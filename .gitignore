@@ -1,0 +1,39 @@
+### Gradle ###
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+buid/
+*/build/
+/build/
+
+### IntelliJ IDEA ###
+.idea
+*/.idea
+*.iws
+*/*.iws
+*.iml
+*/*.iml
+*.ipr
+*/*.ipr
+/out/
+*/out/
+
+
+*.jar
+
+.DS_Store
+/.DS_Store
+*/.DS_Store
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+
