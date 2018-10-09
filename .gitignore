@@ -20,6 +20,14 @@ buid/
 /out/
 */out/
 
+/logs/
+logs/
+*/logs/
+
+/log/
+log/
+*/logs/
+
 
 *.jar
 
