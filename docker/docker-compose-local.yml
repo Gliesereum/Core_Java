@@ -2,9 +2,9 @@ version: '3.1'
 
 services:
   postgres:
-    volumes:
-      - ../pgdata/:/var/lib/postgresql/data
     image: postgres:10.5-alpine
+    volumes:
+      - ../volumes/pgdata/:/var/lib/postgresql/data
     deploy:
       restart_policy:
         condition: on-failure
@@ -13,4 +13,14 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
     ports:
-    - 5432:5432
+      - 5432:5432
+
+  redis:
+    image: redis:3.2.12-alpine
+    volumes:
+      - ../volumes/redisdata/:/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 6379:6379
