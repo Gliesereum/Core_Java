@@ -1,0 +1,17 @@
+# serivce name
+spring:
+  application:
+    name: proxy-service
+
+
+server:
+  port: ${port:8200}
+
+zuul:
+  routes:
+    account-service:
+      path: /account/v1/**
+      service-id: account-service
+  ignored-services: '*'
+  prefix: /api
+

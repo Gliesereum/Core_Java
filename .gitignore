@@ -36,4 +36,5 @@ buid/
 .springBeans
 .sts4-cache
 
+/pgdata
 

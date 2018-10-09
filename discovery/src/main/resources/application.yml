@@ -1,0 +1,23 @@
+#Application name
+spring:
+  application:
+    name: discovery-service
+  cloud:
+    config:
+      allow-override: true
+      override-none: true
+      override-system-properties: false
+
+#Port for eureka
+server:
+  port: 8761
+
+# eureka by default will register itself as a client. So, we need to set it to false.
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

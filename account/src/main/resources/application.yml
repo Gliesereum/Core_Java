@@ -1,0 +1,12 @@
+# serivce name
+spring:
+  application:
+    name: account-service
+
+
+server:
+  port: 8210
+
+db:
+  schema: account
+

@@ -1,0 +1,5 @@
+rootProject.name = 'account'
+
+include 'share'
+project(':share').projectDir = new File(settingsDir,  '../share')
+
