@@ -12,6 +12,9 @@ zuul:
     account-service:
       path: /account/v1/**
       service-id: account-service
+    mail-service:
+      path: /mail/v1/**
+      service-id: mail-service
   ignored-services: '*'
   prefix: /api
 

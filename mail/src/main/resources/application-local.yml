@@ -1,0 +1,40 @@
+logging:
+  file: logs/mail.log
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://${eureka-host:localhost}:${eureka-port:8761}/eureka
+
+admin:
+  email: gliesereum@gmail.com
+
+spring:
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: gliesereum@gmail.com
+    password: Gliesereum0013
+    from: GLIESEREUM<gliesereum@gmail.com>
+    port: 465
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+          ssl:
+            enable: true
+            trust: "*"
+
+phone:
+  url: https://acemountmedia.com/api/
+  auth-type: token
+  alpha-name: SECURITY
+  login: businesseuropolicy
+  token: shiM8uESwOEAWEurmDWGNmY6LPSy_x1m
+
+
