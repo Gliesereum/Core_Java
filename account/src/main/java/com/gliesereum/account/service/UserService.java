@@ -10,5 +10,4 @@ import com.gliesereum.share.common.service.DefaultService;
  * @since 08/10/2018
  */
 public interface UserService extends DefaultService<UserDto, UserEntity> {
-
 }
