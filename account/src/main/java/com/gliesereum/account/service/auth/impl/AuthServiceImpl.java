@@ -1,7 +1,7 @@
 package com.gliesereum.account.service.auth.impl;
 
 import com.gliesereum.account.service.auth.AuthService;
-import com.gliesereum.share.common.model.dto.auth.AuthDto;
+import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import org.springframework.stereotype.Service;
 
 /**

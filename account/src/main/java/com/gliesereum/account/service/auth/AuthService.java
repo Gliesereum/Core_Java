@@ -1,6 +1,6 @@
 package com.gliesereum.account.service.auth;
 
-import com.gliesereum.share.common.model.dto.auth.AuthDto;
+import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 
 /**
  * @author yvlasiuk

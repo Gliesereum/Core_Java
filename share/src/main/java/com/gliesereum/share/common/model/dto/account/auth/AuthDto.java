@@ -1,6 +1,6 @@
-package com.gliesereum.share.common.model.dto.auth;
+package com.gliesereum.share.common.model.dto.account.auth;
 
-import com.gliesereum.share.common.model.dto.account.UserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
