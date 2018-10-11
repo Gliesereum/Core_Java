@@ -3,6 +3,7 @@ package com.gliesereum.account.model.entity;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import javax.persistence.*;
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "user")
 public class UserEntity extends DefaultEntity {

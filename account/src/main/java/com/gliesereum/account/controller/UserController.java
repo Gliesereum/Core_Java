@@ -24,7 +24,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{id}")
-    public UserDto getById(@PathVariable("id")UUID id) {
+    public UserDto getById(@PathVariable("id") UUID id) {
         return userService.getById(id);
     }
 
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public Map<String, String> delete(@PathVariable("id")UUID id) {
+    public Map<String, String> delete(@PathVariable("id") UUID id) {
         userService.delete(id);
         Map<String, String> result = new HashMap<>();
         result.put("deleted", "true");
