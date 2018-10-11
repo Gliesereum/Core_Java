@@ -1,7 +1,7 @@
-package com.gliesereum.account.service;
+package com.gliesereum.account.service.user;
 
 import com.gliesereum.account.model.entity.UserPhoneEntity;
-import com.gliesereum.share.common.model.dto.account.UserPhoneDto;
+import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.UUID;
@@ -13,4 +13,8 @@ import java.util.UUID;
 public interface UserPhoneService extends DefaultService<UserPhoneDto, UserPhoneEntity> {
 
     void deleteByUserId(UUID id);
+
+    UserPhoneDto getByUserId(UUID id);
+
+    void sendCode(String phone);
 }

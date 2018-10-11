@@ -1,10 +1,10 @@
-package com.gliesereum.account.service.impl;
+package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.UserPhoneEntity;
-import com.gliesereum.account.model.repository.UserPhoneRepository;
-import com.gliesereum.account.service.UserPhoneService;
+import com.gliesereum.account.model.repository.jpa.user.UserPhoneRepository;
+import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.share.common.converter.DefaultConverter;
-import com.gliesereum.share.common.model.dto.account.UserPhoneDto;
+import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,9 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     @Autowired
     private UserPhoneRepository repository;
 
+    @Autowired
+    DefaultConverter converter;
+
     private static final Class<UserPhoneDto> DTO_CLASS = UserPhoneDto.class;
     private static final Class<UserPhoneEntity> ENTITY_CLASS = UserPhoneEntity.class;
 
@@ -32,7 +35,24 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     @Override
     public void deleteByUserId(UUID id) {
         if (id != null) {
-            repository.deleteUserPhoneEntitiesByUserId(id);
+            repository.deleteUserPhoneEntityByUserId(id);
         }
+    }
+
+    @Override
+    public UserPhoneDto getByUserId(UUID id) {
+        UserPhoneDto result = null;
+        if (id != null) {
+           UserPhoneEntity user = repository.getByUserId(id);
+           if(user != null){
+              result = converter.entityToDto(user,UserPhoneDto.class);
+           }
+        }
+        return result;
+    }
+
+    @Override
+    public void sendCode(String phone) {
+
     }
 }

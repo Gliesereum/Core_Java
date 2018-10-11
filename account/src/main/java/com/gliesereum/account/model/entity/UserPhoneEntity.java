@@ -20,6 +20,10 @@ public class UserPhoneEntity extends DefaultEntity {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", insertable = false, updatable = false)
     private UUID userId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    private UserEntity user;
 }

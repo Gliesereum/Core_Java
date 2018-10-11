@@ -1,12 +1,12 @@
-package com.gliesereum.account.service.impl;
+package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.UserEntity;
-import com.gliesereum.account.model.repository.UserRepository;
-import com.gliesereum.account.service.UserEmailService;
-import com.gliesereum.account.service.UserPhoneService;
-import com.gliesereum.account.service.UserService;
+import com.gliesereum.account.model.repository.jpa.user.UserRepository;
+import com.gliesereum.account.service.user.UserEmailService;
+import com.gliesereum.account.service.user.UserPhoneService;
+import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
-import com.gliesereum.share.common.model.dto.account.UserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

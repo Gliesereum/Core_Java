@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.model.dto.account;
+package com.gliesereum.share.common.model.dto.account.user;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.Data;
@@ -12,9 +12,11 @@ import java.util.UUID;
  */
 @Data
 @NoArgsConstructor
-public class UserEmailDto extends DefaultDto {
+public class UserPhoneDto extends DefaultDto {
 
-    private String email;
+    private String phone;
+
+    private UserDto user;
 
     private UUID userId;
 }

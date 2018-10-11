@@ -54,14 +54,14 @@ public class EmailServiceImpl implements EmailService {
             message.setText(text);
 
             emailSender.send(message);
-            logger.info("\nSend email, date: [{}] to: {}",LocalDateTime.now(), to);
+            logger.info("\nSend email, date: [{}] to: {}", LocalDateTime.now(), to);
         } catch (MailException exception) {
             exception.printStackTrace();
         }
     }
 
     @Override
-    public void sendSingleVerificationMessage(String to, String subject, String verificationLink, String code) {
+    public void sendSingleVerificationMessage(String to, String subject, String code) {
         try {
             MimeMessagePreparator preparatory = new MimeMessagePreparator() {
                 public void prepare(MimeMessage mimeMessage) throws MessagingException, IOException, TemplateException {
@@ -73,7 +73,6 @@ public class EmailServiceImpl implements EmailService {
                     message.setFrom(environment.getProperty(RECEIVER));
 
                     Map<String, String> model = new HashMap<>();
-                    model.put("verification_link", verificationLink);
                     model.put("code", code);
 
                     freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
@@ -84,7 +83,7 @@ public class EmailServiceImpl implements EmailService {
                 }
             };
             emailSender.send(preparatory);
-            logger.info("\nSend email, date: [{}] to: {}",LocalDateTime.now(), to);
+            logger.info("\nSend email, date: [{}] to: {}", LocalDateTime.now(), to);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -116,7 +115,7 @@ public class EmailServiceImpl implements EmailService {
         }
         if (!preparatoryList.isEmpty()) {
             emailSender.send(preparatoryList.toArray(new MimeMessagePreparator[preparatoryList.size()]));
-            logger.info("\nSend emails, date: [{}] to: {}",LocalDateTime.now(), listTo);
+            logger.info("\nSend emails, date: [{}] to: {}", LocalDateTime.now(), listTo);
         }
     }
 
