@@ -1,7 +1,7 @@
-package com.gliesereum.account.controller;
+package com.gliesereum.account.controller.user;
 
-import com.gliesereum.account.service.UserEmailService;
-import com.gliesereum.share.common.model.dto.account.UserEmailDto;
+import com.gliesereum.account.service.user.UserEmailService;
+import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

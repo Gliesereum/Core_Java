@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.model.dto.account;
+package com.gliesereum.share.common.model.dto.account.user;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;

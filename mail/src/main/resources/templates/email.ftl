@@ -4,7 +4,6 @@
     <title>Verification email</title>
 </head>
 <body>
-<p> ${verification_link}</p>
 <p> ${code}</p>
 </body>
 </html>

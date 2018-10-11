@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.model.dto.account;
+package com.gliesereum.share.common.model.dto.account.user;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.Data;
@@ -17,6 +17,8 @@ import java.util.UUID;
 public class UserEmailDto extends DefaultDto {
 
     private String email;
+
+    private UserDto user;
 
     private UUID userId;
 }

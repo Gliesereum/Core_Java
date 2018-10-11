@@ -1,4 +1,4 @@
-package com.gliesereum.account.model.repository;
+package com.gliesereum.account.model.repository.jpa.user;
 
 import com.gliesereum.account.model.entity.UserEmailEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +13,6 @@ import java.util.UUID;
 @Repository
 public interface UserEmailRepository extends JpaRepository<UserEmailEntity, UUID> {
 
-    void deleteUserEmailEntitiesByUserId(UUID id);
+    void deleteUserEmailEntityByUserId(UUID id);
 
 }

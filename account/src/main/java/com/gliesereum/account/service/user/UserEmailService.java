@@ -1,7 +1,7 @@
-package com.gliesereum.account.service;
+package com.gliesereum.account.service.user;
 
 import com.gliesereum.account.model.entity.UserEmailEntity;
-import com.gliesereum.share.common.model.dto.account.UserEmailDto;
+import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.UUID;

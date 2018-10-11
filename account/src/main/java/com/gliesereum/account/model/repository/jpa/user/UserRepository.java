@@ -1,4 +1,4 @@
-package com.gliesereum.account.model.repository;
+package com.gliesereum.account.model.repository.jpa.user;
 
 import com.gliesereum.account.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
