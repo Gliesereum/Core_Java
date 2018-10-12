@@ -1,8 +1,6 @@
 package com.gliesereum.share.common.converter.imp;
 
 import com.gliesereum.share.common.converter.DefaultConverter;
-import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.entity.DefaultEntity;
 import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
 
@@ -23,44 +21,23 @@ public class DefaultConverterImp implements DefaultConverter {
     }
 
     @Override
-    public <E extends DefaultEntity, D extends DefaultDto> E dtoToEntity(D dto, Class<E> entityClass) {
-        E entity = null;
-        if (dto != null) {
-            entity = modelMapper.map(dto, entityClass);
+    public <E, T> T convert(E object, Class<T> resultClass) {
+        T result = null;
+        if (object != null) {
+            result = modelMapper.map(object, resultClass);
         }
-        return entity;
+        return result;
     }
 
     @Override
-    public <E extends DefaultEntity, D extends DefaultDto> List<E> dtoToEntity(List<D> dtos, Class<E> entityClass) {
-        List<E> entities = null;
-        if (CollectionUtils.isNotEmpty(dtos)) {
-            entities = new ArrayList<>(dtos.size());
-            for (D dto : dtos) {
-                entities.add(dtoToEntity(dto, entityClass));
+    public <E, T> List<T> convert(List<E> objects, Class<T> resultClass) {
+        List<T> result = null;
+        if (CollectionUtils.isNotEmpty(objects)) {
+            result = new ArrayList<>(objects.size());
+            for (E object : objects) {
+                result.add(convert(object, resultClass));
             }
         }
-        return entities;
-    }
-
-    @Override
-    public <E extends DefaultEntity, D extends DefaultDto> D entityToDto(E entity, Class<D> dtoClass) {
-        D dto = null;
-        if (entity != null) {
-            dto = modelMapper.map(entity, dtoClass);
-        }
-        return dto;
-    }
-
-    @Override
-    public <E extends DefaultEntity, D extends DefaultDto> List<D> entityToDto(List<E> entities, Class<D> dtoClass) {
-        List<D> dtos = null;
-        if (CollectionUtils.isNotEmpty(entities)) {
-            dtos = new ArrayList<>(entities.size());
-            for (E entity : entities) {
-                dtos.add(entityToDto(entity, dtoClass));
-            }
-        }
-        return dtos;
+        return result;
     }
 }

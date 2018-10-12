@@ -1,6 +1,8 @@
 package com.gliesereum.share.common.service;
 
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exception.messages.CommonExceptionMessage;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 
 /**
  * @author yvlasiuk
@@ -33,9 +37,9 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
 
     public D create(D dto) {
         if (dto != null) {
-            E entity = converter.dtoToEntity(dto, entityClass);
+            E entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
-            dto = converter.entityToDto(entity, dtoClass);
+            dto = converter.convert(entity, dtoClass);
         }
         return dto;
     }
@@ -43,12 +47,11 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     public D update(D dto) {
         if (dto != null) {
             if (dto.getId() == null) {
-                //TODO: set custom exception
-                throw new RuntimeException("Id not specified");
+                throw new ClientException(ID_NOT_SPECIFIED);
             }
-            E entity = converter.dtoToEntity(dto, entityClass);
+            E entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
-            dto = converter.entityToDto(entity, dtoClass);
+            dto = converter.convert(entity, dtoClass);
         }
         return dto;
     }
@@ -58,7 +61,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
         if (id != null) {
             Optional<E> entityOptional = repository.findById(id);
             if (entityOptional.isPresent()) {
-                result = converter.entityToDto(entityOptional.get(), dtoClass);
+                result = converter.convert(entityOptional.get(), dtoClass);
             }
         }
         return result;
@@ -66,7 +69,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
 
     public List<D> getAll() {
         List<E> entities = repository.findAll();
-        return converter.entityToDto(entities, dtoClass);
+        return converter.convert(entities, dtoClass);
     }
 
     public void delete(UUID id) {
