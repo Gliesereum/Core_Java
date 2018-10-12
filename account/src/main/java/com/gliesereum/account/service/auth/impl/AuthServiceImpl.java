@@ -2,15 +2,13 @@ package com.gliesereum.account.service.auth.impl;
 
 import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.service.auth.AuthService;
+import com.gliesereum.account.service.token.TokenService;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
-import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.account.service.token.TokenService;
-import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_EMPTY;
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.VALUE_EMPTY;
-
-import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -39,13 +36,10 @@ public class AuthServiceImpl implements AuthService {
     private UserPhoneService phoneService;
 
     @Autowired
-    UserEmailService emailService;
+    private UserEmailService emailService;
 
     @Autowired
     private TokenService tokenService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private DefaultConverter defaultConverter;

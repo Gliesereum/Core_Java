@@ -3,7 +3,10 @@ package com.gliesereum.account.service.user.impl;
 import com.gliesereum.account.model.entity.UserPhoneEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserPhoneRepository;
 import com.gliesereum.account.service.user.UserPhoneService;
+import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
 
 /**
  * @author vitalij
@@ -56,7 +59,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
         if (id != null) {
             UserPhoneEntity user = repository.getByUserId(id);
             if (user != null) {
-                result = converter.entityToDto(user, UserPhoneDto.class);
+                result = converter.convert(user, UserPhoneDto.class);
             }
         }
         return result;
