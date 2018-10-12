@@ -45,9 +45,8 @@ public class MailController {
     @PostMapping(value = "/email/verification")
     public void sendSingleVerificationMessage(@RequestParam(value = "to") String to,
                                               @RequestParam(value = "subject") String subject,
-                                              @RequestParam(value = "verificationLink") String verificationLink,
                                               @RequestParam(value = "code") String code) {
-        emailService.sendSingleVerificationMessage(to, subject, verificationLink, code);
+        emailService.sendSingleVerificationMessage(to, subject, code);
     }
 
     @PostMapping(value = "/email/distribution")

@@ -2,6 +2,8 @@ package com.gliesereum.account.service.auth;
 
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 
+import java.util.Map;
+
 /**
  * @author yvlasiuk
  * @version 1.0
@@ -11,7 +13,7 @@ public interface AuthService {
 
     AuthDto signin();
 
-    AuthDto signup();
+    AuthDto signup(Map<String, String> params);
 
     AuthDto auth(String accessToken);
 }
