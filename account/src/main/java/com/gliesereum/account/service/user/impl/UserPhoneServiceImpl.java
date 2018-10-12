@@ -45,7 +45,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
         if (id != null) {
            UserPhoneEntity user = repository.getByUserId(id);
            if(user != null){
-              result = converter.entityToDto(user,UserPhoneDto.class);
+              result = converter.convert(user,UserPhoneDto.class);
            }
         }
         return result;

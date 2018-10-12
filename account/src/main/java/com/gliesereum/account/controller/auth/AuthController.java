@@ -3,9 +3,7 @@ package com.gliesereum.account.controller.auth;
 import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author vitalij
@@ -26,6 +24,11 @@ public class AuthController {
     @PostMapping("/signin")
     public AuthDto signin() {
         return authService.signin();
+    }
+
+    @GetMapping("/check")
+    public AuthDto check(@RequestParam("accessToken") String accessToken) {
+        return authService.check(accessToken);
     }
 
 }

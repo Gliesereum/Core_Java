@@ -13,5 +13,5 @@ public interface AuthService {
 
     AuthDto signup();
 
-    AuthDto auth(String accessToken);
+    AuthDto check(String accessToken);
 }
