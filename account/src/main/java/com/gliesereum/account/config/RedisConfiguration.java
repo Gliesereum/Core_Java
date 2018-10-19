@@ -27,17 +27,12 @@ public class RedisConfiguration {
     private Environment environment;
 
     @Bean
-    public RedisConnectionFactory connectionFactory() {
-        return new LettuceConnectionFactory();
-    }
-
-    @Bean
-    RedisTemplate<String, Object> redisTemplate() {
-        final RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        final RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setKeySerializer(new StringRedisSerializer());
-        template.setConnectionFactory(connectionFactory());
-        template.setHashValueSerializer(new GenericToStringSerializer<Object>(Object.class));
-        template.setValueSerializer(new GenericToStringSerializer<Object>(Object.class));
+        template.setConnectionFactory(redisConnectionFactory);
+        template.setHashValueSerializer(new GenericToStringSerializer<>(Object.class));
+        template.setValueSerializer(new GenericToStringSerializer<>(Object.class));
         return template;
     }
 

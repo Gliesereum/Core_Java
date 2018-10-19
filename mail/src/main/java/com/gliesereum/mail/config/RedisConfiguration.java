@@ -23,11 +23,6 @@ public class RedisConfiguration {
     private Environment environment;
 
     @Bean
-    public RedisConnectionFactory connectionFactory(){
-        return new LettuceConnectionFactory();
-    }
-
-    @Bean
     public RedisMessageListenerContainer redisContainer(RedisMessageListener redisMessageListener,
                                                         RedisConnectionFactory redisConnectionFactory,
                                                         ChannelTopic channelTopic) {
