@@ -6,6 +6,9 @@ import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.KFCStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,17 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             phoneService.deleteByUserId(id);
             super.delete(id);
         }
+    }
+
+    @Override
+    public UserDto create(UserDto dto) {
+        if (dto != null) {
+            dto.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
+            dto.setBanStatus(BanStatus.UNBAN);
+            dto.setKfcStatus(KFCStatus.KFC_NOT_PASSED);
+          return super.create(dto);
+        }
+        return null;
     }
 
 }

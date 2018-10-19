@@ -35,7 +35,7 @@ public class UserPhoneController {
         if (StringUtils.isEmpty(code)) {
             throw new ClientException(PHONE_CODE_EMPTY);
         }
-        return phoneService.create(phone,code);
+        return phoneService.create(phone, code);
     }
 
     @PutMapping
@@ -48,7 +48,7 @@ public class UserPhoneController {
         if (StringUtils.isEmpty(code)) {
             throw new ClientException(PHONE_CODE_EMPTY);
         }
-        return phoneService.update(phone,code);
+        return phoneService.update(phone, code);
     }
 
     @DeleteMapping("/{id}")
@@ -65,11 +65,7 @@ public class UserPhoneController {
     }
 
     @GetMapping("/code")
-    public Map<String, String> sendCode(@NotNull Map<String, String> params) { //params: {'phone': phone(String)}
-        String phone = params.get("phone");
-        if (StringUtils.isEmpty(phone)) {
-            throw new ClientException(PHONE_EMPTY);
-        }
+    public Map<String, String> sendCode(@RequestParam(value = "phone") String phone) {
         phoneService.sendCode(phone);
         Map<String, String> result = new HashMap<>();
         result.put("sent", "true");

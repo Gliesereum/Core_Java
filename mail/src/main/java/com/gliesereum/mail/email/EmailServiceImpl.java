@@ -118,5 +118,4 @@ public class EmailServiceImpl implements EmailService {
             logger.info("\nSend emails, date: [{}] to: {}", LocalDateTime.now(), listTo);
         }
     }
-
 }

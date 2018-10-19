@@ -16,11 +16,13 @@ public interface UserPhoneService extends DefaultService<UserPhoneDto, UserPhone
 
     UserPhoneDto getByUserId(UUID id);
 
+    UserPhoneDto getByValue(String value);
+
     void sendCode(String phone);
 
     UserPhoneDto update(String phone, String code);
 
     UserPhoneDto create(String phone, String code);
 
-    boolean checkCode(String phone, String code);
+    boolean checkPhoneByExist(String phone);
 }

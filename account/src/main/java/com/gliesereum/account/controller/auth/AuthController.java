@@ -25,8 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public AuthDto signin() {
-        return authService.signin();
+    public AuthDto signin(@NotNull Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+        return authService.signin(params);
     }
 
     @GetMapping("/check")

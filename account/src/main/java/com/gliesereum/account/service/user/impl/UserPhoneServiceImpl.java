@@ -2,19 +2,25 @@ package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.UserPhoneEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserPhoneRepository;
+import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
+import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
+import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_WORSE;
 import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.*;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
 
@@ -33,6 +39,12 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserEmailService emailService;
+
+    @Autowired
+    private VerificationService verificationService;
 
     public static final String PHONE_PATTERN = "\\+?[0-9]{6,14}";
 
@@ -54,10 +66,39 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     }
 
     @Override
+    public void delete(UUID id) {
+        if (id != null) {
+            //todo get userId by context
+            UUID userId = UUID.fromString(null);
+            UserDto user = userService.getById(userId);
+            if (user == null) {
+                throw new ClientException(USER_NOT_FOUND);
+            }
+            if (emailService.getByUserId(user.getId()) == null) {
+                throw new ClientException(CAN_NOT_DELETE_PHONE);
+            }
+            super.delete(id);
+            updateUserStatus(user, VerifiedStatus.UNVERIFIED);
+        }
+    }
+
+    @Override
     public UserPhoneDto getByUserId(UUID id) {
         UserPhoneDto result = null;
         if (id != null) {
-            UserPhoneEntity user = repository.getByUserId(id);
+            UserPhoneEntity phone = repository.getByUserId(id);
+            if (phone != null) {
+                result = converter.convert(phone, UserPhoneDto.class);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public UserPhoneDto getByValue(String value) {
+        UserPhoneDto result = null;
+        if (!StringUtils.isEmpty(value)) {
+            UserPhoneEntity user = repository.getUserPhoneEntityByPhone(value);
             if (user != null) {
                 result = converter.convert(user, UserPhoneDto.class);
             }
@@ -68,52 +109,73 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     @Override
     public void sendCode(String phone) {
         checkIsPhone(phone);
-        //todo send code
+        verificationService.sendVerificationCode(phone, VerificationType.PHONE);
     }
 
     @Override
     public UserPhoneDto update(String phone, String code) {
-        //todo check code
-        checkPhoneByExist(phone);
-        //todo get userId by context
-        UUID id = UUID.fromString(null);
-        UserPhoneDto result = getByUserId(id);
-        if (result == null) {
-            throw new ClientException(PHONE_NOT_FOUND);
+        if (verificationService.checkVerification(phone, code)) {
+            if (checkPhoneByExist(phone)) {
+                throw new ClientException(PHONE_EXIST);
+            }
+            //todo get userId by context
+            UUID id = UUID.fromString(null);
+            UserDto user = userService.getById(id);
+            if (user == null) {
+                throw new ClientException(USER_NOT_FOUND);
+            }
+            UserPhoneDto result = getByUserId(user.getId());
+            if (result == null) {
+                throw new ClientException(USER_DOES_NOT_PHONE);
+            }
+            result.setPhone(phone);
+            return update(result);
+        } else {
+            throw new ClientException(CODE_WORSE);
         }
-        result.setPhone(phone);
-        return update(result);
     }
 
     @Override
     public UserPhoneDto create(String phone, String code) {
-        checkPhoneByExist(phone);
-        //todo check code
-        //todo get userId by context
-        UUID id = UUID.fromString(null);
-        UserDto user = userService.getById(id);
-        if (user == null) {
-            throw new ClientException(USER_NOT_FOUND);
+        if (verificationService.checkVerification(phone, code)) {
+            if (checkPhoneByExist(phone)) {
+                throw new ClientException(PHONE_EXIST);
+            }
+            //todo get userId by context
+            UUID id = UUID.fromString(null);
+            UserDto user = userService.getById(id);
+            if (user == null) {
+                throw new ClientException(USER_NOT_FOUND);
+            }
+            if (getByUserId(id) != null) {
+                throw new ClientException(USER_ALREADY_HAS_PHONE);
+            }
+            UserPhoneDto result = new UserPhoneDto();
+            result.setPhone(phone);
+            result.setUser(user);
+            updateUserStatus(user, VerifiedStatus.VERIFIED);
+            return create(result);
+        } else {
+            throw new ClientException(CODE_WORSE);
         }
-        UserPhoneDto result = new UserPhoneDto();
-        result.setPhone(phone);
-        result.setUser(user);
-        return create(result);
+    }
+
+    private void updateUserStatus(UserDto user, VerifiedStatus status) {
+        user.setVerifiedStatus(status);
+        userService.update(user);
     }
 
     @Override
-    public boolean checkCode(String phone, String code) {
-        return false;
+    public boolean checkPhoneByExist(String phone) {
+        checkIsPhone(phone);
+        return repository.existsUserPhoneEntityByPhone(phone);
     }
 
-    private void checkPhoneByExist(String phone) {
-        if (repository.existsUserPhoneEntityByPhone(phone)) {
-            throw new ClientException(PHONE_EXIST);
+    public void checkIsPhone(String phone) {
+        if (StringUtils.isEmpty(phone)) {
+            throw new ClientException(PHONE_EMPTY);
         }
-    }
-
-    public void checkIsPhone(String str) {
-        if (!phonePattern.matcher(str).matches()) {
+        if (!phonePattern.matcher(phone).matches()) {
             throw new ClientException(NOT_PHONE_BY_REGEX);
         }
     }

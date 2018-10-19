@@ -2,11 +2,12 @@ package com.gliesereum.share.common.model.dto.account.enumerated;
 
 /**
  * @author vitalij
- * @since 12/10/2018
+ * @since 10/16/18
  */
-public enum VerificationType {
+public enum BanStatus {
 
-    PHONE,EMAIL;
+    UNBAN,
+    BAN;
 
     public String toString() {
         return name().toLowerCase();

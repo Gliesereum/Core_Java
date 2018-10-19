@@ -13,4 +13,16 @@ import java.util.UUID;
 public interface UserEmailService extends DefaultService<UserEmailDto, UserEmailEntity> {
 
     void deleteByUserId(UUID id);
+
+    UserEmailDto getByUserId(UUID id);
+
+    UserEmailDto getByValue(String value);
+
+    void sendCode(String email);
+
+    UserEmailDto update(String email, String code);
+
+    UserEmailDto create(String email, String code);
+
+    boolean checkEmailByExist(String email);
 }

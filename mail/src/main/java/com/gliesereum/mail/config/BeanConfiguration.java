@@ -13,7 +13,7 @@ import java.io.IOException;
  * @since 10/4/18
  */
 @Configuration
-public class BeanConfig {
+public class BeanConfiguration {
 
     @Bean
     public RestTemplate restTemplate() {

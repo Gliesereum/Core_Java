@@ -18,7 +18,7 @@ zuul:
   ignored-services: '*'
   prefix: /api
   host:
-    connectTimeoutMillis: 10000
+    connectTimeoutMillis: 100000
 
 ribbon:
   ConnectTimeout: 10000
@@ -29,4 +29,4 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 50000
+            timeoutInMilliseconds: 40000

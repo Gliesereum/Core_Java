@@ -17,6 +17,8 @@ public interface UserPhoneRepository extends JpaRepository<UserPhoneEntity, UUID
 
     UserPhoneEntity getByUserId(UUID id);
 
+    UserPhoneEntity getUserPhoneEntityByPhone(String phone);
+
     boolean existsUserPhoneEntityByPhone(String phone);
 
 }

@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public interface AuthService {
 
-    AuthDto signin();
+    AuthDto signin(Map<String, String> params);
 
     AuthDto signup(Map<String, String> params);
 

@@ -15,4 +15,9 @@ public interface UserEmailRepository extends JpaRepository<UserEmailEntity, UUID
 
     void deleteUserEmailEntityByUserId(UUID id);
 
+    UserEmailEntity getUserEmailEntityByEmail(String email);
+
+    boolean existsUserEmailEntityByEmail(String email);
+
+    UserEmailEntity getByUserId(UUID id);
 }

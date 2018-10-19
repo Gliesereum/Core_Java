@@ -1,7 +1,10 @@
 package com.gliesereum.share.common.model.dto.account.user;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
+import com.gliesereum.share.common.model.dto.account.enumerated.KFCStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,4 +27,10 @@ public class UserDto extends DefaultDto {
     private String lastname;
 
     private Gender gender;
+
+    private BanStatus banStatus;
+
+    private VerifiedStatus verifiedStatus;
+
+    private KFCStatus kfcStatus;
 }

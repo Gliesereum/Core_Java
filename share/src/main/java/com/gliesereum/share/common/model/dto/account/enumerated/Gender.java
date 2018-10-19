@@ -8,4 +8,8 @@ package com.gliesereum.share.common.model.dto.account.enumerated;
 public enum Gender {
 
     MALE, FEMALE, UNKNOWN;
+
+    public String toString() {
+        return name().toLowerCase();
+    }
 }

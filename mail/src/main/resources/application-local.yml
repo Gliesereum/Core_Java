@@ -16,6 +16,8 @@ spring:
     username: gliesereum@gmail.com
     password: Gliesereum0013
     from: GLIESEREUM<gliesereum@gmail.com>
+    subject: Gliesereum verification mail
+    chanel-name: verificationQueue
     port: 465
     protocol: smtp
     properties:
@@ -29,6 +31,9 @@ spring:
           ssl:
             enable: true
             trust: "*"
+  redis:
+    host: localhost
+    port: 6379
 
 phone:
   url: https://acemountmedia.com/api/

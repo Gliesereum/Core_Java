@@ -1,6 +1,9 @@
 package com.gliesereum.account.model.entity;
 
+import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
+import com.gliesereum.share.common.model.dto.account.enumerated.KFCStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,4 +35,16 @@ public class UserEntity extends DefaultEntity {
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @Column(name = "ban_status")
+    @Enumerated(EnumType.STRING)
+    private BanStatus banStatus;
+
+    @Column(name = "verified_status")
+    @Enumerated(EnumType.STRING)
+    private VerifiedStatus verifiedStatus;
+
+    @Column(name = "kfc_status")
+    @Enumerated(EnumType.STRING)
+    private KFCStatus kfcStatus;
 }
