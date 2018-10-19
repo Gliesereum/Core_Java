@@ -13,6 +13,7 @@ import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_WORSE;
 import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
  * @author vitalij
@@ -67,18 +68,14 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
 
     @Override
     public void delete(UUID id) {
+        UUID userId = SecurityUtil.getUserId();
+        checkUserAuthentication(userId);
         if (id != null) {
-            //todo get userId by context
-            UUID userId = UUID.fromString(null);
-            UserDto user = userService.getById(userId);
-            if (user == null) {
-                throw new ClientException(USER_NOT_FOUND);
-            }
-            if (emailService.getByUserId(user.getId()) == null) {
+            if (emailService.getByUserId(userId) == null) {
                 throw new ClientException(CAN_NOT_DELETE_PHONE);
             }
             super.delete(id);
-            updateUserStatus(user, VerifiedStatus.UNVERIFIED);
+            updateUserStatus(userService.getById(userId), VerifiedStatus.UNVERIFIED);
         }
     }
 
@@ -114,17 +111,13 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
 
     @Override
     public UserPhoneDto update(String phone, String code) {
+        UUID userId = SecurityUtil.getUserId();
+        checkUserAuthentication(userId);
         if (verificationService.checkVerification(phone, code)) {
             if (checkPhoneByExist(phone)) {
                 throw new ClientException(PHONE_EXIST);
             }
-            //todo get userId by context
-            UUID id = UUID.fromString(null);
-            UserDto user = userService.getById(id);
-            if (user == null) {
-                throw new ClientException(USER_NOT_FOUND);
-            }
-            UserPhoneDto result = getByUserId(user.getId());
+            UserPhoneDto result = getByUserId(userId);
             if (result == null) {
                 throw new ClientException(USER_DOES_NOT_PHONE);
             }
@@ -137,17 +130,14 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
 
     @Override
     public UserPhoneDto create(String phone, String code) {
+        UUID userId = SecurityUtil.getUserId();
+        checkUserAuthentication(userId);
         if (verificationService.checkVerification(phone, code)) {
             if (checkPhoneByExist(phone)) {
                 throw new ClientException(PHONE_EXIST);
             }
-            //todo get userId by context
-            UUID id = UUID.fromString(null);
-            UserDto user = userService.getById(id);
-            if (user == null) {
-                throw new ClientException(USER_NOT_FOUND);
-            }
-            if (getByUserId(id) != null) {
+            UserDto user = userService.getById(userId);
+            if (getByUserId(userId) != null) {
                 throw new ClientException(USER_ALREADY_HAS_PHONE);
             }
             UserPhoneDto result = new UserPhoneDto();
@@ -163,6 +153,12 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     private void updateUserStatus(UserDto user, VerifiedStatus status) {
         user.setVerifiedStatus(status);
         userService.update(user);
+    }
+
+    private void checkUserAuthentication(UUID userId) {
+        if (userId == null) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
     }
 
     @Override

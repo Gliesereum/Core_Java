@@ -6,6 +6,7 @@ import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.KFCStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
@@ -14,7 +15,11 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
 
 /**
  * @author yvlasiuk
@@ -52,9 +57,21 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             dto.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
             dto.setBanStatus(BanStatus.UNBAN);
             dto.setKfcStatus(KFCStatus.KFC_NOT_PASSED);
-          return super.create(dto);
+            return super.create(dto);
         }
         return null;
     }
 
+    @Override
+    public Map<String, String> banById(UUID id) {
+        UserDto user = getById(id);
+        if (user == null) {
+            throw new ClientException(USER_NOT_FOUND);
+        }
+        Map<String, String> result = new HashMap<>();
+        user.setBanStatus(BanStatus.BAN);
+        update(user);
+        result.put("ban", "succeed");
+        return result;
+    }
 }

@@ -6,7 +6,6 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +52,11 @@ public class UserController {
             result = userService.getById(userId);
         }
         return result;
+    }
+
+    @GetMapping("/ban/{id}")
+    public Map<String, String> banById(@PathVariable("id") UUID id) {
+        return userService.banById(id);
     }
 
     @DeleteMapping("/{id}")

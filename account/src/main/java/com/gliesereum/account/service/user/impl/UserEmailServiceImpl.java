@@ -13,6 +13,7 @@ import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_WORSE;
 import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -65,17 +66,13 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     @Override
     public void delete(UUID id) {
         if (id != null) {
-            //todo get userId by context
-            UUID userId = UUID.fromString(null);
-            UserDto user = userService.getById(userId);
-            if (user == null) {
-                throw new ClientException(USER_NOT_FOUND);
-            }
+            UUID userId = SecurityUtil.getUserId();
+            checkUserAuthentication(userId);
             if (phoneService.getByUserId(userId) == null) {
                 throw new ClientException(CAN_NOT_DELETE_EMAIL);
             }
             super.delete(id);
-            updateUserStatus(user, VerifiedStatus.UNVERIFIED);
+            updateUserStatus(userService.getById(userId), VerifiedStatus.UNVERIFIED);
         }
     }
 
@@ -111,17 +108,13 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
 
     @Override
     public UserEmailDto update(String email, String code) {
+        UUID userId = SecurityUtil.getUserId();
+        checkUserAuthentication(userId);
         if (verificationService.checkVerification(email, code)) {
             if (checkEmailByExist(email)) {
                 throw new ClientException(EMAIL_EXIST);
             }
-            //todo get userId by context
-            UUID id = UUID.fromString(null);
-            UserDto user = userService.getById(id);
-            if (user == null) {
-                throw new ClientException(USER_NOT_FOUND);
-            }
-            UserEmailDto result = getByUserId(user.getId());
+            UserEmailDto result = getByUserId(userId);
             if (result == null) {
                 throw new ClientException(USER_DOES_NOT_EMAIL);
             }
@@ -134,17 +127,15 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
 
     @Override
     public UserEmailDto create(String email, String code) {
+        UUID userId = SecurityUtil.getUserId();
+        checkUserAuthentication(userId);
+        UserDto user = userService.getById(userId);
         if (verificationService.checkVerification(email, code)) {
             if (checkEmailByExist(email)) {
                 throw new ClientException(EMAIL_EXIST);
             }
-            //todo get userId by context
-            UUID id = UUID.fromString(null);
-            UserDto user = userService.getById(id);
-            if (user == null) {
-                throw new ClientException(USER_NOT_FOUND);
-            }
-            if (getByUserId(id) != null) {
+
+            if (getByUserId(userId) != null) {
                 throw new ClientException(USER_ALREADY_HAS_EMAIL);
             }
             UserEmailDto result = new UserEmailDto();
@@ -154,6 +145,12 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
             return create(result);
         } else {
             throw new ClientException(CODE_WORSE);
+        }
+    }
+
+    private void checkUserAuthentication(UUID userId) {
+        if (userId == null) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
         }
     }
 
