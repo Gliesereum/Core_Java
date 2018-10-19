@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.model.dto.account.auth;
+package com.gliesereum.share.common.exception.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -12,23 +12,21 @@ import java.time.LocalDateTime;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 11/10/2018
+ * @since 16/10/2018
  */
+
 @Data
 @NoArgsConstructor
-public class TokenInfoDto {
+public class ErrorResponse {
 
-    private String accessToken;
+    private int code;
 
-    private String refreshToken;
+    private String message;
 
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime accessExpirationDate;
+    private String path;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime refreshExpirationDate;
+    private LocalDateTime timestamp;
 
-    private String userId;
 }

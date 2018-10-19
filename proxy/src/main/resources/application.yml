@@ -19,6 +19,8 @@ zuul:
   prefix: /api
   host:
     connectTimeoutMillis: 10000
+  add-host-header: true
+  sensitive-headers:
 
 ribbon:
   ConnectTimeout: 10000
@@ -29,4 +31,13 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 50000
+            timeoutInMilliseconds: 80000
+
+security:
+  properties:
+    checkAccessUrl: http://account-service/auth/check
+    bearerHeader: Authorization
+    bearerPrefix: Bearer
+    jwtHeader: Service-Authorization
+    jwtPrefix: JWT
+    jwtSecret: CnfxFqbCKHLqzT9LGruE

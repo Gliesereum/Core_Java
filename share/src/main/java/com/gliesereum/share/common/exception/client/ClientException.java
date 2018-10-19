@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.exception.client;
 
+import com.gliesereum.share.common.exception.CustomException;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,39 +13,21 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ClientException extends RuntimeException {
-
-    private int errorCode;
-
-    private int httpCode;
-
-    private String message;
+public class ClientException extends CustomException {
 
     public ClientException(ExceptionMessage exceptionMessage) {
-        super(exceptionMessage.getMessage());
-        this.errorCode = exceptionMessage.getErrorCode();
-        this.httpCode = exceptionMessage.getHttpCode();
-        this.message = exceptionMessage.getMessage();
+        super(exceptionMessage);
     }
 
     public ClientException(ExceptionMessage exceptionMessage, Throwable cause) {
-        super(exceptionMessage.getMessage(), cause);
-        this.errorCode = exceptionMessage.getErrorCode();
-        this.httpCode = exceptionMessage.getHttpCode();
-        this.message = exceptionMessage.getMessage();
+        super(exceptionMessage, cause);
     }
 
     public ClientException(String message, int errorCode, int httpCode) {
-        super(message);
-        this.errorCode = errorCode;
-        this.httpCode = httpCode;
-        this.message = message;
+        super(message, errorCode, httpCode);
     }
 
     public ClientException(String message, int errorCode, int httpCode, Throwable cause) {
-        super(message, cause);
-        this.errorCode = errorCode;
-        this.httpCode = httpCode;
-        this.message = message;
+        super(message, errorCode, httpCode, cause);
     }
 }
