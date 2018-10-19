@@ -2,7 +2,6 @@ package com.gliesereum.share.common.service;
 
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.exception.messages.CommonExceptionMessage;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

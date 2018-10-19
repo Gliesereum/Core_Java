@@ -7,7 +7,9 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 @EnableZuulProxy
 @EnableEurekaClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+		"com.gliesereum.proxy",
+		"com.gliesereum.share.common.exception.handler"})
 public class ProxyApplication {
 
 	public static void main(String[] args) {

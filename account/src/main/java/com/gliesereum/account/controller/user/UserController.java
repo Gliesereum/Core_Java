@@ -2,9 +2,11 @@ package com.gliesereum.account.controller.user;
 
 import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,16 @@ public class UserController {
     @PutMapping
     public UserDto update(@RequestBody UserDto user) {
         return userService.update(user);
+    }
+
+    @GetMapping("/me")
+    public UserDto getMe() {
+        UserDto result = null;
+        UUID userId = SecurityUtil.getUserId();
+        if (userId != null) {
+            result = userService.getById(userId);
+        }
+        return result;
     }
 
     @DeleteMapping("/{id}")
