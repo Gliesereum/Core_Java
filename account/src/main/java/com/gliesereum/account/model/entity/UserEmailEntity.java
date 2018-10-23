@@ -22,10 +22,6 @@ public class UserEmailEntity extends DefaultEntity {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id")
     private UUID userId;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    private UserEntity user;
 }

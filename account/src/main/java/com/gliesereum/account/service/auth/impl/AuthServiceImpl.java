@@ -17,15 +17,18 @@ import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.EMAIL_EXIST;
+import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.EMAIL_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.PHONE_EXIST;
+import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.PHONE_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
 
 /**
  * @author yvlasiuk
@@ -66,12 +69,12 @@ public class AuthServiceImpl implements AuthService {
             switch (verificationType) {
                 case EMAIL: {
                     UserEmailDto email = emailService.getByValue(value);
-                    user = email.getUser();
+                    user = userService.getById(email.getUserId());
                     break;
                 }
                 case PHONE: {
                     UserPhoneDto phone = phoneService.getByValue(value);
-                    user = phone.getUser();
+                    user = userService.getById(phone.getUserId());
                     break;
                 }
             }
@@ -81,11 +84,13 @@ public class AuthServiceImpl implements AuthService {
             } else {
                 throw new ClientException(USER_NOT_FOUND);
             }
+        } else {
+            throw new ClientException(CODE_WORSE);
         }
-        return null;
     }
 
     @Override
+    @Transactional
     public AuthDto signup(Map<String, String> params) {
         checkField(params);
         String value = params.get("value");
@@ -100,14 +105,14 @@ public class AuthServiceImpl implements AuthService {
                     case EMAIL: {
                         UserEmailDto newEmail = new UserEmailDto();
                         newEmail.setEmail(value);
-                        newEmail.setUser(newUser);
+                        newEmail.setUserId(newUser.getId());
                         emailService.create(newEmail);
                         break;
                     }
                     case PHONE: {
                         UserPhoneDto newPhone = new UserPhoneDto();
                         newPhone.setPhone(value);
-                        newPhone.setUser(newUser);
+                        newPhone.setUserId(newUser.getId());
                         phoneService.create(newPhone);
                         break;
                     }
@@ -115,6 +120,8 @@ public class AuthServiceImpl implements AuthService {
                 TokenStoreDomain token = tokenService.generate(newUser.getId().toString());
                 return createModel(token, newUser);
             }
+        } else {
+            throw new ClientException(CODE_WORSE);
         }
         return null;
     }

@@ -142,7 +142,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
             }
             UserPhoneDto result = new UserPhoneDto();
             result.setPhone(phone);
-            result.setUser(user);
+            result.setUserId(user.getId());
             updateUserStatus(user, VerifiedStatus.VERIFIED);
             return create(result);
         } else {

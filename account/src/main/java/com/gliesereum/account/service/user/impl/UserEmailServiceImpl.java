@@ -134,13 +134,12 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
             if (checkEmailByExist(email)) {
                 throw new ClientException(EMAIL_EXIST);
             }
-
             if (getByUserId(userId) != null) {
                 throw new ClientException(USER_ALREADY_HAS_EMAIL);
             }
             UserEmailDto result = new UserEmailDto();
             result.setEmail(email);
-            result.setUser(user);
+            result.setUserId(user.getId());
             updateUserStatus(user, VerifiedStatus.VERIFIED);
             return create(result);
         } else {

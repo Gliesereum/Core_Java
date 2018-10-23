@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.EMAIL_CODE_EMPTY;
+import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.EMAIL_EMPTY;
 
 /**
  * @author vitalij
@@ -26,7 +26,7 @@ public class UserEmailController {
     private UserEmailService emailService;
 
     @PostMapping
-    public UserEmailDto create(@NotNull Map<String, String> params) { //params: {'email': email(String), 'code': code(String)}
+    public UserEmailDto create(@RequestBody Map<String, String> params) { //params: {'email': email(String), 'code': code(String)}
         String email = params.get("email");
         String code = params.get("code");
         if (StringUtils.isEmpty(email)) {
@@ -39,7 +39,7 @@ public class UserEmailController {
     }
 
     @PutMapping
-    public UserEmailDto update(@NotNull Map<String, String> params) { //params: {'email': email(String), 'code': code(String)}
+    public UserEmailDto update(@RequestBody Map<String, String> params) { //params: {'email': email(String), 'code': code(String)}
         String email = params.get("email");
         String code = params.get("code");
         if (StringUtils.isEmpty(email)) {

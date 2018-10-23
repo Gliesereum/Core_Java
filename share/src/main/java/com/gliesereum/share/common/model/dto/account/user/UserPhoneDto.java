@@ -18,7 +18,5 @@ public class UserPhoneDto extends DefaultDto {
 
     private String phone;
 
-    private UserDto user;
-
     private UUID userId;
 }
