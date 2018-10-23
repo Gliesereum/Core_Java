@@ -6,28 +6,28 @@
 ```
 docker rm discovery-service
 docker rmi gls-discovery
-docker build -t gls-discovery  ./discovery
+docker build -t gls-discovery -f docker/discovery/Dockerfile  .
 ```
 
 ##### Account
 ```
 docker rm account-service
 docker rmi gls-account
-docker build -t gls-account  ./account
+docker build -t gls-account -f docker/account/Dockerfile  .
 ```
 
 ##### Proxy
 ```
 docker rm proxy-service
 docker rmi gls-proxy
-docker build -t gls-proxy  ./proxy
+docker build -t gls-proxy  -f docker/proxy/Dockerfile  .
 ```
 
 ##### Mail
 ```
 docker rm mail-service
 docker rmi gls-mail
-docker build -t gls-mail  ./mail
+docker build -t gls-mail -f docker/mail/Dockerfile  .
 ```
 
 
