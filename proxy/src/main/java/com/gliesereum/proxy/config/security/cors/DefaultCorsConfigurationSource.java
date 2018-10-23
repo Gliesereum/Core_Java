@@ -2,9 +2,10 @@ package com.gliesereum.proxy.config.security.cors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author yvlasiuk
@@ -12,10 +13,20 @@ import javax.servlet.http.HttpServletRequest;
  * @since 16/10/2018
  */
 @Component
-public class DefaultCorsConfigurationSource implements CorsConfigurationSource {
+public class DefaultCorsConfigurationSource extends UrlBasedCorsConfigurationSource {
 
-    @Override
-    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-        return null;
+    private static final List<String> ALLOWED_ORIGINS = Arrays.asList("*");
+    private static final List<String> ALLOWED_METHODS = Arrays.asList("GET", "POST", "PUT", "DELETE");
+
+    public DefaultCorsConfigurationSource() {
+        super();
+        super.registerCorsConfiguration("/**", corsConfiguration());
+    }
+
+    private CorsConfiguration corsConfiguration() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(ALLOWED_ORIGINS);
+        configuration.setAllowedMethods(ALLOWED_METHODS);
+        return configuration;
     }
 }

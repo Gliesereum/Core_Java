@@ -5,7 +5,7 @@ spring:
 
 
 server:
-  port: ${port:8200}
+  port: 8200
 
 zuul:
   routes:
@@ -18,7 +18,8 @@ zuul:
   ignored-services: '*'
   prefix: /api
   host:
-    connectTimeoutMillis: 10000
+    connectTimeoutMillis: 20000
+    socket-timeout-millis: 20000
   add-host-header: true
   sensitive-headers:
 
@@ -41,3 +42,10 @@ security:
     jwtHeader: Service-Authorization
     jwtPrefix: JWT
     jwtSecret: CnfxFqbCKHLqzT9LGruE
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://${eureka-host:localhost}:${eureka-port:8761}/eureka
+    region: default
+    registry-fetch-interval-seconds: 20

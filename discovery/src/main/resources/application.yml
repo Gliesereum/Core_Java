@@ -21,3 +21,5 @@ eureka:
     fetch-registry: false
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    region: default
+    registry-fetch-interval-seconds: 5

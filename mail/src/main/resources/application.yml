@@ -5,3 +5,10 @@ spring:
 
 server:
   port: 8220
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://${eureka-host:localhost}:${eureka-port:8761}/eureka
+    region: default
+    registry-fetch-interval-seconds: 20
