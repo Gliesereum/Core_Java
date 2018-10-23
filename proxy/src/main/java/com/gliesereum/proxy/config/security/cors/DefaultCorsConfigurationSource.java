@@ -17,6 +17,7 @@ public class DefaultCorsConfigurationSource extends UrlBasedCorsConfigurationSou
 
     private static final List<String> ALLOWED_ORIGINS = Arrays.asList("*");
     private static final List<String> ALLOWED_METHODS = Arrays.asList("GET", "POST", "PUT", "DELETE");
+    private static final List<String> ALLOWED_HEADERS = Arrays.asList("Authorization", "Accept", "Content-Type");
 
     public DefaultCorsConfigurationSource() {
         super();
@@ -27,6 +28,7 @@ public class DefaultCorsConfigurationSource extends UrlBasedCorsConfigurationSou
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(ALLOWED_ORIGINS);
         configuration.setAllowedMethods(ALLOWED_METHODS);
+        configuration.setAllowedHeaders(ALLOWED_HEADERS);
         return configuration;
     }
 }
