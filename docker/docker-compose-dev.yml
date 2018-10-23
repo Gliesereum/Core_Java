@@ -1,0 +1,94 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:10.5-alpine
+    volumes:
+      - ../volumes/pgdata/:/var/lib/postgresql/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+
+  redis:
+    image: redis:4.0.11-alpine
+    volumes:
+      - ../volumes/redisdata/:/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  discovery:
+    image: gls-discovery
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8761
+      PROFILE: docker
+      HOST: discovery
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  account:
+    image: gls-account
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8210
+      PROFILE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+    ports:
+    - 5005:5005
+
+  mail:
+    image: gls-mail
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8220
+      PROFILE: docker
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  proxy:
+    image: gls-proxy
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8200
+      PROFILE: docker
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+    ports:
+      - 8200:8200
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+

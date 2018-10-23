@@ -18,3 +18,9 @@ security:
     jwtPrefix: JWT
     jwtSecret: CnfxFqbCKHLqzT9LGruE
 
+# eureka server url
+eureka:
+  client:
+    service-url:
+      default-zone: http://${eureka-host}:${eureka-port}/eureka
+
