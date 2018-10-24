@@ -1,5 +1,5 @@
 logging:
-  file: logs/mail.log
+  file: mail/logs/mail.log
 
 admin:
   email: gliesereum@gmail.com

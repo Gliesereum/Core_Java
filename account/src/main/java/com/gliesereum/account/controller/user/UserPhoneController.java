@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.PHONE_CODE_EMPTY;
+import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.PHONE_EMPTY;
 
 /**
  * @author vitalij
@@ -26,7 +26,7 @@ public class UserPhoneController {
     private UserPhoneService phoneService;
 
     @PostMapping
-    public UserPhoneDto create(@NotNull Map<String, String> params) { //params: {'phone': phone(String), 'code': code(String)}
+    public UserPhoneDto create(@RequestBody Map<String, String> params) { //params: {'phone': phone(String), 'code': code(String)}
         String phone = params.get("phone");
         String code = params.get("code");
         if (StringUtils.isEmpty(phone)) {
@@ -39,7 +39,7 @@ public class UserPhoneController {
     }
 
     @PutMapping
-    public UserPhoneDto update(@NotNull Map<String, String> params) { //params: {'phone': phone(String), 'code': code(String)}
+    public UserPhoneDto update(@RequestBody Map<String, String> params) { //params: {'phone': phone(String), 'code': code(String)}
         String phone = params.get("phone");
         String code = params.get("code");
         if (StringUtils.isEmpty(phone)) {

@@ -18,7 +18,5 @@ public class UserEmailDto extends DefaultDto {
 
     private String email;
 
-    private UserDto user;
-
     private UUID userId;
 }

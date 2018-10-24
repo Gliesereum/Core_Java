@@ -5,7 +5,6 @@ import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -20,12 +19,12 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public AuthDto signup(@NotNull Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+    public AuthDto signup(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
         return authService.signup(params);
     }
 
     @PostMapping("/signin")
-    public AuthDto signin(@NotNull Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+    public AuthDto signin(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
         return authService.signin(params);
     }
 

@@ -22,10 +22,7 @@ public class UserPhoneEntity extends DefaultEntity {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id")
     private UUID userId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    private UserEntity user;
 }
