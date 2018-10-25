@@ -1,7 +1,8 @@
-FROM gradle:4.10.2-jdk8-alpine
+FROM java:8-jre-alpine
 
-ADD ./account /gls/account
-ADD ./share /gls/share
+MAINTAINER yvlasiuk
+
+ADD ./account/build/libs/account-0.0.1-SNAPSHOT.jar /gls/account/
 
 WORKDIR /gls/account
 
@@ -22,8 +23,5 @@ ARG REDIS_PASSWORD
 ARG EUREKA_HOST
 ARG EUREKA_PORT
 
-EXPOSE 5005
 
-USER root
-CMD gradle clean
-CMD gradle build && java -Xmx500m -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.host=${EUREKA_HOST} -Deureka.port=${EUREKA_PORT} -Ddb.host=${DB_HOST} -Ddb.port=${DB_PORT} -Ddb.username=${DB_USERNAME} -Ddb.password=${DB_PASSWORD} -Dredis.host=${REDIS_HOST} -Dredis.port=${REDIS_PORT} -Dredis.password=${REDIS_PASSWORD} ./build/libs/account-0.0.1-SNAPSHOT.jar
+CMD java -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.host=${EUREKA_HOST} -Deureka.port=${EUREKA_PORT} -Ddb.host=${DB_HOST} -Ddb.port=${DB_PORT} -Ddb.username=${DB_USERNAME} -Ddb.password=${DB_PASSWORD} -Dredis.host=${REDIS_HOST} -Dredis.port=${REDIS_PORT} -Dredis.password=${REDIS_PASSWORD} ./account-0.0.1-SNAPSHOT.jar

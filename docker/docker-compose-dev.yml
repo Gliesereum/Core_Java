@@ -12,6 +12,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
 
   redis:
     image: redis:4.0.11-alpine
@@ -20,6 +22,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    ports:
+      - 6379:6379
 
   discovery:
     image: gls-discovery
@@ -30,10 +34,8 @@ services:
       PORT: 8761
       PROFILE: docker
       HOST: discovery
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "10"
+    ports:
+      - 8761:8761
 
   account:
     image: gls-account
@@ -51,12 +53,6 @@ services:
       REDIS_PORT: 6379
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "10"
-    ports:
-    - 5005:5005
 
   mail:
     image: gls-mail
@@ -70,10 +66,6 @@ services:
       REDIS_PORT: 6379
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "10"
 
   proxy:
     image: gls-proxy
@@ -87,8 +79,8 @@ services:
       EUREKA_PORT: 8761
     ports:
       - 8200:8200
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "10"
+
+networks:
+  gls-net:
+    driver: bridge
 

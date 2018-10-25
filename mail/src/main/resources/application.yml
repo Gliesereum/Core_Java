@@ -6,9 +6,15 @@ spring:
 server:
   port: 8220
 
+# eureka server url
 eureka:
   client:
-    service-url:
-      default-zone: http://${eureka-host:localhost}:${eureka-port:8761}/eureka
-    region: default
+    serviceUrl:
+      defaultZone: http://${eureka.host:localhost}:${eureka.port:8761}/eureka
     registry-fetch-interval-seconds: 20
+    availability-zones:
+      default: defaultZone
+    region: default
+    enabled: true
+  instance:
+    prefer-ip-address: true

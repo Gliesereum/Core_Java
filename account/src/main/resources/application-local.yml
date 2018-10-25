@@ -31,12 +31,6 @@ spring:
     #password:
     chanel-name: verificationQueue
 
-# eureka server url
-eureka:
-  client:
-    service-url:
-      default-zone: http://${eureka-host:localhost}:${eureka-port:8761}/eureka
-
 token:
   expirationTime:
     # 7 days

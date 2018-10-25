@@ -1,7 +1,8 @@
-FROM gradle:4.10.2-jdk8-alpine
+FROM java:8-jre-alpine
 
-ADD ./proxy /gls/proxy
-ADD ./share /gls/share
+MAINTAINER yvlasiuk
+
+ADD ./proxy/build/libs/proxy-0.0.1-SNAPSHOT.jar /gls/proxy/
 
 WORKDIR /gls/proxy
 
@@ -15,6 +16,4 @@ ARG PROFILE="docker"
 ARG EUREKA_HOST
 ARG EUREKA_PORT
 
-USER root
-CMD gradle clean
-CMD gradle build && java -Xmx500m -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.host=${EUREKA_HOST} -Deureka.port=${EUREKA_PORT} ./build/libs/proxy-0.0.1-SNAPSHOT.jar
+CMD java -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.host=${EUREKA_HOST} -Deureka.port=${EUREKA_PORT} ./proxy-0.0.1-SNAPSHOT.jar

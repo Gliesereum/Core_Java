@@ -1,6 +1,8 @@
-FROM gradle:4.10.2-jdk8-alpine
+FROM java:8-jre-alpine
 
-ADD ./discovery /gls/discovery
+MAINTAINER yvlasiuk
+
+ADD ./discovery/build/libs/discovery-0.0.1-SNAPSHOT.jar /gls/discovery/
 
 WORKDIR /gls/discovery
 
@@ -12,6 +14,5 @@ ARG PROFILE
 ARG PROFILE="docker"
 ARG HOST="localhost"
 
-USER root
-CMD gradle clean
-CMD gradle build && java -Xmx200m -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.instance.hostname=${HOST} ./build/libs/discovery-0.0.1-SNAPSHOT.jar
+CMD java -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.instance.hostname=${HOST} ./discovery-0.0.1-SNAPSHOT.jar
+

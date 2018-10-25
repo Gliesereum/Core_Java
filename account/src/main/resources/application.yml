@@ -21,6 +21,12 @@ security:
 # eureka server url
 eureka:
   client:
-    service-url:
-      default-zone: http://${eureka-host}:${eureka-port}/eureka
-
+    serviceUrl:
+      defaultZone: http://${eureka.host:localhost}:${eureka.port:8761}/eureka
+    registry-fetch-interval-seconds: 20
+    availability-zones:
+      default: defaultZone
+    region: default
+    enabled: true
+  instance:
+    prefer-ip-address: true

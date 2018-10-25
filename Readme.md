@@ -1,6 +1,44 @@
 #Gliesereum platform
 
+### Build jar's
+
+#####gradle
+```
+    gradle clean -b=account/build.gradle
+    gradle build -b=account/build.gradle
+    
+    gradle clean -b=discovery/build.gradle
+    gradle build -b=discovery/build.gradle
+    
+    gradle clean -b=proxy/build.gradle
+    gradle build -b=proxy/build.gradle
+    
+    gradle clean -b=mail/build.gradle
+    gradle build -b=mail/build.gradle
+```
+
+##### wrapper
+```
+    ./gradlew clean -b=account/build.gradle
+    ./gradlew build -b=account/build.gradle
+    
+    ./gradlew clean -b=discovery/build.gradle
+    ./gradlew build -b=discovery/build.gradle
+    
+    ./gradlew clean -b=proxy/build.gradle
+    ./gradlew build -b=proxy/build.gradle
+    
+    ./gradlew clean -b=mail/build.gradle
+    ./gradlew build -b=mail/build.gradle
+```
+
 ### Build images
+
+##### Clean docker
+
+``` 
+docker rm $(docker ps -a -q) --force
+```
 
 ##### Discovery
 ```
