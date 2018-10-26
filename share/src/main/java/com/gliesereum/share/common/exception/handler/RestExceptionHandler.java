@@ -1,7 +1,6 @@
 package com.gliesereum.share.common.exception.handler;
 
 import com.gliesereum.share.common.exception.CustomException;
-import com.gliesereum.share.common.exception.messages.CommonExceptionMessage;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.exception.response.ErrorResponse;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
@@ -25,7 +23,7 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
  */
 
 @ControllerAdvice
-public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+public class RestExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestExceptionHandler.class);
 
