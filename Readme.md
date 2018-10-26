@@ -1,8 +1,8 @@
-#Gliesereum platform
+# Gliesereum platform
 
 ### Build jar's
 
-#####gradle
+##### gradle
 ```
     gradle clean -b=account/build.gradle
     gradle build -b=account/build.gradle
