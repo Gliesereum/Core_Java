@@ -31,7 +31,6 @@ spring:
     password: ${redis.password}
     chanel-name: verificationQueue
 
-
 token:
   expirationTime:
     # 7 days

@@ -1,33 +1,71 @@
-#Gliesereum platform
+# Gliesereum platform
+
+### Build jar's
+
+##### gradle
+```
+    gradle clean -b=account/build.gradle
+    gradle build -b=account/build.gradle
+    
+    gradle clean -b=discovery/build.gradle
+    gradle build -b=discovery/build.gradle
+    
+    gradle clean -b=proxy/build.gradle
+    gradle build -b=proxy/build.gradle
+    
+    gradle clean -b=mail/build.gradle
+    gradle build -b=mail/build.gradle
+```
+
+##### wrapper
+```
+    ./gradlew clean -b=account/build.gradle
+    ./gradlew build -b=account/build.gradle
+    
+    ./gradlew clean -b=discovery/build.gradle
+    ./gradlew build -b=discovery/build.gradle
+    
+    ./gradlew clean -b=proxy/build.gradle
+    ./gradlew build -b=proxy/build.gradle
+    
+    ./gradlew clean -b=mail/build.gradle
+    ./gradlew build -b=mail/build.gradle
+```
 
 ### Build images
+
+##### Clean docker
+
+``` 
+docker rm $(docker ps -a -q) --force
+```
 
 ##### Discovery
 ```
 docker rm discovery-service
 docker rmi gls-discovery
-docker build -t gls-discovery  ./discovery
+docker build -t gls-discovery -f docker/discovery/Dockerfile  .
 ```
 
 ##### Account
 ```
 docker rm account-service
 docker rmi gls-account
-docker build -t gls-account  ./account
+docker build -t gls-account -f docker/account/Dockerfile  .
 ```
 
 ##### Proxy
 ```
 docker rm proxy-service
 docker rmi gls-proxy
-docker build -t gls-proxy  ./proxy
+docker build -t gls-proxy  -f docker/proxy/Dockerfile  .
 ```
 
 ##### Mail
 ```
 docker rm mail-service
 docker rmi gls-mail
-docker build -t gls-mail  ./mail
+docker build -t gls-mail -f docker/mail/Dockerfile  .
 ```
 
 

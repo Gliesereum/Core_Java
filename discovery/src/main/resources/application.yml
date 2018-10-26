@@ -16,6 +16,7 @@ server:
 eureka:
   instance:
     hostname: localhost
+    prefer-ip-address: true
   client:
     register-with-eureka: false
     fetch-registry: false
@@ -23,3 +24,5 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
     region: default
     registry-fetch-interval-seconds: 5
+    availability-zones:
+      default: defaultZone

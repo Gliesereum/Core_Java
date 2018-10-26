@@ -3,7 +3,6 @@ spring:
   application:
     name: proxy-service
 
-
 server:
   port: 8200
 
@@ -18,21 +17,22 @@ zuul:
   ignored-services: '*'
   prefix: /api
   host:
-    connectTimeoutMillis: 20000
-    socket-timeout-millis: 20000
+    connectTimeoutMillis: 30000
+    socket-timeout-millis: 30000
   add-host-header: true
   sensitive-headers:
 
 ribbon:
-  ConnectTimeout: 10000
-  ReadTimeout: 30000
+  ConnectTimeout: 60000
+  ReadTimeout: 80000
 hystrix:
   command:
     default:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 80000
+            timeoutInMilliseconds: 280000
+
 
 security:
   properties:
@@ -43,9 +43,15 @@ security:
     jwtPrefix: JWT
     jwtSecret: CnfxFqbCKHLqzT9LGruE
 
+# eureka server url
 eureka:
   client:
-    service-url:
-      default-zone: http://${eureka-host:localhost}:${eureka-port:8761}/eureka
-    region: default
+    serviceUrl:
+      defaultZone: http://${eureka.host:localhost}:${eureka.port:8761}/eureka
     registry-fetch-interval-seconds: 20
+    availability-zones:
+      default: defaultZone
+    region: default
+    enabled: true
+  instance:
+    prefer-ip-address: true
