@@ -101,8 +101,8 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     }
 
     @Override
-    public void sendCode(String email, boolean signin) {
-        checkEmailForSignInUp(email, signin);
+    public void sendCode(String email, boolean isNew) {
+        checkEmailForSignInUp(email, isNew);
         verificationService.sendVerificationCode(email, VerificationType.EMAIL);
     }
 
@@ -173,9 +173,9 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
         userService.update(user);
     }
 
-    private void checkEmailForSignInUp(String email, boolean signin) {
+    private void checkEmailForSignInUp(String email, boolean isNew) {
         checkIsEmail(email);
-        if (signin && !checkEmailByExist(email)) throw new ClientException(EMAIL_NOT_FOUND);
-        if (!signin && checkEmailByExist(email)) throw new ClientException(EMAIL_EXIST);
+        if (!isNew && !checkEmailByExist(email)) throw new ClientException(EMAIL_NOT_FOUND);
+        if (isNew && checkEmailByExist(email)) throw new ClientException(EMAIL_EXIST);
     }
 }
