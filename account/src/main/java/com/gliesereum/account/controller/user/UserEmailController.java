@@ -65,8 +65,9 @@ public class UserEmailController {
     }
 
     @GetMapping("/code")
-    public Map<String, String> sendCode(@RequestParam(value = "email") String email) {
-        emailService.sendCode(email);
+    public Map<String, String> sendCode(@RequestParam(value = "email") String email,
+                                        @RequestParam(value = "isNew", required = false) boolean isNew) {
+        emailService.sendCode(email, isNew);
         Map<String, String> result = new HashMap<>();
         result.put("sent", "true");
         return result;

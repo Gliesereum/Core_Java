@@ -64,6 +64,7 @@ public class VerificationServiceImpl implements VerificationService {
             model.put("value", value);
             ObjectMapper mapper = new ObjectMapper();
             publisher.publish(mapper.writeValueAsString(model));
+            logger.info(model.toString());
         } catch (IOException e) {
             logger.error(e.getMessage());
             e.printStackTrace();

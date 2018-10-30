@@ -59,6 +59,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             LOG.error("{} error - errorCode: {}, message: {}, path: {}", statusCode, errorResponse.getCode(), errorResponse.getMessage(), errorResponse.getPath(), ex);
         }
         response.setHeader("Content-type", MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(httpStatus.value());
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

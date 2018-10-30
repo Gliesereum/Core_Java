@@ -38,5 +38,6 @@ token:
     # 100 days
     refresh: 8640000000
 
-
+logging:
+  file: logs/account.log
 

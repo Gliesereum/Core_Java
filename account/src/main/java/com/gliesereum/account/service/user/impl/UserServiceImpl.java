@@ -14,6 +14,7 @@ import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     }
 
     @Override
+    @Transactional
     public void delete(UUID id) {
         if (id != null) {
             emailService.deleteByUserId(id);

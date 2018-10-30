@@ -104,8 +104,8 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     }
 
     @Override
-    public void sendCode(String phone) {
-        checkIsPhone(phone);
+    public void sendCode(String phone, boolean isNew) {
+        checkPhoneForSignInUp(phone, isNew);
         verificationService.sendVerificationCode(phone, VerificationType.PHONE);
     }
 
@@ -174,5 +174,11 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
         if (!phonePattern.matcher(phone).matches()) {
             throw new ClientException(NOT_PHONE_BY_REGEX);
         }
+    }
+
+    private void checkPhoneForSignInUp(String phone, boolean isNew) {
+        checkIsPhone(phone);
+        if (!isNew && !checkPhoneByExist(phone)) throw new ClientException(PHONE_NOT_FOUND);
+        if (isNew && checkPhoneByExist(phone)) throw new ClientException(PHONE_EXIST);
     }
 }
