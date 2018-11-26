@@ -25,6 +25,8 @@ public class ErrorResponse {
 
     private String path;
 
+    private Object additional;
+
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime timestamp;
