@@ -14,5 +14,5 @@ import java.util.UUID;
  */
 public interface UserService extends DefaultService<UserDto, UserEntity> {
 
-    Map<String, String> banById(UUID id);
+    void banById(UUID id);
 }

@@ -65,15 +65,12 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     }
 
     @Override
-    public Map<String, String> banById(UUID id) {
+    public void banById(UUID id) {
         UserDto user = getById(id);
         if (user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }
-        Map<String, String> result = new HashMap<>();
         user.setBanStatus(BanStatus.BAN);
         update(user);
-        result.put("ban", "succeed");
-        return result;
     }
 }
