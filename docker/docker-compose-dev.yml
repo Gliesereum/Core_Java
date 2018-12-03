@@ -80,6 +80,21 @@ services:
     ports:
       - 8200:8200
 
+  permission:
+    image: gls-permission
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8230
+      PROFILE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+
 networks:
   gls-net:
     driver: bridge
