@@ -2,6 +2,7 @@ package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserRepository;
+import com.gliesereum.account.service.user.UserBusinessService;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
@@ -11,6 +12,7 @@ import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
+import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,9 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Autowired
     private UserPhoneService phoneService;
 
+    @Autowired
+    private UserBusinessService businessService;
+
     private static final String URL_PATTERN = "^(https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
 
     public static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
@@ -58,26 +63,36 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         if (id != null) {
             emailService.deleteByUserId(id);
             phoneService.deleteByUserId(id);
+            businessService.deleteByUserId(id);
             super.delete(id);
         }
     }
 
     @Override
+    @Transactional
     public UserDto create(UserDto dto) {
         if (dto != null) {
+            boolean isIndividual = dto.getUserType().equals(UserType.INDIVIDUAL);
             VerifiedStatus status = VerifiedStatus.UNVERIFIED;
-            if(dto.getUserType().equals(UserType.INDIVIDUAL)){
+            if (isIndividual) {
                 status = VerifiedStatus.VERIFIED;
             }
             dto.setVerifiedStatus(status);
             dto.setBanStatus(BanStatus.UNBAN);
-            dto.setKYCStatus(KYCStatus.KFC_NOT_PASSED);
-            return super.create(dto);
+            UserDto user = super.create(dto);
+            if (user != null && !isIndividual) {
+                UserBusinessDto business = new UserBusinessDto();
+                business.setKYCStatus(KYCStatus.KFC_NOT_PASSED);
+                business.setUserId(user.getId());
+                businessService.create(business);
+            }
+            return user;
         }
         return null;
     }
 
     @Override
+    @Transactional
     public UserDto update(UserDto dto) {
         if (dto != null) {
             if (StringUtils.isEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {

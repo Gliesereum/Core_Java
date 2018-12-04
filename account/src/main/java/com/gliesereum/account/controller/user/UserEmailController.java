@@ -3,6 +3,7 @@ package com.gliesereum.account.controller.user;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -59,9 +60,9 @@ public class UserEmailController {
         return result;
     }
 
-    @GetMapping("/by/user/id/{id}")
-    public UserEmailDto getByUserId(@PathVariable("id") UUID id) {
-        return emailService.getByUserId(id);
+    @GetMapping("/by/user")
+    public UserEmailDto getByUserId() {
+        return emailService.getByUserId(SecurityUtil.getUserId());
     }
 
     @GetMapping("/code")
