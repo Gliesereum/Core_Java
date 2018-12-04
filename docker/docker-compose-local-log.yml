@@ -1,0 +1,99 @@
+version: '3.1'
+
+services:
+
+  postgres:
+    image: postgres:10.5-alpine
+    volumes:
+      - ../volumes/pgdata/:/var/lib/postgresql/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:4.0.11-alpine
+    volumes:
+      - ../volumes/redisdata/:/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 6379:6379
+
+  elasticsearch:
+    environment:
+      http.host: 0.0.0.0
+      transport.host: 127.0.0.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+    ports:
+    - 9200:9200
+    - 9300:9300
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+    - ../log/elk/elasticsearch:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.4.2
+    environment:
+      ELASTICSEARCH_PASSWORD: password
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_USERNAME: elastic
+    ports:
+    - 5601:5601
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.4.2
+    ports:
+    - 5044:5044
+    - 9600:9600
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+    - ../log/elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+
+  curator:
+    image: gls-curator
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch
+      CRON: '15 0 * * *'
+      #CRON: '*/5 * * * *'
+      CONFIG_FILE: /curator/config/curator.yml
+      COMMAND: /curator/config/actions.yml
+      UNIT_COUNT: 3
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - ../log/elk/curator:/.curator
+    - ../log/elk/curator/logs:/curator/logs/
+
+networks:
+  gls-net:
+    driver: bridge

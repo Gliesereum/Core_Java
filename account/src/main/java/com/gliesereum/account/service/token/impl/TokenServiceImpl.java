@@ -4,6 +4,7 @@ import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.model.repository.redis.TokenStoreRepository;
 import com.gliesereum.account.service.token.TokenService;
 import com.gliesereum.share.common.exception.client.ClientException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -22,6 +23,7 @@ import static com.gliesereum.share.common.exception.messages.TokenExceptionMessa
  * @version 1.0
  * @since 11/10/2018
  */
+@Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
 

@@ -34,6 +34,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-data-redis')
 	implementation('org.springframework.boot:spring-boot-starter-security')
 	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-mail')
     implementation('org.apache.commons:commons-collections4:4.2')
 	implementation('org.apache.commons:commons-lang3:3.8.1')
 	implementation('io.lettuce:lettuce-core:5.1.0.RELEASE')
@@ -44,6 +45,7 @@ dependencies {
 	
     compileOnly 'org.projectlombok:lombok:1.18.2'
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
 	runtimeOnly('org.postgresql:postgresql')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')

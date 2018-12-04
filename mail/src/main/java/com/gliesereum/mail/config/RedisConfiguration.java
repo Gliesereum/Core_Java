@@ -6,9 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author vitalij
@@ -17,7 +19,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 @Configuration
 public class RedisConfiguration {
 
-    private final String CHANEL = "spring.mail.chanel-name";
+    private final String CHANEL = "spring.mail.chanel-verification";
 
     @Autowired
     private Environment environment;
@@ -25,16 +27,18 @@ public class RedisConfiguration {
     @Bean
     public RedisMessageListenerContainer redisContainer(RedisMessageListener redisMessageListener,
                                                         RedisConnectionFactory redisConnectionFactory,
-                                                        ChannelTopic channelTopic) {
+                                                        Set<ChannelTopic> channels) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(redisConnectionFactory);
-        container.addMessageListener(redisMessageListener, channelTopic);
+        container.addMessageListener(redisMessageListener, channels);
         return container;
     }
 
     @Bean
-    public ChannelTopic channelTopic() {
-        return new ChannelTopic(environment.getRequiredProperty(CHANEL));
+    public Set<ChannelTopic> channelTopic() {
+        Set<ChannelTopic> channels = new HashSet<>();
+        channels.add(new ChannelTopic(environment.getRequiredProperty(CHANEL)));
+        return channels;
     }
 
 

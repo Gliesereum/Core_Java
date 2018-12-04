@@ -3,6 +3,7 @@ package com.gliesereum.account;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "com.gliesereum.share.common.exception.handler",
         "com.gliesereum.share.common.security.jwt"})
 @EnableEurekaClient
+@EnableAsync
 @EnableScheduling
 public class AccountApplication {
     public static void main(String[] args) {

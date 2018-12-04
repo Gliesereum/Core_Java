@@ -26,7 +26,7 @@ public class UserEmailController {
     private UserEmailService emailService;
 
     @PostMapping
-    public UserEmailDto create(@RequestBody Map<String, String> params) { //params: {'email': email(String), 'code': code(String)}
+    public UserEmailDto create(@RequestBody Map<String, String> params) {
         String email = params.get("email");
         String code = params.get("code");
         if (StringUtils.isEmpty(email)) {
@@ -39,7 +39,7 @@ public class UserEmailController {
     }
 
     @PutMapping
-    public UserEmailDto update(@RequestBody Map<String, String> params) { //params: {'email': email(String), 'code': code(String)}
+    public UserEmailDto update(@RequestBody Map<String, String> params) {
         String email = params.get("email");
         String code = params.get("code");
         if (StringUtils.isEmpty(email)) {

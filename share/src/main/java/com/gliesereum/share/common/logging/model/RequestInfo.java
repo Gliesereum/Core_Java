@@ -31,6 +31,8 @@ public class RequestInfo {
 
     private String method;
 
+    private String uri;
+
     private Map<String, String> headers;
 
     private Map<String, String[]> parameters;
