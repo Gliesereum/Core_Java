@@ -6,5 +6,6 @@ package com.gliesereum.share.common.model.dto.account.enumerated;
  */
 public enum UserType {
     INDIVIDUAL,
-    ENTITY;
+    BUSINESS;
 }
+

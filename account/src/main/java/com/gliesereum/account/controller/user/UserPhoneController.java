@@ -3,6 +3,7 @@ package com.gliesereum.account.controller.user;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -59,9 +60,9 @@ public class UserPhoneController {
         return result;
     }
 
-    @GetMapping("/by/user/id/{id}")
-    public UserPhoneDto getByUserId(@PathVariable("id") UUID id) {
-        return phoneService.getByUserId(id);
+    @GetMapping("/by/user")
+    public UserPhoneDto getByUserId() {
+        return phoneService.getByUserId(SecurityUtil.getUserId());
     }
 
     @GetMapping("/code")

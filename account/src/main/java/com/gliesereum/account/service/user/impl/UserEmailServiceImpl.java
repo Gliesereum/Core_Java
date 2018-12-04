@@ -8,6 +8,7 @@ import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
@@ -74,7 +75,10 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
                 throw new ClientException(CAN_NOT_DELETE_EMAIL);
             }
             super.delete(id);
-            updateUserStatus(userService.getById(userId), VerifiedStatus.UNVERIFIED);
+            UserDto user = userService.getById(userId);
+            if (user.getUserType().equals(UserType.BUSINESS)) {
+                updateUserStatus(user, VerifiedStatus.UNVERIFIED);
+            }
         }
     }
 

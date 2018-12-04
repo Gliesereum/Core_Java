@@ -9,7 +9,6 @@ CREATE TABLE account.user
     gender character varying,
     ban_status character varying,
     verified_status character varying,
-    kyc_status character varying,
     position character varying,
     country character varying,
     city character varying,

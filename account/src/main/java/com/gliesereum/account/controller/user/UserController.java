@@ -1,6 +1,8 @@
 package com.gliesereum.account.controller.user;
 
+import com.gliesereum.account.service.user.UserBusinessService;
 import com.gliesereum.account.service.user.UserService;
+import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserBusinessService businessService;
 
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable("id") UUID id) {
@@ -66,5 +71,15 @@ public class UserController {
         Map<String, String> result = new HashMap<>();
         result.put("deleted", "true");
         return result;
+    }
+
+    @PutMapping("/business")
+    public UserBusinessDto updateBusinessModel(UserBusinessDto business) {
+        return businessService.update(business);
+    }
+
+    @GetMapping("/business")
+    public UserBusinessDto getBusinessByUserId() {
+        return businessService.getByUserId(SecurityUtil.getUserId());
     }
 }
