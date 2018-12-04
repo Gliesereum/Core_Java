@@ -3,12 +3,12 @@ package com.gliesereum.account.controller.user;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
+import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,9 +55,7 @@ public class UserPhoneController {
     @DeleteMapping("/{id}")
     public Map<String, String> delete(@PathVariable("id") UUID id) {
         phoneService.delete(id);
-        Map<String, String> result = new HashMap<>();
-        result.put("deleted", "true");
-        return result;
+        return new MapResponse("true");
     }
 
     @GetMapping("/by/user")
@@ -69,8 +67,6 @@ public class UserPhoneController {
     public Map<String, String> sendCode(@RequestParam(value = "phone") String phone,
                                         @RequestParam(value = "isNew") boolean isNew) {
         phoneService.sendCode(phone,isNew);
-        Map<String, String> result = new HashMap<>();
-        result.put("sent", "true");
-        return result;
+        return new MapResponse("sent", "true");
     }
 }
