@@ -28,7 +28,7 @@
         </filter>
     </appender>
 
-    <appender name="LOGGING_APPENDER" class="com.gliesereum.account.appender.LoggingAppender"/>
+    <appender name="LOGGING_APPENDER" class="com.gliesereum.share.common.logging.appender.LoggingAppender"/>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>

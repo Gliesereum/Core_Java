@@ -1,10 +1,11 @@
-package com.gliesereum.account.config;
+package com.gliesereum.share.common.logging.filter;
 
-import com.gliesereum.account.appender.PublisherRedisService;
 import com.gliesereum.share.common.logging.model.RequestInfo;
+import com.gliesereum.share.common.logging.service.LoggingRedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -29,7 +30,7 @@ import java.util.Map;
 public class RestLoggingFilter extends OncePerRequestFilter {
 
     @Autowired
-    private PublisherRedisService publisher;
+    private LoggingRedisService loggingRedisService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -48,7 +49,7 @@ public class RestLoggingFilter extends OncePerRequestFilter {
     }
 
     private void processLog(RequestInfo requestInfo) {
-        publisher.publishingObject(requestInfo);
+        loggingRedisService.publishingObject(requestInfo);
     }
 
     private RequestInfo getRequestInfo(Long startTime, Long endTime, ContentCachingRequestWrapper requestWrapper, ContentCachingResponseWrapper responseWrapper, boolean isError, Exception ex) {

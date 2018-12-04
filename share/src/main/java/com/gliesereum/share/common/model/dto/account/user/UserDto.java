@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -62,7 +63,6 @@ public class UserDto extends DefaultDto {
 
     private KYCStatus KYCStatus;
 
-    @NotEmpty
     private UserType userType;
 
     public UserDto(@NotEmpty UserType userType) {

@@ -27,10 +27,10 @@ services:
       - 6379:6379
 
   elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     environment:
       http.host: 0.0.0.0
       transport.host: 127.0.0.1
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     ports:
     - 9200:9200
     - 9300:9300
@@ -43,7 +43,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-    - ../log/elk/elasticsearch:/usr/share/elasticsearch/data
+    - ../volumes/elasticsearch:/usr/share/elasticsearch/data
 
   kibana:
     image: docker.elastic.co/kibana/kibana:6.4.2

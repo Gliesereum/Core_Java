@@ -1,25 +1,29 @@
-package com.gliesereum.account.appender;
+package com.gliesereum.share.common.logging.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.gliesereum.account.mq.MessagePublisher;
+import com.gliesereum.share.common.logging.service.LoggingRedisService;
+import com.gliesereum.share.common.redis.publisher.RedisMessagePublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
- * @author vitalij
- * @since 11/9/18
+ * @author yvlasiuk
+ * @version 1.0
+ * @since 04/12/2018
  */
+
 @Slf4j
 @Service
-public class PublisherRedisServiceImpl implements PublisherRedisService {
+public class LoggingRedisServiceImpl implements LoggingRedisService {
 
     @Autowired
-    private MessagePublisher publisher;
+    private RedisMessagePublisher redisMessagePublisher;
 
     @Autowired
     private Environment environment;
@@ -34,7 +38,7 @@ public class PublisherRedisServiceImpl implements PublisherRedisService {
     @Async
     @Override
     public void publishing(String message) {
-        publisher.publish(message, environment.getProperty(CHANEL_LOGGING));
+        redisMessagePublisher.publish(message, environment.getProperty(CHANEL_LOGGING));
     }
 
     @Async
