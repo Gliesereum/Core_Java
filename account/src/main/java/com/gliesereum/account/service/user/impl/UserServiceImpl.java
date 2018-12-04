@@ -80,7 +80,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             dto.setVerifiedStatus(status);
             dto.setBanStatus(BanStatus.UNBAN);
             UserDto user = super.create(dto);
-            if (user != null && isIndividual) {
+            if (user != null && !isIndividual) {
                 UserBusinessDto business = new UserBusinessDto();
                 business.setKYCStatus(KYCStatus.KFC_NOT_PASSED);
                 business.setUserId(user.getId());
