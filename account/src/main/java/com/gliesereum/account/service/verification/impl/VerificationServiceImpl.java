@@ -6,9 +6,9 @@ import com.gliesereum.account.model.repository.redis.VerificationRepository;
 import com.gliesereum.account.mq.MessagePublisher;
 import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,16 +22,20 @@ import java.util.*;
  * @author vitalij
  * @since 10/12/18
  */
+@Slf4j
 @Service
 public class VerificationServiceImpl implements VerificationService {
-
-    private final static Logger logger = LoggerFactory.getLogger(VerificationServiceImpl.class);
 
     @Autowired
     private VerificationRepository repository;
 
     @Autowired
     private MessagePublisher publisher;
+
+    @Autowired
+    private Environment environment;
+
+    private final String CHANEL = "spring.redis.chanel-verification";
 
     @Override
     public boolean checkVerification(@NotNull String value, @NotNull String code) {
@@ -63,9 +67,10 @@ public class VerificationServiceImpl implements VerificationService {
             model.put("type", type.toString());
             model.put("value", value);
             ObjectMapper mapper = new ObjectMapper();
-            publisher.publish(mapper.writeValueAsString(model));
+            publisher.publish(mapper.writeValueAsString(model), environment.getRequiredProperty(CHANEL));
+            log.info(model.toString());
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             e.printStackTrace();
         }
     }

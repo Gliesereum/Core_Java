@@ -40,11 +40,14 @@ repositories {
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation('org.springframework.boot:spring-boot-starter-data-redis')
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('org.apache.commons:commons-collections4:4.2')
     implementation('org.apache.commons:commons-lang3:3.8.1')
+    implementation('io.lettuce:lettuce-core:5.1.0.RELEASE')
     implementation('org.modelmapper:modelmapper:2.3.0')
     implementation('io.jsonwebtoken:jjwt:0.9.1')
+    implementation('commons-io:commons-io:2.6')
     
     compileOnly 'org.projectlombok:lombok:1.18.2'
     

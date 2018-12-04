@@ -3,8 +3,11 @@ package com.gliesereum.account.config;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.converter.imp.DefaultConverterImp;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.validation.MessageInterpolatorFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /**
  * @author yvlasiuk
@@ -22,5 +25,14 @@ public class BeanConfiguration {
     @Bean
     public DefaultConverter defaultConverter(ModelMapper modelMapper) {
         return new DefaultConverterImp(modelMapper);
+    }
+
+    @Bean
+    public LocalValidatorFactoryBean localValidatorFactoryBean(MessageSource messageSource) {
+        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+        MessageInterpolatorFactory interpolatorFactory = new MessageInterpolatorFactory();
+        localValidatorFactoryBean.setMessageInterpolator(interpolatorFactory.getObject());
+        localValidatorFactoryBean.setValidationMessageSource(messageSource);
+        return localValidatorFactoryBean;
     }
 }

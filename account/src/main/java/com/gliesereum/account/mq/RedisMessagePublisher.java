@@ -13,13 +13,10 @@ import org.springframework.stereotype.Component;
 public class RedisMessagePublisher implements MessagePublisher {
 
     @Autowired
-    private ChannelTopic topic;
-
-    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public void publish(final String message) {
-        redisTemplate.convertAndSend(topic.getTopic(), message);
+    public void publish(final String message, final String topic) {
+        redisTemplate.convertAndSend(new ChannelTopic(topic).getTopic(), message);
     }
 }

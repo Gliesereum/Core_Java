@@ -15,6 +15,9 @@
     
     gradle clean -b=mail/build.gradle
     gradle build -b=mail/build.gradle
+    
+    gradle clean -b=permission/build.gradle
+    gradle build -b=permission/build.gradle
 ```
 
 ##### wrapper
@@ -30,6 +33,9 @@
     
     ./gradlew clean -b=mail/build.gradle
     ./gradlew build -b=mail/build.gradle
+    
+    ./gradlew clean -b=permission/build.gradle
+    ./gradlew build -b=permission/build.gradle
 ```
 
 ### Build images
@@ -68,6 +74,20 @@ docker rmi gls-mail
 docker build -t gls-mail -f docker/mail/Dockerfile  .
 ```
 
+##### Permission
+```
+docker rm permission-service
+docker rmi gls-permission
+docker build -t gls-permission -f docker/permission/Dockerfile  .
+```
+
+##### Curator
+```
+docker rm curator-service
+docker rmi gls-curator
+docker build -t gls-curator -f docker/curator/Dockerfile  .
+```
+
 
 ### Run stack
 ```
@@ -98,4 +118,10 @@ docker run -i -t -p 8200:8200 --name=proxy-service -e PORT=8200 -e PROFILE=docke
 ```
 docker rm account-service
 docker run -i -t -p 8220:8220 --name=mail-service -e PORT=8220 -e PROFILE=docker -e REDIS_HOST=localhost -e REDIS_PORT=6379 -e REDIS_PASSWORD= -e EUREKA_HOST=localhost -e EUREKA_PORT=8761 gls-mail
+```
+
+##### Permission
+```
+docker rm permission-service
+docker run -i -t -p 8210:8210 --name=permission-service -e PORT=8210 -e PROFILE=docker -e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e EUREKA_HOST=localhost -e EUREKA_PORT=8761 gls-permission
 ```

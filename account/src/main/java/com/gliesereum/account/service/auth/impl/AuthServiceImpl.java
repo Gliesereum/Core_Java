@@ -11,10 +11,12 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
+import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,7 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
  * @version 1.0
  * @since 11/10/2018
  */
+@Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -57,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
     private VerificationService verificationService;
 
     @Override
-    public AuthDto signin(Map<String, String> params) {
+    public AuthDto signIn(Map<String, String> params) {
         UserDto user = null;
         checkField(params);
         String value = params.get("value");
@@ -91,15 +94,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthDto signup(Map<String, String> params) {
+    public AuthDto signUp(Map<String, String> params) {
         checkField(params);
+        if (StringUtils.isEmpty(params.get("userType"))) {
+            throw new ClientException(USER_TYPE_EMPTY);
+        }
+        UserType userType = UserType.valueOf( params.get("userType"));
         String value = params.get("value");
         String code = params.get("code");
         String type = params.get("type");
         VerificationType verificationType = VerificationType.valueOf(type);
         if (verificationService.checkVerification(value, code)) {
             checkValueByExist(value, verificationType, true);
-            UserDto newUser = userService.create(new UserDto());
+            UserDto newUser = userService.create(new UserDto(userType));
             if (newUser != null) {
                 switch (verificationType) {
                     case EMAIL: {

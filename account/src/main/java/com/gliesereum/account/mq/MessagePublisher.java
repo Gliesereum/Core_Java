@@ -6,5 +6,5 @@ package com.gliesereum.account.mq;
  */
 public interface MessagePublisher {
 
-    void publish(final String message);
+    void publish(final String message, final String topic);
 }

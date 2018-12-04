@@ -8,12 +8,14 @@ import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,12 +25,13 @@ import java.util.regex.Pattern;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_WORSE;
 import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
  * @author vitalij
  * @since 10/10/2018
  */
+@Slf4j
 @Service
 public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserEmailEntity> implements UserEmailService {
 
@@ -72,7 +75,10 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
                 throw new ClientException(CAN_NOT_DELETE_EMAIL);
             }
             super.delete(id);
-            updateUserStatus(userService.getById(userId), VerifiedStatus.UNVERIFIED);
+            UserDto user = userService.getById(userId);
+            if (user.getUserType().equals(UserType.BUSINESS)) {
+                updateUserStatus(user, VerifiedStatus.UNVERIFIED);
+            }
         }
     }
 
@@ -101,8 +107,8 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     }
 
     @Override
-    public void sendCode(String email) {
-        checkIsEmail(email);
+    public void sendCode(String email, boolean isNew) {
+        checkEmailForSignInUp(email, isNew);
         verificationService.sendVerificationCode(email, VerificationType.EMAIL);
     }
 
@@ -171,5 +177,11 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     private void updateUserStatus(UserDto user, VerifiedStatus status) {
         user.setVerifiedStatus(status);
         userService.update(user);
+    }
+
+    private void checkEmailForSignInUp(String email, boolean isNew) {
+        checkIsEmail(email);
+        if (!isNew && !checkEmailByExist(email)) throw new ClientException(EMAIL_NOT_FOUND);
+        if (isNew && checkEmailByExist(email)) throw new ClientException(EMAIL_EXIST);
     }
 }

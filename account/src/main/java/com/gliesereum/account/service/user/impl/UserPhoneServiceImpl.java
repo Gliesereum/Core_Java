@@ -14,6 +14,7 @@ import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,6 +30,7 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
  * @author vitalij
  * @since 10/10/2018
  */
+@Slf4j
 @Service
 public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserPhoneEntity> implements UserPhoneService {
 
@@ -104,8 +106,8 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     }
 
     @Override
-    public void sendCode(String phone) {
-        checkIsPhone(phone);
+    public void sendCode(String phone, boolean isNew) {
+        checkPhoneForSignInUp(phone, isNew);
         verificationService.sendVerificationCode(phone, VerificationType.PHONE);
     }
 
@@ -174,5 +176,11 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
         if (!phonePattern.matcher(phone).matches()) {
             throw new ClientException(NOT_PHONE_BY_REGEX);
         }
+    }
+
+    private void checkPhoneForSignInUp(String phone, boolean isNew) {
+        checkIsPhone(phone);
+        if (!isNew && !checkPhoneByExist(phone)) throw new ClientException(PHONE_NOT_FOUND);
+        if (isNew && checkPhoneByExist(phone)) throw new ClientException(PHONE_EXIST);
     }
 }

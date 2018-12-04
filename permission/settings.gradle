@@ -1,0 +1,5 @@
+rootProject.name = 'permission'
+
+include 'share'
+project(':share').projectDir = new File(settingsDir,  '../share')
+

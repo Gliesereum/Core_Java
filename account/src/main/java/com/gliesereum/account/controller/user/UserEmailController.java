@@ -3,6 +3,7 @@ package com.gliesereum.account.controller.user;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class UserEmailController {
     private UserEmailService emailService;
 
     @PostMapping
-    public UserEmailDto create(@RequestBody Map<String, String> params) { //params: {'email': email(String), 'code': code(String)}
+    public UserEmailDto create(@RequestBody Map<String, String> params) {
         String email = params.get("email");
         String code = params.get("code");
         if (StringUtils.isEmpty(email)) {
@@ -39,7 +40,7 @@ public class UserEmailController {
     }
 
     @PutMapping
-    public UserEmailDto update(@RequestBody Map<String, String> params) { //params: {'email': email(String), 'code': code(String)}
+    public UserEmailDto update(@RequestBody Map<String, String> params) {
         String email = params.get("email");
         String code = params.get("code");
         if (StringUtils.isEmpty(email)) {
@@ -59,14 +60,15 @@ public class UserEmailController {
         return result;
     }
 
-    @GetMapping("/by/user/id/{id}")
-    public UserEmailDto getByUserId(@PathVariable("id") UUID id) {
-        return emailService.getByUserId(id);
+    @GetMapping("/by/user")
+    public UserEmailDto getByUserId() {
+        return emailService.getByUserId(SecurityUtil.getUserId());
     }
 
     @GetMapping("/code")
-    public Map<String, String> sendCode(@RequestParam(value = "email") String email) {
-        emailService.sendCode(email);
+    public Map<String, String> sendCode(@RequestParam(value = "email") String email,
+                                        @RequestParam(value = "isNew", required = false) boolean isNew) {
+        emailService.sendCode(email, isNew);
         Map<String, String> result = new HashMap<>();
         result.put("sent", "true");
         return result;

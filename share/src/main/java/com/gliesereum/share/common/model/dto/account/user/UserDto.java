@@ -3,11 +3,15 @@ package com.gliesereum.share.common.model.dto.account.user;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
-import com.gliesereum.share.common.model.dto.account.enumerated.KFCStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @author yvlasiuk
@@ -20,11 +24,39 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class UserDto extends DefaultDto {
 
-    private String username;
+    @Size(min = 2)
+    @NotEmpty
+    private String firstName;
 
-    private String firstname;
+    @Size(min = 2)
+    @NotEmpty
+    private String lastName;
 
-    private String lastname;
+    @Size(min = 3)
+    @NotEmpty
+    private String position;
+
+    @Size(min = 3)
+    @NotEmpty
+    private String country;
+
+    @Size(min = 3)
+    @NotEmpty
+    private String city;
+
+    @Size(min = 6)
+    @NotEmpty
+    private String address;
+
+    @Size(min = 3)
+    @NotEmpty
+    private String addAddress;
+
+    @NotEmpty
+    private String avatarUrl;
+
+    @NotEmpty
+    private String coverUrl;
 
     private Gender gender;
 
@@ -32,5 +64,10 @@ public class UserDto extends DefaultDto {
 
     private VerifiedStatus verifiedStatus;
 
-    private KFCStatus kfcStatus;
+    @NotNull
+    private UserType userType;
+
+    public UserDto(@NotEmpty UserType userType) {
+        this.userType = userType;
+    }
 }

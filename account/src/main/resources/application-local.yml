@@ -29,7 +29,8 @@ spring:
     host: localhost
     port: 6379
     #password:
-    chanel-name: verificationQueue
+    chanel-verification: verificationQueue
+    chanel-logstash: logstash
 
 token:
   expirationTime:
@@ -37,6 +38,4 @@ token:
     access: 604800000
     # 100 days
     refresh: 8640000000
-
-
 

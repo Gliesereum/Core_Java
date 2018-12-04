@@ -1,22 +1,31 @@
 package com.gliesereum.share.common.exception.handler;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.share.common.exception.CustomException;
-import com.gliesereum.share.common.exception.messages.CommonExceptionMessage;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.exception.response.ErrorResponse;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.UNKNOWN_SERVER_EXCEPTION;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.VALIDATION_ERROR;
 
 /**
  * @author yvlasiuk
@@ -25,7 +34,7 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
  */
 
 @ControllerAdvice
-public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+public class RestExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestExceptionHandler.class);
 
@@ -38,6 +47,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         errorResponse.setTimestamp(LocalDateTime.now());
 
         return buildResponse(errorResponse, ex.getHttpCode(), ex);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
+        ExceptionMessage validationError = VALIDATION_ERROR;
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setCode(validationError.getErrorCode());
+        errorResponse.setMessage(validationError.getMessage());
+        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        addBindingInfo(errorResponse, ex.getBindingResult());
+        return buildResponse(errorResponse, validationError.getHttpCode(), ex);
     }
 
     @ExceptionHandler(Exception.class)
@@ -57,6 +78,23 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             LOG.error("{} error - errorCode: {}, message: {}, path: {}", statusCode, response.getCode(), response.getMessage(), response.getPath(), ex);
         }
         return new ResponseEntity<>(response, httpStatus);
+    }
+
+    private void addBindingInfo(ErrorResponse errorResponse, BindingResult bindingResult) {
+        List<ObjectError> allErrors = bindingResult.getAllErrors();
+        if (CollectionUtils.isNotEmpty(allErrors)) {
+            Map<String, String> validationMap = new HashMap<>();
+            allErrors.forEach(e -> {
+                String errorKey;
+                if (e instanceof FieldError) {
+                    errorKey = ((FieldError) e).getField();
+                } else {
+                    errorKey = e.getObjectName();
+                }
+                validationMap.put(errorKey, e.getDefaultMessage());
+            });
+            errorResponse.setAdditional(validationMap);
+        }
     }
 
 }

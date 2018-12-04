@@ -1,11 +1,15 @@
 package com.gliesereum.account.controller.user;
 
+import com.gliesereum.account.service.user.UserBusinessService;
 import com.gliesereum.account.service.user.UserService;
+import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +28,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserBusinessService businessService;
+
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable("id") UUID id) {
         return userService.getById(id);
@@ -40,7 +47,7 @@ public class UserController {
     }
 
     @PutMapping
-    public UserDto update(@RequestBody UserDto user) {
+    public UserDto update(@Valid @RequestBody UserDto user) {
         return userService.update(user);
     }
 
@@ -55,15 +62,24 @@ public class UserController {
     }
 
     @GetMapping("/ban/{id}")
-    public Map<String, String> banById(@PathVariable("id") UUID id) {
-        return userService.banById(id);
+    public MapResponse banById(@PathVariable("id") UUID id) {
+        userService.banById(id);
+        return new MapResponse("ban", "succeed");
     }
 
     @DeleteMapping("/{id}")
-    public Map<String, String> delete(@PathVariable("id") UUID id) {
+    public MapResponse delete(@PathVariable("id") UUID id) {
         userService.delete(id);
-        Map<String, String> result = new HashMap<>();
-        result.put("deleted", "true");
-        return result;
+        return new MapResponse("true");
+    }
+
+    @PutMapping("/business")
+    public UserBusinessDto updateBusinessModel(UserBusinessDto business) {
+        return businessService.update(business);
+    }
+
+    @GetMapping("/business")
+    public UserBusinessDto getBusinessByUserId() {
+        return businessService.getByUserId(SecurityUtil.getUserId());
     }
 }
