@@ -1,9 +1,10 @@
 package com.gliesereum.account.config;
 
+import com.gliesereum.account.appender.PublisherRedisService;
 import com.gliesereum.share.common.logging.model.RequestInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -23,10 +24,12 @@ import java.util.Map;
  * @version 1.0
  * @since 06/11/2018
  */
+@Slf4j
 @Component
 public class RestLoggingFilter extends OncePerRequestFilter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestLoggingFilter.class);
+    @Autowired
+    private PublisherRedisService publisher;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -45,15 +48,14 @@ public class RestLoggingFilter extends OncePerRequestFilter {
     }
 
     private void processLog(RequestInfo requestInfo) {
-        // TODO: vgrobunov process log, is requestInfo.isError = true -> requestBody is Empty, requestInfo.getErrorMessage contains error message
-        // Следующие метод вызывай ассинхроно или через аннотацию Async, или
-        // Executors.newSingleThreadExecutor().submit(() -> method())
+        publisher.publishingObject(requestInfo);
     }
 
     private RequestInfo getRequestInfo(Long startTime, Long endTime, ContentCachingRequestWrapper requestWrapper, ContentCachingResponseWrapper responseWrapper, boolean isError, Exception ex) {
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setStartTime(startTime);
         requestInfo.setEndTime(endTime);
+        requestInfo.setUri(requestWrapper.getRequestURI());
         requestInfo.setMethod(requestWrapper.getMethod());
         requestInfo.setHeaders(getHeaders(requestWrapper));
         requestInfo.setParameters(requestWrapper.getParameterMap());
@@ -72,7 +74,7 @@ public class RestLoggingFilter extends OncePerRequestFilter {
         try {
             body = IOUtils.toString(contentAsByte, characterEncoding);
         } catch (IOException e) {
-            LOG.warn("Error while read body", e);
+            log.warn("Error while read body", e);
         }
         return body;
     }

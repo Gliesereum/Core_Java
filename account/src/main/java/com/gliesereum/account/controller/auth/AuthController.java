@@ -19,13 +19,13 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public AuthDto signup(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
-        return authService.signup(params);
+    public AuthDto signUp(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+        return authService.signUp(params);
     }
 
     @PostMapping("/signin")
-    public AuthDto signin(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
-        return authService.signin(params);
+    public AuthDto signIn(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+        return authService.signIn(params);
     }
 
     @GetMapping("/check")

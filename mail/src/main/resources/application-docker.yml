@@ -1,6 +1,3 @@
-logging:
-  file: logs/mail.log
-
 admin:
   email: gliesereum@gmail.com
 

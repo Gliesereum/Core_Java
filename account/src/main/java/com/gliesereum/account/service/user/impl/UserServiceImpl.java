@@ -8,10 +8,13 @@ import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.KFCStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
  * @author yvlasiuk
  * @version 1.0
  * @since 08/10/2018
  */
+@Slf4j
 @Service
 public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> implements UserService {
 
@@ -35,6 +40,10 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
 
     @Autowired
     private UserPhoneService phoneService;
+
+    private static final String URL_PATTERN = "^(https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
+
+    public static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
 
     private static final Class<UserDto> DTO_CLASS = UserDto.class;
     private static final Class<UserEntity> ENTITY_CLASS = UserEntity.class;
@@ -56,10 +65,29 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Override
     public UserDto create(UserDto dto) {
         if (dto != null) {
-            dto.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
+            VerifiedStatus status = VerifiedStatus.UNVERIFIED;
+            if(dto.getUserType().equals(UserType.INDIVIDUAL)){
+                status = VerifiedStatus.VERIFIED;
+            }
+            dto.setVerifiedStatus(status);
             dto.setBanStatus(BanStatus.UNBAN);
-            dto.setKfcStatus(KFCStatus.KFC_NOT_PASSED);
+            dto.setKYCStatus(KYCStatus.KFC_NOT_PASSED);
             return super.create(dto);
+        }
+        return null;
+    }
+
+    @Override
+    public UserDto update(UserDto dto) {
+        if (dto != null) {
+            if (StringUtils.isEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {
+                throw new ClientException(UPL_AVATAR_IS_NOT_VALID);
+            }
+            if (StringUtils.isEmpty(dto.getCoverUrl()) && !urlPattern.matcher(dto.getCoverUrl()).matches()) {
+                throw new ClientException(UPL_COVER_IS_NOT_VALID);
+            }
+            validFirstNameLastName(dto);
+            return super.update(dto);
         }
         return null;
     }
@@ -75,5 +103,18 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         update(user);
         result.put("ban", "succeed");
         return result;
+    }
+
+    private void validFirstNameLastName(UserDto dto) {
+        UserDto user = getById(dto.getId());
+        if (user == null) {
+            throw new ClientException(USER_NOT_FOUND);
+        }
+        if (dto.getFirstName() != null && user.getFirstName() != null) {
+            throw new ClientException(USER_ERROR_CHANGE_FIRST_NAME);
+        }
+        if (dto.getLastName() != null && user.getLastName() != null) {
+            throw new ClientException(USER_ERROR_CHANGE_LAST_NAME);
+        }
     }
 }

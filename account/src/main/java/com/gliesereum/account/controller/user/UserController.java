@@ -6,6 +6,7 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @PutMapping
-    public UserDto update(@RequestBody UserDto user) {
+    public UserDto update(@Valid @RequestBody UserDto user) {
         return userService.update(user);
     }
 

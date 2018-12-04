@@ -26,7 +26,7 @@ public class UserPhoneController {
     private UserPhoneService phoneService;
 
     @PostMapping
-    public UserPhoneDto create(@RequestBody Map<String, String> params) { //params: {'phone': phone(String), 'code': code(String)}
+    public UserPhoneDto create(@RequestBody Map<String, String> params) {
         String phone = params.get("phone");
         String code = params.get("code");
         if (StringUtils.isEmpty(phone)) {
@@ -39,7 +39,7 @@ public class UserPhoneController {
     }
 
     @PutMapping
-    public UserPhoneDto update(@RequestBody Map<String, String> params) { //params: {'phone': phone(String), 'code': code(String)}
+    public UserPhoneDto update(@RequestBody Map<String, String> params) {
         String phone = params.get("phone");
         String code = params.get("code");
         if (StringUtils.isEmpty(phone)) {
