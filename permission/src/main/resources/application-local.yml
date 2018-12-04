@@ -25,6 +25,13 @@ spring:
     sql-migration-prefix: V
     schemas: ${db.schema}
 
+  redis:
+    host: localhost
+    port: 6379
+    #password:
+    chanel-verification: verificationQueue
+    chanel-logstash: logstash
+
 logging:
   file: logs/permission.log
 

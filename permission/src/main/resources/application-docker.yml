@@ -25,6 +25,13 @@ spring:
     sql-migration-prefix: V
     schemas: ${db.schema}
 
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+    #password: ${redis.password}
+    chanel-name: verificationQueue
+    chanel-logstash: logstash
+
 logging:
   file: logs/permission.log
 

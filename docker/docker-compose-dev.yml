@@ -92,6 +92,8 @@ services:
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
 
