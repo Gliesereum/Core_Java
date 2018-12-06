@@ -14,6 +14,9 @@ zuul:
     mail-service:
       path: /mail/v1/**
       service-id: mail-service
+    karma-service:
+      path: /karma/v1/**
+      service-id: karma-service
   ignored-services: '*'
   prefix: /api
   host:
