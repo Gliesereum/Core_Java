@@ -8,7 +8,7 @@ import java.util.Map;
  * @version 1.0
  * @since 30/11/2018
  */
-public class MapResponse extends HashMap<String, String> {
+public class MapResponse extends HashMap<String, Object> {
 
     private static final String DEFAULT_KEY = "result";
 
@@ -16,16 +16,16 @@ public class MapResponse extends HashMap<String, String> {
         super();
     }
 
-    public MapResponse(Map<String, String> map) {
+    public MapResponse(Map<String, Object> map) {
         super(map);
     }
 
-    public MapResponse(String value) {
+    public MapResponse(Object value) {
         super();
         put(DEFAULT_KEY, value);
     }
 
-    public MapResponse(String key, String value) {
+    public MapResponse(String key, Object value) {
         super();
         put(key, value);
     }
@@ -40,7 +40,7 @@ public class MapResponse extends HashMap<String, String> {
 
         }
 
-        public Builder put(String key, String value) {
+        public Builder put(String key, Object value) {
             MapResponse.this.put(key, value);
             return this;
         }

@@ -11,6 +11,9 @@ zuul:
     account-service:
       path: /account/v1/**
       service-id: account-service
+    permission-service:
+      path: /permission/v1/**
+      service-id: permission-service
     mail-service:
       path: /mail/v1/**
       service-id: mail-service

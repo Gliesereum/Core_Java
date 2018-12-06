@@ -3,9 +3,9 @@ package com.gliesereum.account.service.verification.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.account.model.domain.VerificationDomain;
 import com.gliesereum.account.model.repository.redis.VerificationRepository;
-import com.gliesereum.account.mq.MessagePublisher;
 import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
+import com.gliesereum.share.common.redis.publisher.RedisMessagePublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -30,7 +30,7 @@ public class VerificationServiceImpl implements VerificationService {
     private VerificationRepository repository;
 
     @Autowired
-    private MessagePublisher publisher;
+    private RedisMessagePublisher redisMessagePublisher;
 
     @Autowired
     private Environment environment;
@@ -67,7 +67,7 @@ public class VerificationServiceImpl implements VerificationService {
             model.put("type", type.toString());
             model.put("value", value);
             ObjectMapper mapper = new ObjectMapper();
-            publisher.publish(mapper.writeValueAsString(model), environment.getRequiredProperty(CHANEL));
+            redisMessagePublisher.publish(mapper.writeValueAsString(model), environment.getRequiredProperty(CHANEL));
             log.info(model.toString());
         } catch (IOException e) {
             log.error(e.getMessage());

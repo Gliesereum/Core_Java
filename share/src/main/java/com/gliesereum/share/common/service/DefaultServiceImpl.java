@@ -78,4 +78,9 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
 
         }
     }
+
+    @Override
+    public boolean isExist(UUID id) {
+        return repository.existsById(id);
+    }
 }

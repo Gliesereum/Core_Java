@@ -13,4 +13,6 @@ import java.util.UUID;
  */
 @Repository
 public interface GroupUserRepository extends JpaRepository<GroupUserEntity, UUID> {
+
+    GroupUserEntity findByUserId(UUID userId);
 }

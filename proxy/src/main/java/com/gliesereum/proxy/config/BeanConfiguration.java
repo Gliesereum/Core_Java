@@ -1,9 +1,6 @@
 package com.gliesereum.proxy.config;
 
-import com.gliesereum.share.common.converter.DefaultConverter;
-import com.gliesereum.share.common.converter.imp.DefaultConverterImp;
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
-import org.modelmapper.ModelMapper;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

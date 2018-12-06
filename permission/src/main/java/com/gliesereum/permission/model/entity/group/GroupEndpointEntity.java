@@ -28,11 +28,12 @@ public class GroupEndpointEntity extends DefaultEntity {
     @Column(name = "endpoint_id")
     private UUID endpoint_id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", insertable = false, updatable = false)
-    private GroupEntity group;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "endpoint_id", insertable = false, updatable = false)
-    private EndpointEntity endpoint;
+    //TODO: REMOVE
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "group_id", insertable = false, updatable = false)
+//    private GroupEntity group;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "endpoint_id", insertable = false, updatable = false)
+//    private EndpointEntity endpoint;
 }

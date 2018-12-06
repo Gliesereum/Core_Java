@@ -10,4 +10,8 @@ import com.gliesereum.share.common.service.DefaultService;
  * @since 12/5/18
  */
 public interface BrandCarService extends DefaultService<BrandCarDto, BrandCarEntity> {
+
+    BrandCarDto getByName(String name);
+
+    BrandCarDto getByNameOrCreate(String name);
 }

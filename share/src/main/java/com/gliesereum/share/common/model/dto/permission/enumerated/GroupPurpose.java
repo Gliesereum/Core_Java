@@ -7,5 +7,5 @@ package com.gliesereum.share.common.model.dto.permission.enumerated;
  */
 public enum GroupPurpose {
 
-    ANONYMOUS, AUTH, BANNED, KYC_APPROVED, CUSTOM;
+    ANONYMOUS, AUTH, BANNED, KYC_PASSED, CUSTOM;
 }

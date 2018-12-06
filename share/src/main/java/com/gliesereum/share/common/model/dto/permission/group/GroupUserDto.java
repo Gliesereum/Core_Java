@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
@@ -18,8 +19,10 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class GroupUserDto extends DefaultDto {
 
+    @NotNull
     private UUID groupId;
 
+    @NotNull
     private UUID userId;
 
 

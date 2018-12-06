@@ -10,4 +10,8 @@ import com.gliesereum.share.common.service.DefaultService;
  * @since 08/11/2018
  */
 public interface ModuleService extends DefaultService<ModuleDto, ModuleEntity> {
+
+    ModuleDto getByUrl(String url);
+
+    ModuleDto getByUrlOrCreate(String url, String name);
 }

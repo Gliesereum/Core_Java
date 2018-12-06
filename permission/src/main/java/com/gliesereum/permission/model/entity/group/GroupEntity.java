@@ -50,11 +50,8 @@ public class GroupEntity extends DefaultEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "group_endpoint",
-            joinColumns = { @JoinColumn(name = "group_id") },
-            inverseJoinColumns = { @JoinColumn(name = "endpoint_id") })
+            joinColumns = { @JoinColumn(name = "group_id", insertable = false, updatable = false) },
+            inverseJoinColumns = { @JoinColumn(name = "endpoint_id", insertable = false, updatable = false) })
     private Set<EndpointEntity> endpoints = new HashSet<>();
-
-    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    private Set<GroupUserEntity> users = new HashSet<>();
 
 }

@@ -82,4 +82,14 @@ public class UserController {
     public UserBusinessDto getBusinessByUserId() {
         return businessService.getByUserId(SecurityUtil.getUserId());
     }
+
+    @GetMapping("/isExist")
+    public MapResponse userIsExist(@RequestParam("id") UUID id) {
+        return new MapResponse(userService.isExist(id));
+    }
+
+    @GetMapping("/isKYCPassed")
+    public MapResponse userIsKYCPassed(@RequestParam("id") UUID id) {
+        return new MapResponse(businessService.KYCPassed(id));
+    }
 }
