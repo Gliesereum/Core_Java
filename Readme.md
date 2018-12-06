@@ -18,6 +18,9 @@
     
     gradle clean -b=permission/build.gradle
     gradle build -b=permission/build.gradle
+    
+    gradle clean -b=karma/build.gradle
+    gradle build -b=karma/build.gradle
 ```
 
 ##### wrapper
@@ -36,6 +39,9 @@
     
     ./gradlew clean -b=permission/build.gradle
     ./gradlew build -b=permission/build.gradle
+
+    ./gradlew clean -b=karma/build.gradle
+    ./gradlew build -b=karma/build.gradle    
 ```
 
 ### Build images
@@ -88,6 +94,12 @@ docker rmi gls-curator
 docker build -t gls-curator -f docker/curator/Dockerfile  .
 ```
 
+##### Karma
+```
+docker rm karma-service
+docker rmi gls-karma
+docker build -t gls-karma -f docker/karma/Dockerfile  .
+```
 
 ### Run stack
 ```
@@ -123,5 +135,11 @@ docker run -i -t -p 8220:8220 --name=mail-service -e PORT=8220 -e PROFILE=docker
 ##### Permission
 ```
 docker rm permission-service
-docker run -i -t -p 8210:8210 --name=permission-service -e PORT=8210 -e PROFILE=docker -e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e EUREKA_HOST=localhost -e EUREKA_PORT=8761 gls-permission
+docker run -i -t -p 8230:8230 --name=permission-service -e PORT=8230 -e PROFILE=docker -e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e EUREKA_HOST=localhost -e EUREKA_PORT=8761 gls-permission
+```
+
+##### Karma
+```
+docker rm karma-service
+docker run -i -t -p 8240:8240 --name=karma-service -e PORT=8240 -e PROFILE=docker -e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e EUREKA_HOST=localhost -e EUREKA_PORT=8761 gls-karma
 ```
