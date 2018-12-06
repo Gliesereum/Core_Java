@@ -31,6 +31,8 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implements CarService {
 
+    private static final Class<CarDto> DTO_CLASS = CarDto.class;
+    private static final Class<CarEntity> ENTITY_CLASS = CarEntity.class;
 
     @Autowired
     private CarRepository repository;
@@ -40,9 +42,6 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
     @Autowired
     private ServiceClassCarService serviceClassCarService;
-
-    private static final Class<CarDto> DTO_CLASS = CarDto.class;
-    private static final Class<CarEntity> ENTITY_CLASS = CarEntity.class;
 
     public CarServiceImpl(CarRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -64,25 +63,25 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     public CarDto addService(UUID idCar, UUID idService) {
         checkCarExist(idCar);
         checkServiceExist(idService);
-        carServiceClassCarService.create(new CarServiceClassCarDto(idCar,idService));
+        carServiceClassCarService.create(new CarServiceClassCarDto(idCar, idService));
         return getById(idCar);
     }
 
     @Override
     public CarDto removeService(UUID idCar, UUID idService) {
         checkCarExist(idCar);
-        carServiceClassCarService.deleteByIdCarAndIdService(idCar,idService);
+        carServiceClassCarService.deleteByIdCarAndIdService(idCar, idService);
         return getById(idCar);
     }
 
-    private void checkCarExist(UUID id){
-        if(!repository.existsCarEntityByUserIdAndId(SecurityUtil.getUserId(), id)){
+    private void checkCarExist(UUID id) {
+        if (!repository.existsCarEntityByUserIdAndId(SecurityUtil.getUserId(), id)) {
             throw new ClientException(CAR_NOT_FOUND);
         }
     }
 
-    private void checkServiceExist(UUID id){
-        if(!serviceClassCarService.existsService(id)){
+    private void checkServiceExist(UUID id) {
+        if (!serviceClassCarService.existsService(id)) {
             throw new ClientException(SERVICE_CLASS_NOT_FOUND);
         }
     }

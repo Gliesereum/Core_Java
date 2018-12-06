@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS karma.car (
    interior character varying,
    car_body character varying,
    colour character varying,
+   note character varying,
    brand_id uuid,
    model_id uuid,
    year_id uuid,
@@ -20,15 +21,12 @@ CREATE TABLE IF NOT EXISTS karma.year_car (
 
 CREATE TABLE IF NOT EXISTS karma.brand_car (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    id_car integer,
     name character varying,
     CONSTRAINT brand_car_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS karma.model_car (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    id_model integer,
-    brand_id_int integer,
     brand_id uuid,
     name character varying,
     CONSTRAINT model_car_pk PRIMARY KEY (id)

@@ -13,4 +13,6 @@ import java.util.UUID;
  */
 @Repository
 public interface BrandCarRepository extends JpaRepository<BrandCarEntity, UUID> {
+
+    BrandCarEntity findByName(String name);
 }
