@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,6 +25,16 @@ public class ModuleController {
     @Autowired
     public ModuleController(ModuleService moduleService) {
         this.moduleService = moduleService;
+    }
+
+    @GetMapping
+    public List<ModuleDto> getAll() {
+        return moduleService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public ModuleDto getById(@PathVariable("id") UUID id) {
+        return moduleService.getById(id);
     }
 
     @PostMapping

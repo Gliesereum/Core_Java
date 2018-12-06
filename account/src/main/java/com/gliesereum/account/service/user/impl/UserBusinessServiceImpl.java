@@ -4,6 +4,7 @@ import com.gliesereum.account.model.entity.UserBusinessEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserBusinessRepository;
 import com.gliesereum.account.service.user.UserBusinessService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,18 @@ public class UserBusinessServiceImpl extends DefaultServiceImpl<UserBusinessDto,
             UserBusinessEntity business = repository.getByUserId(id);
             if (business != null) {
                 result = converter.convert(business, DTO_CLASS);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean KYCPassed(UUID id) {
+        boolean result = false;
+        if (id != null) {
+            UserBusinessDto userBusiness = getByUserId(id);
+            if ((userBusiness != null) && (userBusiness.getKYCStatus().equals(KYCStatus.KFC_PASSED))) {
+                result = true;
             }
         }
         return result;

@@ -14,6 +14,7 @@ import java.io.IOException;
  * @version 1.0
  * @since 16/10/2018
  */
+
 @Component
 public class DefaultAccessDeniedHandler implements AccessDeniedHandler {
 

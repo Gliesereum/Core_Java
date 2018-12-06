@@ -5,6 +5,8 @@ spring:
   mvc:
     logResolvedException: false
 
+module-url: /permission/v1/
+
 
 server:
   port: 8230
@@ -30,3 +32,9 @@ eureka:
     enabled: true
   instance:
     prefer-ip-address: true
+
+exchange:
+  endpoint:
+    account:
+      userIsExist: http://account-service/user/isExist
+      userKYCPassed: http://account-service/user/isKYCPassed

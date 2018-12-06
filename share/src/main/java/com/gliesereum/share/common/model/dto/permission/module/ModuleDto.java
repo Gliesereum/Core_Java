@@ -35,6 +35,4 @@ public class ModuleDto extends DefaultDto {
     private boolean isActive;
 
     private String inactiveMessage;
-
-    private List<EndpointDto> endpoints = new ArrayList<>();
 }

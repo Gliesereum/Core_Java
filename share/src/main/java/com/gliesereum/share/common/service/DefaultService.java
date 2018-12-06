@@ -22,4 +22,6 @@ public interface DefaultService<D extends DefaultDto, E extends DefaultEntity> {
     List<D> getAll();
 
     void delete(UUID id);
+
+    boolean isExist(UUID id);
 }

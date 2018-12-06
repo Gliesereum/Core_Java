@@ -15,4 +15,6 @@ public interface UserBusinessService extends DefaultService<UserBusinessDto, Use
     void  deleteByUserId(UUID id);
 
     UserBusinessDto getByUserId(UUID id);
+
+    boolean KYCPassed(UUID id);
 }

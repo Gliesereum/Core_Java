@@ -24,6 +24,11 @@ public class RedisMessagePublisherImpl implements RedisMessagePublisher {
 
     @Override
     public void publish(final String message, final String topic) {
-        redisTemplate.convertAndSend(new ChannelTopic(topic).getTopic(), message);
+        //TODO: REMOVE
+        try {
+            redisTemplate.convertAndSend(new ChannelTopic(topic).getTopic(), message);
+        } catch (Exception e) {
+
+        }
     }
 }

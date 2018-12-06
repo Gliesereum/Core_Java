@@ -40,7 +40,4 @@ public class ModuleEntity extends DefaultEntity {
     @Column(name = "inactive_message")
     private String inactiveMessage;
 
-    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY)
-    private Set<EndpointEntity> endpoints = new HashSet<>();
-
 }

@@ -27,7 +27,4 @@ public class GroupUserEntity extends DefaultEntity {
     @Column(name = "user_id")
     private UUID userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", insertable = false, updatable = false)
-    private GroupEntity group;
 }

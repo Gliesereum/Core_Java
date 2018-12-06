@@ -5,7 +5,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author yvlasiuk
@@ -34,6 +36,18 @@ public class DefaultConverterImp implements DefaultConverter {
         List<T> result = null;
         if (CollectionUtils.isNotEmpty(objects)) {
             result = new ArrayList<>(objects.size());
+            for (E object : objects) {
+                result.add(convert(object, resultClass));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public <E, T> Set<T> convert(Set<E> objects, Class<T> resultClass) {
+        Set<T> result = null;
+        if (CollectionUtils.isNotEmpty(objects)) {
+            result = new HashSet<>(objects.size());
             for (E object : objects) {
                 result.add(convert(object, resultClass));
             }
