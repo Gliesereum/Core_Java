@@ -12,11 +12,11 @@ zuul:
       path: /account/v1/**
       service-id: account-service
     permission-service:
-      path: /mail/v1/**
-      service-id: mail-service
-    mail-service:
       path: /permission/v1/**
       service-id: permission-service
+    mail-service:
+      path: /mail/v1/**
+      service-id: mail-service
     karma-service:
       path: /karma/v1/**
       service-id: karma-service
