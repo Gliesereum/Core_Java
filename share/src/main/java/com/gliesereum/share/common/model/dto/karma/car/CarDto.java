@@ -39,6 +39,8 @@ public class CarDto extends DefaultDto {
 
     private String description;
 
+    private String note;
+
     @NotNull
     private CarInteriorType interior;
 

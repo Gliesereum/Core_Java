@@ -43,6 +43,9 @@ public class CarEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "note")
+    private String note;
+
     @Column(name = "interior")
     @Enumerated(EnumType.STRING)
     private CarInteriorType interior;

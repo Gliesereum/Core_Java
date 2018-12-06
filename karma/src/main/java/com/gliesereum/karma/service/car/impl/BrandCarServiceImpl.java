@@ -9,6 +9,9 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * @author vitalij
  * @version 1.0
@@ -23,5 +26,12 @@ public class BrandCarServiceImpl extends DefaultServiceImpl<BrandCarDto, BrandCa
 
     public BrandCarServiceImpl(BrandCarRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    }
+
+    @Override
+    public List<BrandCarDto> getAll() {
+        List<BrandCarDto> result = super.getAll();
+        result.sort(Comparator.comparing(BrandCarDto::getName));
+        return result;
     }
 }

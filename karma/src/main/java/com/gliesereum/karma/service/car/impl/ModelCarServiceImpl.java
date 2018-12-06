@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +36,15 @@ public class ModelCarServiceImpl extends DefaultServiceImpl<ModelCarDto, ModelCa
     @Override
     public List<ModelCarDto> getAllByBrandId(UUID id) {
         List<ModelCarEntity> entities = repository.getAllByBrandId(id);
-        return converter.convert(entities, dtoClass);
+        List<ModelCarDto> result = converter.convert(entities, dtoClass);
+        result.sort(Comparator.comparing(ModelCarDto::getName));
+        return result;
+    }
+
+    @Override
+    public List<ModelCarDto> getAll() {
+        List<ModelCarDto> result = super.getAll();
+        result.sort(Comparator.comparing(ModelCarDto::getName));
+        return result;
     }
 }
