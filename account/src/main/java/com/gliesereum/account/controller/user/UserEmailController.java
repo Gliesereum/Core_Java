@@ -53,7 +53,7 @@ public class UserEmailController {
     }
 
     @DeleteMapping("/{id}")
-    public Map<String, String> delete(@PathVariable("id") UUID id) {
+    public MapResponse delete(@PathVariable("id") UUID id) {
         emailService.delete(id);
         return new MapResponse("true");
     }
@@ -64,7 +64,7 @@ public class UserEmailController {
     }
 
     @GetMapping("/code")
-    public Map<String, String> sendCode(@RequestParam(value = "email") String email,
+    public MapResponse sendCode(@RequestParam(value = "email") String email,
                                         @RequestParam(value = "isNew", required = false) boolean isNew) {
         emailService.sendCode(email, isNew);
         return new MapResponse("sent", "true");
