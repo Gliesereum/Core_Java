@@ -1,4 +1,4 @@
-INSERT INTO karma.year_car (year_value) VALUES
+INSERT INTO karma.year_car (name) VALUES
 (1980), (1981), (1982), (1983), (1984), (1985),
 (1986), (1987), (1988), (1989), (1990), (1991),
 (1992), (1993), (1994), (1995), (1996), (1997),

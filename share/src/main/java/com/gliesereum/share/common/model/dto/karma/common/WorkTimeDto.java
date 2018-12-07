@@ -28,7 +28,7 @@ public class WorkTimeDto extends DefaultDto {
     private Time to;
 
     @NotNull
-    private UUID carServiceId;
+    private UUID businessServiceId;
 
     private String isWork;
 

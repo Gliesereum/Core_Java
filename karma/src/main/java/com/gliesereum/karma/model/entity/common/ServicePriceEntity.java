@@ -1,6 +1,7 @@
 package com.gliesereum.karma.model.entity.common;
 
 import com.gliesereum.karma.model.entity.car.ServiceClassCarEntity;
+import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
@@ -33,8 +34,8 @@ public class ServicePriceEntity extends DefaultEntity {
     @Column(name = "service_id")
     private UUID serviceId;
 
-    @Column(name = "user_business_id")
-    private UUID userBusinessId;
+    @Column(name = "business_service_id")
+    private UUID businessServiceId;
 
     @Column(name ="duration")
     private int duration;
@@ -48,5 +49,9 @@ public class ServicePriceEntity extends DefaultEntity {
     @Column(name = "car_body")
     @Enumerated(EnumType.STRING)
     private CarType carBody;
+
+    @Column(name = "interior_type")
+    @Enumerated(EnumType.STRING)
+    private CarInteriorType interiorType;
 
 }
