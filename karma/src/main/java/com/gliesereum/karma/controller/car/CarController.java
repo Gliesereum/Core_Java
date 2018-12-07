@@ -1,7 +1,13 @@
 package com.gliesereum.karma.controller.car;
 
-import com.gliesereum.karma.service.car.*;
-import com.gliesereum.share.common.model.dto.karma.car.*;
+import com.gliesereum.karma.service.car.BrandCarService;
+import com.gliesereum.karma.service.car.CarService;
+import com.gliesereum.karma.service.car.ModelCarService;
+import com.gliesereum.karma.service.car.YearCarService;
+import com.gliesereum.share.common.model.dto.karma.car.BrandCarDto;
+import com.gliesereum.share.common.model.dto.karma.car.CarDto;
+import com.gliesereum.share.common.model.dto.karma.car.ModelCarDto;
+import com.gliesereum.share.common.model.dto.karma.car.YearCarDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +37,6 @@ public class CarController {
 
     @Autowired
     private YearCarService yearCarService;
-
-    @Autowired
-    private ServiceClassCarService serviceClassCarService;
 
     @GetMapping("/{id}")
     public CarDto getById(@PathVariable("id") UUID id) {
@@ -96,31 +99,5 @@ public class CarController {
     @GetMapping("/years")
     public List<YearCarDto> getAllYears() {
         return yearCarService.getAll();
-    }
-
-    @GetMapping("/service/{id}")
-    public ServiceClassCarDto getServiceById(@PathVariable("id") UUID id) {
-        return serviceClassCarService.getById(id);
-    }
-
-    @GetMapping("/services")
-    public List<ServiceClassCarDto> getAllServices() {
-        return serviceClassCarService.getAll();
-    }
-
-    @PostMapping("/service")
-    public ServiceClassCarDto createService(@RequestBody ServiceClassCarDto service) {
-        return serviceClassCarService.create(service);
-    }
-
-    @PutMapping("/service")
-    public ServiceClassCarDto updateService(@Valid @RequestBody ServiceClassCarDto service) {
-        return serviceClassCarService.update(service);
-    }
-
-    @DeleteMapping("/service/{id}")
-    public MapResponse deleteService(@PathVariable("id") UUID id) {
-        serviceClassCarService.delete(id);
-        return new MapResponse("true");
     }
 }
