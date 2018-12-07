@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS karma.car (
 
 CREATE TABLE IF NOT EXISTS karma.year_car (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    year_value integer,
+    name integer,
     CONSTRAINT year_car_pk PRIMARY KEY (id)
 );
 
