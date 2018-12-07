@@ -1,6 +1,7 @@
 package com.gliesereum.proxy.filter;
 
 import com.gliesereum.proxy.config.security.properties.SecurityProperties;
+import com.gliesereum.proxy.service.keeper.EndpointKeeperService;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
 import com.gliesereum.share.common.util.SecurityUtil;
 import com.netflix.zuul.ZuulFilter;
@@ -26,6 +27,9 @@ public class PreFilter extends ZuulFilter {
     @Autowired
     private JwtTokenFactory jwtTokenFactory;
 
+    @Autowired
+    private EndpointKeeperService endpointKeeperService;
+
     @Override
     public String filterType() {
         return PRE_TYPE;
@@ -46,6 +50,9 @@ public class PreFilter extends ZuulFilter {
 
         String jwtToken = jwtTokenFactory.getJwtToken(SecurityUtil.getUser());
         RequestContext ctx = RequestContext.getCurrentContext();
+        String requestURI = ctx.getRequest().getRequestURI();
+        String method = ctx.getRequest().getMethod();
+        endpointKeeperService.checkAccess(jwtToken, requestURI, method);
         ctx.addZuulRequestHeader(securityProperties.getJwtHeader(), securityProperties.getJwtPrefix() + " " + jwtToken);
 
         return null;

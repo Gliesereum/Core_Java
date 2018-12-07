@@ -48,6 +48,9 @@ security:
     jwtHeader: Service-Authorization
     jwtPrefix: JWT
     jwtSecret: CnfxFqbCKHLqzT9LGruE
+    endpointKeeperEnable: true
+    getUserGroupUrl: http://permission-service/group-user/my-group
+    getPermissionMapUrl: http://permission-service/group/permission-map
 
 # eureka server url
 eureka:

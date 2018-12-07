@@ -1,7 +1,7 @@
 package com.gliesereum.proxy.config.security.filter;
 
 import com.gliesereum.proxy.config.security.properties.SecurityProperties;
-import com.gliesereum.proxy.service.auth.AuthService;
+import com.gliesereum.proxy.service.exchange.auth.AuthService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.security.model.UserAuthentication;
 import org.apache.commons.lang.StringUtils;

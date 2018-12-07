@@ -1,7 +1,7 @@
-package com.gliesereum.proxy.service.auth.impl;
+package com.gliesereum.proxy.service.exchange.auth.impl;
 
 import com.gliesereum.proxy.config.security.properties.SecurityProperties;
-import com.gliesereum.proxy.service.auth.AuthService;
+import com.gliesereum.proxy.service.exchange.auth.AuthService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

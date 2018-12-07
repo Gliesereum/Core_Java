@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author yvlasiuk
@@ -30,4 +31,13 @@ public class SecurityProperties extends JwtSecurityProperties {
 
     @NotBlank
     private String bearerPrefix;
+
+    @NotNull
+    private Boolean endpointKeeperEnable;
+
+    @NotBlank
+    private String getUserGroupUrl;
+
+    @NotBlank
+    private String getPermissionMapUrl;
 }

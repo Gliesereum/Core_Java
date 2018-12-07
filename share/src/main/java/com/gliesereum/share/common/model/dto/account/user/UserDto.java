@@ -34,6 +34,10 @@ public class UserDto extends DefaultDto {
 
     @Size(min = 3)
     @NotEmpty
+    private String middleName;
+
+    @Size(min = 3)
+    @NotEmpty
     private String position;
 
     @Size(min = 3)
