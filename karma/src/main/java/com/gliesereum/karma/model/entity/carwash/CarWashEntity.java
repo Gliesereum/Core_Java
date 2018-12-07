@@ -26,9 +26,6 @@ public class CarWashEntity extends DefaultEntity {
     @Column(name = "user_business_id")
     private UUID userBusinessId;
 
-    @Column(name = "work_time_id")
-    private UUID workTimeId;
-
     @Column(name = "name")
     private String name;
 

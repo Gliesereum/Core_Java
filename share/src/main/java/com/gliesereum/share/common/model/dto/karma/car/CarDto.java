@@ -32,6 +32,12 @@ public class CarDto extends DefaultDto {
     @NotNull
     private UUID yearId;
 
+    private BrandCarDto brand;
+
+    private ModelCarDto model;
+
+    private YearCarDto year;
+
     private UUID userId;
 
     private String registrationNumber;

@@ -34,6 +34,18 @@ public class CarEntity extends DefaultEntity {
     @Column(name = "year_id")
     private UUID yearId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brand_id", insertable = false, updatable = false)
+    private BrandCarEntity brand;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_id", insertable = false, updatable = false)
+    private ModelCarEntity model;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "year_id", insertable = false, updatable = false)
+    private YearCarEntity year;
+
     @Column(name = "user_id")
     private UUID userId;
 

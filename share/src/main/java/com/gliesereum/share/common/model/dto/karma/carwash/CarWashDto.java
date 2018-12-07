@@ -25,9 +25,6 @@ public class CarWashDto extends DefaultDto {
     private UUID userBusinessId;
 
     @NotNull
-    private UUID workTimeId;
-
-    @NotNull
     private String name;
 
     private int countBox;
