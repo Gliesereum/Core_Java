@@ -1,7 +1,9 @@
 package com.gliesereum.karma.controller.carwash;
 
 import com.gliesereum.karma.service.carwash.CarWashService;
+import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
+import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,9 @@ public class CarWashController {
 
     @Autowired
     private CarWashService service;
+
+    @Autowired
+    private MediaService mediaService;
 
     @GetMapping
     public List<CarWashDto> getAll() {
@@ -45,5 +50,15 @@ public class CarWashController {
     public MapResponse delete(@PathVariable("id") UUID id) {
         service.delete(id);
         return new MapResponse("true");
+    }
+
+    @GetMapping("/{id}/media")
+    public List<MediaDto> getMediaByCarWash(@PathVariable("id") UUID id) {
+        return mediaService.getByObjectId(id);
+    }
+
+    @PostMapping("/media")
+    public MediaDto create(@RequestBody MediaDto media) {
+        return mediaService.create(media);
     }
 }
