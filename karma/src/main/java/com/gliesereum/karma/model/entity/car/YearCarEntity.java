@@ -21,6 +21,6 @@ import javax.persistence.Table;
 @Table(name = "year_car")
 public class YearCarEntity extends DefaultEntity {
 
-    @Column(name = "year_value")
-    private int yearValue;
+    @Column(name = "name")
+    private int name;
 }

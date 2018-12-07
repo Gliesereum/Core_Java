@@ -11,10 +11,11 @@ CREATE TABLE IF NOT EXISTS karma.service_price (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    car_body character varying,
    name character varying,
+   interior_type character varying,
    price integer,
    duration integer,
    service_id uuid,
-   user_business_id uuid,
+   business_service_id uuid,
 
    CONSTRAINT service_price_pk PRIMARY KEY (id)
 );
@@ -52,7 +53,7 @@ CREATE TABLE IF NOT EXISTS karma.work_time (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    day_of_week character varying,
    car_service_type character varying,
-   car_service_id uuid,
+   business_service_id uuid,
    is_work boolean default false,
    from_time time without time zone,
    to_time time without time zone,

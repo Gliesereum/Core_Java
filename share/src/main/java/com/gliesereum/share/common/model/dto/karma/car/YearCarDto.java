@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class YearCarDto extends DefaultDto {
 
-    private int yearValue;
+    private int name;
 
 }
