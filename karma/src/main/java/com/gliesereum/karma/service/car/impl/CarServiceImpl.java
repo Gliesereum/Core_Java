@@ -59,6 +59,17 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     }
 
     @Override
+    public CarDto create(CarDto dto) {
+        if (dto != null) {
+            dto.setUserId(SecurityUtil.getUserId());
+            CarEntity entity = converter.convert(dto, entityClass);
+            entity = repository.saveAndFlush(entity);
+            dto = converter.convert(entity, dtoClass);
+        }
+        return dto;
+    }
+
+    @Override
     @Transactional
     public CarDto addService(UUID idCar, UUID idService) {
         checkCarExist(idCar);
