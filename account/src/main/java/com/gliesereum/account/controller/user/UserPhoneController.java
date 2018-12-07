@@ -53,7 +53,7 @@ public class UserPhoneController {
     }
 
     @DeleteMapping("/{id}")
-    public Map<String, String> delete(@PathVariable("id") UUID id) {
+    public MapResponse delete(@PathVariable("id") UUID id) {
         phoneService.delete(id);
         return new MapResponse("true");
     }
@@ -64,9 +64,9 @@ public class UserPhoneController {
     }
 
     @GetMapping("/code")
-    public Map<String, String> sendCode(@RequestParam(value = "phone") String phone,
-                                        @RequestParam(value = "isNew") boolean isNew) {
-        phoneService.sendCode(phone,isNew);
+    public MapResponse sendCode(@RequestParam(value = "phone") String phone,
+                                @RequestParam(value = "isNew") boolean isNew) {
+        phoneService.sendCode(phone, isNew);
         return new MapResponse("sent", "true");
     }
 }
