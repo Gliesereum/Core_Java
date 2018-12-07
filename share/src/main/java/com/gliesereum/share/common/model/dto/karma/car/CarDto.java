@@ -32,7 +32,6 @@ public class CarDto extends DefaultDto {
     @NotNull
     private UUID yearId;
 
-    @NotNull
     private UUID userId;
 
     private String registrationNumber;
