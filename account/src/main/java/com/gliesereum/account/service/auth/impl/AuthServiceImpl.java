@@ -3,6 +3,7 @@ package com.gliesereum.account.service.auth.impl;
 import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.account.service.token.TokenService;
+import com.gliesereum.account.service.user.UserBusinessService;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
@@ -13,6 +14,7 @@ import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
+import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
@@ -43,6 +45,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserBusinessService userBusinessService;
 
     @Autowired
     private UserPhoneService phoneService;
@@ -136,8 +141,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthDto check(String accessToken) {
         TokenStoreDomain token = tokenService.getAndVerify(accessToken);
-        UserDto user = userService.getById(UUID.fromString(token.getUserId()));
-        return createModel(token, user);
+        UUID userId = UUID.fromString(token.getUserId());
+        UserDto user = userService.getById(userId);
+        UserBusinessDto userBusiness = userBusinessService.getByUserId(userId);
+        AuthDto auth = createModel(token, user);
+        auth.setUserBusiness(userBusiness);
+        return auth;
     }
 
     private void checkField(Map<String, String> params) {

@@ -3,6 +3,7 @@ package com.gliesereum.share.common.security.jwt.factory.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
+import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
 import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
@@ -30,6 +31,7 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
     private static final String IS_ANONYMOUS = "isAnonymous";
     private static final String USER = "user";
     private static final String TOKEN = "token";
+    private static final String USER_BUSINESS = "userBusinnes";
 
     private JwtSecurityProperties jwtSecurityProperties;
 
@@ -71,6 +73,7 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
         if (!userAuthentication.isAnonymous()) {
             result.put(USER, objectMapper.convertValue(userAuthentication.getUser(), new TypeReference<HashMap<String, Object>>(){}));
             result.put(TOKEN, objectMapper.convertValue(userAuthentication.getTokenInfo(), new TypeReference<HashMap<String, Object>>(){}));
+            result.put(USER_BUSINESS, objectMapper.convertValue(userAuthentication.getUserBusiness(), new TypeReference<HashMap<String, Object>>(){}));
         }
         return result;
     }
@@ -82,7 +85,8 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
         } else {
             UserDto user = objectMapper.convertValue(claims.get(USER), new TypeReference<UserDto>(){});
             TokenInfoDto tokenInfo = objectMapper.convertValue(claims.get(TOKEN), new TypeReference<TokenInfoDto>(){});
-            userAuthentication = new UserAuthentication(user, tokenInfo);
+            UserBusinessDto userBusiness = objectMapper.convertValue(claims.get(USER_BUSINESS), new TypeReference<UserBusinessDto>(){});
+            userAuthentication = new UserAuthentication(user, tokenInfo, userBusiness);
         }
         return userAuthentication;
     }
