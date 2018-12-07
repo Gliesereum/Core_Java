@@ -48,6 +48,6 @@ public class CarWashEntity extends DefaultEntity {
     private double longitude;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "car_service_id")
+    @JoinColumn(name = "business_service_id")
     private Set<WorkTimeEntity> workTimes = new HashSet<>();
 }
