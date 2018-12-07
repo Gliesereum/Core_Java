@@ -29,7 +29,6 @@ spring:
     host: localhost
     port: 6379
     #password:
-    chanel-verification: verificationQueue
     chanel-logstash: logstash
 
 logging:

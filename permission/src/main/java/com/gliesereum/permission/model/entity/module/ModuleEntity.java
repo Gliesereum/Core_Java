@@ -35,7 +35,7 @@ public class ModuleEntity extends DefaultEntity {
     private String version;
 
     @Column(name = "is_active")
-    private boolean isActive;
+    private Boolean isActive;
 
     @Column(name = "inactive_message")
     private String inactiveMessage;

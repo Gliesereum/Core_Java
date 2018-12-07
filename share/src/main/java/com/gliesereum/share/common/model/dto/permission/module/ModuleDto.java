@@ -32,7 +32,7 @@ public class ModuleDto extends DefaultDto {
     @NotEmpty
     private String version;
 
-    private boolean isActive;
+    private Boolean isActive;
 
     private String inactiveMessage;
 }

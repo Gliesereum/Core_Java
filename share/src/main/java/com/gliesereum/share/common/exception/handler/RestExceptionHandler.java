@@ -1,7 +1,5 @@
 package com.gliesereum.share.common.exception.handler;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.share.common.exception.CustomException;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.exception.response.ErrorResponse;
@@ -10,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -24,8 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.UNKNOWN_SERVER_EXCEPTION;
-import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.VALIDATION_ERROR;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.*;
 
 /**
  * @author yvlasiuk
@@ -59,6 +57,16 @@ public class RestExceptionHandler {
         errorResponse.setTimestamp(LocalDateTime.now());
         addBindingInfo(errorResponse, ex.getBindingResult());
         return buildResponse(errorResponse, validationError.getHttpCode(), ex);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setCode(BODY_REQUIRED.getErrorCode());
+        errorResponse.setMessage(BODY_REQUIRED.getMessage());
+        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return buildResponse(errorResponse, BODY_REQUIRED.getHttpCode(), ex);
     }
 
     @ExceptionHandler(Exception.class)

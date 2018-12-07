@@ -1,4 +1,4 @@
-package com.gliesereum.proxy.service.auth;
+package com.gliesereum.proxy.service.exchange.auth;
 
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 

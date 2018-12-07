@@ -29,6 +29,9 @@ public class UserEntity extends DefaultEntity {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "middle_name")
+    private String middleName;
+
     @Column(name = "position")
     private String position;
 

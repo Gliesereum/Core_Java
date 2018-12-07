@@ -38,6 +38,9 @@ public class ZuulErrorController extends AbstractErrorController {
         if (exc == null) {
             exc = new CustomException(CommonExceptionMessage.UNKNOWN_SERVER_EXCEPTION);
         }
+        if (exc.getCause() instanceof CustomException) {
+            throw (CustomException) exc.getCause();
+        }
         throw exc;
     }
 }

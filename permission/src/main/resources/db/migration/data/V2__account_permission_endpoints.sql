@@ -1,5 +1,5 @@
-INSERT INTO permission.module (id, title, description, url, version, is_active, inactive_message) VALUES ('6c37e40e-e22f-4fe2-9161-721d5a97c912', 'permission-service', null, '/permission/v1/', 'v1', false, null);
-INSERT INTO permission.module (id, title, description, url, version, is_active, inactive_message) VALUES ('d26d4f95-a9fb-4878-aa07-019e399bd15c', 'account-service', null, '/account/v1/', 'v1', false, null);
+INSERT INTO permission.module (id, title, description, url, version, is_active, inactive_message) VALUES ('6c37e40e-e22f-4fe2-9161-721d5a97c912', 'permission-service', null, '/permission/v1', 'v1', true, null);
+INSERT INTO permission.module (id, title, description, url, version, is_active, inactive_message) VALUES ('d26d4f95-a9fb-4878-aa07-019e399bd15c', 'account-service', null, '/account/v1', 'v1', true, null);
 
 INSERT INTO permission.endpoint (id, title, description, url, method, version, is_active, inactive_message, module_id) VALUES ('b45ef269-3418-4c2c-af7a-d5427ecf22c0', null, null, '/endpoint', 'PUT', 'v1', true, null, '6c37e40e-e22f-4fe2-9161-721d5a97c912');
 INSERT INTO permission.endpoint (id, title, description, url, method, version, is_active, inactive_message, module_id) VALUES ('39b0f64b-93a8-41d0-9bed-943163d0f973', null, null, '/endpoint/*', 'GET', 'v1', true, null, '6c37e40e-e22f-4fe2-9161-721d5a97c912');
