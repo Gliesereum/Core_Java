@@ -28,4 +28,13 @@ public class SecurityUtil {
         }
         return result;
     }
+
+    public static UUID getUserBusinessId() {
+        UUID result = null;
+        UserAuthentication user = getUser();
+        if ((user != null) && (user.getUserBusiness() != null)) {
+            result = user.getUserBusiness().getId();
+        }
+        return result;
+    }
 }
