@@ -6,11 +6,13 @@ import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,7 +45,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
         List<CommentDto> result = null;
         if (objectId != null) {
             List<CommentEntity> entities = commentRepository.findByObjectId(objectId);
-            result = converter.convert(entities, CommentDto.class);
+            result = converter.convert(entities, dtoClass);
         }
         return result;
     }
@@ -81,6 +83,22 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
             throw new ClientException(CURRENT_USER_CANT_EDIT_THIS_COMMENT);
         }
         commentRepository.delete(existed);
+    }
 
+    @Override
+    public RatingDto getRating(UUID objectId) {
+        RatingDto rating = new RatingDto();
+        List<CommentEntity> comments = commentRepository.findByObjectId(objectId);
+        if (CollectionUtils.isNotEmpty(comments)) {
+            int count = comments.size();
+            int ratingSum = comments.stream().mapToInt(CommentEntity::getRating).sum();
+            BigDecimal ratingAvg = new BigDecimal(ratingSum).divide(new BigDecimal(count), 2, BigDecimal.ROUND_HALF_DOWN);
+            rating.setCount(count);
+            rating.setRating(ratingAvg);
+        } else {
+            rating.setCount(0);
+            rating.setRating(new BigDecimal(0));
+        }
+        return rating;
     }
 }

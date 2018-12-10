@@ -6,6 +6,7 @@ import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -93,6 +94,11 @@ public class CarWashController {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_EDIT_CARWASH);
         }
         return new MapResponse("true");
+    }
+
+    @GetMapping("/{id}/rating")
+    public RatingDto getRating(@PathVariable("id") UUID id) {
+        return commentService.getRating(id);
     }
 
     @GetMapping("/{id}/comment")

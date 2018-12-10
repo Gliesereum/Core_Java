@@ -2,6 +2,7 @@ package com.gliesereum.karma.service.comment;
 
 import com.gliesereum.karma.model.entity.comment.CommentEntity;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface CommentService extends DefaultService<CommentDto, CommentEntity
     CommentDto updateComment(UUID userId, CommentDto comment);
 
     void deleteComment(UUID commentId, UUID userId);
+
+    RatingDto getRating(UUID objectId);
 }
