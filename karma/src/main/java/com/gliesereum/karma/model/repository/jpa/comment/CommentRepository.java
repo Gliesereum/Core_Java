@@ -4,6 +4,7 @@ import com.gliesereum.karma.model.entity.comment.CommentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -14,4 +15,10 @@ import java.util.UUID;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, UUID> {
+
+    List<CommentEntity> findByObjectId(UUID objectId);
+
+    boolean existsByObjectIdAndOwnerId(UUID objectId, UUID ownerId);
+
+    CommentEntity findByIdAndOwnerId(UUID id, UUID ownerId);
 }

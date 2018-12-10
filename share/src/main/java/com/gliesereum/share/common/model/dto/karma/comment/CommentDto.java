@@ -4,6 +4,9 @@ import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
@@ -20,6 +23,9 @@ public class CommentDto extends DefaultDto {
 
     private String text;
 
+    @Min(1)
+    @Max(5)
+    @NotNull
     private Integer rating;
 
     private UUID ownerId;

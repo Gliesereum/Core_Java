@@ -1,11 +1,14 @@
 package com.gliesereum.karma.controller.carwash;
 
 import com.gliesereum.karma.service.carwash.CarWashService;
+import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.response.MapResponse;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.DONT_HAVE_PERMISSION_TO_EDIT_CARWASH;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -29,6 +32,9 @@ public class CarWashController {
 
     @Autowired
     private MediaService mediaService;
+
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping
     public List<CarWashDto> getAll() {
@@ -86,6 +92,44 @@ public class CarWashController {
         } else {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_EDIT_CARWASH);
         }
-        return new MapResponse(true);
+        return new MapResponse("true");
     }
+
+    @GetMapping("/{id}/comment")
+    public List<CommentDto> getCommentByCarWash(@PathVariable("id") UUID id) {
+        return commentService.findByObjectId(id);
+    }
+
+    @PostMapping("/{id}/comment")
+    public CommentDto addComment(@PathVariable("id") UUID id,
+                                 @RequestBody @Valid CommentDto comment) {
+        UUID userId = SecurityUtil.getUserId();
+        if (userId == null) {
+            throw new ClientException(ANONYMOUS_CANT_COMMENT);
+        }
+        if (!mediaService.isExist(id)) {
+            throw new ClientException(CARWASH_NOT_FOUND);
+        }
+        return commentService.addComment(id, userId, comment);
+    }
+
+    @PutMapping("/comment")
+    public CommentDto updateComment(@RequestBody @Valid CommentDto comment) {
+        UUID userId = SecurityUtil.getUserId();
+        if (userId == null) {
+            throw new ClientException(ANONYMOUS_CANT_COMMENT);
+        }
+        return commentService.updateComment(userId, comment);
+    }
+
+    @DeleteMapping("/comment/{commentId}")
+    public MapResponse deleteComment(@PathVariable("commentId") UUID commentId) {
+        UUID userId = SecurityUtil.getUserId();
+        if (userId == null) {
+            throw new ClientException(ANONYMOUS_CANT_COMMENT);
+        }
+        commentService.deleteComment(commentId, userId);
+        return new MapResponse("true");
+    }
+
 }
