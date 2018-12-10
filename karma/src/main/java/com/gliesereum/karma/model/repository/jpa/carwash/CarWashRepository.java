@@ -13,4 +13,6 @@ import java.util.UUID;
  */
 @Repository
 public interface CarWashRepository extends JpaRepository<CarWashEntity, UUID> {
+
+    boolean existsByIdAndUserBusinessId(UUID id, UUID userBusinessId);
 }
