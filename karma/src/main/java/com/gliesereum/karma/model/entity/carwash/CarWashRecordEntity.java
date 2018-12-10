@@ -2,6 +2,7 @@ package com.gliesereum.karma.model.entity.carwash;
 
 import com.gliesereum.karma.model.entity.common.ServiceEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusWashing;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
@@ -58,6 +59,10 @@ public class CarWashRecordEntity extends DefaultEntity {
     @Column(name = "status_washing")
     @Enumerated(EnumType.STRING)
     private StatusWashing statusWashing;
+
+    @Column(name = "status_record")
+    @Enumerated(EnumType.STRING)
+    private StatusRecord statusRecord;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "car_wash_record_service",

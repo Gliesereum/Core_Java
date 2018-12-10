@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -23,6 +24,8 @@ public class PackageDto extends DefaultDto {
     private int discount;
 
     private int duration;
+
+    private UUID businessServiceId;
 
     private List<ServiceDto> services = new ArrayList<>();
 }

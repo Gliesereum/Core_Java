@@ -4,6 +4,7 @@ import com.gliesereum.karma.model.entity.common.ServicePriceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,4 +14,6 @@ import java.util.UUID;
  */
 @Repository
 public interface ServicePriceRepository extends JpaRepository<ServicePriceEntity, UUID> {
+
+    List<ServicePriceEntity> getByBusinessServiceId(UUID id);
 }

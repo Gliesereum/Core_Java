@@ -7,7 +7,11 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -18,6 +22,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto, ServicePriceEntity> implements ServicePriceService {
 
+    @Autowired
+    private ServicePriceRepository repository;
+
     private static final Class<ServicePriceDto> DTO_CLASS = ServicePriceDto.class;
     private static final Class<ServicePriceEntity> ENTITY_CLASS = ServicePriceEntity.class;
 
@@ -25,4 +32,9 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
     }
 
+    @Override
+    public List<ServicePriceDto> getAllByPackage(UUID id) {
+        List<ServicePriceEntity> entities = repository.getByBusinessServiceId(id);
+        return converter.convert(entities, dtoClass);
+    }
 }

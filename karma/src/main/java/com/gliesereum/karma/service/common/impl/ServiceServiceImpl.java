@@ -24,5 +24,4 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
     public ServiceServiceImpl(ServiceRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
     }
-
 }
