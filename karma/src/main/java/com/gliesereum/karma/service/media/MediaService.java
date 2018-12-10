@@ -15,4 +15,6 @@ import java.util.UUID;
 public interface MediaService extends DefaultService<MediaDto, MediaEntity> {
 
     List<MediaDto> getByObjectId(UUID objectId);
+
+   void delete(UUID id, UUID objectId);
 }

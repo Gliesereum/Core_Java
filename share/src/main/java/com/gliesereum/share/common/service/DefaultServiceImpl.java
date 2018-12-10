@@ -5,6 +5,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,6 +72,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
         return converter.convert(entities, dtoClass);
     }
 
+    @Transactional
     public void delete(UUID id) {
         if (id != null) {
             Optional<E> entity = repository.findById(id);
