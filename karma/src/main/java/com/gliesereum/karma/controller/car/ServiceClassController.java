@@ -16,7 +16,7 @@ import java.util.UUID;
  * @since 12/5/18
  */
 @RestController
-@RequestMapping("/service/class")
+@RequestMapping("/class")
 public class ServiceClassController {
 
     @Autowired

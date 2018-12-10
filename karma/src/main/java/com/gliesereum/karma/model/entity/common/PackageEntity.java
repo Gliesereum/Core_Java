@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -29,6 +30,9 @@ public class PackageEntity extends DefaultEntity {
 
     @Column(name = "duration")
     private int duration;
+
+    @Column(name = "business_service_id")
+    private UUID businessServiceId;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "package_service",

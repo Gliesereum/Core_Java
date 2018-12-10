@@ -7,7 +7,11 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.karma.common.PackageDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -18,6 +22,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEntity> implements PackageService {
 
+    @Autowired
+    private PackageRepository repository;
+
     private static final Class<PackageDto> DTO_CLASS = PackageDto.class;
     private static final Class<PackageEntity> ENTITY_CLASS = PackageEntity.class;
 
@@ -25,4 +32,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
     }
 
+    @Override
+    public List<PackageDto> getByBusinessServiceId(UUID id) {
+        List<PackageEntity> entities = repository.getByBusinessServiceId(id);
+        return converter.convert(entities, dtoClass);
+    }
 }

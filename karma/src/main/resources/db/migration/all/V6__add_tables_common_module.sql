@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS karma.package (
    name character varying,
    discount integer,
    duration integer,
+   business_service_id uuid,
 
    CONSTRAINT package_pk PRIMARY KEY (id)
 );

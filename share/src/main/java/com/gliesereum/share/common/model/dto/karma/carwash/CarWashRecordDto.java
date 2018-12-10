@@ -3,6 +3,7 @@ package com.gliesereum.share.common.model.dto.karma.carwash;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusWashing;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,6 +44,8 @@ public class CarWashRecordDto extends DefaultDto {
     private StatusPay statusPay;
 
     private StatusWashing statusWashing;
+
+    private StatusRecord statusRecord;
 
     private List<ServiceDto> services = new ArrayList<>();
 }

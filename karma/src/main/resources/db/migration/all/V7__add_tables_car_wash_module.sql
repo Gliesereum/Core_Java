@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS karma.car_wash_record (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    status_washing character varying,
    status_pay character varying,
+   status_record character varying,
    price integer,
    number_box integer,
    car_id uuid,

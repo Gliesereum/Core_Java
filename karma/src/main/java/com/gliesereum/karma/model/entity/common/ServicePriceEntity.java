@@ -34,6 +34,10 @@ public class ServicePriceEntity extends DefaultEntity {
     @Column(name = "service_id")
     private UUID serviceId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id", insertable = false, updatable = false)
+    private ServiceEntity service;
+
     @Column(name = "business_service_id")
     private UUID businessServiceId;
 
