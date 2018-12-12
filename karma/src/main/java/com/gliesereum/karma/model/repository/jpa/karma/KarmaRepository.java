@@ -14,4 +14,6 @@ import java.util.UUID;
 
 @Repository
 public interface KarmaRepository extends JpaRepository<KarmaEntity, UUID> {
+
+    KarmaEntity findByObjectId(UUID objectId);
 }
