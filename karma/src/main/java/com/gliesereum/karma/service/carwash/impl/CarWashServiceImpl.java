@@ -37,7 +37,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     }
 
     @Override
-    public boolean currentUserHavePermissionToEdit(UUID carWashId) {
+    public boolean currentUserHavePermissionToAction(UUID carWashId) {
         boolean result = false;
         UUID userBusinessId = SecurityUtil.getUserBusinessId();
         if (userBusinessId != null) {

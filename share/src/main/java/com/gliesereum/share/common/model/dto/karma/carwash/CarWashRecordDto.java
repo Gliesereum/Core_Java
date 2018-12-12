@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +37,7 @@ public class CarWashRecordDto extends DefaultDto {
 
     private Time finishTime;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
     private Integer numberBox;
 

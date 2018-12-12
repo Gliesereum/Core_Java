@@ -15,5 +15,5 @@ public interface CarWashService extends DefaultService<CarWashDto, CarWashEntity
 
     boolean existByIdAndUserBusinessId(UUID id, UUID userBusinessId);
 
-    boolean currentUserHavePermissionToEdit(UUID carWashId);
+    boolean currentUserHavePermissionToAction(UUID carWashId);
 }

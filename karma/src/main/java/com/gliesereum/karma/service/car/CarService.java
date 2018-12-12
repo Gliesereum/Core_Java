@@ -18,6 +18,8 @@ public interface CarService extends DefaultService<CarDto, CarEntity> {
 
     void deleteByUserId(UUID id);
 
+    void checkCarExist(UUID id);
+
     CarDto addService(UUID idCar, UUID idService);
 
     CarDto removeService(UUID idCar, UUID idService);

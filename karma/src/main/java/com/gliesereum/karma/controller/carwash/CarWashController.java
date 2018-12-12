@@ -70,28 +70,28 @@ public class CarWashController {
 
     @PostMapping("/media")
     public MediaDto create(@RequestBody @Valid MediaDto media) {
-        if (carWashService.currentUserHavePermissionToEdit(media.getObjectId())) {
+        if (carWashService.currentUserHavePermissionToAction(media.getObjectId())) {
             return mediaService.create(media);
         } else {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_EDIT_CARWASH);
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
         }
     }
 
     @PutMapping("/media")
     public MediaDto update(@RequestBody @Valid MediaDto media) {
-        if (carWashService.currentUserHavePermissionToEdit(media.getObjectId())) {
+        if (carWashService.currentUserHavePermissionToAction(media.getObjectId())) {
             return mediaService.update(media);
         } else {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_EDIT_CARWASH);
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
         }
     }
 
     @DeleteMapping("/{id}/media/{mediaId}")
     public MapResponse delete(@PathVariable("id") UUID carWashId, @PathVariable("mediaId") UUID mediaId) {
-        if (carWashService.currentUserHavePermissionToEdit(carWashId)) {
+        if (carWashService.currentUserHavePermissionToAction(carWashId)) {
             mediaService.delete(mediaId, carWashId);
         } else {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_EDIT_CARWASH);
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
         }
         return new MapResponse("true");
     }

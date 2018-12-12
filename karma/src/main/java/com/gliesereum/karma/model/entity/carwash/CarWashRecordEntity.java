@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Time;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -47,7 +47,7 @@ public class CarWashRecordEntity extends DefaultEntity {
     private Time finishTime;
 
     @Column(name = "date")
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column(name = "number_box")
     private Integer numberBox;
