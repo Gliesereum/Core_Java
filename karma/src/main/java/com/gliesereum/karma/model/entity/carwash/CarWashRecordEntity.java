@@ -38,7 +38,7 @@ public class CarWashRecordEntity extends DefaultEntity {
     private UUID carWashId;
 
     @Column(name = "price")
-    private int price;
+    private Integer price;
 
     @Column(name = "begin_time")
     private Time beginTime;
@@ -50,7 +50,7 @@ public class CarWashRecordEntity extends DefaultEntity {
     private LocalDateTime date;
 
     @Column(name = "number_box")
-    private int numberBox;
+    private Integer numberBox;
 
     @Column(name = "status_pay")
     @Enumerated(EnumType.STRING)
