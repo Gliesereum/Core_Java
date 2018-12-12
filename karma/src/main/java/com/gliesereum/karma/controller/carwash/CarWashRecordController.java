@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -45,5 +46,15 @@ public class CarWashRecordController {
     public MapResponse delete(@PathVariable("id") UUID id) {
         service.delete(id);
         return new MapResponse("true");
+    }
+
+    @PostMapping("/client/params")
+    public List<CarWashRecordDto> getByParamsForClient(@RequestBody Map<String,String> params) {
+        return service.getByParamsForClient(params);
+    }
+
+    @PostMapping("/business/params")
+    public List<CarWashRecordDto> getByParamsForBusiness(@RequestBody Map<String,String> params) {
+        return service.getByParamsForBusiness(params);
     }
 }

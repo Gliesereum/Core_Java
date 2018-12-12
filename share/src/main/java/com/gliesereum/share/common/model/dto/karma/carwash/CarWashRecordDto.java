@@ -31,7 +31,7 @@ public class CarWashRecordDto extends DefaultDto {
 
     private UUID carWashId;
 
-    private int price;
+    private Integer price;
 
     private Time beginTime;
 
@@ -39,7 +39,7 @@ public class CarWashRecordDto extends DefaultDto {
 
     private LocalDateTime date;
 
-    private int numberBox;
+    private Integer numberBox;
 
     private StatusPay statusPay;
 
