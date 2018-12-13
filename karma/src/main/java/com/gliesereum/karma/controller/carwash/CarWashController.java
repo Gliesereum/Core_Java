@@ -53,6 +53,11 @@ public class CarWashController {
         return carWashService.getById(id);
     }
 
+    @GetMapping("/byUser")
+    public List<CarWashDto> getBuUser() {
+        return carWashService.getByUserBusinessId(SecurityUtil.getUserBusinessId());
+    }
+
     @PostMapping
     public CarWashDto create(@RequestBody @Valid CarWashDto carWash) {
         return carWashService.create(carWash);
