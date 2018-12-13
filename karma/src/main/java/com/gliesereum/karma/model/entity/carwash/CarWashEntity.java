@@ -30,7 +30,7 @@ public class CarWashEntity extends DefaultEntity {
     private String name;
 
     @Column(name = "count_box")
-    private int countBox;
+    private Integer countBox;
 
     @Column(name = "description")
     private String description;
@@ -39,12 +39,12 @@ public class CarWashEntity extends DefaultEntity {
     private String address;
 
     @Column(name = "latitude")
-    private double latitude;
+    private Double latitude;
 
     @Column(name = "longitude")
-    private double longitude;
+    private Double longitude;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "business_service_id")
+    @OneToMany
+    @JoinColumn(name = "business_service_id", insertable = false, updatable = false)
     private Set<WorkTimeEntity> workTimes = new HashSet<>();
 }

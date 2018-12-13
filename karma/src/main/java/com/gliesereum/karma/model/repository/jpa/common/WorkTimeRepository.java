@@ -4,6 +4,7 @@ import com.gliesereum.karma.model.entity.common.WorkTimeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,4 +14,6 @@ import java.util.UUID;
  */
 @Repository
 public interface WorkTimeRepository extends JpaRepository<WorkTimeEntity, UUID> {
+
+    List<WorkTimeEntity> findByBusinessServiceId(UUID businessServiceId);
 }
