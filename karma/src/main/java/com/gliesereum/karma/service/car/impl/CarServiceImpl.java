@@ -85,7 +85,8 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
         return getById(idCar);
     }
 
-    private void checkCarExist(UUID id) {
+    @Override
+    public void checkCarExist(UUID id) {
         if (!repository.existsCarEntityByUserIdAndId(SecurityUtil.getUserId(), id)) {
             throw new ClientException(CAR_NOT_FOUND);
         }

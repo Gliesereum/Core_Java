@@ -8,8 +8,9 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage CAR_NOT_FOUND = new ExceptionMessage(1400, 400, "Car not found");
     public static final ExceptionMessage SERVICE_CLASS_NOT_FOUND = new ExceptionMessage(1410, 400, "Service class not found");
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_EDIT_CARWASH = new ExceptionMessage(1420, 401, "Current user don't have permission to edit carwash");
+    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_CARWASH = new ExceptionMessage(1420, 401, "Current user don't have permission to action this carwash");
     public static final ExceptionMessage CARWASH_NOT_FOUND = new ExceptionMessage(1421, 404, "Carwash not found");
+    public static final ExceptionMessage CARWASH_ID_EMPTY = new ExceptionMessage(1421, 404, "Carwash id is empty");
 
 
     public static final ExceptionMessage ANONYMOUS_CANT_COMMENT = new ExceptionMessage(1440, 401, "Anonymous user can't comment");
