@@ -4,14 +4,18 @@ import com.gliesereum.account.model.entity.UserBusinessEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserBusinessRepository;
 import com.gliesereum.account.service.user.UserBusinessService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_BUSINESS;
 
 /**
  * @author vitalij
@@ -36,6 +40,19 @@ public class UserBusinessServiceImpl extends DefaultServiceImpl<UserBusinessDto,
         if (id != null) {
             repository.deleteUserBusinessEntityByUserId(id);
         }
+    }
+
+    @Override
+    public UserBusinessDto update(UserBusinessDto dto) {
+        if (dto != null) {
+            UUID userBusinessId = SecurityUtil.getUserBusinessId();
+            if (userBusinessId == null) {
+                throw new ClientException(USER_NOT_BUSINESS);
+            }
+            dto.setId(userBusinessId);
+            dto.setUserId(SecurityUtil.getUserId());
+        }
+        return super.update(dto);
     }
 
     @Override

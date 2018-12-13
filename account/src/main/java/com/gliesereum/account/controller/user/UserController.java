@@ -74,7 +74,7 @@ public class UserController {
     }
 
     @PutMapping("/business")
-    public UserBusinessDto updateBusinessModel(UserBusinessDto business) {
+    public UserBusinessDto updateBusinessModel(@RequestBody @Valid UserBusinessDto business) {
         return businessService.update(business);
     }
 

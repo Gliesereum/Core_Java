@@ -15,14 +15,13 @@ import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -37,21 +36,16 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Service
 public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> implements UserService {
 
-    @Autowired
-    private UserEmailService emailService;
-
-    @Autowired
-    private UserPhoneService phoneService;
-
-    @Autowired
-    private UserBusinessService businessService;
-
     private static final String URL_PATTERN = "^(https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
-
     public static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
-
     private static final Class<UserDto> DTO_CLASS = UserDto.class;
     private static final Class<UserEntity> ENTITY_CLASS = UserEntity.class;
+    @Autowired
+    private UserEmailService emailService;
+    @Autowired
+    private UserPhoneService phoneService;
+    @Autowired
+    private UserBusinessService businessService;
 
     public UserServiceImpl(UserRepository userRepository, DefaultConverter defaultConverter) {
         super(userRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -95,6 +89,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Transactional
     public UserDto update(UserDto dto) {
         if (dto != null) {
+            dto.setId(SecurityUtil.getUserId());
             if (StringUtils.isEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {
                 throw new ClientException(UPL_AVATAR_IS_NOT_VALID);
             }
@@ -122,11 +117,12 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         if (user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }
-        if (dto.getFirstName() != null && user.getFirstName() != null) {
+        //TODO: comment
+        /*if ((user.getFirstName() != null) && !StringUtils.equals(user.getFirstName(), dto.getFirstName())) {
             throw new ClientException(USER_ERROR_CHANGE_FIRST_NAME);
         }
-        if (dto.getLastName() != null && user.getLastName() != null) {
+        if ((user.getLastName() != null) && !StringUtils.equals(user.getLastName(), dto.getLastName())) {
             throw new ClientException(USER_ERROR_CHANGE_LAST_NAME);
-        }
+        }*/
     }
 }

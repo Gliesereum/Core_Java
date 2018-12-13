@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,13 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class CarWashDto extends DefaultDto {
 
-    @NotNull
     private UUID userBusinessId;
 
-    @NotNull
+    @NotEmpty
     private String name;
 
-    private int countBox;
+    @NotNull
+    private Integer countBox;
 
     private String description;
 
@@ -35,11 +36,10 @@ public class CarWashDto extends DefaultDto {
     private String address;
 
     @NotNull
-    private double latitude;
+    private Double latitude;
 
     @NotNull
-    private double longitude;
+    private Double longitude;
 
-    @NotNull
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 }
