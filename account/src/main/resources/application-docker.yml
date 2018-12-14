@@ -29,7 +29,7 @@ spring:
     host: ${redis.host}
     port: ${redis.port}
     password: ${redis.password}
-    chanel-name: verificationQueue
+    chanel-verification: verificationQueue
     chanel-logstash: logstash
 
 token:
