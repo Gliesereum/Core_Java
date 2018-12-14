@@ -50,6 +50,7 @@ docker rm $(docker ps -a -q) --force
 ```
 docker rm discovery-service
 docker rmi gls-discovery
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-discovery')
 docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  .
 ```
 
@@ -57,7 +58,7 @@ docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  .
 ```
 docker rm account-service
 docker rmi gls-account
-docker rmi $(docker images |grep 'gls-account')
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-account')
 docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  .
 ```
 
@@ -65,6 +66,7 @@ docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  .
 ```
 docker rm proxy-service
 docker rmi gls-proxy
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-proxy')
 docker build -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  .
 ```
 
@@ -72,6 +74,7 @@ docker build -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  .
 ```
 docker rm mail-service
 docker rmi gls-mail
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-mail')
 docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  .
 ```
 
@@ -79,6 +82,7 @@ docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  .
 ```
 docker rm permission-service
 docker rmi gls-permission
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-permission')
 docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  .
 ```
 
@@ -86,6 +90,7 @@ docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  .
 ```
 docker rm curator-service
 docker rmi gls-curator
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
 docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  .
 ```
 
@@ -93,6 +98,7 @@ docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  .
 ```
 docker rm karma-service
 docker rmi gls-karma
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-karma')
 docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  .
 ```
 
