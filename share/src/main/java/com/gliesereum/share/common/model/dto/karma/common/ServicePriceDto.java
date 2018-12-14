@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.car.ServiceClassCarDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import java.util.UUID;
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ServicePriceDto extends DefaultDto {
 
     private String name;

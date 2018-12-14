@@ -82,7 +82,8 @@ services:
   curator:
     image: gls-curator
     environment:
-      ELASTICSEARCH_HOST: elasticsearch
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
       CRON: '15 0 * * *'
       #CRON: '*/5 * * * *'
       CONFIG_FILE: /curator/config/curator.yml

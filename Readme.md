@@ -56,54 +56,55 @@ docker rm $(docker ps -a -q) --force
 ```
 docker rm discovery-service
 docker rmi gls-discovery
-docker build -t gls-discovery -f docker/discovery/Dockerfile  .
+docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  .
 ```
 
 ##### Account
 ```
 docker rm account-service
 docker rmi gls-account
-docker build -t gls-account -f docker/account/Dockerfile  .
+docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  .
 ```
 
 ##### Proxy
 ```
 docker rm proxy-service
 docker rmi gls-proxy
-docker build -t gls-proxy  -f docker/proxy/Dockerfile  .
+docker build -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  .
 ```
 
 ##### Mail
 ```
 docker rm mail-service
 docker rmi gls-mail
-docker build -t gls-mail -f docker/mail/Dockerfile  .
+docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  .
 ```
 
 ##### Permission
 ```
 docker rm permission-service
 docker rmi gls-permission
-docker build -t gls-permission -f docker/permission/Dockerfile  .
+docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  .
 ```
 
 ##### Curator
 ```
 docker rm curator-service
 docker rmi gls-curator
-docker build -t gls-curator -f docker/curator/Dockerfile  .
+docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  .
 ```
 
 ##### Karma
 ```
 docker rm karma-service
 docker rmi gls-karma
-docker build -t gls-karma -f docker/karma/Dockerfile  .
+docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  .
 ```
 
 ### Run stack
 ```
 docker stack deploy -c docker/docker-compose-dev.yml gls
+docker stack deploy -c docker/docker-compose-dev-log.yml gls
 ```
 
 ### Run container

@@ -2,6 +2,7 @@ package com.gliesereum.share.common.model.dto.karma.comment;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class CommentDto extends DefaultDto {
 
     private UUID objectId;
