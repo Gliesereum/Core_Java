@@ -1,0 +1,14 @@
+image: docker:latest
+services:
+  - docker:dind
+
+stages:
+  - deploy
+
+docker-deploy:
+  stage: deploy
+  script:
+    - pwd
+    - ls /usr/
+  only:
+    - karma/dev
