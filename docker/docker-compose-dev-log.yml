@@ -83,7 +83,7 @@ services:
     - ../log/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
 
   curator:
-    image: gls-curator
+    image: gls-curator:0.0.1
     environment:
       ES_HOST: elasticsearch
       ES_PORT: 9200

@@ -4,23 +4,17 @@
 
 ##### gradle
 ```
-    gradle clean -b=account/build.gradle
-    gradle build -b=account/build.gradle
+    gradle clean build -b=account/build.gradle
     
-    gradle clean -b=discovery/build.gradle
-    gradle build -b=discovery/build.gradle
+    gradle clean build -b=discovery/build.gradle
     
-    gradle clean -b=proxy/build.gradle
-    gradle build -b=proxy/build.gradle
+    gradle clean build -b=proxy/build.gradle
     
-    gradle clean -b=mail/build.gradle
-    gradle build -b=mail/build.gradle
+    gradle clean build -b=mail/build.gradle
     
-    gradle clean -b=permission/build.gradle
-    gradle build -b=permission/build.gradle
+    gradle clean build -b=permission/build.gradle
     
-    gradle clean -b=karma/build.gradle
-    gradle build -b=karma/build.gradle
+    gradle clean build -b=karma/build.gradle
 ```
 
 ##### wrapper
