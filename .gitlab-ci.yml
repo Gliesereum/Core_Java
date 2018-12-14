@@ -3,18 +3,11 @@ image: ubuntu
 stages:
   - deploy
 
-before_script:
-  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-  - eval $(ssh-agent -s)
-  - echo "$SSH_PRIVATE_KEY"
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
-
 docker-deploy:
   stage: deploy
   script:
     - ssh root@207.154.239.122
+    - $SSH_PRIVATE_KEY
     - pwd
     - ls /usr/
   only:
