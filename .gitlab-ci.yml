@@ -1,0 +1,11 @@
+
+stages:
+  - deploy
+
+docker-deploy:
+  stage: deploy
+  script:
+    - pwd
+    - ls /usr/
+  only:
+    - karma/dev
