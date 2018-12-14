@@ -57,6 +57,7 @@ docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  .
 ```
 docker rm account-service
 docker rmi gls-account
+docker rmi $(docker images |grep 'gls-account')
 docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  .
 ```
 

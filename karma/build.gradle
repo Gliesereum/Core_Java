@@ -35,19 +35,20 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-security')
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-amqp')
-	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-
+	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7')
+	implementation('org.modelmapper:modelmapper:2.3.0')
 	implementation('io.jsonwebtoken:jjwt:0.9.1')
-
 	implementation('org.apache.commons:commons-collections4:4.2')
 	implementation('org.apache.commons:commons-lang3:3.8.1')
 	implementation('commons-io:commons-io:2.6')
-
 	implementation('org.flywaydb:flyway-core')
+	
 	runtimeOnly('org.postgresql:postgresql')
+	
+	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+	
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
 
-	implementation('org.modelmapper:modelmapper:2.3.0')
 	compileOnly 'org.projectlombok:lombok:1.18.2'
 
 	implementation (project(':share')) {

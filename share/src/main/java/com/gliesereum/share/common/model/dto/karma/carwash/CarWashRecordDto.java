@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.carwash;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
@@ -9,8 +10,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,10 +34,13 @@ public class CarWashRecordDto extends DefaultDto {
 
     private Integer price;
 
-    private Time beginTime;
+    @JsonFormat(pattern = "KK:mm")
+    private LocalTime beginTime;
 
-    private Time finishTime;
+    @JsonFormat(pattern = "KK:mm")
+    private LocalTime finishTime;
 
+    @JsonFormat(pattern = "yyyy:MM:dd")
     private LocalDate date;
 
     private Integer numberBox;

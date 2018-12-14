@@ -1,0 +1,6 @@
+spring:
+  redis:
+    host: 207.154.239.122
+    port: 6379
+    password: Af2f4dsASF
+    chanel-logstash: logstash
