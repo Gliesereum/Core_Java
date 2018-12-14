@@ -10,6 +10,7 @@ import com.gliesereum.share.common.model.dto.karma.car.ModelCarDto;
 import com.gliesereum.share.common.model.dto.karma.car.YearCarDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +46,7 @@ public class CarController {
 
     @GetMapping("/user")
     public List<CarDto> getAll() {
-        return carService.getAllByUserId(SecurityUtil.getUserId());
+        return ListUtils.emptyIfNull(carService.getAllByUserId(SecurityUtil.getUserId()));
     }
 
     @PostMapping

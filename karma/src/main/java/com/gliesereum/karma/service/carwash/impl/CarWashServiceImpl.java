@@ -11,6 +11,7 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -76,6 +77,16 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
         UUID userBusinessId = SecurityUtil.getUserBusinessId();
         if (userBusinessId != null) {
             result = existByIdAndUserBusinessId(carWashId, userBusinessId);
+        }
+        return result;
+    }
+
+    @Override
+    public List<CarWashDto> getByUserBusinessId(UUID userBusinessId) {
+        List<CarWashDto> result = null;
+        if (userBusinessId != null) {
+            List<CarWashEntity> entities = carWashRepository.findByUserBusinessId(userBusinessId);
+            result = converter.convert(entities, dtoClass);
         }
         return result;
     }
