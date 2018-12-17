@@ -38,6 +38,7 @@ docker-clean-image:
     - cd $PROJECT_HOME
     - docker stack rm gls
     - sleep 30
+    - docker stack rm $(docker ps -a -q) --force
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-discovery')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-account')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-proxy')
@@ -47,6 +48,7 @@ docker-clean-image:
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
   only:
     - karma/dev
+  allow_failure: true
     
 docker-image-package:
   stage: package
