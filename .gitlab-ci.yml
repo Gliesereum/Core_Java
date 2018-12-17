@@ -9,10 +9,7 @@ variables:
   PROJECT_HOME: "/usr/gliesereum"
   
 before_script:
-  script:
     - whoami
-  only:
-    - karma/dev
 
   
 git-pull:
