@@ -54,13 +54,13 @@ docker-image-package:
   script:
     - echo 'Docker build images'
     - cd $PROJECT_HOME
-    - docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  .
-    - docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  .
-    - docker build -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  .
-    - docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  .
-    - docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  .
-    - docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  .
-    - docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  .
+    - sudo docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  .
+    - sudo docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  .
+    - sudo docker build -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  .
+    - sudo docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  .
+    - sudo docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  .
+    - sudo docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  .
+    - sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  .
   only:
     - karma/dev
 
