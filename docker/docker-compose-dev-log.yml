@@ -52,8 +52,6 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_USERNAME: elastic
-    ports:
-    - 5601:5601
     deploy:
       restart_policy:
         condition: on-failure
@@ -190,8 +188,20 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: Af2f4dsASF
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
+
+  nginx:
+    image: nginx:1.15.7-alpine
+    volumes:
+      - ../nginx:/etc/nginx
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 5601:5601
 
 networks:
   gls-net:
