@@ -9,7 +9,7 @@ variables:
   PROJECT_HOME: "/usr/gliesereum"
   
 before_script:
-    - su
+    - whoami
   
 git-pull:
   stage: prebuild
