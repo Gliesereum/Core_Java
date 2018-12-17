@@ -8,9 +8,6 @@ stages:
 variables:
   PROJECT_HOME: "/usr/gliesereum"
   
-before_script:
-    - whoami
-  
 git-pull:
   stage: prebuild
   script:
@@ -25,12 +22,12 @@ gradle-build:
   script:
     - echo 'Gradle build'
     - cd $PROJECT_HOME
-    - gradle clean build -b=account/build.gradle
-    - gradle clean build -b=discovery/build.gradle
-    - gradle clean build -b=proxy/build.gradle
-    - gradle clean build -b=mail/build.gradle
-    - gradle clean build -b=permission/build.gradle
-    - gradle clean build -b=karma/build.gradle
+    - sudo gradle clean build -b=account/build.gradle
+    - sudo gradle clean build -b=discovery/build.gradle
+    - sudo gradle clean build -b=proxy/build.gradle
+    - sudo gradle clean build -b=mail/build.gradle
+    - sudo gradle clean build -b=permission/build.gradle
+    - sudo gradle clean build -b=karma/build.gradle
   only:
     - karma/dev
 
