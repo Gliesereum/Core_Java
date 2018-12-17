@@ -44,6 +44,6 @@ logs/
 
 /volumes
 
-/nginx/nginx-logs/access.log
-/nginx/nginx-logs/error.log
-/nginx/nginx-logs/nginx.pid
+nginx/nginx-logs/access.log
+nginx/nginx-logs/error.log
+nginx/nginx-logs/nginx.pid
