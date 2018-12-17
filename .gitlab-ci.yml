@@ -9,7 +9,7 @@ variables:
   PROJECT_HOME: "/usr/gliesereum"
   
 before_script:
-    - whoami
+    - su
 
   
 git-pull:
