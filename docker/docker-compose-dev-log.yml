@@ -19,7 +19,7 @@ services:
   redis:
     image: redis:4.0.11-alpine
     command: >
-      --loglevel ${REDIS_LOGLEVEL:-warning}
+      --loglevel ${REDIS_LOGLEVEL:-notice}
       --save 900 1
       --save 300 10
       --save 60 10000
