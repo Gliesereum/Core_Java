@@ -4,6 +4,7 @@ import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.account.service.token.TokenService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
+import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +41,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public TokenStoreDomain refresh(@RequestParam("accessToken") String accessToken,
-                                    @RequestParam("refreshToken") String refreshToken) {
+    public TokenInfoDto refresh(@RequestParam("accessToken") String accessToken,
+                                @RequestParam("refreshToken") String refreshToken) {
         return tokenService.refresh(accessToken, refreshToken);
     }
 
