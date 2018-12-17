@@ -13,7 +13,7 @@ git-pull:
   script:
     - echo 'Git pull'
     - cd $PROJECT_HOME
-    - sudo git pull
+    - git pull
   only:
     - karma/dev
 
