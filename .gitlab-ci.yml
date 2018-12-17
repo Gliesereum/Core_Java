@@ -38,7 +38,6 @@ docker-clean-image:
     - cd $PROJECT_HOME
     - docker stack rm gls
     - sleep 30
-    - docker rm $(docker ps -a -q) --force
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-discovery')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-account')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-proxy')
