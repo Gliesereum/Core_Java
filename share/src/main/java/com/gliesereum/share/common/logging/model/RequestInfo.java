@@ -33,6 +33,8 @@ public class RequestInfo {
 
     private String uri;
 
+    private Integer httpStatus;
+
     private Map<String, String> headers;
 
     private Map<String, String[]> parameters;
