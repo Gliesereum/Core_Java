@@ -19,5 +19,5 @@ public interface CarRepository extends JpaRepository<CarEntity, UUID> {
 
     void deleteAllByUserId(UUID id);
 
-    boolean existsCarEntityByUserIdAndId(UUID idUser,UUID idCar);
+    boolean existsByIdAndUserId(UUID id, UUID userId);
 }

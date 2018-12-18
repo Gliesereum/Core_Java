@@ -4,6 +4,7 @@ import com.gliesereum.karma.service.car.BrandCarService;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.car.ModelCarService;
 import com.gliesereum.karma.service.car.YearCarService;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.BrandCarDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.car.ModelCarDto;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 
 /**
  * @author vitalij
@@ -46,7 +49,11 @@ public class CarController {
 
     @GetMapping("/user")
     public List<CarDto> getAll() {
-        return ListUtils.emptyIfNull(carService.getAllByUserId(SecurityUtil.getUserId()));
+        UUID userId = SecurityUtil.getUserId();
+        if (userId == null) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        return ListUtils.emptyIfNull(carService.getAllByUserId(userId));
     }
 
     @PostMapping
