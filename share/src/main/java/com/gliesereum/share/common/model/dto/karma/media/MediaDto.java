@@ -3,6 +3,7 @@ package com.gliesereum.share.common.model.dto.karma.media;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.MediaType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class MediaDto extends DefaultDto {
 
     @NotNull

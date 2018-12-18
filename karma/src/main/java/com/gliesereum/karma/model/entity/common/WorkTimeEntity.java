@@ -7,8 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.UUID;
 
 /**
@@ -24,16 +24,16 @@ import java.util.UUID;
 public class WorkTimeEntity extends DefaultEntity {
 
     @Column(name = "from_time")
-    private Time from;
+    private LocalTime from;
 
     @Column(name = "to_time")
-    private Time to;
+    private LocalTime to;
 
     @Column(name = "business_service_id")
     private UUID businessServiceId;
 
     @Column(name = "is_work")
-    private boolean isWork;
+    private Boolean isWork;
 
     @Column(name = "car_service_type")
     @Enumerated(EnumType.STRING)

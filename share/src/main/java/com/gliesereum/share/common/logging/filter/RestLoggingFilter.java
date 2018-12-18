@@ -58,7 +58,8 @@ public class RestLoggingFilter extends OncePerRequestFilter {
         requestInfo.setUri(requestWrapper.getRequestURI());
         requestInfo.setMethod(requestWrapper.getMethod());
         requestInfo.setHeaders(getHeaders(requestWrapper));
-        requestInfo.setParameters(requestWrapper.getParameterMap());
+        requestInfo.setHttpStatus(responseWrapper.getStatusCode());
+        requestInfo.setParameters(new HashMap<>(requestWrapper.getParameterMap()));
         requestInfo.setRequestBody(getBody(requestWrapper.getContentAsByteArray(), requestWrapper.getCharacterEncoding()));
         if (isError) {
             requestInfo.setError(true);

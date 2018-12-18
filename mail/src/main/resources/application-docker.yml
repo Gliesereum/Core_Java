@@ -9,7 +9,7 @@ spring:
     password: Gliesereum0013
     from: GLIESEREUM<gliesereum@gmail.com>
     subject: Gliesereum verification mail
-    chanel-name: verificationQueue
+    chanel-verification: verificationQueue
     port: 465
     protocol: smtp
     properties:

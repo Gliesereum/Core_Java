@@ -3,7 +3,9 @@ package com.gliesereum.account.service.token.impl;
 import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.model.repository.redis.TokenStoreRepository;
 import com.gliesereum.account.service.token.TokenService;
+import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class TokenServiceImpl implements TokenService {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private DefaultConverter defaultConverter;
 
     @Override
     public TokenStoreDomain getByAccessToken(String accessToken) {
@@ -72,7 +77,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public TokenStoreDomain refresh(String accessToken, String refreshToken) {
+    public TokenInfoDto refresh(String accessToken, String refreshToken) {
         if (StringUtils.isBlank(accessToken) || StringUtils.isBlank(refreshToken)) {
             throw new ClientException(ACCESS_REFRESH_EMPTY);
         }
@@ -88,7 +93,7 @@ public class TokenServiceImpl implements TokenService {
         }
         String userId = tokenStore.getUserId();
         tokenStoreRepository.delete(tokenStore);
-        return generate(userId);
+        return defaultConverter.convert(generate(userId), TokenInfoDto.class);
     }
 
     @Override

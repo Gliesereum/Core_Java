@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.common;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
@@ -7,8 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.sql.Time;
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.UUID;
 
 /**
@@ -22,15 +23,17 @@ import java.util.UUID;
 public class WorkTimeDto extends DefaultDto {
 
     @NotNull
-    private Time from;
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime from;
 
     @NotNull
-    private Time to;
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime to;
 
     @NotNull
     private UUID businessServiceId;
 
-    private String isWork;
+    private Boolean isWork;
 
     @NotNull
     private ServiceType carServiceType;

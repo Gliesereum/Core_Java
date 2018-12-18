@@ -10,8 +10,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -41,10 +41,10 @@ public class CarWashRecordEntity extends DefaultEntity {
     private Integer price;
 
     @Column(name = "begin_time")
-    private Time beginTime;
+    private LocalTime beginTime;
 
     @Column(name = "finish_time")
-    private Time finishTime;
+    private LocalTime finishTime;
 
     @Column(name = "date")
     private LocalDate date;
