@@ -31,6 +31,9 @@ spring:
     #password:
     chanel-logstash: logstash
 
+  rabbitmq:
+    queue-logstash: logstash
+
 logging:
   file: logs/permission.log
 

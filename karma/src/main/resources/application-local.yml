@@ -22,3 +22,6 @@ spring:
     sql-migration-suffixes: .sql
     sql-migration-prefix: V
     schemas: ${db.schema}
+
+  rabbitmq:
+    queue-logstash: logstash

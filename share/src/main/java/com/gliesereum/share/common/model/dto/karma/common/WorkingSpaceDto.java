@@ -1,31 +1,31 @@
 package com.gliesereum.share.common.model.dto.karma.common;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
  * @author vitalij
  * @version 1.0
- * @since 12/7/18
+ * @since 12/17/18
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class PackageDto extends DefaultDto {
+public class WorkingSpaceDto extends DefaultDto {
 
-    private String name;
+    private UUID workerId;
 
-    private int discount;
-
-    private int duration;
+    private Integer indexNumber;
 
     private UUID businessServiceId;
 
-    private List<ServicePriceDto> services = new ArrayList<>();
+    private StatusSpace statusSpace;
+
+    private ServiceType carServiceType;
 }

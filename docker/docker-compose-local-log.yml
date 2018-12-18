@@ -95,6 +95,18 @@ services:
     - ../log/elk/curator:/.curator
     - ../log/elk/curator/logs:/curator/logs/
 
+  rabbit:
+    image: rabbitmq:3.7.8-management-alpine
+    ports:
+    - 5672:5672
+    - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    deploy:
+      restart_policy:
+        condition: on-failure
+
 networks:
   gls-net:
     driver: bridge

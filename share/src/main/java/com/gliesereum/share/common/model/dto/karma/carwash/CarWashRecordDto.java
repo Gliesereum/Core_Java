@@ -1,7 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.carwash;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.karma.common.ServiceDto;
+import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusWashing;
@@ -29,7 +29,7 @@ public class CarWashRecordDto extends DefaultDto {
 
     private UUID packageId;
 
-    private UUID carWashId;
+    private UUID placeId;
 
     private Integer price;
 
@@ -39,7 +39,7 @@ public class CarWashRecordDto extends DefaultDto {
 
     private LocalDate date;
 
-    private Integer numberBox;
+    private String description;
 
     private StatusPay statusPay;
 
@@ -47,5 +47,5 @@ public class CarWashRecordDto extends DefaultDto {
 
     private StatusRecord statusRecord;
 
-    private List<ServiceDto> services = new ArrayList<>();
+    private List<ServicePriceDto> services = new ArrayList<>();
 }

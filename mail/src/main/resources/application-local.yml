@@ -27,6 +27,11 @@ spring:
     host: localhost
     port: 6379
 
+  rabbitmq:
+    password: guest
+    username: guest
+    queue-logstash: logstash
+
 phone:
   url: https://acemountmedia.com/api/
   auth-type: token

@@ -1,6 +1,6 @@
 package com.gliesereum.karma.model.entity.carwash;
 
-import com.gliesereum.karma.model.entity.common.ServiceEntity;
+import com.gliesereum.karma.model.entity.common.ServicePriceEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusWashing;
@@ -34,8 +34,8 @@ public class CarWashRecordEntity extends DefaultEntity {
     @Column(name = "package_id")
     private UUID packageId;
 
-    @Column(name = "car_wash_id")
-    private UUID carWashId;
+    @Column(name = "place_id")
+    private UUID placeId;
 
     @Column(name = "price")
     private Integer price;
@@ -49,8 +49,8 @@ public class CarWashRecordEntity extends DefaultEntity {
     @Column(name = "date")
     private LocalDate date;
 
-    @Column(name = "number_box")
-    private Integer numberBox;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "status_pay")
     @Enumerated(EnumType.STRING)
@@ -68,5 +68,5 @@ public class CarWashRecordEntity extends DefaultEntity {
     @JoinTable(name = "car_wash_record_service",
             joinColumns = {@JoinColumn(name = "car_wash_record_id", insertable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "service_id", insertable = false, updatable = false)})
-    private Set<ServiceEntity> services = new HashSet<>();
+    private Set<ServicePriceEntity> services = new HashSet<>();
 }

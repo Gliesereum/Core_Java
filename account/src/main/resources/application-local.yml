@@ -32,6 +32,10 @@ spring:
     chanel-verification: verificationQueue
     chanel-logstash: logstash
 
+  rabbitmq:
+    queue-logstash: logstash
+    queue-mail: verificationQueue
+
 token:
   expirationTime:
     # 7 days

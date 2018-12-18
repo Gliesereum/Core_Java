@@ -13,6 +13,8 @@ public class UserExceptionMessage {
     public static final ExceptionMessage UPL_AVATAR_IS_NOT_VALID = new ExceptionMessage(1014, 500, "Url avatar is not valid");
     public static final ExceptionMessage UPL_COVER_IS_NOT_VALID = new ExceptionMessage(1015, 500, "Url cover is not valid");
     public static final ExceptionMessage USER_NOT_BUSINESS = new ExceptionMessage(1016, 400, "User not business ");
+    public static final ExceptionMessage USER_NOT_VERIFIED = new ExceptionMessage(1017, 400, "User not VERIFIED ");
+    public static final ExceptionMessage USER_IN_BAN = new ExceptionMessage(1018, 400, "User in ban ");
 
 
 }

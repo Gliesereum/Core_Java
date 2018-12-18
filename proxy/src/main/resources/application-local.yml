@@ -4,3 +4,6 @@ spring:
     port: 6379
     #password:
     chanel-logstash: logstash
+
+  rabbitmq:
+    queue-logstash: logstash

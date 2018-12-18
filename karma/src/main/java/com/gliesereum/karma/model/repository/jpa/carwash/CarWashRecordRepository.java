@@ -18,7 +18,7 @@ import java.util.UUID;
 @Repository
 public interface CarWashRecordRepository extends JpaRepository<CarWashRecordEntity, UUID>{
 
-     List<CarWashRecordEntity> findByStatusRecordAndDateAndCarWashId(StatusRecord status, LocalDate date, UUID carWashId);
+     List<CarWashRecordEntity> findByStatusRecordAndDateAndPlaceIdIn(StatusRecord status, LocalDate date, List<UUID> placeIds);
 
      List<CarWashRecordEntity> findByBeginTimeGreaterThanEqualAndStatusRecordAndDateAndCarIdIn(Time time, StatusRecord status, LocalDate date, List<UUID> carIds);
 }
