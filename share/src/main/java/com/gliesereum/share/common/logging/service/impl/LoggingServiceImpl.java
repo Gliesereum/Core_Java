@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoggingServiceImpl implements LoggingService {
 
+    private final String SERVICE_NAME = "spring.application.name";
+    private final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
+
     @Autowired
     private Environment environment;
 
@@ -28,16 +31,13 @@ public class LoggingServiceImpl implements LoggingService {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private RabbitTemplate template;
-
-    private final String SERVICE_NAME = "spring.application.name";
-
-    private final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
+    private RabbitTemplate rabbitTemplate;
 
     @Async
     @Override
-    public void publishing(String message) {
-        template.convertAndSend(environment.getRequiredProperty(QUEUE_LOGSTASH), message);
+    public void publishing(JsonNode jsonNode) {
+        if (rabbitTemplate.isRunning())
+            rabbitTemplate.convertAndSend(environment.getRequiredProperty(QUEUE_LOGSTASH), jsonNode);
     }
 
     @Async
@@ -47,8 +47,7 @@ public class LoggingServiceImpl implements LoggingService {
             try {
                 JsonNode jsonNode = objectMapper.valueToTree(obj);
                 ((ObjectNode) jsonNode).put("service_name", environment.getRequiredProperty(SERVICE_NAME));
-                final String json = jsonNode.toString();
-                publishing(json);
+                publishing(jsonNode);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 e.printStackTrace();
