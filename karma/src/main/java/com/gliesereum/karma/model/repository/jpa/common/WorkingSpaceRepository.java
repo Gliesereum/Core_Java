@@ -12,7 +12,6 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/17/18
  */
-@Repository
 public interface WorkingSpaceRepository extends JpaRepository<WorkingSpaceEntity, UUID> {
 
     List<WorkingSpaceEntity> findByBusinessServiceId(UUID businessServiceId);

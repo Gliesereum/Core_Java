@@ -1,6 +1,8 @@
 spring:
-  redis:
+  rabbitmq:
     host: 207.154.239.122
-    port: 6379
+    port: 5672
     password: Af2f4dsASF
-    chanel-logstash: logstash
+    username: rabbit
+    queue-logstash: logstash
+    queue-mail: verificationQueue

@@ -25,15 +25,10 @@ spring:
     sql-migration-prefix: V
     schemas: ${db.schema}
 
-  redis:
-    host: localhost
-    port: 6379
-    #password:
-    chanel-logstash: logstash
-
   rabbitmq:
+    host: localhost
+    port: 5672
+    password: guest
+    username: guest
     queue-logstash: logstash
-
-logging:
-  file: logs/permission.log
 

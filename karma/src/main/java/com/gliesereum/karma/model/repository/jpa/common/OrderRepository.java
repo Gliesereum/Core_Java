@@ -11,6 +11,5 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/7/18
  */
-@Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
 }
