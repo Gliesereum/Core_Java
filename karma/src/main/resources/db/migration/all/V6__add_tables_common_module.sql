@@ -61,3 +61,24 @@ CREATE TABLE IF NOT EXISTS karma.work_time (
 
    CONSTRAINT work_time_pk PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS karma.work_space (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   status_space character varying,
+   car_service_type character varying,
+   index_number integer,
+   worker_id uuid,
+   business_service_id uuid,
+
+   CONSTRAINT work_space_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.order (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   price integer,
+   service_id uuid,
+   record_id uuid,
+   from_package boolean,
+
+   CONSTRAINT order_pk PRIMARY KEY (id)
+);

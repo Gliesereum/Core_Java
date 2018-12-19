@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://207.154.239.122:5432/postgres
     username: postgres
-    password: postgres
+    password: Af2f4dsASF
   jpa:
     hibernate:
       ddl-auto: validate
@@ -15,12 +15,6 @@ spring:
           use_jdbc_metadata_defaults: false
     show-sql: true
 
-  redis:
-    host: 207.154.239.122
-    port: 6379
-    password: Af2f4dsASF
-    chanel-logstash: logstash
-
   flyway:
     enabled: true
     locations: classpath:db/migration/all,classpath:db/migration/data
@@ -28,6 +22,14 @@ spring:
     sql-migration-suffixes: .sql
     sql-migration-prefix: V
     schemas: ${db.schema}
+
+  rabbitmq:
+    host: 207.154.239.122
+    port: 5672
+    password: Af2f4dsASF
+    username: rabbit
+    queue-logstash: logstash
+    queue-mail: verificationQueue
 
   data:
     jest:

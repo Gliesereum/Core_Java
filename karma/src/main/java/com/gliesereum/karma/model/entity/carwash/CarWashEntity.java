@@ -1,6 +1,7 @@
 package com.gliesereum.karma.model.entity.carwash;
 
 import com.gliesereum.karma.model.entity.common.WorkTimeEntity;
+import com.gliesereum.karma.model.entity.common.WorkingSpaceEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,14 +30,20 @@ public class CarWashEntity extends DefaultEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "count_box")
-    private Integer countBox;
-
     @Column(name = "description")
     private String description;
 
+    @Column(name = "logo_url")
+    private String logoUrl;
+
     @Column(name = "address")
     private String address;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "add_phone")
+    private String addPhone;
 
     @Column(name = "latitude")
     private Double latitude;
@@ -47,4 +54,8 @@ public class CarWashEntity extends DefaultEntity {
     @OneToMany
     @JoinColumn(name = "business_service_id", insertable = false, updatable = false)
     private Set<WorkTimeEntity> workTimes = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "business_service_id", insertable = false, updatable = false)
+    private Set<WorkingSpaceEntity> spaces = new HashSet<>();
 }

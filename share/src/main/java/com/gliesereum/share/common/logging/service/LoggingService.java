@@ -5,7 +5,7 @@ package com.gliesereum.share.common.logging.service;
  * @version 1.0
  * @since 04/12/2018
  */
-public interface LoggingRedisService {
+public interface LoggingService {
 
     void publishing(String message);
 

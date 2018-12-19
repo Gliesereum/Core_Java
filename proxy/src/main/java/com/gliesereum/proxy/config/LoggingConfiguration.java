@@ -1,6 +1,6 @@
 package com.gliesereum.proxy.config;
 
-import com.gliesereum.share.common.config.redis.RedisDefaultConfiguration;
+import com.gliesereum.share.common.config.rabbitmq.RabbitMQDefaultConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +14,6 @@ import org.springframework.context.annotation.Configuration;
         value = {
                 "com.gliesereum.share.common.logging.service",
                 "com.gliesereum.share.common.logging.appender"},
-        basePackageClasses = RedisDefaultConfiguration.class)
+        basePackageClasses = RabbitMQDefaultConfiguration.class)
 public class LoggingConfiguration {
 }

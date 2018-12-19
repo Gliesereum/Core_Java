@@ -18,4 +18,6 @@ public class ServiceClassCarDto extends DefaultDto {
     private String name;
 
     private String description;
+
+    private Integer orderIndex;
 }

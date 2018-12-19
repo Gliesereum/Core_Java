@@ -3,12 +3,10 @@ package com.gliesereum.share.common.logging.appender;
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-import com.gliesereum.share.common.logging.service.LoggingRedisService;
-import com.gliesereum.share.common.redis.publisher.RedisMessagePublisher;
+import com.gliesereum.share.common.logging.service.LoggingService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -29,15 +27,15 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
 
     private List<Map<String,Object>> eventQueue = new LinkedList<>();
 
-    public static LoggingRedisService loggingRedisService;
+    public static LoggingService loggingService;
 
     private static boolean publisherEnable = false;
 
     private static boolean queueIsNotEmpty = false;
 
     @Autowired
-    public void setPublisher(LoggingRedisService loggingRedisService) {
-        this.loggingRedisService = loggingRedisService;
+    public void setPublisher(LoggingService loggingService) {
+        this.loggingService = loggingService;
         publisherEnable = true;
     }
 
@@ -52,11 +50,11 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
         eventMap.put("mdc", event.getMDCPropertyMap());
         if (publisherEnable) {
             if (queueIsNotEmpty) {
-                eventQueue.forEach(loggingRedisService::publishingObject);
+                eventQueue.forEach(loggingService::publishingObject);
                 eventQueue.clear();
                 queueIsNotEmpty = false;
             }
-            loggingRedisService.publishingObject(eventMap);
+            loggingService.publishingObject(eventMap);
         } else {
             eventQueue.add(eventMap);
             queueIsNotEmpty = true;

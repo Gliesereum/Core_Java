@@ -27,4 +27,7 @@ public class ServiceClassCarEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "order_index")
+    private Integer orderIndex;
+
 }

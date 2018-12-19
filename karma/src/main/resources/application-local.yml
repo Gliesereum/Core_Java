@@ -15,12 +15,6 @@ spring:
           use_jdbc_metadata_defaults: false
     show-sql: true
 
-  redis:
-    host: localhost
-    port: 6379
-    #password:
-    chanel-logstash: logstash
-
   flyway:
     enabled: true
     locations: classpath:db/migration/all,classpath:db/migration/data
@@ -28,6 +22,13 @@ spring:
     sql-migration-suffixes: .sql
     sql-migration-prefix: V
     schemas: ${db.schema}
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    password: guest
+    username: guest
+    queue-logstash: logstash
 
   data:
     elasticsearch:

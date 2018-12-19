@@ -4,6 +4,8 @@ import com.gliesereum.karma.service.carwash.CarWashRecordService;
 import com.gliesereum.karma.service.carwash.CarWashService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusWashing;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +48,36 @@ public class CarWashRecordController {
         return service.create(dto);
     }
 
-    @PutMapping
-    public CarWashRecordDto update(@RequestBody CarWashRecordDto dto) {
-        return service.update(dto);
+    @PostMapping("/status/record")
+    public CarWashRecordDto updateStatusRecord(
+            @RequestParam("isUser") Boolean isUser,
+            @RequestParam("idRecord") UUID idRecord,
+            @RequestParam("status") StatusRecord status) {
+        return service.updateStatusRecord(idRecord, status, isUser);
+    }
+
+    @PostMapping("/time/record")
+    public CarWashRecordDto updateTimeRecord(
+            @RequestParam("isUser") Boolean isUser,
+            @RequestParam("idRecord") UUID idRecord,
+            @RequestParam("beginTime") String beginTime) {
+        return service.updateTimeRecord(idRecord, beginTime, isUser);
+    }
+
+    @PostMapping("/status/washing")
+    public CarWashRecordDto updateStatusWashing(
+            @RequestParam("isUser") Boolean isUser,
+            @RequestParam("idRecord") UUID idRecord,
+            @RequestParam("status") StatusWashing status) {
+        return service.updateStatusWashing(idRecord, status, isUser);
+    }
+
+    @PostMapping("/washing/space")
+    public CarWashRecordDto updateWashingSpace(
+            @RequestParam("isUser") Boolean isUser,
+            @RequestParam("idRecord") UUID idRecord,
+            @RequestParam("workingSpaceId") UUID workingSpaceId) {
+        return service.updateWashingSpace(idRecord, workingSpaceId, isUser);
     }
 
     @DeleteMapping("/{id}")

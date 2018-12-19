@@ -4,7 +4,6 @@ import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultService;
 
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -15,4 +14,6 @@ import java.util.UUID;
 public interface UserService extends DefaultService<UserDto, UserEntity> {
 
     void banById(UUID id);
+
+    UserDto updateWithOutCheckModel(UserDto dto);
 }

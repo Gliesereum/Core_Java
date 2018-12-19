@@ -29,8 +29,14 @@ spring:
     host: ${redis.host}
     port: ${redis.port}
     password: ${redis.password}
-    chanel-verification: verificationQueue
-    chanel-logstash: logstash
+
+  rabbitmq:
+    host: ${rabbit.host}
+    port: ${rabbit.port}
+    password: ${rabbit.password}
+    username: ${rabbit.user}
+    queue-logstash: logstash
+    queue-mail: verificationQueue
 
 token:
   expirationTime:

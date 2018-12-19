@@ -5,8 +5,8 @@ import com.gliesereum.account.model.domain.VerificationDomain;
 import com.gliesereum.account.model.repository.redis.VerificationRepository;
 import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
-import com.gliesereum.share.common.redis.publisher.RedisMessagePublisher;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,12 +30,12 @@ public class VerificationServiceImpl implements VerificationService {
     private VerificationRepository repository;
 
     @Autowired
-    private RedisMessagePublisher redisMessagePublisher;
-
-    @Autowired
     private Environment environment;
 
-    private final String CHANEL = "spring.redis.chanel-verification";
+    @Autowired
+    private RabbitTemplate template;
+
+    private final String MAIL_QUEUE = "spring.rabbitmq.queue-mail";
 
     @Override
     public boolean checkVerification(@NotNull String value, @NotNull String code) {
@@ -67,7 +67,8 @@ public class VerificationServiceImpl implements VerificationService {
             model.put("type", type.toString());
             model.put("value", value);
             ObjectMapper mapper = new ObjectMapper();
-            redisMessagePublisher.publish(mapper.writeValueAsString(model), environment.getRequiredProperty(CHANEL));
+            String json = mapper.writeValueAsString(model);
+            template.convertAndSend(environment.getRequiredProperty(MAIL_QUEUE), json);
             log.info(model.toString());
         } catch (IOException e) {
             log.error(e.getMessage());

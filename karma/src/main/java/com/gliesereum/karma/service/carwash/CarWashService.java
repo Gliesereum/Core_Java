@@ -2,6 +2,7 @@ package com.gliesereum.karma.service.carwash;
 
 import com.gliesereum.karma.model.entity.carwash.CarWashEntity;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
+import com.gliesereum.share.common.model.dto.karma.carwash.CarWashFullModel;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface CarWashService extends DefaultService<CarWashDto, CarWashEntity
     boolean currentUserHavePermissionToAction(UUID carWashId);
 
     List<CarWashDto> getByUserBusinessId(UUID userBusinessId);
+
+    CarWashFullModel getFullModelById(UUID id);
 }

@@ -103,6 +103,15 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     }
 
     @Override
+    @Transactional
+    public UserDto updateWithOutCheckModel(UserDto dto) {
+        if (dto != null) {
+            return super.update(dto);
+        }
+        return null;
+    }
+
+    @Override
     public void banById(UUID id) {
         UserDto user = getById(id);
         if (user == null) {
