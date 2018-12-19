@@ -72,3 +72,13 @@ CREATE TABLE IF NOT EXISTS karma.work_space (
 
    CONSTRAINT work_space_pk PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS karma.order (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   price integer,
+   service_id uuid,
+   record_id uuid,
+   from_package boolean,
+
+   CONSTRAINT order_pk PRIMARY KEY (id)
+);

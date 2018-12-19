@@ -33,6 +33,9 @@ public class CarWashEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "logo_url")
+    private String logoUrl;
+
     @Column(name = "address")
     private String address;
 

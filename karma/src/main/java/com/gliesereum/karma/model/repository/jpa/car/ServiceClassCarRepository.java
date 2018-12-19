@@ -15,4 +15,5 @@ import java.util.UUID;
 public interface ServiceClassCarRepository extends JpaRepository<ServiceClassCarEntity, UUID> {
 
     boolean existsById(UUID id);
+
 }

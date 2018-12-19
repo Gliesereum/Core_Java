@@ -1,18 +1,16 @@
 package com.gliesereum.share.common.model.dto.karma.carwash;
 
-import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.common.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.common.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.common.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author vitalij
@@ -21,35 +19,33 @@ import java.util.UUID;
  */
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class CarWashDto extends DefaultDto {
+public class CarWashFullModel{
 
-    private UUID userBusinessId;
-
-    @NotEmpty
     private String name;
 
     private String description;
 
     private String logoUrl;
 
-    @NotNull
     private String address;
 
-    @NotNull
-    @Size(min = 5, max = 13)
     private String phone;
 
-    @Size(min = 5, max = 13)
     private String addPhone;
 
-    @NotNull
     private Double latitude;
 
-    @NotNull
     private Double longitude;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 
     private List<WorkingSpaceDto> spaces = new ArrayList<>();
+
+    private List<ServicePriceDto> servicePrices = new ArrayList<>();
+
+    private List<PackageDto> packages = new ArrayList<>();
+
+    private List<MediaDto> media = new ArrayList<>();
+
+    private List<CommentDto> comments = new ArrayList<>();
 }

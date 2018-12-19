@@ -1,7 +1,7 @@
-INSERT INTO karma.service_class_car (name, description) VALUES ('Стандарт', 'легковые авто стандарт класса (Mitsubishi Lanсer, Skoda, Toyota Avensis, BMW 3, 5, Mercedes С, Е…)');
-INSERT INTO karma.service_class_car (name, description) VALUES ('Бизнес', 'легковые авто премиум класса, кроссоверы (Mercedes S, BMW 7, Audi A8, RAV- 4, Outlander, Hyundai Tucson, Mazda CX 5, CX 7, Honda CR-V, Acura RDX, Infiniti EX….))');
-INSERT INTO karma.service_class_car (name, description) VALUES ('Внедорожник', 'внедорожники, большие минивэны (Hummer H3, Toyota Highlander, Prado, 100, 200, BMW X-5, X-6, МL, Mitsubishi Pajero, Acura MDX, Mazda CX-9, Infiniti FX, Hyundai ix55 Veracruz……)');
-INSERT INTO karma.service_class_car (name, description) VALUES ('Микроавтобус', 'большие внедорожники и микроавтобусы  (Multivan, Vito, Cadillac Escalade, Toyota Sequoia, Nissan Armada, Infiniti QX…..)');
+INSERT INTO karma.service_class_car (name, description, order_index) VALUES ('Эконом', 'авто эконом класса', 1);
+INSERT INTO karma.service_class_car (name, description, order_index) VALUES ('Стандарт', 'авто стандарт класса',2);
+INSERT INTO karma.service_class_car (name, description, order_index) VALUES ('Бизнес', 'авто бизнес класса',3);
+INSERT INTO karma.service_class_car (name, description, order_index) VALUES ('Премиум', 'авто премиум класса',4);
 
 INSERT INTO karma.service (name, description, type) VALUES ('Мойка двигателя', 'Мойка двигателя и моторного отсека, продувка', 'CAR_WASH');
 INSERT INTO karma.service (name, description, type) VALUES ('Пылесос', 'Чистка салона пылесосом', 'CAR_WASH');

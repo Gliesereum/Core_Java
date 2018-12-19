@@ -5,8 +5,8 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +18,9 @@ import java.util.UUID;
 @Repository
 public interface CarWashRecordRepository extends JpaRepository<CarWashRecordEntity, UUID>{
 
-     List<CarWashRecordEntity> findByStatusRecordAndDateAndPlaceIdIn(StatusRecord status, LocalDate date, List<UUID> placeIds);
+     List<CarWashRecordEntity> findByStatusRecordAndDateAndWorkingSpaceIdIn(StatusRecord status, LocalDate date, List<UUID> workingSpaceIds);
 
-     List<CarWashRecordEntity> findByBeginTimeGreaterThanEqualAndStatusRecordAndDateAndCarIdIn(Time time, StatusRecord status, LocalDate date, List<UUID> carIds);
+     List<CarWashRecordEntity> findByBeginTimeGreaterThanEqualAndStatusRecordAndDateAndCarIdIn(LocalTime time, StatusRecord status, LocalDate date, List<UUID> carIds);
+
+     List<CarWashRecordEntity> findByDateAndStatusRecordAndWorkingSpaceId(LocalDate date, StatusRecord status, UUID workingSpaceId);
 }

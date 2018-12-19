@@ -30,14 +30,16 @@ public class CarWashRecordDto extends DefaultDto {
 
     private UUID packageId;
 
-    private UUID placeId;
+    private UUID workingSpaceId;
+
+    private UUID carWashId;
 
     private Integer price;
 
-    @JsonFormat(pattern = "KK:mm")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime beginTime;
 
-    @JsonFormat(pattern = "KK:mm")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime finishTime;
 
     @JsonFormat(pattern = "yyyy:MM:dd")

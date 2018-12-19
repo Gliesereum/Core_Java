@@ -34,8 +34,11 @@ public class CarWashRecordEntity extends DefaultEntity {
     @Column(name = "package_id")
     private UUID packageId;
 
-    @Column(name = "place_id")
-    private UUID placeId;
+    @Column(name = "working_space_id")
+    private UUID workingSpaceId;
+
+    @Column(name = "car_wash_id")
+    private UUID carWashId;
 
     @Column(name = "price")
     private Integer price;
