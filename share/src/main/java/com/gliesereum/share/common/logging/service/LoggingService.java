@@ -1,5 +1,7 @@
 package com.gliesereum.share.common.logging.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * @author yvlasiuk
  * @version 1.0
@@ -7,7 +9,7 @@ package com.gliesereum.share.common.logging.service;
  */
 public interface LoggingService {
 
-    void publishing(String message);
+    void publishing(JsonNode jsonNode);
 
     void publishingObject(Object o);
 }
