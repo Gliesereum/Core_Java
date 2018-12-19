@@ -64,7 +64,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
 
     @Override
     public List<ServicePriceDto> getByBusinessServiceId(UUID id) {
-        List<ServicePriceEntity> entities = repository.getByBusinessServiceId(id);
+        List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessServiceId(id);
         return converter.convert(entities, dtoClass);
     }
 }
