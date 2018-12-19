@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.CAR_NOT_FOUND;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.SERVICE_CLASS_NOT_FOUND;
 
@@ -81,7 +83,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
             if (userId == null) {
                 throw new ClientException(USER_IS_ANONYMOUS);
             }
-            checkCarExist(dto.getId(), userId);
+            checkCarExistInCurrentUser(dto.getId());
             dto.setUserId(userId);
             dto = super.update(dto);
 
@@ -108,7 +110,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
     @Override
     public void checkCarExistInCurrentUser(UUID id) {
-        if (!repository.existsCarEntityByUserIdAndId(SecurityUtil.getUserId(), id)) {
+        if (!repository.existsByIdAndUserId(id, SecurityUtil.getUserId())) {
             throw new ClientException(CAR_NOT_FOUND);
         }
     }
