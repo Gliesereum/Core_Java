@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @since 04/12/2018
  */
 @Configuration
-@EnableJpaRepositories("com.gliesereum.karma.model.repository")
+@EnableJpaRepositories("com.gliesereum.karma.model.repository.jpa")
 public class DatabaseConfiguration {
 }

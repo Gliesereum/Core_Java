@@ -13,7 +13,6 @@ import java.util.UUID;
  * @since 2018-12-08
  */
 
-@Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, UUID> {
 
     List<CommentEntity> findByObjectId(UUID objectId);
