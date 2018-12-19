@@ -20,4 +20,4 @@ ARG RABBIT_PASSWORD
 ARG EUREKA_HOST
 ARG EUREKA_PORT
 
-CMD java -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.host=${EUREKA_HOST} -Deureka.port=${EUREKA_PORT} -Drabbit.host=${RABBIT_HOST} -Drabbit.port=${RABBIT_PORT} -Drabbit.user=${RABBIT_USER} -Drabbit.port=${RABBIT_PASSWORD} ./proxy-0.0.1.jar
+CMD java -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.host=${EUREKA_HOST} -Deureka.port=${EUREKA_PORT} -Drabbit.host=${RABBIT_HOST} -Drabbit.port=${RABBIT_PORT} -Drabbit.user=${RABBIT_USER} -Drabbit.password=${RABBIT_PASSWORD} ./proxy-0.0.1.jar
