@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.common.impl;
 
+import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.common.ServicePriceEntity;
 import com.gliesereum.karma.model.repository.jpa.common.ServicePriceRepository;
 import com.gliesereum.karma.service.common.ServicePriceService;
@@ -22,19 +23,37 @@ import java.util.UUID;
 @Service
 public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto, ServicePriceEntity> implements ServicePriceService {
 
-    @Autowired
-    private ServicePriceRepository repository;
+    private final ServicePriceRepository servicePriceRepository;
 
     private static final Class<ServicePriceDto> DTO_CLASS = ServicePriceDto.class;
     private static final Class<ServicePriceEntity> ENTITY_CLASS = ServicePriceEntity.class;
 
-    public ServicePriceServiceImpl(ServicePriceRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    public ServicePriceServiceImpl(ServicePriceRepository servicePriceRepository, DefaultConverter defaultConverter) {
+        super(servicePriceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.servicePriceRepository = servicePriceRepository;
+    }
+
+    @Override
+    @UpdateCarWashIndex
+    public ServicePriceDto create(ServicePriceDto dto) {
+        return super.create(dto);
+    }
+
+    @Override
+    @UpdateCarWashIndex
+    public ServicePriceDto update(ServicePriceDto dto) {
+        return super.update(dto);
     }
 
     @Override
     public List<ServicePriceDto> getAllByPackage(UUID id) {
-        List<ServicePriceEntity> entities = repository.getByBusinessServiceId(id);
+        List<ServicePriceEntity> entities = servicePriceRepository.getByBusinessServiceId(id);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<ServicePriceDto> getAllByUserBusinessId(UUID id) {
+        List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessServiceId(id);
         return converter.convert(entities, dtoClass);
     }
 }

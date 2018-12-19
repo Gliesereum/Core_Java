@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.common.impl;
 
+import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.common.ServiceClassPriceEntity;
 import com.gliesereum.karma.model.repository.jpa.common.ServiceClassPriceRepository;
 import com.gliesereum.karma.service.common.ServiceClassPriceService;
@@ -25,4 +26,15 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
     }
 
+    @Override
+    @UpdateCarWashIndex
+    public ServiceClassPriceDto create(ServiceClassPriceDto dto) {
+        return super.create(dto);
+    }
+
+    @Override
+    @UpdateCarWashIndex
+    public ServiceClassPriceDto update(ServiceClassPriceDto dto) {
+        return super.update(dto);
+    }
 }

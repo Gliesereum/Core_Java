@@ -29,7 +29,7 @@ public class ServicePriceEntity extends DefaultEntity {
     private String name;
 
     @Column(name = "price")
-    private int price;
+    private Integer price;
 
     @Column(name = "service_id")
     private UUID serviceId;
@@ -42,7 +42,7 @@ public class ServicePriceEntity extends DefaultEntity {
     private UUID businessServiceId;
 
     @Column(name ="duration")
-    private int duration;
+    private Integer duration;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "service_class_price",

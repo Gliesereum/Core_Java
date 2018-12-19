@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.carwash.impl;
 
+import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.carwash.CarWashEntity;
 import com.gliesereum.karma.model.repository.jpa.carwash.CarWashRepository;
 import com.gliesereum.karma.service.carwash.CarWashService;
@@ -37,6 +38,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     }
 
     @Override
+    @UpdateCarWashIndex
     public CarWashDto create(CarWashDto dto) {
         if (dto != null) {
             UUID userBusinessId = SecurityUtil.getUserBusinessId();
@@ -52,6 +54,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     }
 
     @Override
+    @UpdateCarWashIndex
     public CarWashDto update(CarWashDto dto) {
         if (dto != null) {
             if (dto.getId() == null) {

@@ -26,7 +26,7 @@ public class ServicePriceDto extends DefaultDto {
     private String name;
 
     @NotNull
-    private int price;
+    private Integer price;
 
     @NotNull
     private UUID serviceId;
@@ -34,7 +34,7 @@ public class ServicePriceDto extends DefaultDto {
     @NotNull
     private UUID businessServiceId;
 
-    private int duration;
+    private Integer duration;
 
     private CarType carBody;
 

@@ -28,3 +28,7 @@ spring:
     sql-migration-suffixes: .sql
     sql-migration-prefix: V
     schemas: ${db.schema}
+
+  data:
+    elasticsearch:
+      cluster-nodes: localhost:9300

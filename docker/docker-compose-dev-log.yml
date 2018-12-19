@@ -192,8 +192,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: Af2f4dsASF
-      ES_HOST: elasticsearch
-      ES_PORT: 9200
+      ES_NODES: elasticsearch:9300
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
 
