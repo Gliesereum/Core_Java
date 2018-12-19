@@ -11,6 +11,5 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/5/18
  */
-@Repository
 public interface YearCarRepository extends JpaRepository<YearCarEntity, UUID> {
 }

@@ -12,8 +12,9 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/7/18
  */
-@Repository
 public interface ServicePriceRepository extends JpaRepository<ServicePriceEntity, UUID> {
 
     List<ServicePriceEntity> getByBusinessServiceId(UUID id);
+
+    List<ServicePriceEntity> findAllByBusinessServiceId(UUID id);
 }

@@ -12,6 +12,7 @@ public class CommonExceptionMessage {
     public static final ExceptionMessage VALIDATION_ERROR = new ExceptionMessage(1001, 400, "Validation error");
     public static final ExceptionMessage NOT_VALID_URI = new ExceptionMessage(1002, 400, "Not valid uri");
     public static final ExceptionMessage BODY_REQUIRED = new ExceptionMessage(1003, 400, "Required request body is missing");
+    public static final ExceptionMessage NOT_EXIST_BY_ID = new ExceptionMessage(1004, 400, "Not exist by id");
     public static final ExceptionMessage DONT_HAVE_ANY_PERMISSION = new ExceptionMessage(1040, 401, "Current user don't have any permission");
     public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_MODULE = new ExceptionMessage(1041, 401, "Current user don't have permission to module");
     public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ENDPOINT = new ExceptionMessage(1042, 401, "Current user don't have permission to endpoint");

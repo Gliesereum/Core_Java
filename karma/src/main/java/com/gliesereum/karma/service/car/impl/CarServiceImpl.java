@@ -61,10 +61,30 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     @Override
     public CarDto create(CarDto dto) {
         if (dto != null) {
-            dto.setUserId(SecurityUtil.getUserId());
-            CarEntity entity = converter.convert(dto, entityClass);
-            entity = repository.saveAndFlush(entity);
-            dto = converter.convert(entity, dtoClass);
+            UUID userId = SecurityUtil.getUserId();
+            if (userId == null) {
+                throw new ClientException(USER_IS_ANONYMOUS);
+            }
+            dto.setUserId(userId);
+            dto = super.create(dto);
+        }
+        return dto;
+    }
+
+    @Override
+    public CarDto update(CarDto dto) {
+        if (dto != null) {
+            if (dto.getId() == null) {
+                throw new ClientException(ID_NOT_SPECIFIED);
+            }
+            UUID userId = SecurityUtil.getUserId();
+            if (userId == null) {
+                throw new ClientException(USER_IS_ANONYMOUS);
+            }
+            checkCarExist(dto.getId(), userId);
+            dto.setUserId(userId);
+            dto = super.update(dto);
+
         }
         return dto;
     }

@@ -11,7 +11,6 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/5/18
  */
-@Repository
 public interface CarServiceClassCarRepository extends JpaRepository<CarServiceClassCarEntity, UUID> {
 
     void deleteByCarIdAndAndServiceClassId(UUID idCar, UUID idService);

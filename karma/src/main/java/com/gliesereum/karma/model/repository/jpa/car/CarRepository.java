@@ -12,12 +12,11 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/5/18
  */
-@Repository
 public interface CarRepository extends JpaRepository<CarEntity, UUID> {
 
     List<CarEntity> getAllByUserId(UUID id);
 
     void deleteAllByUserId(UUID id);
 
-    boolean existsCarEntityByUserIdAndId(UUID idUser,UUID idCar);
+    boolean existsByIdAndUserId(UUID id, UUID userId);
 }
