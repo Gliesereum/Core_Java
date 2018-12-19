@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.CAR_NOT_FOUND;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.SERVICE_CLASS_NOT_FOUND;
 
@@ -61,10 +63,30 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     @Override
     public CarDto create(CarDto dto) {
         if (dto != null) {
-            dto.setUserId(SecurityUtil.getUserId());
-            CarEntity entity = converter.convert(dto, entityClass);
-            entity = repository.saveAndFlush(entity);
-            dto = converter.convert(entity, dtoClass);
+            UUID userId = SecurityUtil.getUserId();
+            if (userId == null) {
+                throw new ClientException(USER_IS_ANONYMOUS);
+            }
+            dto.setUserId(userId);
+            dto = super.create(dto);
+        }
+        return dto;
+    }
+
+    @Override
+    public CarDto update(CarDto dto) {
+        if (dto != null) {
+            if (dto.getId() == null) {
+                throw new ClientException(ID_NOT_SPECIFIED);
+            }
+            UUID userId = SecurityUtil.getUserId();
+            if (userId == null) {
+                throw new ClientException(USER_IS_ANONYMOUS);
+            }
+            checkCarExistInCurrentUser(dto.getId());
+            dto.setUserId(userId);
+            dto = super.update(dto);
+
         }
         return dto;
     }
@@ -72,7 +94,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     @Override
     @Transactional
     public CarDto addService(UUID idCar, UUID idService) {
-        checkCarExist(idCar);
+        checkCarExistInCurrentUser(idCar);
         checkServiceExist(idService);
         carServiceClassCarService.create(new CarServiceClassCarDto(idCar, idService));
         return getById(idCar);
@@ -80,14 +102,15 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
     @Override
     public CarDto removeService(UUID idCar, UUID idService) {
-        checkCarExist(idCar);
+        checkCarExistInCurrentUser(idCar);
+        checkServiceExist(idService);
         carServiceClassCarService.deleteByIdCarAndIdService(idCar, idService);
         return getById(idCar);
     }
 
     @Override
-    public void checkCarExist(UUID id) {
-        if (!repository.existsCarEntityByUserIdAndId(SecurityUtil.getUserId(), id)) {
+    public void checkCarExistInCurrentUser(UUID id) {
+        if (!repository.existsByIdAndUserId(id, SecurityUtil.getUserId())) {
             throw new ClientException(CAR_NOT_FOUND);
         }
     }

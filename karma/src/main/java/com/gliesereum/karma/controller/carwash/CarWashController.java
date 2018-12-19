@@ -6,6 +6,7 @@ import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
+import com.gliesereum.share.common.model.dto.karma.carwash.CarWashFullModel;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
@@ -51,6 +52,11 @@ public class CarWashController {
     @GetMapping("/{id}")
     public CarWashDto getById(@PathVariable("id") UUID id) {
         return carWashService.getById(id);
+    }
+
+    @GetMapping("full/model/{id}")
+    public CarWashFullModel getFullModelById(@PathVariable("id") UUID id) {
+        return carWashService.getFullModelById(id);
     }
 
     @GetMapping("/byUser")

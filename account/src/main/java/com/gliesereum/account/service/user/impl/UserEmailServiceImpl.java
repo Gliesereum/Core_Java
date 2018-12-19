@@ -176,7 +176,7 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
 
     private void updateUserStatus(UserDto user, VerifiedStatus status) {
         user.setVerifiedStatus(status);
-        userService.update(user);
+        userService.updateWithOutCheckModel(user);
     }
 
     private void checkEmailForSignInUp(String email, boolean isNew) {

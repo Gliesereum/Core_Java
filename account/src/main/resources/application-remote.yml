@@ -3,7 +3,7 @@ spring:
   datasource:
     url: jdbc:postgresql://207.154.239.122:5432/postgres
     username: postgres
-    password: postgres
+    password: Af2f4dsASF
   jpa:
     hibernate:
       ddl-auto: validate
@@ -31,6 +31,14 @@ spring:
     password: Af2f4dsASF
     chanel-verification: verificationQueue
     chanel-logstash: logstash
+
+  rabbitmq:
+    host: 207.154.239.122
+    port: 5672
+    password: Af2f4dsASF
+    username: rabbit
+    queue-logstash: logstash
+    queue-mail: verificationQueue
 
 token:
   expirationTime:

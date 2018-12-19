@@ -154,7 +154,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
 
     private void updateUserStatus(UserDto user, VerifiedStatus status) {
         user.setVerifiedStatus(status);
-        userService.update(user);
+        userService.updateWithOutCheckModel(user);
     }
 
     private void checkUserAuthentication(UUID userId) {

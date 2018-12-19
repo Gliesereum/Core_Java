@@ -3,12 +3,11 @@ package com.gliesereum.mail.mq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.mail.email.EmailService;
 import com.gliesereum.mail.phone.PhoneService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -19,13 +18,13 @@ import java.util.Map;
 
 /**
  * @author vitalij
- * @since 10/17/18
+ * @version 1.0
+ * @since 2018-12-13
  */
-
+@Slf4j
+@EnableRabbit
 @Component
-public class RedisMessageListener implements MessageListener {
-
-    private final static Logger logger = LoggerFactory.getLogger(RedisMessageListener.class);
+public class RabbitMqListener {
 
     private final String SUBJECT = "spring.mail.subject";
 
@@ -38,10 +37,9 @@ public class RedisMessageListener implements MessageListener {
     @Autowired
     private PhoneService phoneService;
 
-
-    @Override
-    public void onMessage(final Message message, final byte[] pattern) {
-        Map<String, String> model = getModelByJson(message.toString());
+    @RabbitListener(queues = "verificationQueue")
+    public void processQueue(String message) {
+        Map<String, String> model = getModelByJson(message);
         if (!CollectionUtils.isEmpty(model)) {
             if (!StringUtils.isEmpty(model.get("type"))) {
                 switch (model.get("type").toUpperCase()) {
@@ -63,7 +61,7 @@ public class RedisMessageListener implements MessageListener {
         try {
             result = (HashMap<String, String>) new ObjectMapper().readValue(json, HashMap.class);
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             e.printStackTrace();
         }
         return result;

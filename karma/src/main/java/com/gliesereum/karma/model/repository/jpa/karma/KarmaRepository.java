@@ -12,7 +12,6 @@ import java.util.UUID;
  * @since 2018-12-08
  */
 
-@Repository
 public interface KarmaRepository extends JpaRepository<KarmaEntity, UUID> {
 
     KarmaEntity findByObjectId(UUID objectId);

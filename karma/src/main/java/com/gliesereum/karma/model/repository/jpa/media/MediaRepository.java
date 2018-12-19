@@ -12,7 +12,6 @@ import java.util.UUID;
  * @version 1.0
  * @since 2018-12-08
  */
-@Repository
 public interface MediaRepository extends JpaRepository<MediaEntity, UUID> {
 
     List<MediaEntity> findByObjectId(UUID objectId);

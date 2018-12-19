@@ -1,6 +1,7 @@
 spring:
-  redis:
+  rabbitmq:
     host: localhost
-    port: 6379
-    #password:
-    chanel-logstash: logstash
+    port: 5672
+    password: guest
+    username: guest
+    queue-logstash: logstash

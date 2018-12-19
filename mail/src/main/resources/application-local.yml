@@ -23,9 +23,12 @@ spring:
           ssl:
             enable: true
             trust: "*"
-  redis:
+
+  rabbitmq:
     host: localhost
-    port: 6379
+    port: 5672
+    password: guest
+    username: guest
 
 phone:
   url: https://acemountmedia.com/api/

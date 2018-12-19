@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS karma.service_class_car (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name character varying,
     description character varying,
+    order_index integer,
     CONSTRAINT service_class_car_pk PRIMARY KEY (id)
 );
 

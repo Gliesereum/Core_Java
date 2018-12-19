@@ -6,7 +6,7 @@ spring:
     default-encoding: UTF-8
     host: smtp.gmail.com
     username: gliesereum@gmail.com
-    password: Gliesereum0013
+    password: GliesereumAdmin0013
     from: GLIESEREUM<gliesereum@gmail.com>
     subject: Gliesereum verification mail
     chanel-verification: verificationQueue
@@ -23,10 +23,12 @@ spring:
           ssl:
             enable: true
             trust: "*"
-  redis:
-    host: ${redis.host}
-    port: ${redis.port}
-    password: ${redis.password}
+
+  rabbitmq:
+    host: ${rabbit.host}
+    port: ${rabbit.port}
+    password: ${rabbit.password}
+    username: ${rabbit.user}
 
 phone:
   url: https://acemountmedia.com/api/

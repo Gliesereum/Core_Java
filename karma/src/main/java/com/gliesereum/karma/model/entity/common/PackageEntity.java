@@ -38,5 +38,5 @@ public class PackageEntity extends DefaultEntity {
     @JoinTable(name = "package_service",
             joinColumns = {@JoinColumn(name = "package_id", insertable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "service_id", insertable = false, updatable = false)})
-    private Set<ServiceEntity> services = new HashSet<>();
+    private Set<ServicePriceEntity> services = new HashSet<>();
 }

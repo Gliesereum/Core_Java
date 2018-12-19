@@ -3,11 +3,10 @@ package com.gliesereum.share.common.logging.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.gliesereum.share.common.logging.service.LoggingRedisService;
-import com.gliesereum.share.common.redis.publisher.RedisMessagePublisher;
+import com.gliesereum.share.common.logging.service.LoggingService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,10 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class LoggingRedisServiceImpl implements LoggingRedisService {
-
-    @Autowired
-    private RedisMessagePublisher redisMessagePublisher;
+public class LoggingServiceImpl implements LoggingService {
 
     @Autowired
     private Environment environment;
@@ -31,14 +27,17 @@ public class LoggingRedisServiceImpl implements LoggingRedisService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final String CHANEL_LOGGING = "spring.redis.chanel-logstash";
+    @Autowired
+    private RabbitTemplate template;
 
     private final String SERVICE_NAME = "spring.application.name";
+
+    private final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
 
     @Async
     @Override
     public void publishing(String message) {
-        redisMessagePublisher.publish(message, environment.getProperty(CHANEL_LOGGING));
+        template.convertAndSend(environment.getRequiredProperty(QUEUE_LOGSTASH), message);
     }
 
     @Async

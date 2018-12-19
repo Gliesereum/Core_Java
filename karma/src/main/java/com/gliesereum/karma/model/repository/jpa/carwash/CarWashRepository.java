@@ -12,7 +12,6 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/7/18
  */
-@Repository
 public interface CarWashRepository extends JpaRepository<CarWashEntity, UUID> {
 
     boolean existsByIdAndUserBusinessId(UUID id, UUID userBusinessId);
