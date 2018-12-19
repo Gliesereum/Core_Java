@@ -36,8 +36,7 @@ public class LoggingServiceImpl implements LoggingService {
     @Async
     @Override
     public void publishing(JsonNode jsonNode) {
-        if (rabbitTemplate.isRunning())
-            rabbitTemplate.convertAndSend(environment.getRequiredProperty(QUEUE_LOGSTASH), jsonNode);
+        rabbitTemplate.convertAndSend(environment.getRequiredProperty(QUEUE_LOGSTASH), jsonNode);
     }
 
     @Async
