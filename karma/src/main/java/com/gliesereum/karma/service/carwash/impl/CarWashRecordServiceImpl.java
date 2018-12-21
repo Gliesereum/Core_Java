@@ -7,6 +7,7 @@ import com.gliesereum.karma.service.carwash.CarWashRecordService;
 import com.gliesereum.karma.service.carwash.CarWashService;
 import com.gliesereum.karma.service.common.OrderService;
 import com.gliesereum.karma.service.common.PackageService;
+import com.gliesereum.karma.service.common.ServicePriceService;
 import com.gliesereum.karma.service.common.WorkingSpaceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
@@ -60,6 +61,9 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ServicePriceService servicePriceService;
 
     private static final Class<CarWashRecordDto> DTO_CLASS = CarWashRecordDto.class;
     private static final Class<CarWashRecordEntity> ENTITY_CLASS = CarWashRecordEntity.class;
@@ -191,6 +195,9 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             if (dto.getBegin() == null) {
                 throw new ClientException(TIME_BEGIN_EMPTY);
             }
+
+
+
             dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
             dto.setPrice(getPriceByRecord(dto));
             checkRecord(dto);
@@ -322,8 +329,11 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
     private Long getDurationByRecord(CarWashRecordDto dto) {
         Long result = 0L;
-        if (dto != null && CollectionUtils.isNotEmpty(dto.getServices())) {
-            result += dto.getServices().stream().mapToInt(ServicePriceDto::getDuration).sum();
+        if (dto != null && CollectionUtils.isNotEmpty(dto.getServicesIds())) {
+            List<ServicePriceDto> services = servicePriceService.getByUUIDs(dto.getServicesIds());
+            if (CollectionUtils.isNotEmpty(services)) {
+                result += services.stream().mapToInt(ServicePriceDto::getDuration).sum();
+            } else throw new ClientException(SERVICE_NOT_FOUND);
         }
         if (dto != null && dto.getPackageId() != null) {
             PackageDto packageDto = packageService.getById(dto.getPackageId());
