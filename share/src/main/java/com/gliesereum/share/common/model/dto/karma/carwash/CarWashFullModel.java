@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.carwash;
 
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.common.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.common.WorkTimeDto;
@@ -36,6 +37,8 @@ public class CarWashFullModel{
     private Double latitude;
 
     private Double longitude;
+
+    private RatingDto rating;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 
