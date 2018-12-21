@@ -17,7 +17,8 @@ public class CommonExceptionMessage {
     public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ENDPOINT = new ExceptionMessage(1042, 401, "Current user don't have permission to endpoint");
     public static final ExceptionMessage MODULE_NOT_ACTIVE = new ExceptionMessage(1043, 403, "Module not active");
     public static final ExceptionMessage ENDPOINT_NOT_ACTIVE = new ExceptionMessage(1044, 403, "Endpoint not active");
-    public static final ExceptionMessage USER_IS_ANONYMOUS = new ExceptionMessage(1045, 401, "User is anonymous");
+    public static final ExceptionMessage ENDPOINT_NOT_FOUND = new ExceptionMessage(1045, 404, "Endpoint not found");
+    public static final ExceptionMessage USER_IS_ANONYMOUS = new ExceptionMessage(1046, 401, "User is anonymous");
 
     public static final ExceptionMessage UNKNOWN_SERVER_EXCEPTION = new ExceptionMessage(9000, 500, "Server error");
     public static final ExceptionMessage SERVICE_NOT_AVAILABLE = new ExceptionMessage(9001, 500, "Service not available now");
