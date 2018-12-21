@@ -330,7 +330,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     private Long getDurationByRecord(CarWashRecordDto dto) {
         Long result = 0L;
         if (dto != null && CollectionUtils.isNotEmpty(dto.getServicesIds())) {
-            List<ServicePriceDto> services = servicePriceService.getByUUIDs(dto.getServicesIds());
+            List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
             if (CollectionUtils.isNotEmpty(services)) {
                 result += services.stream().mapToInt(ServicePriceDto::getDuration).sum();
             } else throw new ClientException(SERVICE_NOT_FOUND);

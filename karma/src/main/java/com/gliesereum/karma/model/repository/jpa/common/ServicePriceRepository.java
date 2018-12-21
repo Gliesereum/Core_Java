@@ -17,6 +17,4 @@ public interface ServicePriceRepository extends JpaRepository<ServicePriceEntity
 
     List<ServicePriceEntity> findAllByBusinessServiceId(UUID id);
 
-    List<ServicePriceEntity> findByIdIn(List<UUID> ids);
-
 }

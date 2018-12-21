@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
@@ -27,5 +28,6 @@ public class WorkingSpaceDto extends DefaultDto {
 
     private StatusSpace statusSpace;
 
+    @NotNull
     private ServiceType carServiceType;
 }
