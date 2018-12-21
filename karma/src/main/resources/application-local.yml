@@ -31,5 +31,5 @@ spring:
     queue-logstash: logstash
 
   data:
-    elasticsearch:
-      cluster-nodes: localhost:9300
+    jest:
+      uri: http://localhost:9200

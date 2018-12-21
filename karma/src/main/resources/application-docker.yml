@@ -31,5 +31,5 @@ spring:
     queue-logstash: logstash
 
   data:
-    elasticsearch:
-      cluster-nodes: ${es.nodes}
+    jest:
+      uri: http://${es.host}:${es.port}

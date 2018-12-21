@@ -1,8 +1,10 @@
 package com.gliesereum.karma.model.document;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
@@ -19,8 +21,12 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class WorkTimeDocument {
 
+    @Field(type = FieldType.Date, format = DateFormat.hour_minute)
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime from;
 
+    @Field(type = FieldType.Date, format = DateFormat.hour_minute)
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime to;
 
     @Field(type = FieldType.Keyword)

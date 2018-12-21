@@ -34,6 +34,7 @@ public class CarWashServiceDocument {
     @Field(type = FieldType.Integer)
     private Integer duration;
 
+    @Field(type = FieldType.Keyword)
     private List<String> serviceClassIds;
 
     @Field(type = FieldType.Keyword)

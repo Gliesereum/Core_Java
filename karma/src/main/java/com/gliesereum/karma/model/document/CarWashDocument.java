@@ -42,8 +42,10 @@ public class CarWashDocument {
     @GeoPointField
     private GeoPoint geoPoint;
 
+    @Field(type = FieldType.Nested)
     private List<CarWashServiceDocument> services;
 
+    @Field(type = FieldType.Nested)
     private List<WorkTimeDocument> workTimes;
 
 }
