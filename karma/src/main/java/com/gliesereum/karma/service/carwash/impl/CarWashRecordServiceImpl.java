@@ -256,7 +256,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
     private void checkRecord(CarWashRecordDto dto) {
         if (dto != null) {
-            if (dto.getPackageId() == null && CollectionUtils.isEmpty(dto.getServices())) {
+            if (dto.getPackageId() == null && CollectionUtils.isEmpty(dto.getServicesIds())) {
                 throw new ClientException(SERVICE_NOT_CHOOSE);
             }
             CarWashDto carWash = getCarWashByRecord(dto);
