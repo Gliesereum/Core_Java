@@ -55,4 +55,6 @@ public class CarWashRecordDto extends DefaultDto {
     private StatusRecord statusRecord;
 
     private List<ServicePriceDto> services = new ArrayList<>();
+
+    private List<UUID> servicesIds = new ArrayList<>();
 }

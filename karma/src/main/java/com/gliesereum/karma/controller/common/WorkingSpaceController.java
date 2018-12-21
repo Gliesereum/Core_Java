@@ -39,8 +39,8 @@ public class WorkingSpaceController {
     }
 
     @DeleteMapping("/{id}")
-    public MapResponse delete(@PathVariable("id") UUID id, @RequestParam("serviceType") ServiceType serviceType) {
-        workingSpaceService.delete(id, serviceType);
+    public MapResponse delete(@PathVariable("id") UUID id) {
+        workingSpaceService.delete(id);
         return new MapResponse("true");
     }
 }

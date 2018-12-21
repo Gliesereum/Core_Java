@@ -16,6 +16,4 @@ import java.util.UUID;
 public interface WorkingSpaceService extends DefaultService<WorkingSpaceDto, WorkingSpaceEntity> {
 
     List<WorkingSpaceDto> getByBusinessServiceId(UUID businessServiceId);
-
-    void delete(UUID id, ServiceType serviceType);
 }

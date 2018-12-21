@@ -69,11 +69,11 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     }
 
     @Override
-    public void delete(UUID id, ServiceType serviceType) {
-        if ((id != null) && (serviceType != null)) {
+    public void delete(UUID id) {
+        if (id != null) {
             Optional<WorkingSpaceEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(serviceType, i.getBusinessServiceId());
+                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(i.getCarServiceType(), i.getBusinessServiceId());
                 repository.delete(i);
             });
 
