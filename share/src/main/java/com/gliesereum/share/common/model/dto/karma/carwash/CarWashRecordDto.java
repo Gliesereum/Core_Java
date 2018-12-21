@@ -1,6 +1,9 @@
 package com.gliesereum.share.common.model.dto.karma.carwash;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
@@ -10,8 +13,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,14 +38,13 @@ public class CarWashRecordDto extends DefaultDto {
 
     private Integer price;
 
-    @JsonFormat(pattern = "HH:mm")
-    private LocalTime beginTime;
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
+    private LocalDateTime begin;
 
-    @JsonFormat(pattern = "HH:mm")
-    private LocalTime finishTime;
-
-    @JsonFormat(pattern = "yyyy:MM:dd")
-    private LocalDate date;
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
+    private LocalDateTime finish;
 
     private String description;
 

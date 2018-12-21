@@ -155,6 +155,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
         result.setAddPhone(carWashDto.getAddPhone());
         result.setLatitude(carWashDto.getLatitude());
         result.setLongitude(carWashDto.getLongitude());
+        result.setRating(commentService.getRating(id));
 
         if (CollectionUtils.isNotEmpty(carWashDto.getWorkTimes())) {
             result.setWorkTimes(carWashDto.getWorkTimes());

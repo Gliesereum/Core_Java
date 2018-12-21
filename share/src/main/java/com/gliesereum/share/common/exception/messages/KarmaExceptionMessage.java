@@ -26,8 +26,13 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage TIME_BEGIN_EMPTY = new ExceptionMessage(1432, 401, "Time begin is empty");
     public static final ExceptionMessage WORKING_SPACE_NOT_FOUND = new ExceptionMessage(1433, 404, "Working space not found");
+    public static final ExceptionMessage CAR_WASH_NOT_WORK_THIS_DAY = new ExceptionMessage(1434, 401, "CarWash don't work this day");
+    public static final ExceptionMessage CAR_WASH_NOT_WORK_THIS_TIME = new ExceptionMessage(1435, 401, "CarWash don't work this time");
 
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_RECORD = new ExceptionMessage(1434, 401, "Current user don't have permission to action this record");
+    public static final ExceptionMessage WORKING_TIME_EXIST_IN_THIS_CAR_WASH = new ExceptionMessage(1436, 401, "Time working already exist in this car wash");
+    public static final ExceptionMessage WORKING_TIME_NOT_FOUND = new ExceptionMessage(1437, 401, "Time working not found");
+
+    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_RECORD = new ExceptionMessage(1438, 401, "Current user don't have permission to action this record");
 
     public static final ExceptionMessage ANONYMOUS_CANT_COMMENT = new ExceptionMessage(1440, 401, "Anonymous user can't comment");
     public static final ExceptionMessage COMMENT_FOR_USER_EXIST = new ExceptionMessage(1441, 400, "Comment for current user exist");

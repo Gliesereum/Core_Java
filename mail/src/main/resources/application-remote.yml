@@ -1,0 +1,40 @@
+admin:
+  email: gliesereum@gmail.com
+
+spring:
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: gliesereum@gmail.com
+    password: GliesereumAdmin0013
+    from: GLIESEREUM<gliesereum@gmail.com>
+    subject: Gliesereum verification mail
+    chanel-verification: verificationQueue
+    port: 465
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+          ssl:
+            enable: true
+            trust: "*"
+
+  rabbitmq:
+    host: 207.154.239.122
+    port: 5672
+    password: Af2f4dsASF
+    username: rabbit
+
+phone:
+  url: https://acemountmedia.com/api/
+  auth-type: token
+  alpha-name: SECURITY
+  login: businesseuropolicy
+  token: shiM8uESwOEAWEurmDWGNmY6LPSy_x1m
+
+
