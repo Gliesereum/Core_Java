@@ -2,6 +2,8 @@ package com.gliesereum.proxy.controller;
 
 import com.gliesereum.share.common.exception.CustomException;
 import com.gliesereum.share.common.exception.messages.CommonExceptionMessage;
+import com.netflix.client.ClientException;
+import com.netflix.zuul.exception.ZuulException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -40,6 +42,13 @@ public class ZuulErrorController extends AbstractErrorController {
         }
         if (exc.getCause() instanceof CustomException) {
             throw (CustomException) exc.getCause();
+        }
+        if (exc instanceof ZuulException) {
+            ZuulException zuulException = (ZuulException) exc;
+            Throwable cause = zuulException.getCause();
+            if(cause instanceof ClientException) {
+                exc = new CustomException(CommonExceptionMessage.SERVICE_NOT_AVAILABLE);
+            }
         }
         throw exc;
     }

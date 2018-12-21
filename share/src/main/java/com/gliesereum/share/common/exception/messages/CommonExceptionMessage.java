@@ -8,7 +8,6 @@ package com.gliesereum.share.common.exception.messages;
 public class CommonExceptionMessage {
 
     public static final ExceptionMessage ID_NOT_SPECIFIED = new ExceptionMessage(1000, 400, "Id not specified");
-    public static final ExceptionMessage UNKNOWN_SERVER_EXCEPTION = new ExceptionMessage(9000, 500, "Server error");
     public static final ExceptionMessage VALIDATION_ERROR = new ExceptionMessage(1001, 400, "Validation error");
     public static final ExceptionMessage NOT_VALID_URI = new ExceptionMessage(1002, 400, "Not valid uri");
     public static final ExceptionMessage BODY_REQUIRED = new ExceptionMessage(1003, 400, "Required request body is missing");
@@ -19,6 +18,9 @@ public class CommonExceptionMessage {
     public static final ExceptionMessage MODULE_NOT_ACTIVE = new ExceptionMessage(1043, 403, "Module not active");
     public static final ExceptionMessage ENDPOINT_NOT_ACTIVE = new ExceptionMessage(1044, 403, "Endpoint not active");
     public static final ExceptionMessage USER_IS_ANONYMOUS = new ExceptionMessage(1045, 401, "User is anonymous");
+
+    public static final ExceptionMessage UNKNOWN_SERVER_EXCEPTION = new ExceptionMessage(9000, 500, "Server error");
+    public static final ExceptionMessage SERVICE_NOT_AVAILABLE = new ExceptionMessage(9001, 500, "Service not available now");
 
 
 }
