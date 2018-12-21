@@ -5,6 +5,7 @@ import com.gliesereum.proxy.service.exchange.auth.AuthService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private SecurityProperties securityProperties;
 
     @Override
+    @Cacheable(value = "tokenInfo", key="#accessToken", unless="#result == null")
     public AuthDto checkAccessToken(String accessToken) {
         AuthDto result = null;
         if (StringUtils.isNotBlank(accessToken)) {
