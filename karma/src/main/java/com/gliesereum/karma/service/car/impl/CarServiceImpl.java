@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.car.impl;
 
 import com.gliesereum.karma.model.entity.car.CarEntity;
+import com.gliesereum.karma.model.entity.car.ServiceClassCarEntity;
 import com.gliesereum.karma.model.repository.jpa.car.CarRepository;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.car.CarServiceClassCarService;
@@ -8,16 +9,21 @@ import com.gliesereum.karma.service.car.ServiceClassCarService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
+import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarServiceClassCarDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
@@ -36,8 +42,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     private static final Class<CarDto> DTO_CLASS = CarDto.class;
     private static final Class<CarEntity> ENTITY_CLASS = CarEntity.class;
 
-    @Autowired
-    private CarRepository repository;
+    private final CarRepository carRepository;
 
     @Autowired
     private CarServiceClassCarService carServiceClassCarService;
@@ -45,19 +50,20 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     @Autowired
     private ServiceClassCarService serviceClassCarService;
 
-    public CarServiceImpl(CarRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    public CarServiceImpl(CarRepository carRepository, DefaultConverter defaultConverter) {
+        super(carRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.carRepository = carRepository;
     }
 
     @Override
     public List<CarDto> getAllByUserId(UUID userId) {
-        List<CarEntity> entities = repository.getAllByUserId(userId);
+        List<CarEntity> entities = carRepository.getAllByUserId(userId);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public void deleteByUserId(UUID id) {
-        repository.deleteAllByUserId(id);
+        carRepository.deleteAllByUserId(id);
     }
 
     @Override
@@ -110,9 +116,34 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
     @Override
     public void checkCarExistInCurrentUser(UUID id) {
-        if (!repository.existsByIdAndUserId(id, SecurityUtil.getUserId())) {
+        if (!carRepository.existsByIdAndUserId(id, SecurityUtil.getUserId())) {
             throw new ClientException(CAR_NOT_FOUND);
         }
+    }
+
+    @Override
+    public CarInfoDto getCarInfo(UUID idCar) {
+        CarInfoDto result = null;
+        if (idCar != null) {
+            Optional<CarEntity> carOptional = carRepository.findById(idCar);
+            if(carOptional.isPresent()) {
+                CarEntity car = carOptional.get();
+                result = new CarInfoDto();
+                result.setCarBody(car.getCarBody());
+                result.setInteriorType(car.getInterior());
+                Set<ServiceClassCarEntity> services = car.getServices();
+                if (CollectionUtils.isNotEmpty(services)) {
+                    result.setServiceClassIds(
+                            services.stream()
+                                    .map(ServiceClassCarEntity::getId)
+                                    .map(UUID::toString)
+                                    .collect(Collectors.toList())
+                    );
+
+                }
+            }
+        }
+        return result;
     }
 
     private void checkServiceExist(UUID id) {

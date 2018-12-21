@@ -19,6 +19,8 @@ public interface DefaultService<D extends DefaultDto, E extends DefaultEntity> {
 
     D getById(UUID id);
 
+    List<D> getByIds(Iterable<UUID> ids);
+
     List<D> getAll();
 
     void delete(UUID id);

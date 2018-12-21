@@ -67,6 +67,16 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
         return result;
     }
 
+    @Override
+    public List<D> getByIds(Iterable<UUID> ids) {
+        List<D> result = null;
+        if (ids != null) {
+            List<E> entities = repository.findAllById(ids);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
     public List<D> getAll() {
         List<E> entities = repository.findAll();
         return converter.convert(entities, dtoClass);

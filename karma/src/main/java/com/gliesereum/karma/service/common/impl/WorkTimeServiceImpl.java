@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.common.impl;
 
+import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.common.WorkTimeEntity;
 import com.gliesereum.karma.model.repository.jpa.common.WorkTimeRepository;
 import com.gliesereum.karma.service.common.WorkTimeService;
@@ -53,6 +54,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     @Override
+    @UpdateCarWashIndex
     public WorkTimeDto create(WorkTimeDto dto) {
         WorkTimeDto result = null;
         if (dto != null) {
@@ -64,6 +66,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     @Override
+    @UpdateCarWashIndex
     public WorkTimeDto update(WorkTimeDto dto) {
         WorkTimeDto result = null;
         if (dto != null) {

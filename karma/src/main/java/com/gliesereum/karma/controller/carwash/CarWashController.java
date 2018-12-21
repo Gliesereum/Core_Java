@@ -2,11 +2,13 @@ package com.gliesereum.karma.controller.carwash;
 
 import com.gliesereum.karma.service.carwash.CarWashService;
 import com.gliesereum.karma.service.comment.CommentService;
+import com.gliesereum.karma.service.es.CarWashEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashFullModel;
+import com.gliesereum.share.common.model.dto.karma.carwash.CarWashSearchDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
@@ -44,9 +46,17 @@ public class CarWashController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private CarWashEsService carWashEsService;
+
     @GetMapping
     public List<CarWashDto> getAll() {
         return carWashService.getAll();
+    }
+
+    @PostMapping("/search")
+    public List<CarWashDto> search(@RequestBody(required = false) CarWashSearchDto carWashSearch) {
+        return carWashEsService.search(carWashSearch);
     }
 
     @GetMapping("/{id}")

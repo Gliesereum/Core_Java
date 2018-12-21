@@ -80,9 +80,10 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:6.4.2
     environment:
-      REDIS_HOST: redis
-      REDIS_PASSWORD: Af2f4dsASF
-      REDIS_PORT: 6379
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: rabbit
+      RABBIT_PASSWORD: Af2f4dsASF
       ES_HOST: elasticsearch
       ES_PORT: 9200
     deploy:
@@ -134,7 +135,7 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_PASSWORD: Af2f4dsASF
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: Af2f4dsASF
@@ -188,7 +189,7 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_PASSWORD: Af2f4dsASF
       RABBIT_HOST: rabbit
       RABBIT_PORT: 5672
       RABBIT_USER: rabbit
@@ -207,7 +208,7 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_PASSWORD: Af2f4dsASF
       RABBIT_HOST: rabbit
       RABBIT_PORT: 5672
       RABBIT_USER: rabbit

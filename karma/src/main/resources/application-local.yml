@@ -29,3 +29,7 @@ spring:
     password: guest
     username: guest
     queue-logstash: logstash
+
+  data:
+    jest:
+      uri: http://localhost:9200

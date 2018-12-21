@@ -2,6 +2,7 @@ package com.gliesereum.karma.service.car;
 
 import com.gliesereum.karma.model.entity.car.CarEntity;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
+import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -23,5 +24,7 @@ public interface CarService extends DefaultService<CarDto, CarEntity> {
     CarDto addService(UUID idCar, UUID idService);
 
     CarDto removeService(UUID idCar, UUID idService);
+
+    CarInfoDto getCarInfo(UUID idCar);
 
 }

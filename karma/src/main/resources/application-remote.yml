@@ -30,3 +30,7 @@ spring:
     username: rabbit
     queue-logstash: logstash
     queue-mail: verificationQueue
+
+  data:
+    jest:
+      uri: http://207.154.239.122:9200

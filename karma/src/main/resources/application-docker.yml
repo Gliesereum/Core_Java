@@ -13,7 +13,7 @@ spring:
         default_schema: ${db.schema}
         temp:
           use_jdbc_metadata_defaults: false
-    show-sql: true
+    show-sql: false
 
   flyway:
     enabled: true
@@ -29,3 +29,7 @@ spring:
     password: ${rabbit.password}
     username: ${rabbit.user}
     queue-logstash: logstash
+
+  data:
+    jest:
+      uri: http://${es.host}:${es.port}
