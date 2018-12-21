@@ -26,6 +26,7 @@ zuul:
     connectTimeoutMillis: 30000
     socket-timeout-millis: 30000
   add-host-header: true
+  sensitive-headers:
 
 ribbon:
   ConnectTimeout: 60000

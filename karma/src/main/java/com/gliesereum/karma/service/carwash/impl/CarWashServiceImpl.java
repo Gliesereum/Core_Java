@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.carwash.impl;
 
+import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.carwash.CarWashEntity;
 import com.gliesereum.karma.model.repository.jpa.carwash.CarWashRepository;
 import com.gliesereum.karma.service.carwash.CarWashService;
@@ -67,6 +68,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     }
 
     @Override
+    @UpdateCarWashIndex
     public CarWashDto create(CarWashDto dto) {
         checkUserByStatus();
         if (dto != null) {
@@ -83,6 +85,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     }
 
     @Override
+    @UpdateCarWashIndex
     public CarWashDto update(CarWashDto dto) {
         checkUserByStatus();
         if (dto != null) {
@@ -155,6 +158,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
         result.setAddPhone(carWashDto.getAddPhone());
         result.setLatitude(carWashDto.getLatitude());
         result.setLongitude(carWashDto.getLongitude());
+        result.setRating(commentService.getRating(id));
 
         if (CollectionUtils.isNotEmpty(carWashDto.getWorkTimes())) {
             result.setWorkTimes(carWashDto.getWorkTimes());

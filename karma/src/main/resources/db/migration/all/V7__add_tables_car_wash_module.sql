@@ -25,9 +25,8 @@ CREATE TABLE IF NOT EXISTS karma.car_wash_record (
    package_id uuid,
    working_space_id uuid,
    car_wash_id uuid,
-   begin_time time without time zone,
-   finish_time time without time zone,
-   date date,
+   begin TIMESTAMP without time zone,
+   finish TIMESTAMP without time zone,
 
    CONSTRAINT car_wash_record_pk PRIMARY KEY (id)
 );
