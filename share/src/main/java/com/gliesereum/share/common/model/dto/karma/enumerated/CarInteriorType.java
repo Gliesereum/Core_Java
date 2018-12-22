@@ -8,6 +8,7 @@ package com.gliesereum.share.common.model.dto.karma.enumerated;
 public enum CarInteriorType {
 
     SUEDE,
+    TEXTILE,
     LEATHER,
     ARTIFICIAL_LEATHER,
     ALCANTARA,

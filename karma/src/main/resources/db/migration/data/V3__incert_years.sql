@@ -1,8 +1,40 @@
-INSERT INTO karma.year_car (name) VALUES
-(1980), (1981), (1982), (1983), (1984), (1985),
-(1986), (1987), (1988), (1989), (1990), (1991),
-(1992), (1993), (1994), (1995), (1996), (1997),
-(1998), (1999), (2000), (2001), (2002), (2003),
-(2004), (2005), (2006), (2007), (2008), (2009),
-(2010), (2011), (2012), (2013), (2014), (2015),
-(2016), (2017), (2018), (2019);
+INSERT INTO karma.year_car (id, name) VALUES ('f3235de3-8c56-4006-a815-00753f4c3db8', 1980);
+INSERT INTO karma.year_car (id, name) VALUES ('28d39f24-2d66-4364-94a8-9a308d4ae2f3', 1981);
+INSERT INTO karma.year_car (id, name) VALUES ('b9270e4a-e933-49cd-896b-3a0eed30fff0', 1982);
+INSERT INTO karma.year_car (id, name) VALUES ('8de4082b-48ee-48a8-b87e-4843b2cf5453', 1983);
+INSERT INTO karma.year_car (id, name) VALUES ('fef5af20-b948-455f-ba41-c9313cd3d2b4', 1984);
+INSERT INTO karma.year_car (id, name) VALUES ('62f0a98b-520b-42c3-99af-85f4ac09d307', 1985);
+INSERT INTO karma.year_car (id, name) VALUES ('152427ac-11ca-40c4-bb5f-7a8f8d80aac1', 1986);
+INSERT INTO karma.year_car (id, name) VALUES ('7295f8e0-3a73-40cc-be85-a991860a0d3a', 1987);
+INSERT INTO karma.year_car (id, name) VALUES ('1a8864f3-b4e7-492b-b593-85122edfaadd', 1988);
+INSERT INTO karma.year_car (id, name) VALUES ('7cddfba9-0574-4294-a2ad-829243add1f6', 1989);
+INSERT INTO karma.year_car (id, name) VALUES ('372635e0-44a3-4465-a355-9a9e8b3d2eae', 1990);
+INSERT INTO karma.year_car (id, name) VALUES ('6a9c435b-0c51-48b0-9a99-82ad544654f3', 1991);
+INSERT INTO karma.year_car (id, name) VALUES ('0a53be0d-9e1c-4c7b-ba80-89ed1bd6bf56', 1992);
+INSERT INTO karma.year_car (id, name) VALUES ('507b2698-5184-4ec9-91a4-f31f4e12cc2f', 1993);
+INSERT INTO karma.year_car (id, name) VALUES ('1c63f00f-6c98-477a-9cf1-921369b64fd1', 1994);
+INSERT INTO karma.year_car (id, name) VALUES ('c5645b65-177f-4514-8595-2090a6e91e04', 1995);
+INSERT INTO karma.year_car (id, name) VALUES ('79898368-7998-4a2e-8ae3-b6565678584d', 1996);
+INSERT INTO karma.year_car (id, name) VALUES ('63d3edf7-125a-4308-8428-bcce6afb06e7', 1997);
+INSERT INTO karma.year_car (id, name) VALUES ('1b4c3c14-c4cb-4ac5-8a7e-2a20c490746d', 1998);
+INSERT INTO karma.year_car (id, name) VALUES ('c555a0bc-0efd-4843-872f-18944321b788', 1999);
+INSERT INTO karma.year_car (id, name) VALUES ('1ca896fa-63f2-4e7f-b34a-bd192dee75ef', 2000);
+INSERT INTO karma.year_car (id, name) VALUES ('97396f45-f5ec-458c-a047-6faf266a334d', 2001);
+INSERT INTO karma.year_car (id, name) VALUES ('6f400526-d25a-46bf-8c70-dcf3026891ed', 2002);
+INSERT INTO karma.year_car (id, name) VALUES ('c3b1711f-5f39-4dbc-b623-37282137e35f', 2003);
+INSERT INTO karma.year_car (id, name) VALUES ('5f39f83b-b356-473c-9e7b-b29802166b7e', 2004);
+INSERT INTO karma.year_car (id, name) VALUES ('aa98cecb-4814-434f-9763-5fd3f8dd7c77', 2005);
+INSERT INTO karma.year_car (id, name) VALUES ('4f5749b0-0266-4b74-9b94-190be65d34e5', 2006);
+INSERT INTO karma.year_car (id, name) VALUES ('1ae88824-89b5-4cf7-853a-4528740fd911', 2007);
+INSERT INTO karma.year_car (id, name) VALUES ('47178dee-39bd-423d-bd35-a035659ca769', 2008);
+INSERT INTO karma.year_car (id, name) VALUES ('6c834be5-2ed1-4282-b48d-14113bddd727', 2009);
+INSERT INTO karma.year_car (id, name) VALUES ('03f248df-a238-453a-ace1-8559182460a8', 2010);
+INSERT INTO karma.year_car (id, name) VALUES ('1a9e0cf9-592f-47f4-b02e-ea8b8e564e4c', 2011);
+INSERT INTO karma.year_car (id, name) VALUES ('67093ff6-5e2d-42ac-a6fe-f7780bd4316f', 2012);
+INSERT INTO karma.year_car (id, name) VALUES ('156bc731-68c5-4242-ac13-15bf2ce46026', 2013);
+INSERT INTO karma.year_car (id, name) VALUES ('68bac06a-173a-4ece-b029-0c79c463a694', 2014);
+INSERT INTO karma.year_car (id, name) VALUES ('a5831037-e46a-481d-9183-e520be71ca9a', 2015);
+INSERT INTO karma.year_car (id, name) VALUES ('f8b50c19-4c2a-46eb-aa96-89a3cde14165', 2016);
+INSERT INTO karma.year_car (id, name) VALUES ('f05623cc-39d1-4e48-a52c-39c48f0424a4', 2017);
+INSERT INTO karma.year_car (id, name) VALUES ('56ad5f50-342d-410c-bba6-8c129feafc56', 2018);
+INSERT INTO karma.year_car (id, name) VALUES ('efca889d-4fc5-49aa-b6e7-bdd4ecc5a70c', 2019);

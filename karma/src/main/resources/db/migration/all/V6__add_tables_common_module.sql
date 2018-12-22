@@ -9,9 +9,7 @@ CREATE TABLE IF NOT EXISTS karma.service (
 
 CREATE TABLE IF NOT EXISTS karma.service_price (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
-   car_body character varying,
    name character varying,
-   interior_type character varying,
    price integer,
    duration integer,
    service_id uuid,
@@ -81,4 +79,20 @@ CREATE TABLE IF NOT EXISTS karma.order (
    from_package boolean,
 
    CONSTRAINT order_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.service_price_interior (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   interior_type character varying,
+   service_price_id uuid,
+
+   CONSTRAINT service_price_interior_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.service_price_bodies (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   car_body character varying,
+   service_price_id uuid,
+
+   CONSTRAINT service_price_bodies_pk PRIMARY KEY (id)
 );

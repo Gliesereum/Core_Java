@@ -195,11 +195,9 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             if (dto.getBegin() == null) {
                 throw new ClientException(TIME_BEGIN_EMPTY);
             }
-
-
-
             dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
             dto.setPrice(getPriceByRecord(dto));
+            dto.setStatusRecord(StatusRecord.CREATED);
             checkRecord(dto);
             CarWashRecordDto result = super.create(dto);
             if (result != null) {
@@ -219,28 +217,39 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
                 throw new ClientException(TIME_BEGIN_EMPTY);
             }
             CarWashDto carWash = getCarWashByRecord(dto);
+
             dto.setPrice(getPriceByRecord(dto));
             dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
+
             LocalDateTime begin = dto.getBegin();
             LocalDateTime finish = dto.getFinish();
+
             WorkTimeDto workTime = getWorkTimeByCarWash(begin, carWash);
+
             carWash.getSpaces().forEach(f -> {
+
                 List<CarWashRecordEntity> records =
                         repository.findByStatusRecordAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(
-                                StatusRecord.CREATED, Arrays.asList(f.getId()), begin.toLocalDate().atStartOfDay(), finish.toLocalDate().atTime(LocalTime.MAX));
+                                StatusRecord.CREATED, Arrays.asList(f.getId()), begin, finish.toLocalDate().atTime(LocalTime.MAX));
+
                 if (CollectionUtils.isNotEmpty(records)) {
+
+                    if ((records.get(0).getBegin().isAfter(finish.minusMinutes(1L)) &&
+                            workTime.getFrom().isBefore(begin.plusMinutes(1L).toLocalTime())) ||
+                            (records.get(records.size() - 1).getFinish().isBefore(begin.plusMinutes(1L)) &&
+                                    (workTime.getTo().isBefore(finish.minusMinutes(1L).toLocalTime())))) {
+                        times.put(begin, f.getId());
+                    }
+
                     for (int i = 0; i < records.size(); i++) {
-                        if ((records.get(0).getBegin().isAfter(finish.minusMinutes(1L)) &&
-                                workTime.getFrom().isBefore(begin.plusMinutes(1L).toLocalTime())) ||
-                                (records.get(records.size() - 1).getFinish().isBefore(begin.plusMinutes(1L)) &&
-                                        (workTime.getTo().isBefore(finish.minusMinutes(1L).toLocalTime())))) {
-                            times.put(begin, f.getId());
-                        }
+
                         if (records.get(i).getFinish().minusMinutes(1L).isBefore(begin) &&
                                 records.get(i + 1).getBegin().plusMinutes(1L).isAfter(finish)) {
                             times.put(records.get(i).getFinish(), f.getId());
                         }
                     }
+                } else {
+                    times.put(begin, f.getId());
                 }
             });
         }
@@ -281,16 +290,29 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
         List<CarWashRecordEntity> records =
                 repository.findByStatusRecordAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(
                         StatusRecord.CREATED, Arrays.asList(workingSpaceId), begin.toLocalDate().atStartOfDay(), begin.toLocalDate().atTime(LocalTime.MAX));
+
         if (CollectionUtils.isNotEmpty(records)) {
             boolean result = false;
             int i = 0;
+
             result = records.get(0).getBegin().isAfter(finish.minusMinutes(1L)) &&
                     workTime.getFrom().isBefore(begin.plusMinutes(1L).toLocalTime());
+
             result = records.get(records.size() - 1).getFinish().isBefore(begin.plusMinutes(1L)) &&
                     (workTime.getTo().isBefore(finish.minusMinutes(1L).toLocalTime())) && !result;
-            while (!result) {
-                result = records.get(i).getFinish().minusMinutes(1L).isBefore(begin) &&
-                        records.get(i + 1).getBegin().plusMinutes(1L).isAfter(finish) && !result;
+
+            while (!result || records.size() == i) {
+                LocalDateTime current = records.get(i).getFinish();
+                LocalDateTime next = null;
+
+                if (records.size() == i + 1) {
+                    next = workTime.getTo().atDate(begin.toLocalDate());
+                } else {
+                    next = records.get(i + 1).getFinish();
+                }
+
+                result = current.minusMinutes(1L).isBefore(begin) &&
+                        next.plusMinutes(1L).isAfter(finish) && !result;
                 i++;
             }
             if (!result) {
@@ -321,8 +343,12 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             } else throw new ClientException(PACKAGE_NOT_FOUND);
 
         }
-        if (dto != null && CollectionUtils.isNotEmpty(dto.getServices())) {
-            result += dto.getServices().stream().mapToInt(ServicePriceDto::getPrice).sum();
+        if (dto != null && CollectionUtils.isNotEmpty(dto.getServicesIds())) {
+            List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
+            if (CollectionUtils.isEmpty(services)) {
+                throw new ClientException(SERVICE_NOT_FOUND);
+            }
+            result += services.stream().mapToInt(ServicePriceDto::getPrice).sum();
         }
         return result;
     }

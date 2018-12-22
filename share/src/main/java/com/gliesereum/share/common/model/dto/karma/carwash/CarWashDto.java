@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,9 +42,13 @@ public class CarWashDto extends DefaultDto {
     private String addPhone;
 
     @NotNull
+    @Max(180)
+    @Min(-180)
     private Double latitude;
 
     @NotNull
+    @Max(180)
+    @Min(-180)
     private Double longitude;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
