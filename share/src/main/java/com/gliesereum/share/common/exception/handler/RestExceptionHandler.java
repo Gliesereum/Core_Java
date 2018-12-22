@@ -62,11 +62,11 @@ public class RestExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setCode(BODY_REQUIRED.getErrorCode());
-        errorResponse.setMessage(BODY_REQUIRED.getMessage());
+        errorResponse.setCode(BODY_INVALID.getErrorCode());
+        errorResponse.setMessage(BODY_INVALID.getMessage());
         errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
         errorResponse.setTimestamp(LocalDateTime.now());
-        return buildResponse(errorResponse, BODY_REQUIRED.getHttpCode(), ex);
+        return buildResponse(errorResponse, BODY_INVALID.getHttpCode(), ex);
     }
 
     @ExceptionHandler(Exception.class)
