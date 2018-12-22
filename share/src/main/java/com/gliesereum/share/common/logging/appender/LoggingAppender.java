@@ -2,6 +2,8 @@ package com.gliesereum.share.common.logging.appender;
 
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.AppenderBase;
 import com.gliesereum.share.common.logging.service.LoggingService;
 import lombok.Getter;
@@ -48,6 +50,7 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
         eventMap.put("logger", event.getLoggerName());
         eventMap.put("massage", event.getFormattedMessage());
         eventMap.put("mdc", event.getMDCPropertyMap());
+        putError(eventMap, event);
         if (publisherEnable) {
             if (queueIsNotEmpty) {
                 eventQueue.forEach(loggingService::publishingObject);
@@ -64,6 +67,24 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
     @Override
     public void start() {
         super.start();
+    }
+
+    private void putError(Map<String, Object> eventMap, ILoggingEvent event) {
+        IThrowableProxy throwableProxy = event.getThrowableProxy();
+        if(throwableProxy != null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(throwableProxy.getMessage());
+            builder.append("\n");
+            StackTraceElementProxy[] stackTrace = throwableProxy.getStackTraceElementProxyArray();
+            if (stackTrace != null) {
+                for (StackTraceElementProxy element : stackTrace) {
+                    builder.append(element.getSTEAsString());
+                    builder.append("\n");
+                }
+
+            }
+            eventMap.put("stackTrace", builder.toString());
+        }
     }
 
 }

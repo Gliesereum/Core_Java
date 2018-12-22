@@ -19,23 +19,17 @@
 
 ##### wrapper
 ```
-    ./gradlew clean -b=account/build.gradle
-    ./gradlew build -b=account/build.gradle
+    ./gradlew clean build -b=account/build.gradle
     
-    ./gradlew clean -b=discovery/build.gradle
-    ./gradlew build -b=discovery/build.gradle
+    ./gradlew clean build -b=discovery/build.gradle
     
-    ./gradlew clean -b=proxy/build.gradle
-    ./gradlew build -b=proxy/build.gradle
+    ./gradlew clean build -b=proxy/build.gradle
     
-    ./gradlew clean -b=mail/build.gradle
-    ./gradlew build -b=mail/build.gradle
+    ./gradlew clean build -b=mail/build.gradle
     
-    ./gradlew clean -b=permission/build.gradle
-    ./gradlew build -b=permission/build.gradle
+    ./gradlew clean build -b=permission/build.gradle
 
-    ./gradlew clean -b=karma/build.gradle
-    ./gradlew build -b=karma/build.gradle    
+    ./gradlew clean build -b=karma/build.gradle
 ```
 
 ### Build images

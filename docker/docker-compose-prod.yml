@@ -1,0 +1,230 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:10.5-alpine
+    command: postgres -c 'max_connections=300'
+    volumes:
+      - ../volumes/pgdata/:/var/lib/postgresql/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      POSTGRES_PASSWORD: Af2f4dsASF
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:4.0.11-alpine
+    command: >
+      --loglevel ${REDIS_LOGLEVEL:-notice}
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+      --requirepass Af2f4dsASF
+    volumes:
+      - ../volumes/redisdata/:/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 6379:6379
+
+  rabbit:
+    image: rabbitmq:3.7.8-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: Af2f4dsASF
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+    environment:
+      http.host: 0.0.0.0
+      transport.host: 127.0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+    volumes:
+    - ../volumes/elasticsearch:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.4.2
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_USERNAME: elastic
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.4.2
+    environment:
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: rabbit
+      RABBIT_PASSWORD: Af2f4dsASF
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+    volumes:
+    - ../log/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
+
+  curator:
+    image: gls-curator:0.0.1
+    environment:
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
+      CRON: '15 0 * * *'
+      #CRON: '*/5 * * * *'
+      CONFIG_FILE: /curator/config/curator.yml
+      COMMAND: /curator/config/actions.yml
+      UNIT_COUNT: 3
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - ../log/elk/curator:/.curator
+    - ../log/elk/curator/logs:/curator/logs/
+
+  discovery:
+    image: gls-discovery:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8761
+      PROFILE: docker
+      HOST: discovery
+
+  account:
+    image: gls-account:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8210
+      PROFILE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: Af2f4dsASF
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: Af2f4dsASF
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: rabbit
+      RABBIT_PASSWORD: Af2f4dsASF
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+
+  mail:
+    image: gls-mail:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8220
+      PROFILE: docker
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: rabbit
+      RABBIT_PASSWORD: Af2f4dsASF
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+
+  proxy:
+    image: gls-proxy:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8200
+      PROFILE: docker
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: rabbit
+      RABBIT_PASSWORD: Af2f4dsASF
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+
+  permission:
+    image: gls-permission:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8230
+      PROFILE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: Af2f4dsASF
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: rabbit
+      RABBIT_PASSWORD: Af2f4dsASF
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+
+  karma:
+    image: gls-karma:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8230
+      PROFILE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: Af2f4dsASF
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: rabbit
+      RABBIT_PASSWORD: Af2f4dsASF
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+
+  nginx:
+    image: nginx:1.15.7-alpine
+    volumes:
+      - ../nginx:/etc/nginx
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 5601:5601
+      - 80:80
+      - 443:443
+
+networks:
+  gls-net:
+    driver: bridge
