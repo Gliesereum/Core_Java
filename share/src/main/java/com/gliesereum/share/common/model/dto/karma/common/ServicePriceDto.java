@@ -34,11 +34,13 @@ public class ServicePriceDto extends DefaultDto {
     @NotNull
     private UUID businessServiceId;
 
+    private ServiceDto service;
+
     private Integer duration;
 
-    private CarType carBody;
-
-    private CarInteriorType interiorType;
-
     private List<ServiceClassCarDto> serviceClass = new ArrayList<>();
+
+    private List<CarInteriorType> interiorTypes = new ArrayList<>();
+
+    private List<CarType> carBodies = new ArrayList<>();
 }

@@ -50,12 +50,16 @@ public class ServicePriceEntity extends DefaultEntity {
             inverseJoinColumns = {@JoinColumn(name = "service_class_car_id", insertable = false, updatable = false)})
     private Set<ServiceClassCarEntity> serviceClass = new HashSet<>();
 
-    @Column(name = "car_body")
+    @ElementCollection(targetClass=CarInteriorType.class)
     @Enumerated(EnumType.STRING)
-    private CarType carBody;
+    @CollectionTable(name="service_price_interior", joinColumns = @JoinColumn(name = "service_price_id"))
+    @Column(name="interior_type", nullable = false)
+    Set<CarInteriorType> interiorTypes;
 
-    @Column(name = "interior_type")
+    @ElementCollection(targetClass=CarType.class)
     @Enumerated(EnumType.STRING)
-    private CarInteriorType interiorType;
+    @CollectionTable(name="service_price_bodies", joinColumns = @JoinColumn(name = "service_price_id"))
+    @Column(name="car_body", nullable = false)
+    Set<CarType> carBodies;
 
 }
