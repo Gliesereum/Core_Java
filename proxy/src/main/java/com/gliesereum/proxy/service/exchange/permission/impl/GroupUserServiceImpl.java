@@ -5,6 +5,7 @@ import com.gliesereum.proxy.service.exchange.permission.GroupUserService;
 import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,7 @@ public class GroupUserServiceImpl implements GroupUserService {
     private RestTemplate restTemplate;
 
     @Override
+    @Cacheable(value = "user-group", key="#jwt", unless="#result == null")
     public GroupDto getUserGroup(String jwt) {
         GroupDto result = null;
         if (StringUtils.isNotEmpty(jwt)) {

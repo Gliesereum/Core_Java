@@ -38,8 +38,8 @@ public class CarWashServiceDocument {
     private List<String> serviceClassIds;
 
     @Field(type = FieldType.Keyword)
-    private CarType carBody;
+    private List<CarType> carBody;
 
     @Field(type = FieldType.Keyword)
-    private CarInteriorType interiorType;
+    private List<CarInteriorType> interiorType;
 }

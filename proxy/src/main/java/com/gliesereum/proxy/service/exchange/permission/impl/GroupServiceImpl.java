@@ -4,6 +4,7 @@ import com.gliesereum.proxy.config.security.properties.SecurityProperties;
 import com.gliesereum.proxy.service.exchange.permission.GroupService;
 import com.gliesereum.share.common.model.dto.permission.permission.PermissionMapValue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,7 @@ public class GroupServiceImpl implements GroupService {
     private RestTemplate restTemplate;
 
     @Override
+    @Cacheable(value = "group", key="#groupId", unless="#result == null")
     public Map<String, PermissionMapValue> getPermissionMap(UUID groupId) {
         Map<String, PermissionMapValue> result = null;
         if (groupId != null) {
