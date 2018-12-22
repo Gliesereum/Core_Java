@@ -50,7 +50,6 @@ dependencies {
 
 	implementation "org.cache2k:cache2k-api:${cache2kVersion}"
 	implementation "org.cache2k:cache2k-jcache:${cache2kVersion}"
-	implementation "org.cache2k:cache2k-jcache-api:${cache2kVersion}"
 	runtimeOnly "org.cache2k:cache2k-core:${cache2kVersion}"
 
 	implementation (project(':share')) {
