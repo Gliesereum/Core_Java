@@ -29,7 +29,7 @@ public class GroupUserServiceImpl implements GroupUserService {
     private RestTemplate restTemplate;
 
     @Override
-    @Cacheable(value = "user-group", key="#jwt", unless="#result == null")
+    @Cacheable(value = "userGroup", key="#jwt", unless="#result == null")
     public GroupDto getUserGroup(String jwt) {
         GroupDto result = null;
         if (StringUtils.isNotEmpty(jwt)) {
