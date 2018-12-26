@@ -5,8 +5,7 @@ spring:
   mvc:
     logResolvedException: false
 
-# property to endpoint migrate
-#module-url: /account/v1/
+module-url: /account/v1
 
 server:
   port: 8210
@@ -33,8 +32,8 @@ eureka:
   instance:
     prefer-ip-address: true
 
-# property to endpoint migrate
-#exchange:
-#  endpoint:
- #   permission:
-#      endpointUpdatePack: http://permission-service/endpoint/pack
+#property to endpoint migrate
+exchange:
+  endpoint:
+    permission:
+      endpointUpdatePack: http://permission-service/endpoint/pack
