@@ -158,6 +158,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
         if (carWashDto == null) {
             throw new ClientException(CARWASH_NOT_FOUND);
         }
+        result.setCarWashId(id);
         result.setLogoUrl(carWashDto.getLogoUrl());
         result.setName(carWashDto.getName());
         result.setDescription(carWashDto.getDescription());

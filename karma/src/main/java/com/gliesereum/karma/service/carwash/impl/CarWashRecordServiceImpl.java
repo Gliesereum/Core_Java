@@ -15,6 +15,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordDto;
+import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordFreeTime;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordServiceDto;
 import com.gliesereum.share.common.model.dto.karma.common.*;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
@@ -176,8 +177,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
         if (workingSpace == null) {
             throw new ClientException(WORKING_SPACE_NOT_FOUND);
         }
-        //todo
-        //checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), workingSpaceId, carWash);
+        checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), workingSpaceId, carWash);
         dto.setWorkingSpaceId(workingSpaceId);
         return super.update(dto);
     }
@@ -235,42 +235,22 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             LocalDateTime begin = dto.getBegin();
             LocalDateTime finish = dto.getFinish();
 
-            WorkTimeDto workTime = getWorkTimeByCarWash(begin, carWash);
-            checkTimeWorking(workTime, begin, finish);
+            List<CarWashRecordFreeTime> freeTimes = getFreeTimesByCarWashAndCheckWorkingTime(begin, finish, carWash);
 
-            carWash.getSpaces().forEach(f -> {
-
-                /*List<CarWashRecordEntity> records =
-                        repository.findByStatusRecordAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(
-                                StatusRecord.CREATED, Arrays.asList(f.getId()), begin.toLocalDate().atStartOfDay(), finish.toLocalDate().atTime(LocalTime.MAX));
-
-                if (CollectionUtils.isNotEmpty(records)) {
-
-                    if ((records.get(0).getBegin().isAfter(finish.minusMinutes(1L)) &&
-                            workTime.getFrom().isBefore(begin.plusMinutes(1L).toLocalTime())) ||
-                            (records.get(records.size() - 1).getFinish().isBefore(begin.plusMinutes(1L)) &&
-                                    (workTime.getTo().isBefore(finish.minusMinutes(1L).toLocalTime())))) {
-                        times.put(begin, f.getId());
-                    }
-
-                    for (int i = 0; i < records.size(); i++) {
-
-                        if (records.get(i).getFinish().minusMinutes(1L).isBefore(begin) &&
-                                records.get(i + 1).getBegin().plusMinutes(1L).isAfter(finish)) {
-                            times.put(records.get(i).getFinish(), f.getId());
-                        }
-                    }
+            if (CollectionUtils.isNotEmpty(freeTimes)) {
+                freeTimes.sort(Comparator.comparing(CarWashRecordFreeTime::getBegin));
+                CarWashRecordFreeTime freeTime = freeTimes.stream()
+                        .filter(f -> begin.plusMinutes(1L).isAfter(f.getBegin()) &&
+                                finish.minusMinutes(1L).isBefore(f.getFinish()))
+                        .findFirst().orElse(null);
+                if (freeTime != null) {
+                    dto.setWorkingSpaceId(freeTime.getWorkingSpaceID());
+                    dto.setBegin(freeTime.getBegin());
+                    dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
                 } else {
-                    times.put(begin, f.getId());
-                }*/
-                times.put(begin, f.getId());
-            });
-        }
-        if (!times.isEmpty()) {
-            Map.Entry<LocalDateTime, UUID> entry = ((TreeMap<LocalDateTime, UUID>) times).firstEntry();
-            dto.setWorkingSpaceId(entry.getValue());
-            dto.setBegin(entry.getKey());
-            dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
+                    throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
+                }
+            }
         }
         return dto;
     }
@@ -289,44 +269,19 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             if (workingSpace == null) {
                 throw new ClientException(WORKING_SPACE_NOT_FOUND_IN_THIS_CARWASH);
             }
-            //todo
-            //checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), dto.getWorkingSpaceId(), carWash);
+            checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), dto.getWorkingSpaceId(), carWash);
         }
     }
 
     private void checkWorkingSpaceByOpportunityRecordToTime(LocalDateTime begin, LocalDateTime finish, UUID workingSpaceId, CarWashDto carWash) {
-        WorkTimeDto workTime = getWorkTimeByCarWash(begin, carWash);
-        checkTimeWorking(workTime, begin, finish);
-        List<CarWashRecordEntity> records =
-                repository.findByStatusRecordAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(
-                        StatusRecord.CREATED, Arrays.asList(workingSpaceId), begin.toLocalDate().atStartOfDay(), begin.toLocalDate().atTime(LocalTime.MAX));
-
-        if (CollectionUtils.isNotEmpty(records)) {
-            boolean result = false;
-            int i = 0;
-
-            result = records.get(0).getBegin().isAfter(finish.minusMinutes(1L)) &&
-                    workTime.getFrom().isBefore(begin.plusMinutes(1L).toLocalTime());
-
-            result = records.get(records.size() - 1).getFinish().isBefore(begin.plusMinutes(1L)) &&
-                    (workTime.getTo().isBefore(finish.minusMinutes(1L).toLocalTime())) && !result;
-
-            while (!result) {
-                LocalDateTime current = records.get(i).getFinish();
-                LocalDateTime next = null;
-
-                if (records.size() == i + 1) {
-                    next = workTime.getTo().atDate(begin.toLocalDate());
-                } else {
-                    next = records.get(i + 1).getFinish();
-                }
-
-                result = current.minusMinutes(1L).isBefore(begin) &&
-                        next.plusMinutes(1L).isAfter(finish) && !result;
-                i++;
-                if (records.size() == i) break;
-            }
-            if (!result) {
+        List<CarWashRecordFreeTime> freeTimes = getFreeTimesByCarWashAndCheckWorkingTime(begin, finish, carWash);
+        if (CollectionUtils.isNotEmpty(freeTimes)) {
+            CarWashRecordFreeTime freeTime = freeTimes.stream()
+                    .filter(f -> f.getWorkingSpaceID().equals(workingSpaceId) &&
+                            begin.plusMinutes(1L).isAfter(f.getBegin()) &&
+                            finish.minusMinutes(1L).isBefore(f.getFinish()))
+                    .findAny().orElse(null);
+            if (freeTime == null) {
                 throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
             }
         }
@@ -440,6 +395,43 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
                 throw new ClientException(CAR_WASH_NOT_WORK_THIS_TIME);
             }
         }
+    }
+
+    private List<CarWashRecordFreeTime> getFreeTimesByCarWashAndCheckWorkingTime(LocalDateTime begin, LocalDateTime finish, CarWashDto carWash) {
+        WorkTimeDto workTime = getWorkTimeByCarWash(begin, carWash);
+        checkTimeWorking(workTime, begin, finish);
+        return getFreeTimesByCarWash(carWash, begin.toLocalDate().atTime(workTime.getFrom()), begin.toLocalDate().atTime(workTime.getTo()));
+    }
+
+    private List<CarWashRecordFreeTime> getFreeTimesByCarWash(CarWashDto carWash, LocalDateTime startTimeWork, LocalDateTime endTimeWork) {
+        List<CarWashRecordFreeTime> result = new ArrayList();
+        if (carWash != null && CollectionUtils.isNotEmpty(carWash.getSpaces())) {
+            List<CarWashRecordEntity> records = repository.findByCarWashIdAndStatusRecordAndBeginBetween(carWash.getId(), StatusRecord.CREATED, startTimeWork, endTimeWork);
+            carWash.getSpaces().forEach(cw -> {
+                UUID currentId = cw.getId();
+                if (CollectionUtils.isNotEmpty(records)) {
+                    List<CarWashRecordEntity> recordsBySpace = records.stream().filter(f -> f.getWorkingSpaceId().equals(cw.getId())).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(recordsBySpace)) {
+                        for (int i = 0; i < recordsBySpace.size(); i++) {
+                            if (i == 0) {
+                                result.add(new CarWashRecordFreeTime(currentId, startTimeWork, recordsBySpace.get(i).getBegin()));
+                            } else {
+                                if (i == recordsBySpace.size() - 1) {
+                                    result.add(new CarWashRecordFreeTime(currentId, recordsBySpace.get(i).getFinish(), endTimeWork));
+                                } else {
+                                    result.add(new CarWashRecordFreeTime(currentId, records.get(i - 1).getFinish(), records.get(i).getBegin()));
+                                }
+                            }
+                        }
+                    } else {
+                        result.add(new CarWashRecordFreeTime(currentId, startTimeWork, endTimeWork));
+                    }
+                } else {
+                    result.add(new CarWashRecordFreeTime(currentId, startTimeWork, endTimeWork));
+                }
+            });
+        }
+        return result;
     }
 
 }

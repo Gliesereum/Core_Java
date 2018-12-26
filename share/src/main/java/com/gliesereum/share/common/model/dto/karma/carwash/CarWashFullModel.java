@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -23,6 +24,8 @@ import java.util.List;
 public class CarWashFullModel{
 
     private String name;
+
+    private UUID carWashId;
 
     private String description;
 
