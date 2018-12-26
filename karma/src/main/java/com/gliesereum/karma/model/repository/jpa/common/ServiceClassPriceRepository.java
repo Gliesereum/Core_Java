@@ -2,8 +2,8 @@ package com.gliesereum.karma.model.repository.jpa.common;
 
 import com.gliesereum.karma.model.entity.common.ServiceClassPriceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -12,4 +12,6 @@ import java.util.UUID;
  * @since 12/7/18
  */
 public interface ServiceClassPriceRepository extends JpaRepository<ServiceClassPriceEntity, UUID> {
+
+    List<ServiceClassPriceEntity> findAllByPriceId(UUID priceId);
 }

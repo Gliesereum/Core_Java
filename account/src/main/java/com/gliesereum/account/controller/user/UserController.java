@@ -83,12 +83,12 @@ public class UserController {
         return businessService.getByUserId(SecurityUtil.getUserId());
     }
 
-    @GetMapping("/isExist")
+    @GetMapping("/exist")
     public MapResponse userIsExist(@RequestParam("id") UUID id) {
         return new MapResponse(userService.isExist(id));
     }
 
-    @GetMapping("/isKYCPassed")
+    @GetMapping("/kyc-passed")
     public MapResponse userIsKYCPassed(@RequestParam("id") UUID id) {
         return new MapResponse(businessService.KYCPassed(id));
     }
