@@ -34,6 +34,9 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_RECORD = new ExceptionMessage(1438, 401, "Current user don't have permission to action this record");
 
+    public static final ExceptionMessage TIME_BEGIN_PAST = new ExceptionMessage(1439, 401, "Try to choose past time");
+
+
     public static final ExceptionMessage ANONYMOUS_CANT_COMMENT = new ExceptionMessage(1440, 401, "Anonymous user can't comment");
     public static final ExceptionMessage COMMENT_FOR_USER_EXIST = new ExceptionMessage(1441, 400, "Comment for current user exist");
     public static final ExceptionMessage CURRENT_USER_CANT_EDIT_THIS_COMMENT = new ExceptionMessage(1442, 401, "Current user cant't edit this comment");

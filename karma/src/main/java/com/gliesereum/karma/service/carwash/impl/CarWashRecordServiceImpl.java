@@ -4,6 +4,7 @@ import com.gliesereum.karma.model.entity.carwash.CarWashRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.carwash.CarWashRecordRepository;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.carwash.CarWashRecordService;
+import com.gliesereum.karma.service.carwash.CarWashRecordServiceService;
 import com.gliesereum.karma.service.carwash.CarWashService;
 import com.gliesereum.karma.service.common.OrderService;
 import com.gliesereum.karma.service.common.PackageService;
@@ -14,7 +15,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordDto;
-import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordFreeTimesModel;
+import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordServiceDto;
 import com.gliesereum.share.common.model.dto.karma.common.*;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusWashing;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,9 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     @Autowired
     private ServicePriceService servicePriceService;
 
+    @Autowired
+    private CarWashRecordServiceService carWashRecordServiceService;
+
     private static final Class<CarWashRecordDto> DTO_CLASS = CarWashRecordDto.class;
     private static final Class<CarWashRecordEntity> ENTITY_CLASS = CarWashRecordEntity.class;
 
@@ -75,6 +80,12 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     @Override
     public List<CarWashRecordDto> getByParamsForClient(Map<String, String> params) {
         return getByParams(params, false);
+    }
+
+    @Override
+    public List<CarWashRecordDto> getByIdCarWashAndStatusRecord(UUID idCarWash, StatusRecord status, LocalDateTime from, LocalDateTime to) {
+        List<CarWashRecordEntity> entities = repository.findByCarWashIdAndStatusRecordAndBeginBetween(idCarWash, status, from, to);
+        return converter.convert(entities, dtoClass);
     }
 
     @Override
@@ -165,7 +176,8 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
         if (workingSpace == null) {
             throw new ClientException(WORKING_SPACE_NOT_FOUND);
         }
-        checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), workingSpaceId, carWash);
+        //todo
+        //checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), workingSpaceId, carWash);
         dto.setWorkingSpaceId(workingSpaceId);
         return super.update(dto);
     }
@@ -192,15 +204,17 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     @Transactional
     public CarWashRecordDto create(CarWashRecordDto dto) {
         if (dto != null) {
-            if (dto.getBegin() == null) {
-                throw new ClientException(TIME_BEGIN_EMPTY);
-            }
+            checkBeginTimeForRecord(dto.getBegin());
             dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
             dto.setPrice(getPriceByRecord(dto));
             dto.setStatusRecord(StatusRecord.CREATED);
             checkRecord(dto);
             CarWashRecordDto result = super.create(dto);
+            result.setServicesIds(dto.getServicesIds());
             if (result != null) {
+                dto.getServicesIds().forEach(f -> {
+                    carWashRecordServiceService.create(new CarWashRecordServiceDto(result.getId(), f));
+                });
                 createOrders(result);
             }
             return result;
@@ -209,13 +223,10 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     }
 
     @Override
-    public CarWashRecordFreeTimesModel getFreeTimeForRecord(CarWashRecordDto dto) {
-        CarWashRecordFreeTimesModel result = new CarWashRecordFreeTimesModel();
+    public CarWashRecordDto getFreeTimeForRecord(CarWashRecordDto dto) {
         Map<LocalDateTime, UUID> times = new TreeMap<>();
         if (dto != null) {
-            if (dto.getBegin() == null) {
-                throw new ClientException(TIME_BEGIN_EMPTY);
-            }
+            checkBeginTimeForRecord(dto.getBegin());
             CarWashDto carWash = getCarWashByRecord(dto);
 
             dto.setPrice(getPriceByRecord(dto));
@@ -225,12 +236,13 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             LocalDateTime finish = dto.getFinish();
 
             WorkTimeDto workTime = getWorkTimeByCarWash(begin, carWash);
+            checkTimeWorking(workTime, begin, finish);
 
             carWash.getSpaces().forEach(f -> {
 
                 List<CarWashRecordEntity> records =
                         repository.findByStatusRecordAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(
-                                StatusRecord.CREATED, Arrays.asList(f.getId()), begin, finish.toLocalDate().atTime(LocalTime.MAX));
+                                StatusRecord.CREATED, Arrays.asList(f.getId()), begin.toLocalDate().atStartOfDay(), finish.toLocalDate().atTime(LocalTime.MAX));
 
                 if (CollectionUtils.isNotEmpty(records)) {
 
@@ -255,11 +267,11 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
         }
         if (!times.isEmpty()) {
             Map.Entry<LocalDateTime, UUID> entry = ((TreeMap<LocalDateTime, UUID>) times).firstEntry();
-            result.setSpaceID(entry.getValue());
-            result.setTime(entry.getKey());
+            dto.setWorkingSpaceId(entry.getValue());
+            dto.setBegin(entry.getKey());
+            dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
         }
-        result.setRecord(dto);
-        return result;
+        return dto;
     }
 
 
@@ -276,17 +288,14 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             if (workingSpace == null) {
                 throw new ClientException(WORKING_SPACE_NOT_FOUND_IN_THIS_CARWASH);
             }
-            checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), dto.getWorkingSpaceId(), carWash);
+            //todo
+            //checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), dto.getWorkingSpaceId(), carWash);
         }
     }
 
     private void checkWorkingSpaceByOpportunityRecordToTime(LocalDateTime begin, LocalDateTime finish, UUID workingSpaceId, CarWashDto carWash) {
         WorkTimeDto workTime = getWorkTimeByCarWash(begin, carWash);
-        if (!(workTime.getFrom().equals(LocalTime.MIN) && workTime.getTo().equals(LocalTime.MAX))) {
-            if (begin.toLocalTime().isBefore(workTime.getFrom()) || finish.toLocalTime().isAfter(workTime.getTo())) {
-                throw new ClientException(CAR_WASH_NOT_WORK_THIS_TIME);
-            }
-        }
+        checkTimeWorking(workTime, begin, finish);
         List<CarWashRecordEntity> records =
                 repository.findByStatusRecordAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(
                         StatusRecord.CREATED, Arrays.asList(workingSpaceId), begin.toLocalDate().atStartOfDay(), begin.toLocalDate().atTime(LocalTime.MAX));
@@ -301,7 +310,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             result = records.get(records.size() - 1).getFinish().isBefore(begin.plusMinutes(1L)) &&
                     (workTime.getTo().isBefore(finish.minusMinutes(1L).toLocalTime())) && !result;
 
-            while (!result || records.size() == i) {
+            while (!result) {
                 LocalDateTime current = records.get(i).getFinish();
                 LocalDateTime next = null;
 
@@ -314,6 +323,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
                 result = current.minusMinutes(1L).isBefore(begin) &&
                         next.plusMinutes(1L).isAfter(finish) && !result;
                 i++;
+                if (records.size() == i) break;
             }
             if (!result) {
                 throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
@@ -321,8 +331,8 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
         }
     }
 
-    private WorkTimeDto getWorkTimeByCarWash(LocalDateTime start, CarWashDto carWash) {
-        WorkTimeDto workTime = carWash.getWorkTimes().stream().filter(wt -> wt.getDayOfWeek().equals(start.getDayOfWeek())).findFirst().orElse(null);
+    private WorkTimeDto getWorkTimeByCarWash(LocalDateTime begin, CarWashDto carWash) {
+        WorkTimeDto workTime = carWash.getWorkTimes().stream().filter(wt -> wt.getDayOfWeek().equals(begin.getDayOfWeek())).findFirst().orElse(null);
         if (workTime == null || !workTime.getIsWork()) {
             throw new ClientException(CAR_WASH_NOT_WORK_THIS_DAY);
         }
@@ -386,8 +396,9 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     }
 
     private void createOrders(CarWashRecordDto dto) {
-        if (dto != null && CollectionUtils.isNotEmpty(dto.getServices())) {
-            dto.getServices().forEach(f -> {
+        if (dto != null && CollectionUtils.isNotEmpty(dto.getServicesIds())) {
+            List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
+            services.forEach(f -> {
                 orderService.create(new OrderDto(f.getServiceId(), dto.getId(), f.getPrice(), false));
             });
         }
@@ -411,6 +422,23 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             throw new ClientException(CARWASH_NOT_FOUND);
         }
         return carWash;
+    }
+
+    private void checkBeginTimeForRecord(LocalDateTime time) {
+        if (time == null) {
+            throw new ClientException(TIME_BEGIN_EMPTY);
+        }
+        if (time.plusMinutes(2L).isBefore(LocalDateTime.now(ZoneOffset.UTC))) {
+            throw new ClientException(TIME_BEGIN_PAST);
+        }
+    }
+
+    private void checkTimeWorking(WorkTimeDto workTime, LocalDateTime begin, LocalDateTime finish) {
+        if (!(workTime.getFrom().equals(LocalTime.MIN) && workTime.getTo().equals(LocalTime.MAX))) {
+            if (begin.toLocalTime().isBefore(workTime.getFrom()) || finish.toLocalTime().isAfter(workTime.getTo())) {
+                throw new ClientException(CAR_WASH_NOT_WORK_THIS_TIME);
+            }
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.carwash.impl;
 import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.carwash.CarWashEntity;
 import com.gliesereum.karma.model.repository.jpa.carwash.CarWashRepository;
+import com.gliesereum.karma.service.carwash.CarWashRecordService;
 import com.gliesereum.karma.service.carwash.CarWashService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.common.PackageService;
@@ -15,11 +16,13 @@ import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashFullModel;
+import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.common.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.common.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.common.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -28,6 +31,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -61,6 +66,9 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private CarWashRecordService carWashRecordService;
 
     public CarWashServiceImpl(CarWashRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -201,6 +209,14 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
         } else {
             List<CommentDto> emptyList = Collections.emptyList();
             result.setComments(emptyList);
+        }
+        List<CarWashRecordDto> records = carWashRecordService.getByIdCarWashAndStatusRecord(id, StatusRecord.CREATED,
+                LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
+        if (CollectionUtils.isNotEmpty(records)) {
+            result.setRecords(records);
+        } else {
+            List<CarWashRecordDto> emptyList = Collections.emptyList();
+            result.setRecords(emptyList);
         }
         return result;
     }

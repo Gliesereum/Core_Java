@@ -2,11 +2,11 @@ package com.gliesereum.karma.service.carwash;
 
 import com.gliesereum.karma.model.entity.carwash.CarWashRecordEntity;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordDto;
-import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordFreeTimesModel;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusWashing;
 import com.gliesereum.share.common.service.DefaultService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,6 +20,8 @@ public interface CarWashRecordService extends DefaultService<CarWashRecordDto, C
 
     List<CarWashRecordDto> getByParamsForClient(Map<String, String> params);
 
+    List<CarWashRecordDto> getByIdCarWashAndStatusRecord(UUID idCarWash, StatusRecord status, LocalDateTime from, LocalDateTime to);
+
     List<CarWashRecordDto> getByParamsForBusiness(Map<String, String> params);
 
     CarWashRecordDto updateWashingSpace(UUID idRecord, UUID workingSpaceId, Boolean isUser);
@@ -30,5 +32,5 @@ public interface CarWashRecordService extends DefaultService<CarWashRecordDto, C
 
     CarWashRecordDto updateTimeRecord(UUID idRecord, Long beginTime, Boolean isUser);
 
-    CarWashRecordFreeTimesModel getFreeTimeForRecord(CarWashRecordDto dto);
+    CarWashRecordDto getFreeTimeForRecord(CarWashRecordDto dto);
 }

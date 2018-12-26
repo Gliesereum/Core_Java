@@ -51,4 +51,6 @@ public class CarWashFullModel{
     private List<MediaDto> media = new ArrayList<>();
 
     private List<CommentDto> comments = new ArrayList<>();
+
+    private List<CarWashRecordDto> records = new ArrayList<>();
 }

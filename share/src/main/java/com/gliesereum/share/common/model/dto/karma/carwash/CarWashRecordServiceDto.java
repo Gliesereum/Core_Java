@@ -20,4 +20,9 @@ public class CarWashRecordServiceDto extends DefaultDto {
     private UUID carWashRecordId;
 
     private UUID serviceId;
+
+    public CarWashRecordServiceDto(UUID carWashRecordId, UUID serviceId) {
+        this.carWashRecordId = carWashRecordId;
+        this.serviceId = serviceId;
+    }
 }
