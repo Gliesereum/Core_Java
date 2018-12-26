@@ -4,7 +4,6 @@ import com.gliesereum.karma.service.carwash.CarWashRecordService;
 import com.gliesereum.karma.service.carwash.CarWashService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordDto;
-import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordFreeTimesModel;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusWashing;
 import com.gliesereum.share.common.model.response.MapResponse;
@@ -113,7 +112,7 @@ public class CarWashRecordController {
     }
 
     @PostMapping("free/time")
-    public CarWashRecordFreeTimesModel getFreeTimeForRecord(@RequestBody CarWashRecordDto dto) {
+    public CarWashRecordDto getFreeTimeForRecord(@RequestBody CarWashRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
     }
 }

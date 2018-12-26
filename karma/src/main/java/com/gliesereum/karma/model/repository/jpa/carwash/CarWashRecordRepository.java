@@ -18,4 +18,6 @@ public interface CarWashRecordRepository extends JpaRepository<CarWashRecordEnti
      List<CarWashRecordEntity> findByStatusRecordAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(StatusRecord status,List<UUID> workingSpaceIds, LocalDateTime from, LocalDateTime to);
 
      List<CarWashRecordEntity> findByStatusRecordAndCarIdInAndBeginBetween(StatusRecord status, List<UUID> carIds, LocalDateTime from, LocalDateTime to);
+
+     List<CarWashRecordEntity> findByCarWashIdAndStatusRecordAndBeginBetween(UUID carWashId, StatusRecord status,LocalDateTime from, LocalDateTime to);
 }

@@ -42,8 +42,8 @@ public class CarWashDto extends DefaultDto {
     private String addPhone;
 
     @NotNull
-    @Max(180)
-    @Min(-180)
+    @Max(90)
+    @Min(-90)
     private Double latitude;
 
     @NotNull
