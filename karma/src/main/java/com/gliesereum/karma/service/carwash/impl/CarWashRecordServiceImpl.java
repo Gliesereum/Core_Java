@@ -240,7 +240,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
             carWash.getSpaces().forEach(f -> {
 
-                List<CarWashRecordEntity> records =
+                /*List<CarWashRecordEntity> records =
                         repository.findByStatusRecordAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(
                                 StatusRecord.CREATED, Arrays.asList(f.getId()), begin.toLocalDate().atStartOfDay(), finish.toLocalDate().atTime(LocalTime.MAX));
 
@@ -262,7 +262,8 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
                     }
                 } else {
                     times.put(begin, f.getId());
-                }
+                }*/
+                times.put(begin, f.getId());
             });
         }
         if (!times.isEmpty()) {
