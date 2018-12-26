@@ -54,6 +54,7 @@ public class ModuleServiceImpl extends DefaultServiceImpl<ModuleDto, ModuleEntit
                 entity.setUrl(url);
                 entity.setTitle(name);
                 entity.setVersion(DEFAULT_VERSION);
+                entity.setIsActive(true);
                 entity = moduleRepository.save(entity);
                 result = converter.convert(entity, dtoClass);
             }

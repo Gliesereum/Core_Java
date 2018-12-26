@@ -1,4 +1,4 @@
-package com.gliesereum.karma.config;
+package com.gliesereum.karma.config.es;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.vanroy.springdata.jest.JestElasticsearchTemplate;
