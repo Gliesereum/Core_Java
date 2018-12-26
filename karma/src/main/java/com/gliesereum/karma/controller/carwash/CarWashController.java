@@ -64,12 +64,12 @@ public class CarWashController {
         return carWashService.getById(id);
     }
 
-    @GetMapping("full/model/{id}")
+    @GetMapping("{id}/full-model")
     public CarWashFullModel getFullModelById(@PathVariable("id") UUID id) {
         return carWashService.getFullModelById(id);
     }
 
-    @GetMapping("/byUser")
+    @GetMapping("/by-user")
     public List<CarWashDto> getByUser() {
         return carWashService.getByUserBusinessId(SecurityUtil.getUserBusinessId());
     }

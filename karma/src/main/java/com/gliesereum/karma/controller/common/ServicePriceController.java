@@ -1,11 +1,14 @@
 package com.gliesereum.karma.controller.common;
 
+import com.gliesereum.karma.service.common.ServiceClassPriceService;
 import com.gliesereum.karma.service.common.ServicePriceService;
+import com.gliesereum.share.common.model.dto.karma.common.ServiceClassPriceDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +23,9 @@ public class ServicePriceController {
 
     @Autowired
     private ServicePriceService service;
+
+    @Autowired
+    private ServiceClassPriceService serviceClassPriceService;
 
     @GetMapping
     public List<ServicePriceDto> getAll() {
@@ -51,4 +57,26 @@ public class ServicePriceController {
         service.delete(id);
         return new MapResponse("true");
     }
+
+    @PostMapping("/class")
+    public ServiceClassPriceDto createClass(@Valid @RequestBody ServiceClassPriceDto dto) {
+        return serviceClassPriceService.create(dto);
+    }
+
+    @PutMapping("/class")
+    public ServiceClassPriceDto updateClass(@Valid @RequestBody ServiceClassPriceDto dto) {
+        return serviceClassPriceService.update(dto);
+    }
+
+    @DeleteMapping("/class/{id}")
+    public MapResponse deleteClass(@PathVariable("id") UUID id) {
+        serviceClassPriceService.delete(id);
+        return new MapResponse("true");
+    }
+
+    @GetMapping("/{priceId}/class")
+    private List<ServiceClassPriceDto> getByPriceId(@PathVariable("id") UUID priceId) {
+        return serviceClassPriceService.getByPriceId(priceId);
+    }
+
 }

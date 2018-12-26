@@ -1,6 +1,7 @@
 stages:
   - prebuild
   - build
+  - stop-container
   - prepackage
   - package
   - deploy
@@ -31,14 +32,23 @@ gradle-build:
   only:
     - karma/dev
 
+docker-stop-container:
+  stage: stop-container
+  script:
+    - echo 'Docker stop containers'
+    - cd $PROJECT_HOME
+    - docker stack rm gls
+    - sleep 30
+    - docker rm $(docker ps -a -q) --force
+  only:
+    - karma/dev
+  allow_failure: true
+
 docker-clean-image:
   stage: prepackage
   script:
     - echo 'Docker clean images'
     - cd $PROJECT_HOME
-    - docker stack rm gls
-    - sleep 30
-    - docker rm $(docker ps -a -q) --force
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-discovery')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-account')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-proxy')
