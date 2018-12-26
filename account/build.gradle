@@ -2,6 +2,14 @@ buildscript {
 	ext {
 		springBootVersion = '2.0.6.RELEASE'
 		springCloudVersion = 'Finchley.SR2'
+		commonsCollectionsVersion = '4.2'
+		commonsLangVersion = '3.8.1'
+		commonsIOVersion = '2.6'
+		lettuceVersion = '5.1.0.RELEASE'
+		modelMapperVersion = '2.3.0'
+		jjwtVersion = '0.9.1'
+		lombokVersion = '1.18.2'
+		logbackVersion = '1.2.3'
 	}
 	repositories {
 		mavenCentral()
@@ -36,17 +44,18 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-amqp')
 	implementation('org.springframework.boot:spring-boot-starter-mail')
-    implementation('org.apache.commons:commons-collections4:4.2')
-	implementation('org.apache.commons:commons-lang3:3.8.1')
-	implementation('io.lettuce:lettuce-core:5.1.0.RELEASE')
-	implementation('org.modelmapper:modelmapper:2.3.0')
-	implementation('io.jsonwebtoken:jjwt:0.9.1')
-    implementation('commons-io:commons-io:2.6')
 	implementation('org.flywaydb:flyway-core')
-	
-    compileOnly 'org.projectlombok:lombok:1.18.2'
+    implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
+	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
+	implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+	implementation "io.lettuce:lettuce-core:${lettuceVersion}"
+    implementation "commons-io:commons-io:${commonsIOVersion}"
+	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
+
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+
+	testImplementation "ch.qos.logback:logback-classic:${logbackVersion}"
 
 	runtimeOnly('org.postgresql:postgresql')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')

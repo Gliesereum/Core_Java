@@ -2,6 +2,15 @@ buildscript {
 	ext {
 		springBootVersion = '2.1.1.RELEASE'
 		springCloudVersion = 'Finchley.SR2'
+		springDataJestVersion = '3.2.0.RELEASE'
+		elasticsearchVersion = '6.2.2'
+		jaksonJsr310Version = '2.9.7'
+		modelMapperVersion = '2.3.0'
+		jjwtVersion = '0.9.1'
+		commonsCollectionsVersion = '4.2'
+		commonsLangVersion = '3.8.1'
+		commonsIOVersion = '2.6'
+		lombokVersion = '1.18.2'
 	}
 	repositories {
 		mavenCentral()
@@ -34,24 +43,23 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-security')
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-amqp')
-	implementation('com.github.vanroy:spring-boot-starter-data-jest:3.2.0.RELEASE')
-	implementation('org.elasticsearch:elasticsearch:6.2.2')
-	implementation('org.elasticsearch.client:transport:6.2.2')
-	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7')
-	implementation('org.modelmapper:modelmapper:2.3.0')
-	implementation('io.jsonwebtoken:jjwt:0.9.1')
-	implementation('org.apache.commons:commons-collections4:4.2')
-	implementation('org.apache.commons:commons-lang3:3.8.1')
-	implementation('commons-io:commons-io:2.6')
 	implementation('org.flywaydb:flyway-core')
+	implementation "com.github.vanroy:spring-boot-starter-data-jest:${springDataJestVersion}"
+	implementation "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
+	implementation "org.elasticsearch.client:transport:${elasticsearchVersion}"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jaksonJsr310Version}"
+	implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
+	implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
+	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
+	implementation "commons-io:commons-io:${commonsIOVersion}"
 	
 	runtimeOnly('org.postgresql:postgresql')
 	
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
-
-	compileOnly 'org.projectlombok:lombok:1.18.2'
 
 	implementation (project(':share')) {
 		transitive = false

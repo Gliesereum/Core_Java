@@ -1,7 +1,6 @@
 package com.gliesereum.proxy.controller;
 
 import com.gliesereum.share.common.exception.CustomException;
-import com.gliesereum.share.common.exception.messages.CommonExceptionMessage;
 import com.netflix.client.ClientException;
 import com.netflix.zuul.exception.ZuulException;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.*;
 
 /**
  * @author yvlasiuk
@@ -38,7 +39,12 @@ public class ZuulErrorController extends AbstractErrorController {
     public ResponseEntity error(HttpServletRequest request) throws Exception {
         Exception exc = (Exception) request.getAttribute("javax.servlet.error.exception");
         if (exc == null) {
-            exc = new CustomException(CommonExceptionMessage.UNKNOWN_SERVER_EXCEPTION);
+            Object attribute = request.getAttribute("javax.servlet.error.status_code");
+            if ((attribute instanceof Integer) && ((Integer) attribute) == 404) {
+                exc = new CustomException(ENDPOINT_NOT_FOUND);
+            } else {
+                exc = new CustomException(UNKNOWN_SERVER_EXCEPTION);
+            }
         }
         if (exc.getCause() instanceof CustomException) {
             throw (CustomException) exc.getCause();
@@ -46,8 +52,8 @@ public class ZuulErrorController extends AbstractErrorController {
         if (exc instanceof ZuulException) {
             ZuulException zuulException = (ZuulException) exc;
             Throwable cause = zuulException.getCause();
-            if(cause instanceof ClientException) {
-                exc = new CustomException(CommonExceptionMessage.SERVICE_NOT_AVAILABLE);
+            if (cause instanceof ClientException) {
+                exc = new CustomException(SERVICE_NOT_AVAILABLE);
             }
         }
         throw exc;
