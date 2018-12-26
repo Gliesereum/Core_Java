@@ -58,7 +58,7 @@ public class UserEmailController {
         return new MapResponse("true");
     }
 
-    @GetMapping("/by/user")
+    @GetMapping("/by-user")
     public UserEmailDto getByUserId() {
         return emailService.getByUserId(SecurityUtil.getUserId());
     }

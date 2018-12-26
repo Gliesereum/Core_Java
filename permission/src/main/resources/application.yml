@@ -36,5 +36,5 @@ eureka:
 exchange:
   endpoint:
     account:
-      userIsExist: http://account-service/user/isExist
-      userKYCPassed: http://account-service/user/isKYCPassed
+      userIsExist: http://account-service/user/exist
+      userKYCPassed: http://account-service/user/kyc-passed

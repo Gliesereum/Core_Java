@@ -58,7 +58,7 @@ public class UserPhoneController {
         return new MapResponse("true");
     }
 
-    @GetMapping("/by/user")
+    @GetMapping("/by-user")
     public UserPhoneDto getByUserId() {
         return phoneService.getByUserId(SecurityUtil.getUserId());
     }

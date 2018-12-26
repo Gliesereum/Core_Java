@@ -61,7 +61,7 @@ public class CarController {
         return carService.create(car);
     }
 
-    @PostMapping("/add/service/{idCar}/{idService}")
+    @PostMapping("/service/{idCar}/{idService}")
     public CarDto addService(@PathVariable("idCar") UUID idCar, @PathVariable("idService") UUID idService) {
         return carService.addService(idCar, idService);
     }
@@ -82,9 +82,9 @@ public class CarController {
         return new MapResponse("true");
     }
 
-    @DeleteMapping("/by/user/{id}")
-    public MapResponse deleteByUserId(@PathVariable("id") UUID id) {
-        carService.deleteByUserId(id);
+    @DeleteMapping("/all-by-user")
+    public MapResponse deleteByUserId() {
+        carService.deleteByUserId(SecurityUtil.getUserId());
         //TODO: notify other service
         return new MapResponse("true");
     }
@@ -99,7 +99,7 @@ public class CarController {
         return modelCarService.getAll();
     }
 
-    @GetMapping("/models/by/brand/{id}")
+    @GetMapping("/models/by-brand/{id}")
     public List<ModelCarDto> getAllModelsByBrandId(@PathVariable("id") UUID id) {
         return modelCarService.getAllByBrandId(id);
     }
