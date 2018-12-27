@@ -69,7 +69,7 @@ public class EndpointsListener implements ApplicationListener<ApplicationReadyEv
                             EndpointDto endpoint = new EndpointDto();
                             endpoint.setTitle(endpointName);
                             endpoint.setMethod(Method.valueOf(method.name()));
-                            endpoint.setUrl(url.replaceAll("\\{.*\\}", "*"));
+                            endpoint.setUrl(url.replaceAll("\\{\\w*\\}", "*"));
                             endpoint.setActive(true);
                             endpoint.setVersion("v1");
                             endpoints.add(endpoint);
