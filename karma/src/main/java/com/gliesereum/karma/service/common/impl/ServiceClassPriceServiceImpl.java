@@ -83,6 +83,18 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     }
 
     @Override
+    public void delete(UUID priceId, UUID classId) {
+        if (ObjectUtils.allNotNull(priceId, classId)) {
+            Optional<ServiceClassPriceEntity> entity = serviceClassPriceRepository.findByPriceIdAndServiceClassId(priceId, classId);
+            entity.ifPresent(i -> {
+                checkPermission(i.getPriceId(), i.getServiceClassId());
+                repository.delete(i);
+            });
+
+        }
+    }
+
+    @Override
     public List<ServiceClassPriceDto> getByPriceId(UUID priceId) {
         List<ServiceClassPriceDto> result = null;
         if (priceId != null) {

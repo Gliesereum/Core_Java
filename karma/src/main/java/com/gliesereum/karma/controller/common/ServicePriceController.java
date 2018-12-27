@@ -22,39 +22,44 @@ import java.util.UUID;
 public class ServicePriceController {
 
     @Autowired
-    private ServicePriceService service;
+    private ServicePriceService servicePriceService;
 
     @Autowired
     private ServiceClassPriceService serviceClassPriceService;
 
     @GetMapping
     public List<ServicePriceDto> getAll() {
-        return service.getAll();
+        return servicePriceService.getAll();
     }
 
     @GetMapping("/package/{id}")
     public List<ServicePriceDto> getAllByPackage(@PathVariable("id") UUID id) {
-        return service.getAllByPackage(id);
+        return servicePriceService.getAllByPackage(id);
     }
 
     @GetMapping("/{id}")
     public ServicePriceDto getById(@PathVariable("id") UUID id) {
-        return service.getById(id);
+        return servicePriceService.getById(id);
     }
 
     @PostMapping
     public ServicePriceDto create(@RequestBody ServicePriceDto dto) {
-        return service.create(dto);
+        return servicePriceService.create(dto);
     }
 
     @PutMapping
     public ServicePriceDto update(@RequestBody ServicePriceDto dto) {
-        return service.update(dto);
+        return servicePriceService.update(dto);
+    }
+
+    @GetMapping("/by-business-service/{id}")
+    public List<ServicePriceDto> getByBusinessId(@PathVariable("id") UUID id) {
+        return servicePriceService.getByBusinessServiceId(id);
     }
 
     @DeleteMapping("/{id}")
     public MapResponse delete(@PathVariable("id") UUID id) {
-        service.delete(id);
+        servicePriceService.delete(id);
         return new MapResponse("true");
     }
 
@@ -68,9 +73,9 @@ public class ServicePriceController {
         return serviceClassPriceService.update(dto);
     }
 
-    @DeleteMapping("/class/{id}")
-    public MapResponse deleteClass(@PathVariable("id") UUID id) {
-        serviceClassPriceService.delete(id);
+    @DeleteMapping("/class/{priceId}/{classId}")
+    public MapResponse deleteClass(@PathVariable("priceId") UUID priceId, @PathVariable("classId") UUID classId) {
+        serviceClassPriceService.delete(priceId, classId);
         return new MapResponse("true");
     }
 
