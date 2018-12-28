@@ -66,20 +66,8 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Transactional
     public UserDto create(UserDto dto) {
         if (dto != null) {
-            boolean isIndividual = dto.getUserType().equals(UserType.INDIVIDUAL);
-            VerifiedStatus status = VerifiedStatus.UNVERIFIED;
-            if (isIndividual) {
-                status = VerifiedStatus.VERIFIED;
-            }
-            dto.setVerifiedStatus(status);
             dto.setBanStatus(BanStatus.UNBAN);
             UserDto user = super.create(dto);
-            if (user != null && !isIndividual) {
-                UserBusinessDto business = new UserBusinessDto();
-                business.setKYCStatus(KYCStatus.KFC_NOT_PASSED);
-                business.setUserId(user.getId());
-                businessService.create(business);
-            }
             return user;
         }
         return null;

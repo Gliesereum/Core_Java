@@ -1,15 +1,15 @@
 package com.gliesereum.account.controller.auth;
 
-import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.account.service.token.TokenService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
+import com.gliesereum.share.common.model.dto.account.auth.SignInDto;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import javax.validation.Valid;
 
 /**
  * @author vitalij
@@ -25,7 +25,13 @@ public class AuthController {
     @Autowired
     private TokenService tokenService;
 
-    @PostMapping("/signup")
+    @PostMapping("/signin")
+    public AuthDto signIn(@Valid @RequestBody SignInDto signInDto) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+        return authService.signIn(signInDto);
+    }
+
+    //TODO: merge signin with signup
+    /*@PostMapping("/signup")
     public AuthDto signUp(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
         return authService.signUp(params);
     }
@@ -33,7 +39,7 @@ public class AuthController {
     @PostMapping("/signin")
     public AuthDto signIn(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
         return authService.signIn(params);
-    }
+    }*/
 
     @GetMapping("/check")
     public AuthDto check(@RequestParam("accessToken") String accessToken) {

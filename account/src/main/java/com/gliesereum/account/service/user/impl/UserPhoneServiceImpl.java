@@ -106,8 +106,10 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     }
 
     @Override
-    public void sendCode(String phone, boolean isNew) {
-        checkPhoneForSignInUp(phone, isNew);
+    public void sendCode(String phone) {
+        //TODO: REMOVE isNEW
+        //checkPhoneForSignInUp(phone, isNew);
+        checkIsPhone(phone);
         verificationService.sendVerificationCode(phone, VerificationType.PHONE);
     }
 
@@ -178,9 +180,10 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
         }
     }
 
+    /* TODO: REMOVE isNEW
     private void checkPhoneForSignInUp(String phone, boolean isNew) {
         checkIsPhone(phone);
         if (!isNew && !checkPhoneByExist(phone)) throw new ClientException(PHONE_NOT_FOUND);
         if (isNew && checkPhoneByExist(phone)) throw new ClientException(PHONE_EXIST);
-    }
+    }*/
 }
