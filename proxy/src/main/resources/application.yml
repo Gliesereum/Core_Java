@@ -2,6 +2,11 @@
 spring:
   application:
     name: proxy-service
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1MB
+      max-request-size: 1MB
 
 server:
   port: 8200
@@ -20,6 +25,9 @@ zuul:
     karma-service:
       path: /karma/v1/**
       service-id: karma-service
+    media-service:
+      path: /media/v1/**
+      service-id: media-service
   ignored-services: '*'
   prefix: /api
   host:

@@ -37,4 +37,9 @@ public class SecurityUtil {
         }
         return result;
     }
+
+    public static boolean isAnonymous() {
+        UserAuthentication user = getUser();
+        return (user == null) || user.isAnonymous();
+    }
 }

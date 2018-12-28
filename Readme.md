@@ -15,6 +15,8 @@
     gradle clean build -b=permission/build.gradle
     
     gradle clean build -b=karma/build.gradle
+    
+    gradle clean build -b=media/build.gradle
 ```
 
 ##### wrapper
@@ -30,6 +32,8 @@
     ./gradlew clean build -b=permission/build.gradle
 
     ./gradlew clean build -b=karma/build.gradle
+    
+    ./gradlew clean build -b=media/build.gradle
 ```
 
 ### Build images
@@ -96,6 +100,14 @@ docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-karma
 docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  .
 ```
 
+##### Media
+```
+docker rm media-service
+docker rmi gls-media
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-media')
+docker build -t gls-media:0.0.1 -f docker/media/Dockerfile  .
+```
+
 ### Run stack
 ```
 docker stack deploy -c docker/docker-compose-dev.yml gls
@@ -139,3 +151,4 @@ docker run -i -t -p 8230:8230 --name=permission-service -e PORT=8230 -e PROFILE=
 docker rm karma-service
 docker run -i -t -p 8240:8240 --name=karma-service -e PORT=8240 -e PROFILE=docker -e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e EUREKA_HOST=localhost -e EUREKA_PORT=8761 gls-karma
 ```
+
