@@ -210,8 +210,8 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             dto.setStatusRecord(StatusRecord.CREATED);
             checkRecord(dto);
             CarWashRecordDto result = super.create(dto);
-            result.setServicesIds(dto.getServicesIds());
             if (result != null) {
+                result.setServicesIds(dto.getServicesIds());
                 dto.getServicesIds().forEach(f -> {
                     carWashRecordServiceService.create(new CarWashRecordServiceDto(result.getId(), f));
                 });
@@ -224,13 +224,11 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
     @Override
     public CarWashRecordDto getFreeTimeForRecord(CarWashRecordDto dto) {
-        Map<LocalDateTime, UUID> times = new TreeMap<>();
         if (dto != null) {
             checkBeginTimeForRecord(dto.getBegin());
             CarWashDto carWash = getCarWashByRecord(dto);
-
-            dto.setPrice(getPriceByRecord(dto));
-            dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
+            Long duration = getDurationByRecord(dto);
+            dto.setFinish(dto.getBegin().plusMinutes(duration));
 
             LocalDateTime begin = dto.getBegin();
             LocalDateTime finish = dto.getFinish();
@@ -240,16 +238,23 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             if (CollectionUtils.isNotEmpty(freeTimes)) {
                 freeTimes.sort(Comparator.comparing(CarWashRecordFreeTime::getBegin));
                 CarWashRecordFreeTime freeTime = freeTimes.stream()
-                        .filter(f -> begin.plusMinutes(1L).isAfter(f.getBegin()) &&
-                                finish.minusMinutes(1L).isBefore(f.getFinish()))
+                        .filter(f -> (f.getBegin().isAfter(begin.plusMinutes(1L)) && f.getMin() >= duration) ||
+                                (begin.plusMinutes(1L).isAfter(f.getBegin()) && finish.minusMinutes(1L).isBefore(f.getFinish()) && f.getMin() >= duration))
                         .findFirst().orElse(null);
                 if (freeTime != null) {
                     dto.setWorkingSpaceId(freeTime.getWorkingSpaceID());
-                    dto.setBegin(freeTime.getBegin());
+                    if (freeTime.getBegin().isBefore(begin.plusMinutes(1L))) {
+                        dto.setBegin(begin);
+                    } else {
+                        dto.setBegin(freeTime.getBegin());
+                    }
                     dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
+                    dto.setPrice(getPriceByRecord(dto));
                 } else {
                     throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
                 }
+            } else {
+                dto.setBegin(null);
             }
         }
         return dto;
@@ -258,9 +263,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
     private void checkRecord(CarWashRecordDto dto) {
         if (dto != null) {
-            if (dto.getPackageId() == null && CollectionUtils.isEmpty(dto.getServicesIds())) {
-                throw new ClientException(SERVICE_NOT_CHOOSE);
-            }
+            checkServiceChoose(dto);
             CarWashDto carWash = getCarWashByRecord(dto);
             if (dto.getWorkingSpaceId() == null) {
                 throw new ClientException(WORKING_SPACE_ID_EMPTY);
@@ -280,11 +283,11 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
                     .filter(f -> f.getWorkingSpaceID().equals(workingSpaceId) &&
                             begin.plusMinutes(1L).isAfter(f.getBegin()) &&
                             finish.minusMinutes(1L).isBefore(f.getFinish()))
-                    .findAny().orElse(null);
+                    .findFirst().orElse(null);
             if (freeTime == null) {
                 throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
             }
-        }
+        } else throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
     }
 
     private WorkTimeDto getWorkTimeByCarWash(LocalDateTime begin, CarWashDto carWash) {
@@ -297,9 +300,13 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
     private Integer getPriceByRecord(CarWashRecordDto dto) {
         int result = 0;
+        checkServiceChoose(dto);
         if (dto != null && dto.getPackageId() != null) {
             PackageDto packageDto = packageService.getById(dto.getPackageId());
-            if (packageDto != null && CollectionUtils.isNotEmpty(packageDto.getServices())) {
+            if (packageDto != null) {
+                if (CollectionUtils.isEmpty(packageDto.getServices())) {
+                    throw new ClientException(PACKAGE_NOT_HAVE_SERVICE);
+                }
                 int sumByPackage = packageDto.getServices().stream().mapToInt(ServicePriceDto::getPrice).sum();
                 if (packageDto.getDiscount() > 0) {
                     result += (sumByPackage - ((sumByPackage / 100) * packageDto.getDiscount()));
@@ -321,6 +328,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
     private Long getDurationByRecord(CarWashRecordDto dto) {
         Long result = 0L;
+        checkServiceChoose(dto);
         if (dto != null && CollectionUtils.isNotEmpty(dto.getServicesIds())) {
             List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
             if (CollectionUtils.isNotEmpty(services)) {
@@ -334,6 +342,12 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             } else throw new ClientException(PACKAGE_NOT_FOUND);
         }
         return result;
+    }
+
+    private void checkServiceChoose(CarWashRecordDto dto) {
+        if (dto != null && dto.getPackageId() == null && CollectionUtils.isEmpty(dto.getServicesIds())) {
+            throw new ClientException(SERVICE_NOT_CHOOSE);
+        }
     }
 
     private void checkPermissionToUpdate(CarWashRecordDto dto, Boolean isUser) {
@@ -361,6 +375,9 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
         if (dto != null && dto.getPackageId() != null) {
             PackageDto packageDto = packageService.getById(dto.getPackageId());
             if (packageDto != null) {
+                if (CollectionUtils.isEmpty(packageDto.getServices())) {
+                    throw new ClientException(PACKAGE_NOT_HAVE_SERVICE);
+                }
                 packageDto.getServices().forEach(f -> {
                     int price = f.getPrice() - ((f.getPrice() / 100) * packageDto.getDiscount());
                     orderService.create(new OrderDto(f.getServiceId(), dto.getId(), price, true));
@@ -384,14 +401,14 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
         if (time == null) {
             throw new ClientException(TIME_BEGIN_EMPTY);
         }
-        if (time.plusMinutes(2L).isBefore(LocalDateTime.now(ZoneOffset.UTC))) {
+        if (time.plusMinutes(3L).isBefore(LocalDateTime.now(ZoneOffset.UTC))) {
             throw new ClientException(TIME_BEGIN_PAST);
         }
     }
 
     private void checkTimeWorking(WorkTimeDto workTime, LocalDateTime begin, LocalDateTime finish) {
         if (!(workTime.getFrom().equals(LocalTime.MIN) && workTime.getTo().equals(LocalTime.MAX))) {
-            if (begin.toLocalTime().isBefore(workTime.getFrom()) || finish.toLocalTime().isAfter(workTime.getTo())) {
+            if (begin.toLocalTime().minusMinutes(1L).isBefore(workTime.getFrom()) || finish.toLocalTime().plusMinutes(1L).isAfter(workTime.getTo())) {
                 throw new ClientException(CAR_WASH_NOT_WORK_THIS_TIME);
             }
         }
@@ -410,17 +427,25 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             carWash.getSpaces().forEach(cw -> {
                 UUID currentId = cw.getId();
                 if (CollectionUtils.isNotEmpty(records)) {
-                    List<CarWashRecordEntity> recordsBySpace = records.stream().filter(f -> f.getWorkingSpaceId().equals(cw.getId())).collect(Collectors.toList());
+                    List<CarWashRecordEntity> recordsBySpace = records.stream().filter(f -> f.getWorkingSpaceId().equals(currentId)).collect(Collectors.toList());
                     if (CollectionUtils.isNotEmpty(recordsBySpace)) {
                         for (int i = 0; i < recordsBySpace.size(); i++) {
+                            LocalDateTime begin = null;
+                            LocalDateTime end = null;
                             if (i == 0) {
-                                result.add(new CarWashRecordFreeTime(currentId, startTimeWork, recordsBySpace.get(i).getBegin()));
-                            } else {
-                                if (i == recordsBySpace.size() - 1) {
-                                    result.add(new CarWashRecordFreeTime(currentId, recordsBySpace.get(i).getFinish(), endTimeWork));
-                                } else {
-                                    result.add(new CarWashRecordFreeTime(currentId, records.get(i - 1).getFinish(), records.get(i).getBegin()));
-                                }
+                                begin = startTimeWork;
+                                end = recordsBySpace.get(i).getBegin();
+                            }
+                            if (recordsBySpace.size() > 1 && i != 0 && i != recordsBySpace.size() - 1) {
+                                begin = recordsBySpace.get(i - 1).getFinish();
+                                end = recordsBySpace.get(i).getBegin();
+                            }
+                            if (i == recordsBySpace.size() - 1 || recordsBySpace.size() == 1) {
+                                begin = recordsBySpace.get(i).getFinish();
+                                end = endTimeWork;
+                            }
+                            if (!begin.equals(end)) {
+                                result.add(new CarWashRecordFreeTime(currentId, begin, end));
                             }
                         }
                     } else {

@@ -4,18 +4,11 @@ import com.gliesereum.account.model.entity.UserBusinessEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserBusinessRepository;
 import com.gliesereum.account.service.user.UserBusinessService;
 import com.gliesereum.share.common.converter.DefaultConverter;
-import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
-import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
-
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_BUSINESS;
 
 /**
  * @author vitalij
@@ -34,48 +27,4 @@ public class UserBusinessServiceImpl extends DefaultServiceImpl<UserBusinessDto,
 
     @Autowired
     private UserBusinessRepository repository;
-
-    @Override
-    public void deleteByUserId(UUID id) {
-        if (id != null) {
-            repository.deleteUserBusinessEntityByUserId(id);
-        }
-    }
-
-    @Override
-    public UserBusinessDto update(UserBusinessDto dto) {
-        if (dto != null) {
-            UUID userBusinessId = SecurityUtil.getUserBusinessId();
-            if (userBusinessId == null) {
-                throw new ClientException(USER_NOT_BUSINESS);
-            }
-            dto.setId(userBusinessId);
-            dto.setUserId(SecurityUtil.getUserId());
-        }
-        return super.update(dto);
-    }
-
-    @Override
-    public UserBusinessDto getByUserId(UUID id) {
-        UserBusinessDto result = null;
-        if (id != null) {
-            UserBusinessEntity business = repository.getByUserId(id);
-            if (business != null) {
-                result = converter.convert(business, DTO_CLASS);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public boolean KYCPassed(UUID id) {
-        boolean result = false;
-        if (id != null) {
-            UserBusinessDto userBusiness = getByUserId(id);
-            if ((userBusiness != null) && (userBusiness.getKYCStatus().equals(KYCStatus.KFC_PASSED))) {
-                result = true;
-            }
-        }
-        return result;
-    }
 }

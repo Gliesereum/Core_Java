@@ -31,7 +31,8 @@ public class CarWashDto extends DefaultDto {
 
     private String logoUrl;
 
-    @NotNull
+    @NotEmpty
+    @Size(min = 5)
     private String address;
 
     @NotNull

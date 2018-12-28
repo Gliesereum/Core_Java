@@ -9,7 +9,6 @@ import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -77,7 +76,6 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
                 throw new ClientException(CAN_NOT_DELETE_PHONE);
             }
             super.delete(id);
-            updateUserStatus(userService.getById(userId), VerifiedStatus.UNVERIFIED);
         }
     }
 
@@ -107,31 +105,32 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
 
     @Override
     public void sendCode(String phone, boolean isNew) {
-        checkPhoneForSignInUp(phone, isNew);
         verificationService.sendVerificationCode(phone, VerificationType.PHONE);
     }
 
     @Override
     public UserPhoneDto update(String phone, String code) {
+        UserPhoneDto result = null;
         UUID userId = SecurityUtil.getUserId();
         checkUserAuthentication(userId);
         if (verificationService.checkVerification(phone, code)) {
             if (checkPhoneByExist(phone)) {
                 throw new ClientException(PHONE_EXIST);
             }
-            UserPhoneDto result = getByUserId(userId);
+            result = getByUserId(userId);
             if (result == null) {
                 throw new ClientException(USER_DOES_NOT_PHONE);
             }
             result.setPhone(phone);
-            return update(result);
         } else {
             throw new ClientException(CODE_WORSE);
         }
+        return update(result);
     }
 
     @Override
     public UserPhoneDto create(String phone, String code) {
+        UserPhoneDto result = null;
         UUID userId = SecurityUtil.getUserId();
         checkUserAuthentication(userId);
         if (verificationService.checkVerification(phone, code)) {
@@ -142,19 +141,13 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
             if (getByUserId(userId) != null) {
                 throw new ClientException(USER_ALREADY_HAS_PHONE);
             }
-            UserPhoneDto result = new UserPhoneDto();
+            result = new UserPhoneDto();
             result.setPhone(phone);
             result.setUserId(user.getId());
-            updateUserStatus(user, VerifiedStatus.VERIFIED);
-            return create(result);
         } else {
             throw new ClientException(CODE_WORSE);
         }
-    }
-
-    private void updateUserStatus(UserDto user, VerifiedStatus status) {
-        user.setVerifiedStatus(status);
-        userService.updateWithOutCheckModel(user);
+        return create(result);
     }
 
     private void checkUserAuthentication(UUID userId) {
@@ -176,11 +169,5 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
         if (!phonePattern.matcher(phone).matches()) {
             throw new ClientException(NOT_PHONE_BY_REGEX);
         }
-    }
-
-    private void checkPhoneForSignInUp(String phone, boolean isNew) {
-        checkIsPhone(phone);
-        if (!isNew && !checkPhoneByExist(phone)) throw new ClientException(PHONE_NOT_FOUND);
-        if (isNew && checkPhoneByExist(phone)) throw new ClientException(PHONE_EXIST);
     }
 }

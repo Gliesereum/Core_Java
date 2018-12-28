@@ -3,15 +3,14 @@ package com.gliesereum.share.common.model.dto.account.user;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
-import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yvlasiuk
@@ -66,12 +65,5 @@ public class UserDto extends DefaultDto {
 
     private BanStatus banStatus;
 
-    private VerifiedStatus verifiedStatus;
-
-    @NotNull
-    private UserType userType;
-
-    public UserDto(@NotEmpty UserType userType) {
-        this.userType = userType;
-    }
+    private List<BusinessDto> business = new ArrayList<>();
 }

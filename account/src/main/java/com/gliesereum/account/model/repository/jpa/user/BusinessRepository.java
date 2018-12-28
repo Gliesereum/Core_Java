@@ -1,6 +1,6 @@
 package com.gliesereum.account.model.repository.jpa.user;
 
-import com.gliesereum.account.model.entity.UserBusinessEntity;
+import com.gliesereum.account.model.entity.BusinessEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +11,6 @@ import java.util.UUID;
  * @since 12/4/18
  */
 @Repository
-public interface UserBusinessRepository extends JpaRepository<UserBusinessEntity, UUID> {
+public interface BusinessRepository extends JpaRepository<BusinessEntity, UUID> {
 
 }

@@ -3,7 +3,7 @@ package com.gliesereum.share.common.security.jwt.factory.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
-import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
+import com.gliesereum.share.common.model.dto.account.user.BusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
 import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
@@ -85,7 +85,7 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
         } else {
             UserDto user = objectMapper.convertValue(claims.get(USER), new TypeReference<UserDto>(){});
             TokenInfoDto tokenInfo = objectMapper.convertValue(claims.get(TOKEN), new TypeReference<TokenInfoDto>(){});
-            UserBusinessDto userBusiness = objectMapper.convertValue(claims.get(USER_BUSINESS), new TypeReference<UserBusinessDto>(){});
+            BusinessDto userBusiness = objectMapper.convertValue(claims.get(USER_BUSINESS), new TypeReference<BusinessDto>(){});
             userAuthentication = new UserAuthentication(user, tokenInfo, userBusiness);
         }
         return userAuthentication;

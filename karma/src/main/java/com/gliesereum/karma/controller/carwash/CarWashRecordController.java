@@ -111,7 +111,7 @@ public class CarWashRecordController {
         return service.getByParamsForBusiness(params);
     }
 
-    @PostMapping("free-time")
+    @PostMapping("/free-time")
     public CarWashRecordDto getFreeTimeForRecord(@RequestBody CarWashRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
     }
