@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
+import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,8 @@ public class ErrorResponse {
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime timestamp;
 
+    public ErrorResponse(ExceptionMessage exceptionMessage) {
+        this.code = exceptionMessage.getErrorCode();
+        this.message = exceptionMessage.getMessage();
+    }
 }

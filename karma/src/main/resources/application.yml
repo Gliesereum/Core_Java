@@ -9,6 +9,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+module-url: /karma/v1
 
 server:
   port: 8240
@@ -33,3 +34,8 @@ eureka:
     enabled: true
   instance:
     prefer-ip-address: true
+
+exchange:
+  endpoint:
+    permission:
+      endpointUpdatePack: http://permission-service/endpoint/pack

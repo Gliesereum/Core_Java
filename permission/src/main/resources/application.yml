@@ -5,7 +5,7 @@ spring:
   mvc:
     logResolvedException: false
 
-module-url: /permission/v1/
+module-url: /permission/v1
 
 
 server:

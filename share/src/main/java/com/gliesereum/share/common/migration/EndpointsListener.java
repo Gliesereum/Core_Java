@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
@@ -30,7 +31,8 @@ import java.util.Set;
 @Slf4j
 public class EndpointsListener implements ApplicationListener<ApplicationReadyEvent> {
 
-    private static boolean isRun = false;
+    private static final String MODULE_URL = "module-url";
+    private static final String APPLICATION_NAME = "spring.application.name";
 
     @Autowired
     private EndpointExchangeService endpointExchangeService;
@@ -41,42 +43,60 @@ public class EndpointsListener implements ApplicationListener<ApplicationReadyEv
     @Autowired
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
+    @Autowired
+    private TaskExecutor threadPoolTaskExecutor;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        log.info("Run migrate service endpoints");
-        List<EndpointDto> endpoints = new ArrayList<>();
-        Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
-        handlerMethods.forEach((key, value) -> {
-            if (!value.getBeanType().getPackage().getName().contains("gliesereum")) {
-                return;
-            }
-            Set<String> urls = key.getPatternsCondition().getPatterns();
-            Set<RequestMethod> methods = key.getMethodsCondition().getMethods();
-            if (CollectionUtils.isEmpty(urls) || CollectionUtils.isEmpty(methods)) {
-                return;
-            }
-            for (String url : urls) {
-                for (RequestMethod method : methods) {
-                    EndpointDto endpoint = new EndpointDto();
-                    endpoint.setMethod(Method.valueOf(method.name()));
-                    endpoint.setUrl(url.replaceAll("\\{.*\\}", "*"));
-                    endpoint.setActive(true);
-                    endpoint.setVersion("v1");
-                    endpoints.add(endpoint);
+        Runnable migrationTask = () -> {
+            try {
+                log.info("Run migrate service endpoints");
+                List<EndpointDto> endpoints = new ArrayList<>();
+                Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
+                handlerMethods.forEach((key, value) -> {
+                    if (!value.getBeanType().getPackage().getName().contains("gliesereum")) {
+                        return;
+                    }
+                    Set<String> urls = key.getPatternsCondition().getPatterns();
+                    Set<RequestMethod> methods = key.getMethodsCondition().getMethods();
+                    if (CollectionUtils.isEmpty(urls) || CollectionUtils.isEmpty(methods)) {
+                        return;
+                    }
+
+                    String endpointName = value.getBeanType().getSimpleName().replace("Controller", "") + "#" + value.getMethod().getName();
+                    for (String url : urls) {
+                        for (RequestMethod method : methods) {
+                            EndpointDto endpoint = new EndpointDto();
+                            endpoint.setTitle(endpointName);
+                            endpoint.setMethod(Method.valueOf(method.name()));
+                            endpoint.setUrl(url.replaceAll("\\{\\w*\\}", "*"));
+                            endpoint.setActive(true);
+                            endpoint.setVersion("v1");
+                            endpoints.add(endpoint);
+                        }
+                    }
+                });
+                Integer newEndpointCount = 0;
+                if (CollectionUtils.isNotEmpty(endpoints)) {
+                    String moduleUrl = environment.getRequiredProperty(MODULE_URL);
+                    String moduleName = environment.getRequiredProperty(APPLICATION_NAME);
+                    EndpointPackDto endpointPack = new EndpointPackDto();
+                    endpointPack.setEndpoints(endpoints);
+                    endpointPack.setModuleUrl(moduleUrl);
+                    endpointPack.setModuleName(moduleName);
+                    List<EndpointDto> result = endpointExchangeService.createPack(endpointPack);
+
+
+                    if (CollectionUtils.isNotEmpty(result)) {
+                        newEndpointCount = result.size();
+                    }
                 }
+                log.info("Finish migrate service endpoints, Added {} new endpoints to permission", newEndpointCount);
+            } catch (Exception e) {
+                log.warn("Error while migrate endpoint", e);
             }
-        });
-        if (CollectionUtils.isNotEmpty(endpoints)) {
-            String moduleUrl = environment.getProperty("module-url");
-            String moduleName = environment.getProperty("spring.application.name");
-            EndpointPackDto endpointPack = new EndpointPackDto();
-            endpointPack.setEndpoints(endpoints);
-            endpointPack.setModuleUrl(moduleUrl);
-            endpointPack.setModuleName(moduleName);
-            isRun = true;
-            endpointExchangeService.createPack(endpointPack);
-        }
-        log.info("Finish migrate service endpoints");
+        };
+        threadPoolTaskExecutor.execute(migrationTask);
     }
 
 }

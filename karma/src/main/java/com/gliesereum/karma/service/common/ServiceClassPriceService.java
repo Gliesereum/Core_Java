@@ -15,4 +15,6 @@ import java.util.UUID;
 public interface ServiceClassPriceService extends DefaultService<ServiceClassPriceDto, ServiceClassPriceEntity> {
 
     List<ServiceClassPriceDto> getByPriceId(UUID priceId);
+
+    void delete(UUID priceId, UUID classId);
 }

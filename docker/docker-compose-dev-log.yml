@@ -3,7 +3,7 @@ version: '3.1'
 services:
   postgres:
     image: postgres:10.5-alpine
-    command: postgres -c 'max_connections=300'
+    command: postgres -c 'max_connections=500' -c 'shared_buffers=256MB'
     volumes:
       - ../volumes/pgdata/:/var/lib/postgresql/data
     deploy:
@@ -215,6 +215,31 @@ services:
       RABBIT_PASSWORD: Af2f4dsASF
       ES_HOST: elasticsearch
       ES_PORT: 9200
+      EUREKA_HOST: discovery
+      EUREKA_PORT: 8761
+
+  media:
+    image: gls-media:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      PORT: 8250
+      PROFILE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: Af2f4dsASF
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: rabbit
+      RABBIT_PASSWORD: Af2f4dsASF
+      CDN_ACCESS_KEY: XJSIQ6UA5HZEHMH3DDUP
+      CDN_SECRET_KEY: C5PSCSJgAG4VaCYUSJaK9SA/pDHX/kE7BLatMHEz90I
+      CDN_HOST: sgp1.digitaloceanspaces.com
+      CDN_REGION: sgp1
+      CDN_BUCKET: glcdn
+      CDN_FOLDER: karma
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
 

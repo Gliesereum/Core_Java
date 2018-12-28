@@ -101,7 +101,8 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     }
 
     @Override
-    public void sendCode(String email, boolean isNew) {
+    public void sendCode(String email) {
+        checkIsEmail(email);
         verificationService.sendVerificationCode(email, VerificationType.EMAIL);
     }
 
@@ -122,7 +123,7 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
         } else {
             throw new ClientException(CODE_WORSE);
         }
-        return update(result);
+        return super.update(result);
     }
 
     @Override
@@ -144,7 +145,7 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
         } else {
             throw new ClientException(CODE_WORSE);
         }
-        return create(result);
+        return super.create(result);
     }
 
     private void checkUserAuthentication(UUID userId) {
@@ -167,4 +168,16 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
             throw new ClientException(NOT_EMAIL_BY_REGEX);
         }
     }
+
+    private void updateUserStatus(UserDto user, VerifiedStatus status) {
+        user.setVerifiedStatus(status);
+        userService.updateWithOutCheckModel(user);
+    }
+
+    //TODO: Remove isNEW
+    /*private void checkEmailForSignInUp(String email, boolean isNew) {
+        checkIsEmail(email);
+        if (!isNew && !checkEmailByExist(email)) throw new ClientException(EMAIL_NOT_FOUND);
+        if (isNew && checkEmailByExist(email)) throw new ClientException(EMAIL_EXIST);
+    }*/
 }

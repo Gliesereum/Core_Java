@@ -29,6 +29,7 @@ gradle-build:
     - sudo gradle clean build -b=mail/build.gradle
     - sudo gradle clean build -b=permission/build.gradle
     - sudo gradle clean build -b=karma/build.gradle
+    - sudo gradle clean build -b=media/build.gradle
   only:
     - karma/dev
 
@@ -55,6 +56,7 @@ docker-clean-image:
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-mail')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-permission')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-karma')
+    - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-media')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
   only:
     - karma/dev
@@ -71,6 +73,7 @@ docker-image-package:
     - sudo docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  .
     - sudo docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  .
     - sudo docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  .
+    - sudo docker build -t gls-media:0.0.1 -f docker/media/Dockerfile  .
     - sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  .
   only:
     - karma/dev

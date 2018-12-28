@@ -2,13 +2,9 @@ package com.gliesereum.account.config;
 
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
-import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
-import com.gliesereum.share.common.exchange.service.account.impl.UserExchangeServiceImpl;
-import com.gliesereum.share.common.exchange.service.permission.EndpointExchangeService;
-import com.gliesereum.share.common.exchange.service.permission.impl.EndpointExchangeServiceImpl;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
  */
 
 @Configuration
-@ComponentScan(basePackageClasses = ExchangeProperties.class)
+@EnableConfigurationProperties(ExchangeProperties.class)
 public class ExchangeConfiguration {
 
     @Bean
@@ -29,10 +25,4 @@ public class ExchangeConfiguration {
         restTemplate.setErrorHandler(new RestTemplateErrorHandler());
         return restTemplate;
     }
-
-    //TODO: to endpoint migrate
-//    @Bean
-//    public EndpointExchangeService endpointExchangeService(ExchangeProperties exchangeProperties, RestTemplate restTemplate) {
-//        return new EndpointExchangeServiceImpl(restTemplate, exchangeProperties);
-//    }
 }

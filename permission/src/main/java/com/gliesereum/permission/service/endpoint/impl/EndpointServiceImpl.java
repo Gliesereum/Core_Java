@@ -5,6 +5,7 @@ import com.gliesereum.permission.model.repository.jpa.endpoint.EndpointRepositor
 import com.gliesereum.permission.service.endpoint.EndpointService;
 import com.gliesereum.permission.service.module.ModuleService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.model.dto.base.enumerated.Method;
 import com.gliesereum.share.common.model.dto.permission.endpoint.EndpointDto;
 import com.gliesereum.share.common.model.dto.permission.endpoint.EndpointPackDto;
 import com.gliesereum.share.common.model.dto.permission.module.ModuleDto;
@@ -44,6 +45,11 @@ public class EndpointServiceImpl extends DefaultServiceImpl<EndpointDto, Endpoin
     }
 
     @Override
+    public EndpointDto getByUrlAndModuleIdAndMethod(String url, UUID moduleId, Method method) {
+        return converter.convert(endpointRepository.findByUrlAndModuleIdAndMethod(url, moduleId, method), dtoClass);
+    }
+
+    @Override
     public List<EndpointDto> createPack(EndpointPackDto endpointPack) {
         List<EndpointDto> result = null;
         if (endpointPack != null) {
@@ -52,7 +58,7 @@ public class EndpointServiceImpl extends DefaultServiceImpl<EndpointDto, Endpoin
             if (module != null) {
                 UUID moduleId = module.getId();
                 for (EndpointDto endpoint : endpointPack.getEndpoints()) {
-                    EndpointDto exist = getByUrlAndModuleId(endpoint.getUrl(), moduleId);
+                    EndpointDto exist = getByUrlAndModuleIdAndMethod(endpoint.getUrl(), moduleId, endpoint.getMethod());
                     if (exist == null) {
                         endpoint.setModuleId(moduleId);
                         result.add(super.create(endpoint));
