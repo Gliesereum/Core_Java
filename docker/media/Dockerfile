@@ -31,4 +31,4 @@ ARG EUREKA_HOST
 ARG EUREKA_PORT
 
 
-CMD java -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.host=${EUREKA_HOST} -Deureka.port=${EUREKA_PORT} -Ddb.host=${DB_HOST} -Ddb.port=${DB_PORT} -Ddb.username=${DB_USERNAME} -Ddb.password=${DB_PASSWORD} -Drabbit.host=${RABBIT_HOST} -Drabbit.port=${RABBIT_PORT} -Drabbit.user=${RABBIT_USER} -Drabbit.password=${RABBIT_PASSWORD} -Dcdn.accessKey=${CDN_ACCESS_KEY} -Dcdn.secretKey=${CDN_SECRET_KEY} -Dcdn.host=${CDN_HOST} -Dcdn.region=${CDN_REGION} -Dcdn.bucket=${CDN_BUCKET} -Dcdn.folder=${CDN_FOLDER} ./karma-0.0.1.jar
+CMD java -jar -Dspring.profiles.active=${PROFILE} -Dserver.port=${PORT} -Deureka.host=${EUREKA_HOST} -Deureka.port=${EUREKA_PORT} -Ddb.host=${DB_HOST} -Ddb.port=${DB_PORT} -Ddb.username=${DB_USERNAME} -Ddb.password=${DB_PASSWORD} -Drabbit.host=${RABBIT_HOST} -Drabbit.port=${RABBIT_PORT} -Drabbit.user=${RABBIT_USER} -Drabbit.password=${RABBIT_PASSWORD} -Dcdn.accessKey=${CDN_ACCESS_KEY} -Dcdn.secretKey=${CDN_SECRET_KEY} -Dcdn.host=${CDN_HOST} -Dcdn.region=${CDN_REGION} -Dcdn.bucket=${CDN_BUCKET} -Dcdn.folder=${CDN_FOLDER} ./media-0.0.1.jar
