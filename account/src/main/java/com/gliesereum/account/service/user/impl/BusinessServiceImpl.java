@@ -8,6 +8,8 @@ import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.BusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
@@ -46,6 +48,8 @@ public class BusinessServiceImpl extends DefaultServiceImpl<BusinessDto, Busines
     public BusinessDto create(BusinessDto dto) {
         BusinessDto result = null;
         checkUserByStatus();
+        dto.setKYCStatus(KYCStatus.KYC_NOT_PASSED);
+        dto.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
         result = super.create(dto);
         if (result != null) {
             userBusinessService.create(new UserBusinessDto(SecurityUtil.getUserId(), result.getId()));
