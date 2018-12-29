@@ -30,6 +30,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -80,11 +81,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     public CarWashDto create(CarWashDto dto) {
         checkUserByStatus();
         if (dto != null) {
-            UUID userBusinessId = SecurityUtil.getUserBusinessId();
-            if (userBusinessId == null) {
-                throw new ClientException(DONT_HAVE_PERMISSION_TO_CREATE_CARWASH);
-            }
-            dto.setUserBusinessId(userBusinessId);
+            checkBusinessId(dto);
             CarWashEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
@@ -101,7 +98,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
             currentUserHavePermissionToAction(dto.getId());
-            dto.setUserBusinessId(SecurityUtil.getUserBusinessId());
+            checkBusinessId(dto);
             CarWashEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
@@ -110,25 +107,25 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     }
 
     @Override
-    public boolean existByIdAndUserBusinessId(UUID id, UUID userBusinessId) {
-        return carWashRepository.existsByIdAndUserBusinessId(id, userBusinessId);
+    public boolean existByIdAndUserBusinessIds(UUID id, List<UUID> userBusinessIds) {
+        return carWashRepository.existsByIdAndBusinessIdIn(id, userBusinessIds);
     }
 
     @Override
     public boolean currentUserHavePermissionToAction(UUID carWashId) {
         boolean result = false;
-        UUID userBusinessId = SecurityUtil.getUserBusinessId();
-        if (userBusinessId != null) {
-            result = existByIdAndUserBusinessId(carWashId, userBusinessId);
+        List<UUID> userBusinessIds = SecurityUtil.getUserBusinessIds();
+        if (CollectionUtils.isNotEmpty(userBusinessIds)) {
+            result = existByIdAndUserBusinessIds(carWashId, userBusinessIds);
         }
         return result;
     }
 
     @Override
-    public List<CarWashDto> getByUserBusinessId(UUID userBusinessId) {
+    public List<CarWashDto> getByUserBusinessIds(List<UUID> businessIds) {
         List<CarWashDto> result = null;
-        if (userBusinessId != null) {
-            List<CarWashEntity> entities = carWashRepository.findByUserBusinessId(userBusinessId);
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            List<CarWashEntity> entities = carWashRepository.findByBusinessIdIn(businessIds);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -143,6 +140,19 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
         if (user.getBanStatus().equals(BanStatus.BAN)) {
             throw new ClientException(USER_IN_BAN);
         }
+    }
+
+    @Override
+    public List<CarWashDto> getByBusinessId(UUID businessId) {
+        List<CarWashDto> result = null;
+        if (businessId != null) {
+            if (!SecurityUtil.userHavePermissionToBusiness(businessId)) {
+                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
+            }
+            List<CarWashEntity> entities = carWashRepository.findByBusinessId(businessId);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
     }
 
     @Override
@@ -217,5 +227,15 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
             result.setRecords(emptyList);
         }
         return result;
+    }
+
+    private void checkBusinessId(CarWashDto carWash) {
+        UUID businessId = carWash.getBusinessId();
+        if (businessId == null) {
+            throw new ClientException(BUSINESS_ID_REQUIRED_FOR_THIS_ACTION);
+        }
+        if (!SecurityUtil.userHavePermissionToBusiness(businessId)) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
+        }
     }
 }

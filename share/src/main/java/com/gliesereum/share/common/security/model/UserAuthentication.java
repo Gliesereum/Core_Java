@@ -22,14 +22,11 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
 
     private TokenInfoDto tokenInfo;
 
-    private BusinessDto userBusiness;
-
     private boolean isAnonymous = false;
 
-    public UserAuthentication(UserDto user, TokenInfoDto tokenInfo, BusinessDto userBusiness) {
+    public UserAuthentication(UserDto user, TokenInfoDto tokenInfo) {
         super(user, null, AUTHENTICATED_AUTHORITY);
         this.tokenInfo = tokenInfo;
-        this.userBusiness = userBusiness;
     }
 
     public UserAuthentication() {
@@ -46,10 +43,6 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
 
     public TokenInfoDto getTokenInfo() {
         return tokenInfo;
-    }
-
-    public BusinessDto getUserBusiness() {
-        return userBusiness;
     }
 
     public boolean isAnonymous() {

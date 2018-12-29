@@ -23,17 +23,17 @@ public class UserBusinessServiceImpl extends DefaultServiceImpl<UserBusinessDto,
     private static final Class<UserBusinessDto> DTO_CLASS = UserBusinessDto.class;
     private static final Class<UserBusinessEntity> ENTITY_CLASS = UserBusinessEntity.class;
 
-    public UserBusinessServiceImpl(UserBusinessRepository repository, DefaultConverter converter) {
-        super(repository, converter, DTO_CLASS, ENTITY_CLASS);
-    }
+    private final UserBusinessRepository userBusinessRepository;
 
     @Autowired
-    private UserBusinessRepository repository;
-
+    public UserBusinessServiceImpl(UserBusinessRepository userBusinessRepository, DefaultConverter converter) {
+        super(userBusinessRepository, converter, DTO_CLASS, ENTITY_CLASS);
+        this.userBusinessRepository = userBusinessRepository;
+    }
 
     @Override
     public UserBusinessDto getByUserIdAndBusinessId(UUID userId, UUID businessId) {
-        UserBusinessEntity entity = repository.findByUserIdAndBusinessId(userId, businessId);
+        UserBusinessEntity entity = userBusinessRepository.findByUserIdAndBusinessId(userId, businessId);
         return converter.convert(entity, dtoClass);
     }
 }

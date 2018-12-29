@@ -31,7 +31,6 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
     private static final String IS_ANONYMOUS = "isAnonymous";
     private static final String USER = "user";
     private static final String TOKEN = "token";
-    private static final String USER_BUSINESS = "userBusinnes";
 
     private JwtSecurityProperties jwtSecurityProperties;
 
@@ -73,7 +72,6 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
         if (!userAuthentication.isAnonymous()) {
             result.put(USER, objectMapper.convertValue(userAuthentication.getUser(), new TypeReference<HashMap<String, Object>>(){}));
             result.put(TOKEN, objectMapper.convertValue(userAuthentication.getTokenInfo(), new TypeReference<HashMap<String, Object>>(){}));
-            result.put(USER_BUSINESS, objectMapper.convertValue(userAuthentication.getUserBusiness(), new TypeReference<HashMap<String, Object>>(){}));
         }
         return result;
     }
@@ -85,8 +83,7 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
         } else {
             UserDto user = objectMapper.convertValue(claims.get(USER), new TypeReference<UserDto>(){});
             TokenInfoDto tokenInfo = objectMapper.convertValue(claims.get(TOKEN), new TypeReference<TokenInfoDto>(){});
-            BusinessDto userBusiness = objectMapper.convertValue(claims.get(USER_BUSINESS), new TypeReference<BusinessDto>(){});
-            userAuthentication = new UserAuthentication(user, tokenInfo, userBusiness);
+            userAuthentication = new UserAuthentication(user, tokenInfo);
         }
         return userAuthentication;
     }

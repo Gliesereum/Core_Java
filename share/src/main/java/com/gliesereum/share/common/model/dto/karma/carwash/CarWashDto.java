@@ -22,7 +22,8 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class CarWashDto extends DefaultDto {
 
-    private UUID userBusinessId;
+    @NotNull
+    private UUID businessId;
 
     @NotEmpty
     private String name;

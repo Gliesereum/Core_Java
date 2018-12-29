@@ -71,7 +71,12 @@ public class CarWashController {
 
     @GetMapping("/by-user")
     public List<CarWashDto> getByUser() {
-        return carWashService.getByUserBusinessId(SecurityUtil.getUserBusinessId());
+        return carWashService.getByUserBusinessIds(SecurityUtil.getUserBusinessIds());
+    }
+
+    @GetMapping("/by-business-id")
+    public List<CarWashDto> getByBusinessId(@RequestParam("businessId") UUID businessId) {
+        return carWashService.getByBusinessId(businessId);
     }
 
     @PostMapping

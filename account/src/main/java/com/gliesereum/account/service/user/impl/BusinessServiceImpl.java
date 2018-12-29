@@ -37,9 +37,6 @@ public class BusinessServiceImpl extends DefaultServiceImpl<BusinessDto, Busines
     }
 
     @Autowired
-    private BusinessRepository repository;
-
-    @Autowired
     private UserBusinessService userBusinessService;
 
     @Autowired
@@ -104,6 +101,10 @@ public class BusinessServiceImpl extends DefaultServiceImpl<BusinessDto, Busines
 
     private void checkCurrentUserForPermissionActionThisBusiness(UUID id) {
         UUID userId = SecurityUtil.getUserId();
+        UserBusinessDto userBusiness = userBusinessService.getByUserIdAndBusinessId(userId, id);
+        if (userBusiness == null) {
+            throw new ClientException(USER_DONT_HAVE_PERMISSION_TO_BUSINESS);
+        }
     }
 
 

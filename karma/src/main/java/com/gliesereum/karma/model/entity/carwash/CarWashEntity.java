@@ -24,8 +24,8 @@ import java.util.UUID;
 @Table(name = "car_wash")
 public class CarWashEntity extends DefaultEntity {
 
-    @Column(name = "user_business_id")
-    private UUID userBusinessId;
+    @Column(name = "business_id")
+    private UUID businessId;
 
     @Column(name = "name")
     private String name;

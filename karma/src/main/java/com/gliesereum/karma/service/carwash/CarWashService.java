@@ -15,11 +15,13 @@ import java.util.UUID;
  */
 public interface CarWashService extends DefaultService<CarWashDto, CarWashEntity> {
 
-    boolean existByIdAndUserBusinessId(UUID id, UUID userBusinessId);
+    boolean existByIdAndUserBusinessIds(UUID id, List<UUID> userBusinessIds);
 
     boolean currentUserHavePermissionToAction(UUID carWashId);
 
-    List<CarWashDto> getByUserBusinessId(UUID userBusinessId);
+    List<CarWashDto> getByUserBusinessIds(List<UUID> businessId);
 
     CarWashFullModel getFullModelById(UUID id);
+
+    List<CarWashDto> getByBusinessId(UUID businessId);
 }

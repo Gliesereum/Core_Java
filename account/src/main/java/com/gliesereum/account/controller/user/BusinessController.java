@@ -46,13 +46,13 @@ public class BusinessController {
         return new MapResponse("true");
     }
 
-    @PostMapping("/add/{idBusiness}/{idUser}")
+    @PostMapping("/user/{idBusiness}/{idUser}")
     public MapResponse addUserToBusiness(@PathVariable("idBusiness") UUID idBusiness, @PathVariable("idUser") UUID idUser) {
         service.addUser(idBusiness, idUser);
         return new MapResponse("true");
     }
 
-    @PostMapping("/remove/{idBusiness}/{idUser}")
+    @DeleteMapping("/user/{idBusiness}/{idUser}")
     public MapResponse removeUserToBusiness(@PathVariable("idBusiness") UUID idBusiness, @PathVariable("idUser") UUID idUser) {
         service.removeUser(idBusiness, idUser);
         return new MapResponse("true");

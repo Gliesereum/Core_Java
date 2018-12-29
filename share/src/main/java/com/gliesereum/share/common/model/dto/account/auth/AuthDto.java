@@ -19,7 +19,5 @@ public class AuthDto {
 
     private UserDto user;
 
-    private BusinessDto userBusiness;
-
     private TokenInfoDto tokenInfo;
 }
