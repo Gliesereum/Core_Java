@@ -8,9 +8,7 @@ import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -75,10 +73,6 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
                 throw new ClientException(CAN_NOT_DELETE_EMAIL);
             }
             super.delete(id);
-            UserDto user = userService.getById(userId);
-            if (user.getUserType().equals(UserType.BUSINESS)) {
-                updateUserStatus(user, VerifiedStatus.UNVERIFIED);
-            }
         }
     }
 
@@ -114,25 +108,27 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
 
     @Override
     public UserEmailDto update(String email, String code) {
+        UserEmailDto result = null;
         UUID userId = SecurityUtil.getUserId();
         checkUserAuthentication(userId);
         if (verificationService.checkVerification(email, code)) {
             if (checkEmailByExist(email)) {
                 throw new ClientException(EMAIL_EXIST);
             }
-            UserEmailDto result = getByUserId(userId);
+            result = getByUserId(userId);
             if (result == null) {
                 throw new ClientException(USER_DOES_NOT_EMAIL);
             }
             result.setEmail(email);
-            return update(result);
         } else {
             throw new ClientException(CODE_WORSE);
         }
+        return super.update(result);
     }
 
     @Override
     public UserEmailDto create(String email, String code) {
+        UserEmailDto result = null;
         UUID userId = SecurityUtil.getUserId();
         checkUserAuthentication(userId);
         UserDto user = userService.getById(userId);
@@ -143,14 +139,13 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
             if (getByUserId(userId) != null) {
                 throw new ClientException(USER_ALREADY_HAS_EMAIL);
             }
-            UserEmailDto result = new UserEmailDto();
+            result = new UserEmailDto();
             result.setEmail(email);
             result.setUserId(user.getId());
-            updateUserStatus(user, VerifiedStatus.VERIFIED);
-            return create(result);
         } else {
             throw new ClientException(CODE_WORSE);
         }
+        return super.create(result);
     }
 
     private void checkUserAuthentication(UUID userId) {
@@ -172,11 +167,6 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
         if (!emailPattern.matcher(email).matches()) {
             throw new ClientException(NOT_EMAIL_BY_REGEX);
         }
-    }
-
-    private void updateUserStatus(UserDto user, VerifiedStatus status) {
-        user.setVerifiedStatus(status);
-        userService.updateWithOutCheckModel(user);
     }
 
     //TODO: Remove isNEW

@@ -3,7 +3,7 @@ package com.gliesereum.account.service.auth.impl;
 import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.account.service.token.TokenService;
-import com.gliesereum.account.service.user.UserBusinessService;
+import com.gliesereum.account.service.user.BusinessService;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
@@ -14,7 +14,6 @@ import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.model.dto.account.auth.SignInDto;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
-import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
@@ -47,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private UserService userService;
 
     @Autowired
-    private UserBusinessService userBusinessService;
+    private BusinessService businessService;
 
     @Autowired
     private UserPhoneService phoneService;
@@ -184,14 +183,13 @@ public class AuthServiceImpl implements AuthService {
         if (StringUtils.isEmpty(params.get("userType"))) {
             throw new ClientException(USER_TYPE_EMPTY);
         }
-        UserType userType = UserType.valueOf( params.get("userType"));
         String value = params.get("value");
         String code = params.get("code");
         String type = params.get("type");
         VerificationType verificationType = VerificationType.valueOf(type);
         if (verificationService.checkVerification(value, code)) {
             checkValueByExist(value, verificationType, true);
-            UserDto newUser = userService.create(new UserDto(userType));
+            UserDto newUser = userService.create(new UserDto());
             if (newUser != null) {
                 switch (verificationType) {
                     case EMAIL: {
@@ -223,9 +221,7 @@ public class AuthServiceImpl implements AuthService {
         TokenStoreDomain token = tokenService.getAndVerify(accessToken);
         UUID userId = UUID.fromString(token.getUserId());
         UserDto user = userService.getById(userId);
-        UserBusinessDto userBusiness = userBusinessService.getByUserId(userId);
         AuthDto auth = createModel(token, user);
-        auth.setUserBusiness(userBusiness);
         return auth;
     }
 

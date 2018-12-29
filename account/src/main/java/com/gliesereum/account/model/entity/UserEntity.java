@@ -2,14 +2,14 @@ package com.gliesereum.account.model.entity;
 
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
-import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author yvlasiuk
@@ -61,11 +61,9 @@ public class UserEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private BanStatus banStatus;
 
-    @Column(name = "verified_status")
-    @Enumerated(EnumType.STRING)
-    private VerifiedStatus verifiedStatus;
-
-    @Column(name = "user_type")
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "user_business",
+            joinColumns = {@JoinColumn(name = "user_id", insertable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "business_id", insertable = false, updatable = false)})
+    private Set<BusinessEntity> business = new HashSet<>();
 }

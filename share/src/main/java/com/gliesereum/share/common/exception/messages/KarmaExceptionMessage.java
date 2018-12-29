@@ -45,5 +45,5 @@ public class KarmaExceptionMessage {
 
 
     public static final ExceptionMessage MEDIA_NOT_FOUND_BY_ID = new ExceptionMessage(1450, 404, "Media not found by id");
-
+    public static final ExceptionMessage PACKAGE_NOT_HAVE_SERVICE = new ExceptionMessage(1451, 400, "Package dont have any services ");
 }

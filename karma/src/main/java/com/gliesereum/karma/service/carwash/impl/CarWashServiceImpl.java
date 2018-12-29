@@ -12,7 +12,6 @@ import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashFullModel;
@@ -39,7 +38,8 @@ import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_IN_BAN;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
  * @author vitalij
@@ -140,9 +140,6 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
             throw new ClientException(USER_NOT_AUTHENTICATION);
         }
         UserDto user = SecurityUtil.getUser().getUser();
-        if (user.getVerifiedStatus().equals(VerifiedStatus.UNVERIFIED)) {
-            throw new ClientException(USER_NOT_VERIFIED);
-        }
         if (user.getBanStatus().equals(BanStatus.BAN)) {
             throw new ClientException(USER_IN_BAN);
         }
@@ -158,6 +155,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
         if (carWashDto == null) {
             throw new ClientException(CARWASH_NOT_FOUND);
         }
+        result.setCarWashId(id);
         result.setLogoUrl(carWashDto.getLogoUrl());
         result.setName(carWashDto.getName());
         result.setDescription(carWashDto.getDescription());

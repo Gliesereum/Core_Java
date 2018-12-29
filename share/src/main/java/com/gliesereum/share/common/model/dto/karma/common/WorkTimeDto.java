@@ -1,6 +1,9 @@
 package com.gliesereum.share.common.model.dto.karma.common;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.LocalTimeJsonDeserializer;
+import com.gliesereum.share.common.databind.json.LocalTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
@@ -23,11 +26,13 @@ import java.util.UUID;
 public class WorkTimeDto extends DefaultDto {
 
     @NotNull
-    @JsonFormat(pattern = "HH:mm")
+    @JsonDeserialize(using = LocalTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalTimeJsonSerializer.class)
     private LocalTime from;
 
     @NotNull
-    @JsonFormat(pattern = "HH:mm")
+    @JsonDeserialize(using = LocalTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalTimeJsonSerializer.class)
     private LocalTime to;
 
     @NotNull
