@@ -169,11 +169,6 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
         }
     }
 
-    private void updateUserStatus(UserDto user, VerifiedStatus status) {
-        user.setVerifiedStatus(status);
-        userService.updateWithOutCheckModel(user);
-    }
-
     //TODO: Remove isNEW
     /*private void checkEmailForSignInUp(String email, boolean isNew) {
         checkIsEmail(email);

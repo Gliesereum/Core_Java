@@ -45,4 +45,10 @@ public class BusinessController {
         service.delete(id);
         return new MapResponse("true");
     }
+
+    @PostMapping("/{idBusiness}/{idUser}")
+    public MapResponse addUserToBusiness(@PathVariable("idBusiness") UUID idBusiness, @PathVariable("idUser") UUID idUser) {
+        service.addUser(idBusiness, idUser);
+        return new MapResponse("true");
+    }
 }

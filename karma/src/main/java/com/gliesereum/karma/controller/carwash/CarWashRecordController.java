@@ -86,6 +86,11 @@ public class CarWashRecordController {
         return new MapResponse("true");
     }
 
+    @GetMapping("/client/all")
+    public List<CarWashRecordDto> getAllByUser() {
+        return service.getAllByUser();
+    }
+
     @PostMapping("/client/params")
     public List<CarWashRecordDto> getByParamsForClient(@RequestBody Map<String, String> params) {
         return service.getByParamsForClient(params);

@@ -3,10 +3,12 @@ package com.gliesereum.account.service.user.impl;
 import com.gliesereum.account.model.entity.BusinessEntity;
 import com.gliesereum.account.model.repository.jpa.user.BusinessRepository;
 import com.gliesereum.account.service.user.BusinessService;
+import com.gliesereum.account.service.user.UserBusinessService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.user.BusinessDto;
+import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -37,22 +39,37 @@ public class BusinessServiceImpl extends DefaultServiceImpl<BusinessDto, Busines
     @Autowired
     private BusinessRepository repository;
 
+    @Autowired
+    private UserBusinessService  userBusinessService;
+
     @Override
     public BusinessDto create(BusinessDto dto) {
+        BusinessDto result = null;
         checkUserByStatus();
-        return super.create(dto);
+        result = super.create(dto);
+        if(result != null){
+           userBusinessService.create(new UserBusinessDto(SecurityUtil.getUserId(),result.getId()));
+        }
+        return result;
     }
 
     @Override
     public BusinessDto update(BusinessDto dto) {
-        checkPermissionUser();
+        checkPermissionUser(dto.getId());
         return super.update(dto);
     }
 
     @Override
     public void delete(UUID id) {
-        checkPermissionUser();
+        checkPermissionUser(id);
         super.delete(id);
+    }
+
+    @Override
+    public void addUser(UUID idBusiness, UUID idUser) {
+        checkUserByStatus();
+        //checkPermissionUser(dto.getId()); //todo add USER
+
     }
 
     private void checkUserByStatus() {
@@ -65,7 +82,9 @@ public class BusinessServiceImpl extends DefaultServiceImpl<BusinessDto, Busines
         }
     }
 
-    private void checkPermissionUser() {
+    private void checkPermissionUser(UUID id) {
         UUID userId = SecurityUtil.getUserId();
     }
+
+
 }

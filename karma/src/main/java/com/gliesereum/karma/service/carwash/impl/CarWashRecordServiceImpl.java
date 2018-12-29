@@ -101,7 +101,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             status = StatusRecord.valueOf(params.get("status"));
         }
 
-        LocalDateTime from = LocalDateTime.now();
+        LocalDateTime from = LocalDateTime.now(ZoneOffset.UTC);
         if (StringUtils.isNotEmpty(params.get("from"))) {
             Long dateLong = Long.valueOf(params.get("from"));
             from = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateLong),
@@ -258,6 +258,19 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             }
         }
         return dto;
+    }
+
+    @Override
+    public List<CarWashRecordDto> getAllByUser() {
+        List<UUID> listCarId = new ArrayList<>();
+        List<CarDto> carsUsers = carService.getAllByUserId(SecurityUtil.getUserId());
+        if (CollectionUtils.isNotEmpty(carsUsers)) {
+            listCarId = carsUsers.stream().map(CarDto::getId).collect(Collectors.toList());
+        } else {
+            throw new ClientException(CAR_NOT_FOUND);
+        }
+        List<CarWashRecordEntity> entities = repository.findAllByCarIdIn(listCarId);
+        return converter.convert(entities, dtoClass);
     }
 
 
