@@ -6,11 +6,11 @@ package com.gliesereum.share.common.model.dto.account.enumerated;
  */
 public enum KYCStatus {
 
-    KFC_NOT_PASSED,
-    KFC_IN_PROCESS,
-    KFC_PASSED,
-    KFC_REJECTED,
-    KFC_POSTPONED;
+    KYC_NOT_PASSED,
+    KYC_IN_PROCESS,
+    KYC_PASSED,
+    KYC_REJECTED,
+    KYC_POSTPONED;
 
     public String toString() {
         return name().toLowerCase();
