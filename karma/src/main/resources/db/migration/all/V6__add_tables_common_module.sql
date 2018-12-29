@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS karma.service_price (
    service_id uuid,
    business_service_id uuid,
 
-   CONSTRAINT service_price_pk PRIMARY KEY (id),
+   CONSTRAINT service_price_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE karma.service_class_price (
