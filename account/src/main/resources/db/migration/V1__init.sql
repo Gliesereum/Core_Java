@@ -6,7 +6,7 @@ CREATE TABLE account.user
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     first_name character varying,
     last_name character varying,
-    middle_name character varying;
+    middle_name character varying,
     gender character varying,
     ban_status character varying,
     position character varying,
