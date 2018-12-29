@@ -3,7 +3,7 @@ package com.gliesereum.account.service.auth.impl;
 import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.account.service.token.TokenService;
-import com.gliesereum.account.service.user.UserBusinessService;
+import com.gliesereum.account.service.user.BusinessService;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
@@ -11,10 +11,9 @@ import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
+import com.gliesereum.share.common.model.dto.account.auth.SignInDto;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
-import com.gliesereum.share.common.model.dto.account.enumerated.UserType;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
-import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
@@ -47,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private UserService userService;
 
     @Autowired
-    private UserBusinessService userBusinessService;
+    private BusinessService businessService;
 
     @Autowired
     private UserPhoneService phoneService;
@@ -65,6 +64,86 @@ public class AuthServiceImpl implements AuthService {
     private VerificationService verificationService;
 
     @Override
+    @Transactional
+    public AuthDto signIn(SignInDto signInDto) {
+        AuthDto result = null;
+        if (signInDto != null) {
+            VerificationType type = signInDto.getType();
+            String value = signInDto.getValue();
+            if ((type.equals(VerificationType.EMAIL) && emailService.checkEmailByExist(value)) ||
+                    (type.equals(VerificationType.PHONE) && phoneService.checkPhoneByExist(value))) {
+                result = signIn(value, signInDto.getCode(), type);
+            } else {
+                result = signUp(value, signInDto.getCode(), type);
+            }
+
+        }
+        return result;
+    }
+
+    @Transactional
+    public AuthDto signIn(String value, String code, VerificationType type) {
+        AuthDto result;
+        UserDto user = null;
+        if (verificationService.checkVerification(value, code)) {
+            switch (type) {
+                case EMAIL: {
+                    UserEmailDto email = emailService.getByValue(value);
+                    user = userService.getById(email.getUserId());
+                    break;
+                }
+                case PHONE: {
+                    UserPhoneDto phone = phoneService.getByValue(value);
+                    user = userService.getById(phone.getUserId());
+                    break;
+                }
+            }
+            if (user != null) {
+                TokenStoreDomain token = tokenService.generate(user.getId().toString());
+                result = createModel(token, user);
+            } else {
+                throw new ClientException(USER_NOT_FOUND);
+            }
+        } else {
+            throw new ClientException(CODE_WORSE);
+        }
+        return result;
+    }
+
+    @Transactional
+    public AuthDto signUp(String value, String code, VerificationType type) {
+        AuthDto result = null;
+        if (verificationService.checkVerification(value, code)) {
+            checkValueByExist(value, type, true);
+            UserDto newUser = userService.create(new UserDto());
+            if (newUser != null) {
+                switch (type) {
+                    case EMAIL: {
+                        UserEmailDto newEmail = new UserEmailDto();
+                        newEmail.setEmail(value);
+                        newEmail.setUserId(newUser.getId());
+                        emailService.create(newEmail);
+                        break;
+                    }
+                    case PHONE: {
+                        UserPhoneDto newPhone = new UserPhoneDto();
+                        newPhone.setPhone(value);
+                        newPhone.setUserId(newUser.getId());
+                        phoneService.create(newPhone);
+                        break;
+                    }
+                }
+                TokenStoreDomain token = tokenService.generate(newUser.getId().toString());
+                result = createModel(token, newUser);
+            }
+        } else {
+            throw new ClientException(CODE_WORSE);
+        }
+        return result;
+    }
+
+    //TODO: merge signin with signup
+    /*@Override
     public AuthDto signIn(Map<String, String> params) {
         UserDto user = null;
         checkField(params);
@@ -104,14 +183,13 @@ public class AuthServiceImpl implements AuthService {
         if (StringUtils.isEmpty(params.get("userType"))) {
             throw new ClientException(USER_TYPE_EMPTY);
         }
-        UserType userType = UserType.valueOf( params.get("userType"));
         String value = params.get("value");
         String code = params.get("code");
         String type = params.get("type");
         VerificationType verificationType = VerificationType.valueOf(type);
         if (verificationService.checkVerification(value, code)) {
             checkValueByExist(value, verificationType, true);
-            UserDto newUser = userService.create(new UserDto(userType));
+            UserDto newUser = userService.create(new UserDto());
             if (newUser != null) {
                 switch (verificationType) {
                     case EMAIL: {
@@ -136,16 +214,14 @@ public class AuthServiceImpl implements AuthService {
             throw new ClientException(CODE_WORSE);
         }
         return null;
-    }
+    }*/
 
     @Override
     public AuthDto check(String accessToken) {
         TokenStoreDomain token = tokenService.getAndVerify(accessToken);
         UUID userId = UUID.fromString(token.getUserId());
         UserDto user = userService.getById(userId);
-        UserBusinessDto userBusiness = userBusinessService.getByUserId(userId);
         AuthDto auth = createModel(token, user);
-        auth.setUserBusiness(userBusiness);
         return auth;
     }
 

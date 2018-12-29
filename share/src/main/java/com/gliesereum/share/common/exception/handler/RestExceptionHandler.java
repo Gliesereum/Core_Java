@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.MediaExceptionMessage.MAX_UPLOAD_SIZE_EXCEEDED;
 
 /**
  * @author yvlasiuk
@@ -49,35 +51,37 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
-        ExceptionMessage validationError = VALIDATION_ERROR;
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setCode(validationError.getErrorCode());
-        errorResponse.setMessage(validationError.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(VALIDATION_ERROR);
         errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
         errorResponse.setTimestamp(LocalDateTime.now());
         addBindingInfo(errorResponse, ex.getBindingResult());
-        return buildResponse(errorResponse, validationError.getHttpCode(), ex);
+        return buildResponse(errorResponse, VALIDATION_ERROR.getHttpCode(), ex);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setCode(BODY_INVALID.getErrorCode());
-        errorResponse.setMessage(BODY_INVALID.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(BODY_INVALID);
         errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
         errorResponse.setTimestamp(LocalDateTime.now());
         return buildResponse(errorResponse, BODY_INVALID.getHttpCode(), ex);
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(MAX_UPLOAD_SIZE_EXCEEDED);
+        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        errorResponse.setAdditional(ex.getCause().getCause().getMessage());
+        return buildResponse(errorResponse, MAX_UPLOAD_SIZE_EXCEEDED.getHttpCode(), ex);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUndefined(Exception ex, WebRequest request) {
-        ExceptionMessage unknownServerException = UNKNOWN_SERVER_EXCEPTION;
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setCode(unknownServerException.getErrorCode());
+        ErrorResponse errorResponse = new ErrorResponse(UNKNOWN_SERVER_EXCEPTION);
         errorResponse.setMessage(ex.getMessage());
         errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
         errorResponse.setTimestamp(LocalDateTime.now());
-        return buildResponse(errorResponse, unknownServerException.getHttpCode(), ex);
+        return buildResponse(errorResponse, UNKNOWN_SERVER_EXCEPTION.getHttpCode(), ex);
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(ErrorResponse response, int statusCode, Exception ex) {

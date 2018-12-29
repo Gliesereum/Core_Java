@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS karma.service_price (
    service_id uuid,
    business_service_id uuid,
 
-   CONSTRAINT service_price_pk PRIMARY KEY (id)
+   CONSTRAINT service_price_pk PRIMARY KEY (id),
 );
 
 CREATE TABLE karma.service_class_price (
@@ -45,7 +45,7 @@ CREATE TABLE karma.package_service (
 
   CONSTRAINT package_service_pk PRIMARY KEY (id),
   CONSTRAINT package_service_package_fk FOREIGN KEY (package_id) REFERENCES karma.package (id),
-  CONSTRAINT package_service_service_fk FOREIGN KEY (service_id) REFERENCES karma.service (id)
+  CONSTRAINT package_service_service_fk FOREIGN KEY (service_id) REFERENCES karma.service_price (id)
 );
 
 CREATE TABLE IF NOT EXISTS karma.work_time (

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS karma.car_wash (
    add_phone character varying,
    latitude double precision,
    longitude double precision,
-   user_business_id uuid,
+   business_id uuid,
    work_time_id uuid,
 
    CONSTRAINT car_wash_pk PRIMARY KEY (id)
@@ -38,6 +38,6 @@ CREATE TABLE karma.car_wash_record_service (
 
   CONSTRAINT car_wash_record_service_pk PRIMARY KEY (id),
   CONSTRAINT car_wash_record_service_car_wash_record_fk FOREIGN KEY (car_wash_record_id) REFERENCES karma.car_wash_record (id),
-  CONSTRAINT car_wash_record_service_service_fk FOREIGN KEY (service_id) REFERENCES karma.service (id)
+  CONSTRAINT car_wash_record_service_service_fk FOREIGN KEY (service_id) REFERENCES karma.service_price (id)
 );
 

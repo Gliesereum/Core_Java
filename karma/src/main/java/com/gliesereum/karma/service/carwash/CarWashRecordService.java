@@ -33,4 +33,6 @@ public interface CarWashRecordService extends DefaultService<CarWashRecordDto, C
     CarWashRecordDto updateTimeRecord(UUID idRecord, Long beginTime, Boolean isUser);
 
     CarWashRecordDto getFreeTimeForRecord(CarWashRecordDto dto);
+
+    List<CarWashRecordDto> getAllByUser();
 }

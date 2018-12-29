@@ -13,7 +13,6 @@ import java.util.UUID;
 @Repository
 public interface UserBusinessRepository extends JpaRepository<UserBusinessEntity, UUID> {
 
-    void deleteUserBusinessEntityByUserId(UUID id);
+    UserBusinessEntity findByUserIdAndBusinessId(UUID userId, UUID businessId);
 
-    UserBusinessEntity getByUserId(UUID id);
 }

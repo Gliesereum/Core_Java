@@ -1,8 +1,7 @@
 package com.gliesereum.account.service.auth;
 
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
-
-import java.util.Map;
+import com.gliesereum.share.common.model.dto.account.auth.SignInDto;
 
 /**
  * @author yvlasiuk
@@ -11,9 +10,10 @@ import java.util.Map;
  */
 public interface AuthService {
 
-    AuthDto signIn(Map<String, String> params);
+    AuthDto signIn(SignInDto signInDto);
 
-    AuthDto signUp(Map<String, String> params);
+    //TODO: merge signin with signup
+    //AuthDto signUp(Map<String, String> params);
 
     AuthDto check(String accessToken);
 }

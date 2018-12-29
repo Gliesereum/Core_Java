@@ -1,7 +1,7 @@
 package com.gliesereum.share.common.security.model;
 
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
-import com.gliesereum.share.common.model.dto.account.user.UserBusinessDto;
+import com.gliesereum.share.common.model.dto.account.user.BusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,14 +22,11 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
 
     private TokenInfoDto tokenInfo;
 
-    private UserBusinessDto userBusiness;
-
     private boolean isAnonymous = false;
 
-    public UserAuthentication(UserDto user, TokenInfoDto tokenInfo, UserBusinessDto userBusiness) {
+    public UserAuthentication(UserDto user, TokenInfoDto tokenInfo) {
         super(user, null, AUTHENTICATED_AUTHORITY);
         this.tokenInfo = tokenInfo;
-        this.userBusiness = userBusiness;
     }
 
     public UserAuthentication() {
@@ -46,10 +43,6 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
 
     public TokenInfoDto getTokenInfo() {
         return tokenInfo;
-    }
-
-    public UserBusinessDto getUserBusiness() {
-        return userBusiness;
     }
 
     public boolean isAnonymous() {

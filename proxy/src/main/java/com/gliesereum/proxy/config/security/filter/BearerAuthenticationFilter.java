@@ -39,7 +39,7 @@ public class BearerAuthenticationFilter extends OncePerRequestFilter {
                 bearerToken = bearerToken.trim();
                 AuthDto auth = authService.checkAccessToken(bearerToken);
                 if (auth != null) {
-                    SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(auth.getUser(), auth.getTokenInfo(), auth.getUserBusiness()));
+                    SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(auth.getUser(), auth.getTokenInfo()));
                     filterChain.doFilter(request, response);
                     return;
                 }

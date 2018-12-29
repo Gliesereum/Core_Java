@@ -1,17 +1,19 @@
 package com.gliesereum.account.model.entity;
 
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
  * @author vitalij
- * @since 12/4/18
+ * @version 1.0
+ * @since 12/5/18
  */
 @Data
 @NoArgsConstructor
@@ -20,28 +22,10 @@ import java.util.UUID;
 @Table(name = "user_business")
 public class UserBusinessEntity extends DefaultEntity {
 
-    @Column(name = "name")
-    private String name;
-
     @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "business_id")
+    private UUID businessId;
 
-    @Column(name = "edrpou")
-    private String edrpou;
-
-    @Column(name = "address")
-    private String address;
-
-    @Column(name = "logo_url")
-    private String logoUrl;
-
-    @Column(name = "cover_url")
-    private String coverUrl;
-
-    @Column(name = "kyc_status")
-    @Enumerated(EnumType.STRING)
-    private KYCStatus kYCStatus;
 }

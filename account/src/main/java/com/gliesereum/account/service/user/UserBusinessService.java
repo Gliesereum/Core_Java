@@ -12,9 +12,5 @@ import java.util.UUID;
  */
 public interface UserBusinessService extends DefaultService<UserBusinessDto, UserBusinessEntity> {
 
-    void  deleteByUserId(UUID id);
-
-    UserBusinessDto getByUserId(UUID id);
-
-    boolean KYCPassed(UUID id);
+    UserBusinessDto getByUserIdAndBusinessId(UUID userId, UUID businessId);
 }
