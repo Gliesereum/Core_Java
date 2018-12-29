@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 /**
  * @author vitalij
  * @since 12/4/18
@@ -27,4 +29,11 @@ public class UserBusinessServiceImpl extends DefaultServiceImpl<UserBusinessDto,
 
     @Autowired
     private UserBusinessRepository repository;
+
+
+    @Override
+    public UserBusinessDto getByUserIdAndBusinessId(UUID userId, UUID businessId) {
+        UserBusinessEntity entity = repository.findByUserIdAndBusinessId(userId, businessId);
+        return converter.convert(entity, dtoClass);
+    }
 }

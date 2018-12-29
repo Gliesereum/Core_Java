@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface BusinessService extends DefaultService<BusinessDto, BusinessEntity> {
 
     void addUser(UUID idBusiness, UUID idUser);
+
+    void removeUser(UUID idBusiness, UUID idUser);
 }

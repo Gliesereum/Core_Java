@@ -13,4 +13,6 @@ import java.util.UUID;
 @Repository
 public interface UserBusinessRepository extends JpaRepository<UserBusinessEntity, UUID> {
 
+    UserBusinessEntity findByUserIdAndBusinessId(UUID userId, UUID businessId);
+
 }

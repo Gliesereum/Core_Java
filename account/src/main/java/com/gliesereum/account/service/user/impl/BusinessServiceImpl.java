@@ -4,6 +4,7 @@ import com.gliesereum.account.model.entity.BusinessEntity;
 import com.gliesereum.account.model.repository.jpa.user.BusinessRepository;
 import com.gliesereum.account.service.user.BusinessService;
 import com.gliesereum.account.service.user.UserBusinessService;
+import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
@@ -18,8 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_IN_BAN;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -40,36 +40,56 @@ public class BusinessServiceImpl extends DefaultServiceImpl<BusinessDto, Busines
     private BusinessRepository repository;
 
     @Autowired
-    private UserBusinessService  userBusinessService;
+    private UserBusinessService userBusinessService;
+
+    @Autowired
+    private UserService userservice;
 
     @Override
     public BusinessDto create(BusinessDto dto) {
         BusinessDto result = null;
         checkUserByStatus();
         result = super.create(dto);
-        if(result != null){
-           userBusinessService.create(new UserBusinessDto(SecurityUtil.getUserId(),result.getId()));
+        if (result != null) {
+            userBusinessService.create(new UserBusinessDto(SecurityUtil.getUserId(), result.getId()));
         }
         return result;
     }
 
     @Override
     public BusinessDto update(BusinessDto dto) {
-        checkPermissionUser(dto.getId());
+        checkCurrentUserForPermissionActionThisBusiness(dto.getId());
         return super.update(dto);
     }
 
     @Override
     public void delete(UUID id) {
-        checkPermissionUser(id);
+        checkCurrentUserForPermissionActionThisBusiness(id);
         super.delete(id);
     }
 
     @Override
     public void addUser(UUID idBusiness, UUID idUser) {
-        checkUserByStatus();
-        //checkPermissionUser(dto.getId()); //todo add USER
+        checkActionWithUserFromBusiness(idBusiness, idUser);
+        userBusinessService.create(new UserBusinessDto(idUser, idBusiness));
+    }
 
+    @Override
+    public void removeUser(UUID idBusiness, UUID idUser) {
+        checkActionWithUserFromBusiness(idBusiness, idUser);
+        UserBusinessDto userBusiness = userBusinessService.getByUserIdAndBusinessId(idUser, idBusiness);
+        if (userBusiness == null) {
+            throw new ClientException(DONT_FOUND_DEPENDENCY_USER_AND_BUSINESS);
+        }
+        userBusinessService.delete(userBusiness.getId());
+    }
+
+    private void checkActionWithUserFromBusiness(UUID idBusiness, UUID idUser) {
+        checkUserByStatus();
+        checkCurrentUserForPermissionActionThisBusiness(idBusiness);
+        if (userservice.getById(idUser) == null) {
+            throw new ClientException(USER_NOT_FOUND);
+        }
     }
 
     private void checkUserByStatus() {
@@ -82,7 +102,7 @@ public class BusinessServiceImpl extends DefaultServiceImpl<BusinessDto, Busines
         }
     }
 
-    private void checkPermissionUser(UUID id) {
+    private void checkCurrentUserForPermissionActionThisBusiness(UUID id) {
         UUID userId = SecurityUtil.getUserId();
     }
 
