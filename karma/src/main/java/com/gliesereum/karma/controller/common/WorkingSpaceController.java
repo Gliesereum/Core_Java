@@ -2,7 +2,6 @@ package com.gliesereum.karma.controller.common;
 
 import com.gliesereum.karma.service.common.WorkingSpaceService;
 import com.gliesereum.share.common.model.dto.karma.common.WorkingSpaceDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +22,9 @@ public class WorkingSpaceController {
     @Autowired
     private WorkingSpaceService workingSpaceService;
 
-    @GetMapping("/{businessServiceId}")
-    public List<WorkingSpaceDto> getAll(@PathVariable("businessServiceId") UUID businessServiceId) {
-        return workingSpaceService.getByBusinessServiceId(businessServiceId);
+    @GetMapping("/{corporationServiceId}")
+    public List<WorkingSpaceDto> getAll(@PathVariable("corporationServiceId") UUID corporationServiceId) {
+        return workingSpaceService.getByCorporationServiceId(corporationServiceId);
     }
 
     @PostMapping

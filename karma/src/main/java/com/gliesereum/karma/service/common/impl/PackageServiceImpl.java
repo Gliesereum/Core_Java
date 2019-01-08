@@ -33,8 +33,8 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     }
 
     @Override
-    public List<PackageDto> getByBusinessServiceId(UUID id) {
-        List<PackageEntity> entities = repository.getByBusinessServiceId(id);
+    public List<PackageDto> getByCorporationServiceId(UUID id) {
+        List<PackageEntity> entities = repository.getByCorporationServiceId(id);
         return converter.convert(entities, dtoClass);
     }
 }

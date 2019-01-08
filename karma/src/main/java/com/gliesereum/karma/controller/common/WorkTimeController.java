@@ -24,9 +24,9 @@ public class WorkTimeController {
     @Autowired
     private WorkTimeService workTimeService;
 
-    @GetMapping("/{businessServiceId}")
-    public List<WorkTimeDto> getAll(@PathVariable("businessServiceId") UUID businessServiceId) {
-        return workTimeService.getByBusinessServiceId(businessServiceId);
+    @GetMapping("/{corporationServiceId}")
+    public List<WorkTimeDto> getAll(@PathVariable("corporationServiceId") UUID corporationServiceId) {
+        return workTimeService.getByCorporationServiceId(corporationServiceId);
     }
 
     @PostMapping

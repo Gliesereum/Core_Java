@@ -36,7 +36,7 @@ public class WorkTimeDto extends DefaultDto {
     private LocalTime to;
 
     @NotNull
-    private UUID businessServiceId;
+    private UUID corporationServiceId;
 
     private Boolean isWork;
 

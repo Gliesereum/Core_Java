@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BusinessDto extends DefaultDto {
+public class CorporationDto extends DefaultDto {
 
     @Size(min = 2)
     @NotEmpty

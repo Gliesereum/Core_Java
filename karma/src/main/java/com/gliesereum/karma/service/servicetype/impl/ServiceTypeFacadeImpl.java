@@ -24,12 +24,12 @@ public class ServiceTypeFacadeImpl implements ServiceTypeFacade {
     private CarWashService carWashService;
 
     @Override
-    public boolean currentUserHavePermissionToAction(ServiceType serviceType, UUID businessServiceId) {
+    public boolean currentUserHavePermissionToAction(ServiceType serviceType, UUID corporationServiceId) {
         boolean result = false;
         if (serviceType != null) {
             switch (serviceType) {
                 case CAR_WASH:
-                    result = carWashService.currentUserHavePermissionToAction(businessServiceId);
+                    result = carWashService.currentUserHavePermissionToAction(corporationServiceId);
                     break;
             }
         }
@@ -37,8 +37,8 @@ public class ServiceTypeFacadeImpl implements ServiceTypeFacade {
     }
 
     @Override
-    public void throwExceptionIfUserDontHavePermissionToAction(ServiceType serviceType, UUID businessServiceId) {
-        if (!currentUserHavePermissionToAction(serviceType, businessServiceId)) {
+    public void throwExceptionIfUserDontHavePermissionToAction(ServiceType serviceType, UUID corporationServiceId) {
+        if (!currentUserHavePermissionToAction(serviceType, corporationServiceId)) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_SERVICE);
         }
     }

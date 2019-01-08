@@ -96,8 +96,8 @@ public class CarWashRecordController {
         return service.getByParamsForClient(params);
     }
 
-    @PostMapping("/business/params")
-    public List<CarWashRecordDto> getByParamsForBusiness(@RequestBody Map<String, String> params) {
+    @PostMapping("/corporation/params")
+    public List<CarWashRecordDto> getByParamsForCorporation(@RequestBody Map<String, String> params) {
         if (StringUtils.isNotEmpty(params.get("carWashId"))) {
             if (!carWashService.currentUserHavePermissionToAction(UUID.fromString(params.get("carWashId")))) {
                 throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
@@ -105,7 +105,7 @@ public class CarWashRecordController {
         } else {
             throw new ClientException(CARWASH_ID_EMPTY);
         }
-        return service.getByParamsForBusiness(params);
+        return service.getByParamsForCorporation(params);
     }
 
     @PostMapping("/map/params")
@@ -113,7 +113,7 @@ public class CarWashRecordController {
         if (StringUtils.isEmpty(params.get("carWashId"))) {
             throw new ClientException(CARWASH_ID_EMPTY);
         }
-        return service.getByParamsForBusiness(params);
+        return service.getByParamsForCorporation(params);
     }
 
     @PostMapping("/free-time")

@@ -3,7 +3,6 @@ package com.gliesereum.share.common.security.jwt.factory.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
-import com.gliesereum.share.common.model.dto.account.user.BusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
 import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;

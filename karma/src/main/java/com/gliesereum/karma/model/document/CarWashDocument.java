@@ -25,7 +25,7 @@ public class CarWashDocument {
     private String id;
 
     @Field(type = FieldType.Keyword)
-    private String userBusinessId;
+    private String corporationId;
 
     @Field(type = FieldType.Keyword)
     private String name;

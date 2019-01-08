@@ -1,7 +1,6 @@
 package com.gliesereum.share.common.security.model;
 
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
-import com.gliesereum.share.common.model.dto.account.user.BusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

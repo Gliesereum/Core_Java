@@ -119,7 +119,7 @@ public class CarWashEsServiceImpl implements CarWashEsService {
 
     private CarWashDocument insertServices(CarWashDocument target, CarWashDto source) {
         if (ObjectUtils.allNotNull(target, source)) {
-            List<ServicePriceDto> servicePrices = servicePriceService.getByBusinessServiceId(source.getId());
+            List<ServicePriceDto> servicePrices = servicePriceService.getByCorporationServiceId(source.getId());
             if (CollectionUtils.isNotEmpty(servicePrices)) {
                 List<CarWashServiceDocument> services = servicePrices.stream()
                         .map(price -> {

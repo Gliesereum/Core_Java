@@ -28,8 +28,8 @@ public class WorkingSpaceEntity extends DefaultEntity {
     @Column(name = "index_number")
     private Integer indexNumber;
 
-    @Column(name = "business_service_id")
-    private UUID businessServiceId;
+    @Column(name = "corporation_service_id")
+    private UUID corporationServiceId;
 
     @Column(name = "status_space")
     @Enumerated(EnumType.STRING)

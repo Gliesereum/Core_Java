@@ -38,8 +38,8 @@ public class ServicePriceEntity extends DefaultEntity {
     @JoinColumn(name = "service_id", insertable = false, updatable = false)
     private ServiceEntity service;
 
-    @Column(name = "business_service_id")
-    private UUID businessServiceId;
+    @Column(name = "corporation_service_id")
+    private UUID corporationServiceId;
 
     @Column(name ="duration")
     private Integer duration;

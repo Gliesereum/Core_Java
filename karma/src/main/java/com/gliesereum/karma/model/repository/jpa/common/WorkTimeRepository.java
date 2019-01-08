@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 public interface WorkTimeRepository extends JpaRepository<WorkTimeEntity, UUID> {
 
-    List<WorkTimeEntity> findByBusinessServiceId(UUID businessServiceId);
+    List<WorkTimeEntity> findByCorporationServiceId(UUID corporationServiceId);
 
-    boolean existsByBusinessServiceIdAndAndDayOfWeek(UUID id, DayOfWeek dayOfWeek);
+    boolean existsByCorporationServiceIdAndDayOfWeek(UUID id, DayOfWeek dayOfWeek);
 }

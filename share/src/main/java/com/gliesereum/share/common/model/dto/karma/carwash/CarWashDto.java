@@ -23,7 +23,7 @@ import java.util.UUID;
 public class CarWashDto extends DefaultDto {
 
     @NotNull
-    private UUID businessId;
+    private UUID corporationId;
 
     @NotEmpty
     private String name;

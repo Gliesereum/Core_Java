@@ -15,14 +15,14 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UserBusinessDto extends DefaultDto {
+public class UserCorporationDto extends DefaultDto {
 
     private UUID userId;
 
-    private UUID businessId;
+    private UUID corporationId;
 
-    public UserBusinessDto(UUID userId, UUID businessId) {
+    public UserCorporationDto(UUID userId, UUID corporationId) {
         this.userId = userId;
-        this.businessId = businessId;
+        this.corporationId = corporationId;
     }
 }

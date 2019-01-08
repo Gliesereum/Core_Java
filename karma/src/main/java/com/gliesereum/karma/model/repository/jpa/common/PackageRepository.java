@@ -14,5 +14,5 @@ import java.util.UUID;
  */
 public interface PackageRepository extends JpaRepository<PackageEntity, UUID> {
 
-    List<PackageEntity> getByBusinessServiceId(UUID id);
+    List<PackageEntity> getByCorporationServiceId(UUID corporationServiceId);
 }

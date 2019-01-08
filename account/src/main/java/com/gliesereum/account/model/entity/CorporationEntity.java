@@ -17,8 +17,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "business")
-public class BusinessEntity extends DefaultEntity {
+@Table(name = "corporation")
+public class CorporationEntity extends DefaultEntity {
 
     @Column(name = "name")
     private String name;
