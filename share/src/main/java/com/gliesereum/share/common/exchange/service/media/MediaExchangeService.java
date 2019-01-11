@@ -1,7 +1,8 @@
 package com.gliesereum.share.common.exchange.service.media;
 
 import com.gliesereum.share.common.model.dto.media.UserFileDto;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 /**
  * @author vitalij
@@ -10,6 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface MediaExchangeService {
 
-     UserFileDto uploadFile(MultipartFile file);
+     UserFileDto uploadFile(File file);
 
 }

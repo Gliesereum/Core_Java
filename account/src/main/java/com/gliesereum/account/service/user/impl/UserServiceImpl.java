@@ -95,16 +95,6 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         changeBanStatus(id, BanStatus.UNBAN);
     }
 
-    public void checkUserByBanStatus() {
-        if (SecurityUtil.getUser() == null) {
-            throw new ClientException(USER_NOT_AUTHENTICATION);
-        }
-        UserDto user = SecurityUtil.getUser().getUser();
-        if (user.getBanStatus().equals(BanStatus.BAN)) {
-            throw new ClientException(USER_IN_BAN);
-        }
-    }
-
     private void changeBanStatus(UUID id, BanStatus status) {
         UserDto user = getById(id);
         if (user == null) {

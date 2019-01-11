@@ -4,10 +4,17 @@ import com.gliesereum.share.common.exchange.service.media.MediaExchangeService;
 import com.gliesereum.share.common.model.dto.media.UserFileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.*;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 /**
  * @author vitalij
@@ -21,7 +28,7 @@ public class MediaExchangeServiceImpl implements MediaExchangeService {
 
     private Environment environment;
 
-    private final String UPLOAD_FILE_URL ="exchange.endpoint.media.upload";
+    private final String UPLOAD_FILE_URL = "exchange.endpoint.media.upload";
 
     @Autowired
     public MediaExchangeServiceImpl(RestTemplate restTemplate, Environment environment) {
@@ -29,12 +36,19 @@ public class MediaExchangeServiceImpl implements MediaExchangeService {
         this.environment = environment;
     }
 
-    public UserFileDto uploadFile(MultipartFile file){
+    public UserFileDto uploadFile(File file) {
         String url = environment.getProperty(UPLOAD_FILE_URL);
+
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE);
-        HttpEntity httpEntity = new HttpEntity<>(file, httpHeaders);
-        ResponseEntity<UserFileDto> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, UserFileDto.class);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", new FileSystemResource(file));
+
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(body, httpHeaders);
+
+        ResponseEntity<UserFileDto> response = restTemplate.postForEntity(url, httpEntity, UserFileDto.class);
+
         UserFileDto result = null;
         if (response.getStatusCode().is2xxSuccessful()) {
             result = response.getBody();
