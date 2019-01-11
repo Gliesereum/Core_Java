@@ -90,11 +90,11 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     }
 
     @Override
-    public List<CarWashRecordDto> getByParamsForBusiness(Map<String, String> params) {
+    public List<CarWashRecordDto> getByParamsForCorporation(Map<String, String> params) {
         return getByParams(params, true);
     }
 
-    private List<CarWashRecordDto> getByParams(Map<String, String> params, boolean isBusiness) {
+    private List<CarWashRecordDto> getByParams(Map<String, String> params, boolean isCorporation) {
 
         StatusRecord status = StatusRecord.CREATED;
         if (StringUtils.isNotEmpty(params.get("status"))) {
@@ -117,7 +117,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
 
         List<CarWashRecordEntity> entities = null;
 
-        if (isBusiness) {
+        if (isCorporation) {
             UUID carWashId = UUID.fromString(params.get("carWashId"));
             CarWashDto carWash = carWashService.getById(carWashId);
             if (carWash == null || CollectionUtils.isEmpty(carWash.getSpaces())) {

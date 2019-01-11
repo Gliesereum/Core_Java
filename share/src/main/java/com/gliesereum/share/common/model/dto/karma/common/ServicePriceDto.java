@@ -32,7 +32,7 @@ public class ServicePriceDto extends DefaultDto {
     private UUID serviceId;
 
     @NotNull
-    private UUID businessServiceId;
+    private UUID corporationServiceId;
 
     private ServiceDto service;
 

@@ -19,13 +19,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "user_business")
-public class UserBusinessEntity extends DefaultEntity {
+@Table(name = "user_corporation")
+public class UserCorporationEntity extends DefaultEntity {
 
     @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "business_id")
-    private UUID businessId;
+    @Column(name = "corporation_id")
+    private UUID corporationId;
 
 }

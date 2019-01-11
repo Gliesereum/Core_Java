@@ -3,7 +3,7 @@ package com.gliesereum.account.service.auth.impl;
 import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.account.service.token.TokenService;
-import com.gliesereum.account.service.user.BusinessService;
+import com.gliesereum.account.service.user.CorporationService;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private UserService userService;
 
     @Autowired
-    private BusinessService businessService;
+    private CorporationService corporationService;
 
     @Autowired
     private UserPhoneService phoneService;

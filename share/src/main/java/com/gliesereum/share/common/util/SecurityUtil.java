@@ -1,6 +1,6 @@
 package com.gliesereum.share.common.util;
 
-import com.gliesereum.share.common.model.dto.account.user.BusinessDto;
+import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.security.model.UserAuthentication;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.Authentication;
@@ -33,19 +33,19 @@ public class SecurityUtil {
         return result;
     }
 
-    public static List<UUID> getUserBusinessIds() {
+    public static List<UUID> getUserCorporationIds() {
         List<UUID> result = null;
         UserAuthentication user = getUser();
-        if ((user != null) && (user.getUser() != null) && (CollectionUtils.isNotEmpty(user.getUser().getBusiness()))) {
-            result = user.getUser().getBusiness().stream().map(BusinessDto::getId).collect(Collectors.toList());
+        if ((user != null) && (user.getUser() != null) && (CollectionUtils.isNotEmpty(user.getUser().getCorporation()))) {
+            result = user.getUser().getCorporation().stream().map(CorporationDto::getId).collect(Collectors.toList());
         }
         return result;
     }
 
-    public static boolean userHavePermissionToBusiness(UUID businessId) {
+    public static boolean userHavePermissionToCorporation(UUID corporationId) {
         boolean result = false;
-        List<UUID> userBusinessIds = getUserBusinessIds();
-        if (CollectionUtils.isNotEmpty(userBusinessIds) && userBusinessIds.contains(businessId)) {
+        List<UUID> userCorporationIds = getUserCorporationIds();
+        if (CollectionUtils.isNotEmpty(userCorporationIds) && userCorporationIds.contains(corporationId)) {
             result = true;
         }
         return result;
@@ -54,5 +54,10 @@ public class SecurityUtil {
     public static boolean isAnonymous() {
         UserAuthentication user = getUser();
         return (user == null) || user.isAnonymous();
+    }
+
+    public static String getJwtToken() {
+        UserAuthentication user = getUser();
+        return (user != null) ? user.getJwtToken() : null;
     }
 }

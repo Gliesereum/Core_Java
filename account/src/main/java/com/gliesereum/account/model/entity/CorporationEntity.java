@@ -8,6 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -17,8 +20,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "business")
-public class BusinessEntity extends DefaultEntity {
+@Table(name = "corporation")
+public class CorporationEntity extends DefaultEntity {
 
     @Column(name = "name")
     private String name;
@@ -45,4 +48,11 @@ public class BusinessEntity extends DefaultEntity {
     @Column(name = "verified_status")
     @Enumerated(EnumType.STRING)
     private VerifiedStatus verifiedStatus;
+
+    @Column(name = "parent_corporation_id")
+    private UUID parentCorporationId;
+
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "parent_corporation_id", insertable = false, updatable = false)
+    private Set<CorporationEntity> childrenCorporation = new HashSet<>();
 }

@@ -62,8 +62,8 @@ public class UserEntity extends DefaultEntity {
     private BanStatus banStatus;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "user_business",
+    @JoinTable(name = "user_corporation",
             joinColumns = {@JoinColumn(name = "user_id", insertable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "business_id", insertable = false, updatable = false)})
-    private Set<BusinessEntity> business = new HashSet<>();
+            inverseJoinColumns = {@JoinColumn(name = "corporation_id", insertable = false, updatable = false)})
+    private Set<CorporationEntity> corporation = new HashSet<>();
 }

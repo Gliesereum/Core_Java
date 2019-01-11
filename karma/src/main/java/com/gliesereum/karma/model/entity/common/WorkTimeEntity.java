@@ -29,8 +29,8 @@ public class WorkTimeEntity extends DefaultEntity {
     @Column(name = "to_time")
     private LocalTime to;
 
-    @Column(name = "business_service_id")
-    private UUID businessServiceId;
+    @Column(name = "corporation_service_id")
+    private UUID corporationServiceId;
 
     @Column(name = "is_work")
     private Boolean isWork;

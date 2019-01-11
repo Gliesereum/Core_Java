@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.SERVICE_NOT_FOUND;
 
 /**
@@ -79,13 +80,16 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     }
 
     @Override
-    public List<ServicePriceDto> getByBusinessServiceId(UUID id) {
-        List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessServiceId(id);
+    public List<ServicePriceDto> getByCorporationServiceId(UUID id) {
+        List<ServicePriceEntity> entities = servicePriceRepository.findAllByCorporationServiceId(id);
         return converter.convert(entities, dtoClass);
     }
 
     private void checkPermission(ServicePriceDto dto) {
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, dto.getBusinessServiceId());
+        if(dto.getCorporationServiceId() == null) {
+            throw new ClientException(ID_NOT_SPECIFIED);
+        }
+        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, dto.getCorporationServiceId());
     }
 
     private ServicePriceDto setCustomName(ServicePriceDto dto) {

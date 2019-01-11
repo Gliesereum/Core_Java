@@ -31,8 +31,8 @@ public class PackageEntity extends DefaultEntity {
     @Column(name = "duration")
     private int duration;
 
-    @Column(name = "business_service_id")
-    private UUID businessServiceId;
+    @Column(name = "corporation_service_id")
+    private UUID corporationServiceId;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "package_service",

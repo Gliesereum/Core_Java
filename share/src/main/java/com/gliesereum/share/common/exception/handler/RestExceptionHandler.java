@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -56,6 +57,14 @@ public class RestExceptionHandler {
         errorResponse.setTimestamp(LocalDateTime.now());
         addBindingInfo(errorResponse, ex.getBindingResult());
         return buildResponse(errorResponse, VALIDATION_ERROR.getHttpCode(), ex);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(METHOD_NOT_SUPPORTED);
+        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return buildResponse(errorResponse, METHOD_NOT_SUPPORTED.getHttpCode(), ex);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

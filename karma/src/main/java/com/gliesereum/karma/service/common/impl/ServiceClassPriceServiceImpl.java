@@ -110,7 +110,7 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
             if (price == null) {
                 throw new ClientException(SERVICE_PRICE_NOT_FOUND);
             }
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, price.getBusinessServiceId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, price.getCorporationServiceId());
             if (!serviceClassCarService.isExist(serviceClassId)) {
                 throw new ClientException(SERVICE_CLASS_NOT_FOUND);
             }

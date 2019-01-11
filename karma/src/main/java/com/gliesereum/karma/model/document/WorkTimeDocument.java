@@ -30,7 +30,7 @@ public class WorkTimeDocument {
     private LocalTime to;
 
     @Field(type = FieldType.Keyword)
-    private String businessServiceId;
+    private String corporationServiceId;
 
     @Field(type = FieldType.Boolean)
     private Boolean isWork;

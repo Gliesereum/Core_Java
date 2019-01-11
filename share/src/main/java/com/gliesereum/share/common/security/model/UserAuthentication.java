@@ -1,7 +1,6 @@
 package com.gliesereum.share.common.security.model;
 
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
-import com.gliesereum.share.common.model.dto.account.user.BusinessDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +21,8 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
 
     private TokenInfoDto tokenInfo;
 
+    private String jwtToken;
+
     private boolean isAnonymous = false;
 
     public UserAuthentication(UserDto user, TokenInfoDto tokenInfo) {
@@ -39,6 +40,14 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
             return (UserDto) getPrincipal();
         }
         return null;
+    }
+
+    public String getJwtToken() {
+        return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
     }
 
     public TokenInfoDto getTokenInfo() {

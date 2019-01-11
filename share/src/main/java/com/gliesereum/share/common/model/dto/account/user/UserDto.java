@@ -65,5 +65,5 @@ public class UserDto extends DefaultDto {
 
     private BanStatus banStatus;
 
-    private List<BusinessDto> business = new ArrayList<>();
+    private List<CorporationDto> corporation = new ArrayList<>();
 }

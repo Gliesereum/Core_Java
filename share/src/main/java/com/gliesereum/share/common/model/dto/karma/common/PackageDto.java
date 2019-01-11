@@ -25,7 +25,7 @@ public class PackageDto extends DefaultDto {
 
     private int duration;
 
-    private UUID businessServiceId;
+    private UUID packageServiceId;
 
     private List<ServicePriceDto> services = new ArrayList<>();
 }

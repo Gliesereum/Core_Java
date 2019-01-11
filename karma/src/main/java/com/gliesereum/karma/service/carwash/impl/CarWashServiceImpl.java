@@ -30,7 +30,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -81,7 +80,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     public CarWashDto create(CarWashDto dto) {
         checkUserByStatus();
         if (dto != null) {
-            checkBusinessId(dto);
+            checkCorporationId(dto);
             CarWashEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
@@ -98,7 +97,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
             currentUserHavePermissionToAction(dto.getId());
-            checkBusinessId(dto);
+            checkCorporationId(dto);
             CarWashEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
@@ -107,25 +106,25 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     }
 
     @Override
-    public boolean existByIdAndUserBusinessIds(UUID id, List<UUID> userBusinessIds) {
-        return carWashRepository.existsByIdAndBusinessIdIn(id, userBusinessIds);
+    public boolean existByIdAndCorporationIds(UUID id, List<UUID> corporationIds) {
+        return carWashRepository.existsByIdAndCorporationIdIn(id, corporationIds);
     }
 
     @Override
     public boolean currentUserHavePermissionToAction(UUID carWashId) {
         boolean result = false;
-        List<UUID> userBusinessIds = SecurityUtil.getUserBusinessIds();
-        if (CollectionUtils.isNotEmpty(userBusinessIds)) {
-            result = existByIdAndUserBusinessIds(carWashId, userBusinessIds);
+        List<UUID> userCorporationIds = SecurityUtil.getUserCorporationIds();
+        if (CollectionUtils.isNotEmpty(userCorporationIds)) {
+            result = existByIdAndCorporationIds(carWashId, userCorporationIds);
         }
         return result;
     }
 
     @Override
-    public List<CarWashDto> getByUserBusinessIds(List<UUID> businessIds) {
+    public List<CarWashDto> getByCorporationIds(List<UUID> corporationIds) {
         List<CarWashDto> result = null;
-        if (CollectionUtils.isNotEmpty(businessIds)) {
-            List<CarWashEntity> entities = carWashRepository.findByBusinessIdIn(businessIds);
+        if (CollectionUtils.isNotEmpty(corporationIds)) {
+            List<CarWashEntity> entities = carWashRepository.findByCorporationIdIn(corporationIds);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -143,13 +142,13 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     }
 
     @Override
-    public List<CarWashDto> getByBusinessId(UUID businessId) {
+    public List<CarWashDto> getByCorporationId(UUID corporationId) {
         List<CarWashDto> result = null;
-        if (businessId != null) {
-            if (!SecurityUtil.userHavePermissionToBusiness(businessId)) {
+        if (corporationId != null) {
+            if (!SecurityUtil.userHavePermissionToCorporation(corporationId)) {
                 throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
             }
-            List<CarWashEntity> entities = carWashRepository.findByBusinessId(businessId);
+            List<CarWashEntity> entities = carWashRepository.findByCorporationId(corporationId);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -190,14 +189,14 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
             result.setSpaces(emptyList);
         }
 
-        List<ServicePriceDto> servicePrices = servicePriceService.getByBusinessServiceId(id);
+        List<ServicePriceDto> servicePrices = servicePriceService.getByCorporationServiceId(id);
         if (CollectionUtils.isNotEmpty(servicePrices)) {
             result.setServicePrices(servicePrices);
         } else {
             List<ServicePriceDto> emptyList = Collections.emptyList();
             result.setServicePrices(emptyList);
         }
-        List<PackageDto> packages = packageService.getByBusinessServiceId(id);
+        List<PackageDto> packages = packageService.getByCorporationServiceId(id);
         if (CollectionUtils.isNotEmpty(packages)) {
             result.setPackages(packages);
         } else {
@@ -229,12 +228,12 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
         return result;
     }
 
-    private void checkBusinessId(CarWashDto carWash) {
-        UUID businessId = carWash.getBusinessId();
-        if (businessId == null) {
-            throw new ClientException(BUSINESS_ID_REQUIRED_FOR_THIS_ACTION);
+    private void checkCorporationId(CarWashDto carWash) {
+        UUID corporationId = carWash.getCorporationId();
+        if (corporationId == null) {
+            throw new ClientException(CORPORATION_ID_REQUIRED_FOR_THIS_ACTION);
         }
-        if (!SecurityUtil.userHavePermissionToBusiness(businessId)) {
+        if (!SecurityUtil.userHavePermissionToCorporation(corporationId)) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
         }
     }

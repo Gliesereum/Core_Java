@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -17,7 +19,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BusinessDto extends DefaultDto {
+public class CorporationDto extends DefaultDto {
 
     @Size(min = 2)
     @NotEmpty
@@ -40,5 +42,9 @@ public class BusinessDto extends DefaultDto {
     private KYCStatus kYCStatus;
 
     private VerifiedStatus verifiedStatus;
+
+    private UUID parentCorporationId;
+
+    private List<CorporationDto> childrenCorporation;
 
 }

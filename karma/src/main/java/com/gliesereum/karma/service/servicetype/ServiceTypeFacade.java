@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public interface ServiceTypeFacade {
 
-    boolean currentUserHavePermissionToAction(ServiceType serviceType, UUID businessServiceId);
+    boolean currentUserHavePermissionToAction(ServiceType serviceType, UUID corporationServiceId);
 
-    void throwExceptionIfUserDontHavePermissionToAction(ServiceType serviceType, UUID businessServiceId);
+    void throwExceptionIfUserDontHavePermissionToAction(ServiceType serviceType, UUID corporationServiceId);
 }

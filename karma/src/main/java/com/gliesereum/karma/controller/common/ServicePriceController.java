@@ -52,9 +52,9 @@ public class ServicePriceController {
         return servicePriceService.update(dto);
     }
 
-    @GetMapping("/by-business-service/{id}")
-    public List<ServicePriceDto> getByBusinessId(@PathVariable("id") UUID id) {
-        return servicePriceService.getByBusinessServiceId(id);
+    @GetMapping("/by-corporation-service/{id}")
+    public List<ServicePriceDto> getByCorporationId(@PathVariable("id") UUID id) {
+        return servicePriceService.getByCorporationServiceId(id);
     }
 
     @DeleteMapping("/{id}")
@@ -80,7 +80,7 @@ public class ServicePriceController {
     }
 
     @GetMapping("/{priceId}/class")
-    private List<ServiceClassPriceDto> getByPriceId(@PathVariable("id") UUID priceId) {
+    public List<ServiceClassPriceDto> getByPriceId(@PathVariable("priceId") UUID priceId) {
         return serviceClassPriceService.getByPriceId(priceId);
     }
 

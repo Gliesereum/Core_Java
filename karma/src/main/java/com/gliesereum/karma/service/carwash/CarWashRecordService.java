@@ -22,7 +22,7 @@ public interface CarWashRecordService extends DefaultService<CarWashRecordDto, C
 
     List<CarWashRecordDto> getByIdCarWashAndStatusRecord(UUID idCarWash, StatusRecord status, LocalDateTime from, LocalDateTime to);
 
-    List<CarWashRecordDto> getByParamsForBusiness(Map<String, String> params);
+    List<CarWashRecordDto> getByParamsForCorporation(Map<String, String> params);
 
     CarWashRecordDto updateWashingSpace(UUID idRecord, UUID workingSpaceId, Boolean isUser);
 

@@ -29,7 +29,7 @@ public class CarWashServiceDocument {
     private String serviceId;
 
     @Field(type = FieldType.Keyword)
-    private String businessServiceId;
+    private String corporationServiceId;
 
     @Field(type = FieldType.Integer)
     private Integer duration;

@@ -71,12 +71,12 @@ public class CarWashController {
 
     @GetMapping("/by-user")
     public List<CarWashDto> getByUser() {
-        return carWashService.getByUserBusinessIds(SecurityUtil.getUserBusinessIds());
+        return carWashService.getByCorporationIds(SecurityUtil.getUserCorporationIds());
     }
 
-    @GetMapping("/by-business-id")
-    public List<CarWashDto> getByBusinessId(@RequestParam("businessId") UUID businessId) {
-        return carWashService.getByBusinessId(businessId);
+    @GetMapping("/by-corporation-id")
+    public List<CarWashDto> getByCorporationId(@RequestParam("corporationId") UUID corporationId) {
+        return carWashService.getByCorporationId(corporationId);
     }
 
     @PostMapping

@@ -15,9 +15,9 @@ import java.util.UUID;
 public interface CarWashRepository extends JpaRepository<CarWashEntity, UUID> {
 
 
-    boolean existsByIdAndBusinessIdIn(UUID id, List<UUID> userBusinessIds);
+    boolean existsByIdAndCorporationIdIn(UUID id, List<UUID> corporationIds);
 
-    List<CarWashEntity> findByBusinessIdIn(List<UUID> businessIds);
+    List<CarWashEntity> findByCorporationIdIn(List<UUID> corporationIds);
 
-    List<CarWashEntity> findByBusinessId(UUID businessId);
+    List<CarWashEntity> findByCorporationId(UUID corporationId);
 }

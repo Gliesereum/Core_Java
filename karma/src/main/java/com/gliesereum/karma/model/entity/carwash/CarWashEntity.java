@@ -24,8 +24,8 @@ import java.util.UUID;
 @Table(name = "car_wash")
 public class CarWashEntity extends DefaultEntity {
 
-    @Column(name = "business_id")
-    private UUID businessId;
+    @Column(name = "corporation_id")
+    private UUID corporationId;
 
     @Column(name = "name")
     private String name;
@@ -52,10 +52,10 @@ public class CarWashEntity extends DefaultEntity {
     private Double longitude;
 
     @OneToMany
-    @JoinColumn(name = "business_service_id", insertable = false, updatable = false)
+    @JoinColumn(name = "corporation_service_id", insertable = false, updatable = false)
     private Set<WorkTimeEntity> workTimes = new HashSet<>();
 
     @OneToMany
-    @JoinColumn(name = "business_service_id", insertable = false, updatable = false)
+    @JoinColumn(name = "corporation_service_id", insertable = false, updatable = false)
     private Set<WorkingSpaceEntity> spaces = new HashSet<>();
 }
