@@ -55,4 +55,9 @@ public class SecurityUtil {
         UserAuthentication user = getUser();
         return (user == null) || user.isAnonymous();
     }
+
+    public static String getJwtToken() {
+        UserAuthentication user = getUser();
+        return (user != null) ? user.getJwtToken() : null;
+    }
 }
