@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.NOT_EXIST_BY_ID;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
@@ -50,6 +52,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         checkUserByStatus();
         dto.setKYCStatus(KYCStatus.KYC_NOT_PASSED);
         dto.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
+        dto.setParentCorporationId(null);
         result = super.create(dto);
         if (result != null) {
             userCorporationService.create(new UserCorporationDto(SecurityUtil.getUserId(), result.getId()));
@@ -59,8 +62,21 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
 
     @Override
     public CorporationDto update(CorporationDto dto) {
-        checkCurrentUserForPermissionActionThisCorporation(dto.getId());
-        return super.update(dto);
+        if (dto != null) {
+            if (dto.getId() == null) {
+                throw new ClientException(ID_NOT_SPECIFIED);
+            }
+            checkCurrentUserForPermissionActionThisCorporation(dto.getId());
+            CorporationDto byId = super.getById(dto.getId());
+            if (byId == null) {
+                throw new ClientException(NOT_EXIST_BY_ID);
+            }
+            dto.setParentCorporationId(byId.getParentCorporationId());
+            CorporationEntity entity = converter.convert(dto, entityClass);
+            entity = repository.saveAndFlush(entity);
+            dto = converter.convert(entity, dtoClass);
+        }
+        return dto;
     }
 
     @Override

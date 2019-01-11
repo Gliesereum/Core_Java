@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -40,5 +42,9 @@ public class CorporationDto extends DefaultDto {
     private KYCStatus kYCStatus;
 
     private VerifiedStatus verifiedStatus;
+
+    private UUID parentCorporationId;
+
+    private List<CorporationDto> childrenCorporation;
 
 }
