@@ -70,6 +70,9 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     public UserDto update(UserDto dto) {
         UserDto result = null;
         if (dto != null) {
+            if (SecurityUtil.isAnonymous()) {
+                throw new ClientException(USER_NOT_AUTHENTICATION);
+            }
             dto.setId(SecurityUtil.getUserId());
             if (StringUtils.isEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {
                 throw new ClientException(UPL_AVATAR_IS_NOT_VALID);
@@ -77,7 +80,6 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             if (StringUtils.isEmpty(dto.getCoverUrl()) && !urlPattern.matcher(dto.getCoverUrl()).matches()) {
                 throw new ClientException(UPL_COVER_IS_NOT_VALID);
             }
-            validFirstNameLastName(dto);
             result = super.update(dto);
         }
         return result;
@@ -85,18 +87,20 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
 
     @Override
     public void banById(UUID id) {
+        changeBanStatus(id, BanStatus.BAN);
+    }
+
+    @Override
+    public void unBanById(UUID id) {
+        changeBanStatus(id, BanStatus.UNBAN);
+    }
+
+    private void changeBanStatus(UUID id, BanStatus status) {
         UserDto user = getById(id);
         if (user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }
-        user.setBanStatus(BanStatus.BAN);
+        user.setBanStatus(status);
         update(user);
-    }
-
-    private void validFirstNameLastName(UserDto dto) {
-        UserDto user = getById(dto.getId());
-        if (user == null) {
-            throw new ClientException(USER_NOT_FOUND);
-        }
     }
 }

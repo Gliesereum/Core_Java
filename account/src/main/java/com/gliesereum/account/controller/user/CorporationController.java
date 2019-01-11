@@ -1,10 +1,12 @@
 package com.gliesereum.account.controller.user;
 
 import com.gliesereum.account.service.user.CorporationService;
+import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -56,5 +58,24 @@ public class CorporationController {
     public MapResponse removeUserToCorporation(@PathVariable("idCorporation") UUID idCorporation, @PathVariable("idUser") UUID idUser) {
         service.removeUser(idCorporation, idUser);
         return new MapResponse("true");
+    }
+
+    @PostMapping("/kyc/status")
+    public MapResponse updateKyc(@RequestParam(value = "status") KYCStatus status,
+                                 @RequestParam(value = "idCorporation") UUID idCorporation) {
+        service.updateKycStatus(status,idCorporation);
+        return new MapResponse("true");
+    }
+
+    @PostMapping("/kyc/upload-document")
+    public MapResponse uploadDocument(@RequestParam("file") MultipartFile file,
+                                      @RequestParam(value = "idCorporation") UUID idCorporation) {
+        service.uploadDocument(file, idCorporation);
+        return new MapResponse("true");
+    }
+
+    @GetMapping("/kyc/request")
+    public List<CorporationDto> getRequest() {
+        return service.getAllRequest();
     }
 }

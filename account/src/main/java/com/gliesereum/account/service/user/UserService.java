@@ -15,4 +15,5 @@ public interface UserService extends DefaultService<UserDto, UserEntity> {
 
     void banById(UUID id);
 
+    void unBanById(UUID id);
 }

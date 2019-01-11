@@ -1,6 +1,9 @@
 package com.gliesereum.share.common.util;
 
+import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.security.model.UserAuthentication;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.Authentication;
@@ -10,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
  * @author yvlasiuk
@@ -59,5 +64,15 @@ public class SecurityUtil {
     public static String getJwtToken() {
         UserAuthentication user = getUser();
         return (user != null) ? user.getJwtToken() : null;
+    }
+
+    public static void checkUserByBanStatus() {
+        if (SecurityUtil.getUser() == null) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
+        UserDto user = SecurityUtil.getUser().getUser();
+        if (user.getBanStatus().equals(BanStatus.BAN)) {
+            throw new ClientException(USER_IN_BAN);
+        }
     }
 }

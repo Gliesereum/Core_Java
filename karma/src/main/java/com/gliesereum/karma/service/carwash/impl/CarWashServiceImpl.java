@@ -11,8 +11,6 @@ import com.gliesereum.karma.service.common.ServicePriceService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashFullModel;
 import com.gliesereum.share.common.model.dto.karma.carwash.CarWashRecordDto;
@@ -38,8 +36,6 @@ import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_IN_BAN;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
  * @author vitalij
@@ -78,7 +74,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     @Override
     @UpdateCarWashIndex
     public CarWashDto create(CarWashDto dto) {
-        checkUserByStatus();
+        SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
             checkCorporationId(dto);
             CarWashEntity entity = converter.convert(dto, entityClass);
@@ -91,7 +87,7 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
     @Override
     @UpdateCarWashIndex
     public CarWashDto update(CarWashDto dto) {
-        checkUserByStatus();
+        SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
             if (dto.getId() == null) {
                 throw new ClientException(ID_NOT_SPECIFIED);
@@ -128,17 +124,6 @@ public class CarWashServiceImpl extends DefaultServiceImpl<CarWashDto, CarWashEn
             result = converter.convert(entities, dtoClass);
         }
         return result;
-    }
-
-
-    private void checkUserByStatus() {
-        if (SecurityUtil.getUser() == null) {
-            throw new ClientException(USER_NOT_AUTHENTICATION);
-        }
-        UserDto user = SecurityUtil.getUser().getUser();
-        if (user.getBanStatus().equals(BanStatus.BAN)) {
-            throw new ClientException(USER_IN_BAN);
-        }
     }
 
     @Override
