@@ -60,6 +60,12 @@ public class UserController {
         return new MapResponse("ban", "succeed");
     }
 
+    @GetMapping("/un-ban/{id}")
+    public MapResponse unBanById(@PathVariable("id") UUID id) {
+        userService.unBanById(id);
+        return new MapResponse("unBan", "succeed");
+    }
+
     @DeleteMapping("/{id}")
     public MapResponse delete(@PathVariable("id") UUID id) {
         userService.delete(id);
