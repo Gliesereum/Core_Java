@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.SERVICE_NOT_FOUND;
 
 /**
@@ -85,6 +86,9 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     }
 
     private void checkPermission(ServicePriceDto dto) {
+        if(dto.getCorporationServiceId() == null) {
+            throw new ClientException(ID_NOT_SPECIFIED);
+        }
         serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, dto.getCorporationServiceId());
     }
 
