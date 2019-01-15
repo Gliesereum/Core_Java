@@ -2,13 +2,17 @@ package com.gliesereum.account.config;
 
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.converter.imp.DefaultConverterImp;
+import com.gliesereum.share.common.exchange.service.media.MediaExchangeService;
+import com.gliesereum.share.common.exchange.service.media.impl.MediaExchangeServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.validation.MessageInterpolatorFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author yvlasiuk
@@ -37,5 +41,10 @@ public class BeanConfiguration {
         localValidatorFactoryBean.setMessageInterpolator(interpolatorFactory.getObject());
         localValidatorFactoryBean.setValidationMessageSource(messageSource);
         return localValidatorFactoryBean;
+    }
+
+    @Bean
+    public MediaExchangeService mediaExchange(RestTemplate restTemplate, Environment environment){
+        return new MediaExchangeServiceImpl(restTemplate, environment);
     }
 }
