@@ -25,6 +25,8 @@ public class ServicePriceDto extends DefaultDto {
 
     private String name;
 
+    private String description;
+
     @NotNull
     private Integer price;
 

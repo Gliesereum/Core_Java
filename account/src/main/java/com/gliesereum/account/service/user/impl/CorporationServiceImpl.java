@@ -159,6 +159,16 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         }
     }
 
+    @Override
+    public void deleteDocument(String path, UUID idCorporation) {
+        checkCurrentUserForPermissionActionThisCorporation(idCorporation);
+        CorporationDto corporation = getById(idCorporation);
+        if (corporation == null) {
+            throw new ClientException(CORPORATION_NOT_FOUND);
+        }
+        mediaExchangeService.deleteFile(path);
+    }
+
     private void checkActionWithUserFromCorporation(UUID idCorporation, UUID idUser) {
         SecurityUtil.checkUserByBanStatus();
         checkCurrentUserForPermissionActionThisCorporation(idCorporation);
@@ -191,7 +201,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         File file = null;
         try {
             file = multipartFileToFile(multipart);
-            //todo encrypt, gzip file and save
+            //todo encrypt, gzip file
             UserFileDto userFile = mediaExchangeService.uploadFile(file);
             if (userFile != null) {
                 depositoryService.create(new DepositoryDto(userFile.getUrl(), idCorporation));
@@ -206,11 +216,9 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
 
     private File multipartFileToFile(MultipartFile multipart) {
         File file = new File(multipart.getOriginalFilename());
-        try {
+        try (FileOutputStream fos = new FileOutputStream(file)){
             file.createNewFile();
-            FileOutputStream fos = new FileOutputStream(file);
             fos.write(multipart.getBytes());
-            fos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

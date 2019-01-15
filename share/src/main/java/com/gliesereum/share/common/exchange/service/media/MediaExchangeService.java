@@ -13,4 +13,6 @@ public interface MediaExchangeService {
 
      UserFileDto uploadFile(File file);
 
+     void deleteFile(String path);
+
 }
