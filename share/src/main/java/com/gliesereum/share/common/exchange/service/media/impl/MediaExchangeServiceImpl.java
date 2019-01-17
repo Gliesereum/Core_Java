@@ -15,6 +15,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author vitalij
@@ -29,6 +31,8 @@ public class MediaExchangeServiceImpl implements MediaExchangeService {
     private Environment environment;
 
     private final String UPLOAD_FILE_URL = "exchange.endpoint.media.upload";
+
+    private final String DELETE_FILE_URL = "exchange.endpoint.media.delete";
 
     @Autowired
     public MediaExchangeServiceImpl(RestTemplate restTemplate, Environment environment) {
@@ -54,5 +58,12 @@ public class MediaExchangeServiceImpl implements MediaExchangeService {
             result = response.getBody();
         }
         return result;
+    }
+
+    public void deleteFile(String path) {
+        String url = environment.getProperty(DELETE_FILE_URL);
+        Map<String, Object> urlVariables = new HashMap<>();
+        urlVariables.put("path", path); //todo add correct variable
+        restTemplate.delete(url, urlVariables);
     }
 }

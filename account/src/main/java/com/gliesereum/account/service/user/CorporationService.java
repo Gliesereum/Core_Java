@@ -24,4 +24,6 @@ public interface CorporationService extends DefaultService<CorporationDto, Corpo
     List<CorporationDto> getAllRequest();
 
     void uploadDocument(MultipartFile file, UUID idCorporation);
+
+    void deleteDocument(String path, UUID idCorporation);
 }

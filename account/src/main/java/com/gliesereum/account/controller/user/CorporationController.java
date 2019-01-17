@@ -74,6 +74,13 @@ public class CorporationController {
         return new MapResponse("true");
     }
 
+    @DeleteMapping("/kyc/delete-document")
+    public MapResponse deleteDocument(@RequestParam("path") String path,
+                                      @RequestParam(value = "idCorporation") UUID idCorporation) {
+        service.deleteDocument(path, idCorporation);
+        return new MapResponse("true");
+    }
+
     @GetMapping("/kyc/request")
     public List<CorporationDto> getRequest() {
         return service.getAllRequest();
