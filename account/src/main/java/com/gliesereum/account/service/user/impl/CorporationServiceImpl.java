@@ -44,11 +44,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     private static final Class<CorporationDto> DTO_CLASS = CorporationDto.class;
     private static final Class<CorporationEntity> ENTITY_CLASS = CorporationEntity.class;
 
-    public CorporationServiceImpl(CorporationRepository repository, DefaultConverter converter) {
-        super(repository, converter, DTO_CLASS, ENTITY_CLASS);
-    }
-
-    private CorporationRepository repository;
+    private final CorporationRepository corporationRepository;
 
     @Autowired
     private UserCorporationService userCorporationService;
@@ -61,6 +57,11 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
 
     @Autowired
     private MediaExchangeService mediaExchangeService;
+
+    public CorporationServiceImpl(CorporationRepository corporationRepository, DefaultConverter converter) {
+        super(corporationRepository, converter, DTO_CLASS, ENTITY_CLASS);
+        this.corporationRepository = corporationRepository;
+    }
 
     @Override
     public CorporationDto create(CorporationDto dto) {
@@ -90,7 +91,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             checkByUpdateStatus(dto, byId);
             dto.setParentCorporationId(byId.getParentCorporationId());
             CorporationEntity entity = converter.convert(dto, entityClass);
-            entity = repository.saveAndFlush(entity);
+            entity = corporationRepository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
         }
         return dto;
@@ -141,7 +142,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
 
     @Override
     public List<CorporationDto> getAllRequest() {
-        List<CorporationEntity> entities = repository.findByKYCStatus(KYCStatus.KYC_IN_PROCESS);
+        List<CorporationEntity> entities = corporationRepository.findByKYCStatus(KYCStatus.KYC_IN_PROCESS);
         return converter.convert(entities, DTO_CLASS);
     }
 
