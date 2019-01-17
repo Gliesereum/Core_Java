@@ -84,10 +84,10 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             }
             checkCurrentUserForPermissionActionThisCorporation(dto.getId());
             CorporationDto byId = super.getById(dto.getId());
-            checkByUpdateStatus(dto, byId);
             if (byId == null) {
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
+            checkByUpdateStatus(dto, byId);
             dto.setParentCorporationId(byId.getParentCorporationId());
             CorporationEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
