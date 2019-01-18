@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.BODY_INVALID;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -83,6 +84,8 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         checkPermission(dto);
         checkServicesInCarWash(dto);
         PackageDto result = super.update(dto);
+        List<UUID> servicesIds = dto.getServices().stream().map(ServicePriceDto::getId).collect(Collectors.toList());
+        packageServiceService.deleteByPackageIdAndServicePriceIDs(result.getId(), servicesIds);
         setServices(dto, result);
         return result;
     }
