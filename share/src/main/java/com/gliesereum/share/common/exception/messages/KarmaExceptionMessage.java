@@ -50,4 +50,5 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage CORPORATION_ID_REQUIRED_FOR_THIS_ACTION = new ExceptionMessage(1452, 400, "Corporation id required for this action");
 
     public static final ExceptionMessage CAR_ID_EMPTY = new ExceptionMessage(1453, 404, "Car id is empty");
+    public static final ExceptionMessage SERVICE_PRICE_NOT_FOUND_IN_CARWASH = new ExceptionMessage(1454, 404, "Service price not found in this carWash");
 }

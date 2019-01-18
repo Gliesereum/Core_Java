@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,13 +20,19 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class PackageDto extends DefaultDto {
 
+    @NotEmpty
     private String name;
 
+    @NotEmpty
     private int discount;
 
+    @NotEmpty
     private int duration;
 
-    private UUID packageServiceId;
+    @NotEmpty
+    private UUID corporationServiceId;
+
+    private List<UUID> servicesIds = new ArrayList<>();
 
     private List<ServicePriceDto> services = new ArrayList<>();
 }
