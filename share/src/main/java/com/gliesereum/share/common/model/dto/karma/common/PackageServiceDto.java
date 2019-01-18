@@ -20,4 +20,9 @@ public class PackageServiceDto extends DefaultDto {
     private UUID packageId;
 
     private UUID serviceId;
+
+    public PackageServiceDto(UUID packageId, UUID serviceId) {
+        this.packageId = packageId;
+        this.serviceId = serviceId;
+    }
 }
