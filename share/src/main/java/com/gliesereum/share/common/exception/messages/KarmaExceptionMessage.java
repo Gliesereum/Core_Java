@@ -16,9 +16,9 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_SERVICE = new ExceptionMessage(1424, 401, "Current user don't have permission to action this service");
 
-    public static final ExceptionMessage SERVICE_NOT_FOUND = new ExceptionMessage(1425, 404, "Service not found");
+    public static final ExceptionMessage SERVICE_NOT_FOUND = new ExceptionMessage(1425, 400, "Service not found");
     public static final ExceptionMessage SERVICE_NOT_CHOOSE = new ExceptionMessage(1426, 401, "Service not choose");
-    public static final ExceptionMessage PACKAGE_NOT_FOUND = new ExceptionMessage(1427, 404, "Package not found ");
+    public static final ExceptionMessage PACKAGE_NOT_FOUND = new ExceptionMessage(1427, 400, "Package not found ");
 
     public static final ExceptionMessage WORKING_SPACE_NOT_FOUND_IN_THIS_CARWASH = new ExceptionMessage(1428, 404, "CarWash don't have this working space ");
     public static final ExceptionMessage WORKING_SPACE_ID_EMPTY = new ExceptionMessage(1429, 400, "Working space id is null ");

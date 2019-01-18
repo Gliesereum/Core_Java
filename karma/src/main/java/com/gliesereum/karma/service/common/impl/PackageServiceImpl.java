@@ -84,7 +84,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         checkPermission(dto);
         checkServicesInCarWash(dto);
         PackageDto result = super.update(dto);
-        deletePackageServicePrace(dto);
+        deletePackageServicePrice(dto);
         setServices(dto, result);
         return result;
     }
@@ -95,13 +95,13 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         if (id != null) {
             PackageDto dto = getById(id);
             if (dto != null) {
-                deletePackageServicePrace(dto);
+                deletePackageServicePrice(dto);
             }
             super.delete(id);
         }
     }
 
-    private void deletePackageServicePrace(PackageDto dto) {
+    private void deletePackageServicePrice(PackageDto dto) {
         List<UUID> servicesIds = dto.getServices().stream().map(ServicePriceDto::getId).collect(Collectors.toList());
         packageServiceService.deleteByPackageIdAndServicePriceIDs(dto.getId(), servicesIds);
     }
@@ -124,6 +124,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
             throw new ClientException(CARWASH_NOT_FOUND);
         }
         List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
+        if (dto.getServicesIds().size() != services.size()) {
+            throw new ClientException(SERVICE_NOT_FOUND);
+        }
         if (CollectionUtils.isNotEmpty(services)) {
             services.forEach(f -> {
                 if (!f.getCorporationServiceId().equals(dto.getCorporationServiceId())) {
