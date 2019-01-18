@@ -205,6 +205,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     @Transactional
     public CarWashRecordDto create(CarWashRecordDto dto) {
         if (dto != null) {
+            carService.checkCarExistInCurrentUser(dto.getCarId());
             checkBeginTimeForRecord(dto.getBegin());
             dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
             dto.setPrice(getPriceByRecord(dto));
