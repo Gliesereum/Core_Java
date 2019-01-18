@@ -84,10 +84,26 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         checkPermission(dto);
         checkServicesInCarWash(dto);
         PackageDto result = super.update(dto);
-        List<UUID> servicesIds = dto.getServices().stream().map(ServicePriceDto::getId).collect(Collectors.toList());
-        packageServiceService.deleteByPackageIdAndServicePriceIDs(result.getId(), servicesIds);
+        deletePackageServicePrace(dto);
         setServices(dto, result);
         return result;
+    }
+
+    @Override
+    @Transactional
+    public void delete(UUID id) {
+        if (id != null) {
+            PackageDto dto = getById(id);
+            if (dto != null) {
+                deletePackageServicePrace(dto);
+            }
+            super.delete(id);
+        }
+    }
+
+    private void deletePackageServicePrace(PackageDto dto) {
+        List<UUID> servicesIds = dto.getServices().stream().map(ServicePriceDto::getId).collect(Collectors.toList());
+        packageServiceService.deleteByPackageIdAndServicePriceIDs(dto.getId(), servicesIds);
     }
 
     private void setServices(PackageDto dto, PackageDto result) {
@@ -100,17 +116,17 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     }
 
     private void checkServicesInCarWash(PackageDto dto) {
-        if(dto.getServicesIds().isEmpty()){
+        if (dto.getServicesIds().isEmpty()) {
             throw new ClientException(SERVICE_NOT_CHOOSE);
         }
         CarWashDto carWash = washService.getById(dto.getCorporationServiceId());
-        if(carWash == null){
+        if (carWash == null) {
             throw new ClientException(CARWASH_NOT_FOUND);
         }
         List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
         if (CollectionUtils.isNotEmpty(services)) {
-            services.forEach(f->{
-                if(!f.getCorporationServiceId().equals(dto.getCorporationServiceId())){
+            services.forEach(f -> {
+                if (!f.getCorporationServiceId().equals(dto.getCorporationServiceId())) {
                     throw new ClientException(SERVICE_PRICE_NOT_FOUND_IN_CARWASH);
                 }
             });
