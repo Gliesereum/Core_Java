@@ -142,6 +142,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             }
             entities = repository.findByStatusRecordAndCarIdInAndBeginBetween(status, listCarId, from, to);
         }
+        entities.sort(Comparator.comparing(CarWashRecordEntity::getBegin));
         return converter.convert(entities, dtoClass);
     }
 
@@ -204,6 +205,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
     @Transactional
     public CarWashRecordDto create(CarWashRecordDto dto) {
         if (dto != null) {
+            carService.checkCarExistInCurrentUser(dto.getCarId());
             checkBeginTimeForRecord(dto.getBegin());
             dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
             dto.setPrice(getPriceByRecord(dto));
@@ -270,6 +272,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             throw new ClientException(CAR_NOT_FOUND);
         }
         List<CarWashRecordEntity> entities = repository.findAllByCarIdIn(listCarId);
+        entities.sort(Comparator.comparing(CarWashRecordEntity::getBegin));
         return converter.convert(entities, dtoClass);
     }
 
