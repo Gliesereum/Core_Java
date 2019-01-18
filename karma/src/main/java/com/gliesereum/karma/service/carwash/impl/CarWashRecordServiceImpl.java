@@ -142,6 +142,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             }
             entities = repository.findByStatusRecordAndCarIdInAndBeginBetween(status, listCarId, from, to);
         }
+        entities.sort(Comparator.comparing(CarWashRecordEntity::getBegin));
         return converter.convert(entities, dtoClass);
     }
 
@@ -270,6 +271,7 @@ public class CarWashRecordServiceImpl extends DefaultServiceImpl<CarWashRecordDt
             throw new ClientException(CAR_NOT_FOUND);
         }
         List<CarWashRecordEntity> entities = repository.findAllByCarIdIn(listCarId);
+        entities.sort(Comparator.comparing(CarWashRecordEntity::getBegin));
         return converter.convert(entities, dtoClass);
     }
 
