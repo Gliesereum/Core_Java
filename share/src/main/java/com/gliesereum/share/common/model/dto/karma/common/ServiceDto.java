@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * @author vitalij
@@ -18,12 +18,11 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 public class ServiceDto extends DefaultDto {
 
-    @NotNull
+    @NotEmpty
     private String name;
 
-    @NotNull
+    @NotEmpty
     private String description;
 
-    @NotNull
     private ServiceType type;
 }

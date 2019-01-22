@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,13 +22,10 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class CarDto extends DefaultDto {
 
-    @NotNull
     private UUID brandId;
 
-    @NotNull
     private UUID modelId;
 
-    @NotNull
     private UUID yearId;
 
     private BrandCarDto brand;
@@ -46,13 +42,10 @@ public class CarDto extends DefaultDto {
 
     private String note;
 
-    @NotNull
     private CarInteriorType interior;
 
-    @NotNull
     private CarType carBody;
 
-    @NotNull
     private ColourCarType colour;
 
     private List<ServiceClassCarDto> services = new ArrayList<>();

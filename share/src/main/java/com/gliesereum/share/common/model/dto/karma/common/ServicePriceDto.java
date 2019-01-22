@@ -8,8 +8,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,18 +30,18 @@ public class ServicePriceDto extends DefaultDto {
     private String description;
 
     @NotNull
+    @Min(0)
     private Integer price;
 
-    @NotNull
     private UUID serviceId;
 
-    @NotNull
     private UUID corporationServiceId;
 
     private ServiceDto service;
 
     @NotNull
-    @Size(min = 1, max = 1440)
+    @Max(1440)
+    @Min(0)
     private Integer duration;
 
     private List<ServiceClassCarDto> serviceClass = new ArrayList<>();
