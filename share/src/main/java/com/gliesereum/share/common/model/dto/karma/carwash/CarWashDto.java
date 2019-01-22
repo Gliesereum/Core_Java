@@ -36,7 +36,7 @@ public class CarWashDto extends DefaultDto {
     @Size(min = 5)
     private String address;
 
-    @NotNull
+    @NotEmpty
     @Size(min = 5, max = 13)
     private String phone;
 

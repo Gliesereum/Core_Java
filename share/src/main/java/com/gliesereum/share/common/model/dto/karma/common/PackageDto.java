@@ -5,8 +5,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,14 +26,14 @@ public class PackageDto extends DefaultDto {
     @NotEmpty
     private String name;
 
-    @NotEmpty
-    @Size(min = 0, max = 100)
-    private int discount;
+    @NotNull
+    @Max(100)
+    @Min(0)
+    private Integer discount;
 
-    @NotEmpty
-    private int duration;
+    @NotNull
+    private Integer duration;
 
-    @NotEmpty
     private UUID corporationServiceId;
 
     private List<UUID> servicesIds = new ArrayList<>();

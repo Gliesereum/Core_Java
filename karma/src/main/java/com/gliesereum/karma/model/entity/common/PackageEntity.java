@@ -26,10 +26,10 @@ public class PackageEntity extends DefaultEntity {
     private String name;
 
     @Column(name = "discount")
-    private int discount;
+    private Integer discount;
 
     @Column(name = "duration")
-    private int duration;
+    private Integer duration;
 
     @Column(name = "corporation_service_id")
     private UUID corporationServiceId;

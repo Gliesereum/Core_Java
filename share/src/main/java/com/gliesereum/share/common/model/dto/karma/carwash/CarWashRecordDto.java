@@ -13,7 +13,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +28,14 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class CarWashRecordDto extends DefaultDto {
 
-    @NotNull
     private UUID carId;
 
     private UUID packageId;
 
     private UUID workingSpaceId;
 
-    @NotNull
     private UUID carWashId;
 
-    @NotNull
     private Integer price;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)

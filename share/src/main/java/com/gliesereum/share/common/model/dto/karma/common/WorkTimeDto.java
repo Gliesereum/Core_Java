@@ -35,14 +35,11 @@ public class WorkTimeDto extends DefaultDto {
     @JsonSerialize(using = LocalTimeJsonSerializer.class)
     private LocalTime to;
 
-    @NotNull
     private UUID corporationServiceId;
 
     private Boolean isWork;
 
-    @NotNull
     private ServiceType carServiceType;
 
-    @NotNull
     private DayOfWeek dayOfWeek;
 }

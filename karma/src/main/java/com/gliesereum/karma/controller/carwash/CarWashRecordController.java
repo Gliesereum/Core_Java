@@ -118,7 +118,7 @@ public class CarWashRecordController {
     }
 
     @PostMapping("/free-time")
-    public CarWashRecordDto getFreeTimeForRecord(@Valid @RequestBody CarWashRecordDto dto) {
+    public CarWashRecordDto getFreeTimeForRecord(@RequestBody CarWashRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
     }
 }
