@@ -36,8 +36,10 @@ public class CarWashRecordDto extends DefaultDto {
 
     private UUID workingSpaceId;
 
+    @NotNull
     private UUID carWashId;
 
+    @NotNull
     private Integer price;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)

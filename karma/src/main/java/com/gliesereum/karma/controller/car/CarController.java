@@ -57,7 +57,7 @@ public class CarController {
     }
 
     @PostMapping
-    public CarDto create(@RequestBody CarDto car) {
+    public CarDto create(@RequestBody @Valid  CarDto car) {
         return carService.create(car);
     }
 
@@ -72,7 +72,7 @@ public class CarController {
     }
 
     @PutMapping
-    public CarDto update(@Valid @RequestBody CarDto car) {
+    public CarDto update(@RequestBody  @Valid CarDto car) {
         return carService.update(car);
     }
 

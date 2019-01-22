@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,7 +45,7 @@ public class CarWashRecordController {
     }
 
     @PostMapping
-    public CarWashRecordDto create(@RequestBody CarWashRecordDto dto) {
+    public CarWashRecordDto create(@Valid @RequestBody CarWashRecordDto dto) {
         return service.create(dto);
     }
 
@@ -92,12 +93,12 @@ public class CarWashRecordController {
     }
 
     @PostMapping("/client/params")
-    public List<CarWashRecordDto> getByParamsForClient(@RequestBody Map<String, String> params) {
+    public List<CarWashRecordDto> getByParamsForClient(@Valid @RequestBody Map<String, String> params) {
         return service.getByParamsForClient(params);
     }
 
     @PostMapping("/corporation/params")
-    public List<CarWashRecordDto> getByParamsForCorporation(@RequestBody Map<String, String> params) {
+    public List<CarWashRecordDto> getByParamsForCorporation(@Valid @RequestBody Map<String, String> params) {
         if (StringUtils.isNotEmpty(params.get("carWashId"))) {
             if (!carWashService.currentUserHavePermissionToAction(UUID.fromString(params.get("carWashId")))) {
                 throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_CARWASH);
@@ -117,7 +118,7 @@ public class CarWashRecordController {
     }
 
     @PostMapping("/free-time")
-    public CarWashRecordDto getFreeTimeForRecord(@RequestBody CarWashRecordDto dto) {
+    public CarWashRecordDto getFreeTimeForRecord(@Valid @RequestBody CarWashRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
     }
 }

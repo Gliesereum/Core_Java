@@ -34,7 +34,7 @@ public class ServiceClassController {
     }
 
     @PostMapping
-    public ServiceClassCarDto createService(@RequestBody ServiceClassCarDto service) {
+    public ServiceClassCarDto createService(@Valid @RequestBody ServiceClassCarDto service) {
         return serviceClassCarService.create(service);
     }
 

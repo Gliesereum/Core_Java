@@ -43,12 +43,12 @@ public class ServicePriceController {
     }
 
     @PostMapping
-    public ServicePriceDto create(@RequestBody ServicePriceDto dto) {
+    public ServicePriceDto create(@Valid @RequestBody ServicePriceDto dto) {
         return servicePriceService.create(dto);
     }
 
     @PutMapping
-    public ServicePriceDto update(@RequestBody ServicePriceDto dto) {
+    public ServicePriceDto update(@Valid @RequestBody ServicePriceDto dto) {
         return servicePriceService.update(dto);
     }
 
