@@ -24,6 +24,7 @@ public class WorkingSpaceDto extends DefaultDto {
 
     private Integer indexNumber;
 
+    @NotNull
     private UUID corporationServiceId;
 
     private StatusSpace statusSpace;

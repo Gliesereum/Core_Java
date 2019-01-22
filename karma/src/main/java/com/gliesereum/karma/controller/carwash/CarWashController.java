@@ -55,7 +55,7 @@ public class CarWashController {
     }
 
     @PostMapping("/search")
-    public List<CarWashDto> search(@RequestBody(required = false) CarWashSearchDto carWashSearch) {
+    public List<CarWashDto> search(@Valid @RequestBody(required = false) CarWashSearchDto carWashSearch) {
         return carWashEsService.search(carWashSearch);
     }
 

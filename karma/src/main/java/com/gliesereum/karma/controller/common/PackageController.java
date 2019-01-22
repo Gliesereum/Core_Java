@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,12 +38,12 @@ public class PackageController {
     }
 
     @PostMapping
-    public PackageDto create(@RequestBody PackageDto dto) {
+    public PackageDto create(@Valid @RequestBody PackageDto dto) {
         return service.create(dto);
     }
 
     @PutMapping
-    public PackageDto update(@RequestBody PackageDto dto) {
+    public PackageDto update(@Valid @RequestBody PackageDto dto) {
         return service.update(dto);
     }
 
