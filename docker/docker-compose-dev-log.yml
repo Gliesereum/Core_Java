@@ -254,4 +254,4 @@ services:
 
 networks:
   gls-net:
-    driver: bridge
+    driver: host
