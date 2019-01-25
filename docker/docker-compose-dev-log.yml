@@ -250,6 +250,7 @@ services:
         condition: on-failure
     ports:
       - 5601:5601
+      - 8200:8200
 
 networks:
   gls-net:
