@@ -1,7 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.common;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.karma.car.ServiceClassCarDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
 import lombok.Data;
@@ -35,7 +34,7 @@ public class ServicePriceDto extends DefaultDto {
 
     private UUID serviceId;
 
-    private UUID corporationServiceId;
+    private UUID businessId;
 
     private ServiceDto service;
 
@@ -44,7 +43,7 @@ public class ServicePriceDto extends DefaultDto {
     @Min(0)
     private Integer duration;
 
-    private List<ServiceClassCarDto> serviceClass = new ArrayList<>();
+    private List<ServiceClassDto> serviceClass = new ArrayList<>();
 
     private List<CarInteriorType> interiorTypes = new ArrayList<>();
 

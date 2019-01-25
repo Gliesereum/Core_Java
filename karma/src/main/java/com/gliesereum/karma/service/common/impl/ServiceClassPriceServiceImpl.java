@@ -3,7 +3,7 @@ package com.gliesereum.karma.service.common.impl;
 import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.common.ServiceClassPriceEntity;
 import com.gliesereum.karma.model.repository.jpa.common.ServiceClassPriceRepository;
-import com.gliesereum.karma.service.car.ServiceClassCarService;
+import com.gliesereum.karma.service.common.ServiceClassService;
 import com.gliesereum.karma.service.common.ServiceClassPriceService;
 import com.gliesereum.karma.service.common.ServicePriceService;
 import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
@@ -46,7 +46,7 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     private ServicePriceService servicePriceService;
 
     @Autowired
-    private ServiceClassCarService serviceClassCarService;
+    private ServiceClassService serviceClassService;
 
     @Autowired
     public ServiceClassPriceServiceImpl(ServiceClassPriceRepository serviceClassPriceRepository, DefaultConverter defaultConverter) {
@@ -110,8 +110,8 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
             if (price == null) {
                 throw new ClientException(SERVICE_PRICE_NOT_FOUND);
             }
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, price.getCorporationServiceId());
-            if (!serviceClassCarService.isExist(serviceClassId)) {
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, price.getBusinessId());
+            if (!serviceClassService.isExist(serviceClassId)) {
                 throw new ClientException(SERVICE_CLASS_NOT_FOUND);
             }
         }

@@ -2,7 +2,6 @@ package com.gliesereum.karma.model.repository.jpa.common;
 
 import com.gliesereum.karma.model.entity.common.WorkingSpaceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,5 +13,5 @@ import java.util.UUID;
  */
 public interface WorkingSpaceRepository extends JpaRepository<WorkingSpaceEntity, UUID> {
 
-    List<WorkingSpaceEntity> findByCorporationServiceId(UUID corporationServiceId);
+    List<WorkingSpaceEntity> findByBusinessId(UUID businessId);
 }

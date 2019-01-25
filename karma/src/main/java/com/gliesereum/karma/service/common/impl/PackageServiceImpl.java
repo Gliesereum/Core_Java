@@ -2,14 +2,14 @@ package com.gliesereum.karma.service.common.impl;
 
 import com.gliesereum.karma.model.entity.common.PackageEntity;
 import com.gliesereum.karma.model.repository.jpa.common.PackageRepository;
-import com.gliesereum.karma.service.carwash.CarWashService;
+import com.gliesereum.karma.service.common.BaseBusinessService;
 import com.gliesereum.karma.service.common.PackageService;
 import com.gliesereum.karma.service.common.PackageServiceService;
 import com.gliesereum.karma.service.common.ServicePriceService;
 import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
+import com.gliesereum.share.common.model.dto.karma.common.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.common.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.common.PackageServiceDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
@@ -48,7 +48,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     private ServiceTypeFacade serviceTypeFacade;
 
     @Autowired
-    private CarWashService washService;
+    private BaseBusinessService washService;
 
     @Autowired
     private ServicePriceService servicePriceService;
@@ -61,8 +61,8 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     }
 
     @Override
-    public List<PackageDto> getByCorporationServiceId(UUID id) {
-        List<PackageEntity> entities = repository.getByCorporationServiceId(id);
+    public List<PackageDto> getByBusinessId(UUID id) {
+        List<PackageEntity> entities = repository.getByBusinessId(id);
         return converter.convert(entities, dtoClass);
     }
 
@@ -119,9 +119,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         if (dto.getServicesIds().isEmpty()) {
             throw new ClientException(SERVICE_NOT_CHOOSE);
         }
-        CarWashDto carWash = washService.getById(dto.getCorporationServiceId());
+        BaseBusinessDto carWash = washService.getById(dto.getBusinessId());
         if (carWash == null) {
-            throw new ClientException(CARWASH_NOT_FOUND);
+            throw new ClientException(BUSINESS_NOT_FOUND);
         }
         List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
         if (dto.getServicesIds().size() != services.size()) {
@@ -129,8 +129,8 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         }
         if (CollectionUtils.isNotEmpty(services)) {
             services.forEach(f -> {
-                if (!f.getCorporationServiceId().equals(dto.getCorporationServiceId())) {
-                    throw new ClientException(SERVICE_PRICE_NOT_FOUND_IN_CARWASH);
+                if (!f.getBusinessId().equals(dto.getBusinessId())) {
+                    throw new ClientException(SERVICE_PRICE_NOT_FOUND_IN_BUSINESS);
                 }
             });
         } else throw new ClientException(SERVICE_NOT_FOUND);
@@ -140,9 +140,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         if (dto == null) {
             throw new ClientException(BODY_INVALID);
         }
-        if (dto.getCorporationServiceId() == null) {
+        if (dto.getBusinessId() == null) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, dto.getCorporationServiceId());
+        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, dto.getBusinessId());
     }
 }

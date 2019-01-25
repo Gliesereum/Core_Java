@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS karma.service (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    name character varying,
    description character varying,
-   type character varying,
+   service_type character varying,
 
    CONSTRAINT service_pk PRIMARY KEY (id)
 );
@@ -10,22 +10,32 @@ CREATE TABLE IF NOT EXISTS karma.service (
 CREATE TABLE IF NOT EXISTS karma.service_price (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    name character varying,
+   description character varying,
    price integer,
    duration integer,
    service_id uuid,
-   business_service_id uuid,
+   business_id uuid,
 
    CONSTRAINT service_price_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.service_class (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    name character varying,
+    description character varying,
+    order_index integer,
+    service_type character varying,
+    CONSTRAINT service_class_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE karma.service_class_price (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
   price_id uuid not null,
-  service_class_car_id uuid not null,
+  service_class_id uuid not null,
 
   CONSTRAINT service_class_price_pk PRIMARY KEY (id),
   CONSTRAINT service_class_price_price_fk FOREIGN KEY (price_id) REFERENCES karma.service_price (id),
-  CONSTRAINT service_class_price_service_class_fk FOREIGN KEY (service_class_car_id) REFERENCES karma.service_class_car (id)
+  CONSTRAINT service_class_price_service_class_fk FOREIGN KEY (service_class_id) REFERENCES karma.service_class (id)
 );
 
 CREATE TABLE IF NOT EXISTS karma.package (
@@ -33,7 +43,7 @@ CREATE TABLE IF NOT EXISTS karma.package (
    name character varying,
    discount integer,
    duration integer,
-   business_service_id uuid,
+   business_id uuid,
 
    CONSTRAINT package_pk PRIMARY KEY (id)
 );
@@ -51,8 +61,8 @@ CREATE TABLE karma.package_service (
 CREATE TABLE IF NOT EXISTS karma.work_time (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    day_of_week character varying,
-   car_service_type character varying,
-   business_service_id uuid,
+   service_type character varying,
+   business_id uuid,
    is_work boolean default false,
    from_time time without time zone,
    to_time time without time zone,
@@ -63,10 +73,10 @@ CREATE TABLE IF NOT EXISTS karma.work_time (
 CREATE TABLE IF NOT EXISTS karma.work_space (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    status_space character varying,
-   car_service_type character varying,
+   service_type character varying,
    index_number integer,
    worker_id uuid,
-   business_service_id uuid,
+   business_id uuid,
 
    CONSTRAINT work_space_pk PRIMARY KEY (id)
 );
@@ -96,3 +106,58 @@ CREATE TABLE IF NOT EXISTS karma.service_price_bodies (
 
    CONSTRAINT service_price_bodies_pk PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS karma.business (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   name character varying,
+   description character varying,
+   logo_url character varying,
+   address character varying,
+   phone character varying,
+   add_phone character varying,
+   service_type character varying,
+   latitude double precision,
+   longitude double precision,
+   corporation_id uuid,
+
+   CONSTRAINT business_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.record (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   status_process character varying,
+   status_pay character varying,
+   status_record character varying,
+   service_type character varying,
+   price integer,
+   description character varying,
+   target_id uuid,
+   package_id uuid,
+   working_space_id uuid,
+   business_id uuid,
+   begin TIMESTAMP without time zone,
+   finish TIMESTAMP without time zone,
+
+   CONSTRAINT record_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.record_service (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  record_id uuid not null,
+  service_id uuid not null,
+
+  CONSTRAINT record_service_pk PRIMARY KEY (id),
+  CONSTRAINT record_service_record_fk FOREIGN KEY (record_id) REFERENCES karma.record (id),
+  CONSTRAINT record_service_service_fk FOREIGN KEY (service_id) REFERENCES karma.service_price (id)
+);
+
+CREATE TABLE karma.car_service_class (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  car_id uuid not null,
+  service_class_id uuid not null,
+
+  CONSTRAINT car_service_class_pk PRIMARY KEY (id),
+  CONSTRAINT car_service_class_car_fk FOREIGN KEY (car_id) REFERENCES karma.car (id),
+  CONSTRAINT car_service_class_service_class_fk FOREIGN KEY (service_class_id) REFERENCES karma.service_class (id)
+);
+

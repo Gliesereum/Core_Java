@@ -1,6 +1,5 @@
 package com.gliesereum.karma.model.entity.common;
 
-import com.gliesereum.karma.model.entity.car.ServiceClassCarEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
@@ -41,8 +40,8 @@ public class ServicePriceEntity extends DefaultEntity {
     @JoinColumn(name = "service_id", insertable = false, updatable = false)
     private ServiceEntity service;
 
-    @Column(name = "corporation_service_id")
-    private UUID corporationServiceId;
+    @Column(name = "business_id")
+    private UUID businessId;
 
     @Column(name ="duration")
     private Integer duration;
@@ -50,8 +49,8 @@ public class ServicePriceEntity extends DefaultEntity {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "service_class_price",
             joinColumns = {@JoinColumn(name = "price_id", insertable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "service_class_car_id", insertable = false, updatable = false)})
-    private Set<ServiceClassCarEntity> serviceClass = new HashSet<>();
+            inverseJoinColumns = {@JoinColumn(name = "service_class_id", insertable = false, updatable = false)})
+    private Set<ServiceClassEntity> serviceClass = new HashSet<>();
 
     @ElementCollection(targetClass=CarInteriorType.class)
     @Enumerated(EnumType.STRING)

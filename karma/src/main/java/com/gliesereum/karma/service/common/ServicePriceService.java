@@ -16,5 +16,5 @@ public interface ServicePriceService extends DefaultService<ServicePriceDto, Ser
 
     List<ServicePriceDto> getAllByPackage(UUID id);
 
-    List<ServicePriceDto> getByCorporationServiceId(UUID id);
+    List<ServicePriceDto> getByBusinessId(UUID id);
 }

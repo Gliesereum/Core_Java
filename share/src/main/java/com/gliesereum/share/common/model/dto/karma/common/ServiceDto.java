@@ -24,5 +24,5 @@ public class ServiceDto extends DefaultDto {
     @NotEmpty
     private String description;
 
-    private ServiceType type;
+    private ServiceType serviceType;
 }

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.WORKING_TIME_EXIST_IN_THIS_CAR_WASH;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.WORKING_TIME_EXIST_IN_THIS_BUSINESS;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.WORKING_TIME_NOT_FOUND;
 
 /**
@@ -44,10 +44,10 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     @Override
-    public List<WorkTimeDto> getByCorporationServiceId(UUID corporationServiceId) {
+    public List<WorkTimeDto> getByBusinessId(UUID businessId) {
         List<WorkTimeDto> result = null;
-        if (corporationServiceId != null) {
-            List<WorkTimeEntity> entities = workTimeRepository.findByCorporationServiceId(corporationServiceId);
+        if (businessId != null) {
+            List<WorkTimeEntity> entities = workTimeRepository.findByBusinessId(businessId);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -59,7 +59,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         WorkTimeDto result = null;
         if (dto != null) {
             checkDayExist(dto);
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getCarServiceType(), dto.getCorporationServiceId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
             result = super.create(dto);
         }
         return result;
@@ -77,7 +77,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             if (!dto.getDayOfWeek().equals(time.getDayOfWeek())) {
                 checkDayExist(dto);
             }
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getCarServiceType(), dto.getCorporationServiceId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
             result = super.update(dto);
         }
         return result;
@@ -88,16 +88,15 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         if ((id != null) && (serviceType != null)) {
             Optional<WorkTimeEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(serviceType, i.getCorporationServiceId());
+                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(serviceType, i.getBusinessId());
                 repository.delete(i);
             });
-
         }
     }
 
     private void checkDayExist(WorkTimeDto dto) {
-        if (workTimeRepository.existsByCorporationServiceIdAndDayOfWeek(dto.getCorporationServiceId(), dto.getDayOfWeek())) {
-            throw new ClientException(WORKING_TIME_EXIST_IN_THIS_CAR_WASH);
+        if (workTimeRepository.existsByBusinessIdAndDayOfWeek(dto.getBusinessId(), dto.getDayOfWeek())) {
+            throw new ClientException(WORKING_TIME_EXIST_IN_THIS_BUSINESS);
         }
     }
 }

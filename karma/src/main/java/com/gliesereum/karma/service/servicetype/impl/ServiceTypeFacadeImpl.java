@@ -1,6 +1,6 @@
 package com.gliesereum.karma.service.servicetype.impl;
 
-import com.gliesereum.karma.service.carwash.CarWashService;
+import com.gliesereum.karma.service.common.BaseBusinessService;
 import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
@@ -21,7 +21,7 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 public class ServiceTypeFacadeImpl implements ServiceTypeFacade {
 
     @Autowired
-    private CarWashService carWashService;
+    private BaseBusinessService baseBusinessService;
 
     @Override
     public boolean currentUserHavePermissionToAction(ServiceType serviceType, UUID corporationServiceId) {
@@ -29,7 +29,7 @@ public class ServiceTypeFacadeImpl implements ServiceTypeFacade {
         if (serviceType != null) {
             switch (serviceType) {
                 case CAR_WASH:
-                    result = carWashService.currentUserHavePermissionToAction(corporationServiceId);
+                    result = baseBusinessService.currentUserHavePermissionToActionInBusiness(corporationServiceId);
                     break;
             }
         }

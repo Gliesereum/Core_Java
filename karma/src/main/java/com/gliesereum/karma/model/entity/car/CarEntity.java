@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.car;
 
+import com.gliesereum.karma.model.entity.common.ServiceClassEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ColourCarType;
@@ -71,9 +72,9 @@ public class CarEntity extends DefaultEntity {
     private ColourCarType colour;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "car_service_class_car",
+    @JoinTable(name = "car_service_class",
             joinColumns = {@JoinColumn(name = "car_id", insertable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "service_class_car_id", insertable = false, updatable = false)})
-    private Set<ServiceClassCarEntity> services = new HashSet<>();
+            inverseJoinColumns = {@JoinColumn(name = "service_class_id", insertable = false, updatable = false)})
+    private Set<ServiceClassEntity> services = new HashSet<>();
 
 }

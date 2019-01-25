@@ -27,9 +27,9 @@ public class PackageController {
         return service.getAll();
     }
 
-    @GetMapping("/by-corporation-service/{id}")
-    public List<PackageDto> getByCorporationId(@PathVariable("id") UUID id) {
-        return service.getByCorporationServiceId(id);
+    @GetMapping("/by-business/{id}")
+    public List<PackageDto> getByBusinessId(@PathVariable("id") UUID id) {
+        return service.getByBusinessId(id);
     }
 
     @GetMapping("/{id}")

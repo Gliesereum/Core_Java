@@ -34,7 +34,7 @@ public class PackageDto extends DefaultDto {
     @NotNull
     private Integer duration;
 
-    private UUID corporationServiceId;
+    private UUID businessId;
 
     private List<UUID> servicesIds = new ArrayList<>();
 

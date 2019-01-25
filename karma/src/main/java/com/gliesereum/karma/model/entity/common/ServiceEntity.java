@@ -26,7 +26,7 @@ public class ServiceEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "type")
+    @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
-    private ServiceType type;
+    private ServiceType serviceType;
 }

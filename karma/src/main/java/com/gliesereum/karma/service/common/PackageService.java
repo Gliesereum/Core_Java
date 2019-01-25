@@ -14,5 +14,5 @@ import java.util.UUID;
  */
 public interface PackageService extends DefaultService<PackageDto, PackageEntity> {
 
-    List<PackageDto> getByCorporationServiceId(UUID id);
+    List<PackageDto> getByBusinessId(UUID id);
 }

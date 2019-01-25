@@ -80,16 +80,16 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     }
 
     @Override
-    public List<ServicePriceDto> getByCorporationServiceId(UUID id) {
-        List<ServicePriceEntity> entities = servicePriceRepository.findAllByCorporationServiceId(id);
+    public List<ServicePriceDto> getByBusinessId(UUID id) {
+        List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessId(id);
         return converter.convert(entities, dtoClass);
     }
 
     private void checkPermission(ServicePriceDto dto) {
-        if(dto.getCorporationServiceId() == null) {
+        if(dto.getBusinessId() == null) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, dto.getCorporationServiceId());
+        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, dto.getBusinessId());
     }
 
     private ServicePriceDto setCustomName(ServicePriceDto dto) {
