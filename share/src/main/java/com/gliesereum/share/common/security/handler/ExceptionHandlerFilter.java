@@ -23,7 +23,6 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 17/10/2018
  */
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
 

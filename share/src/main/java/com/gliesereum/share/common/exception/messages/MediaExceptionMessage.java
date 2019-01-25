@@ -3,7 +3,6 @@ package com.gliesereum.share.common.exception.messages;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-28
  */
 public class MediaExceptionMessage {
 

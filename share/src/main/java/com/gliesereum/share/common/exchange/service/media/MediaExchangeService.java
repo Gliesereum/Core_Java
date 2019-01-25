@@ -7,7 +7,6 @@ import java.io.File;
 /**
  * @author vitalij
  * @version 1.0
- * @since 2019-01-10
  */
 public interface MediaExchangeService {
 

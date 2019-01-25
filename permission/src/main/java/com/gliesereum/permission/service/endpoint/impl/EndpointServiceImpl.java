@@ -20,7 +20,6 @@ import java.util.UUID;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 04/12/2018
  */
 @Service
 public class EndpointServiceImpl extends DefaultServiceImpl<EndpointDto, EndpointEntity> implements EndpointService {

@@ -6,7 +6,6 @@ import java.util.Map;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 30/11/2018
  */
 public class MapResponse extends HashMap<String, Object> {
 

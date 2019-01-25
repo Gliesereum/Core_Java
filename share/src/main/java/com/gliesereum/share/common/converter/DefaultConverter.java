@@ -6,7 +6,6 @@ import java.util.Set;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 10/10/2018
  */
 public interface DefaultConverter {
 

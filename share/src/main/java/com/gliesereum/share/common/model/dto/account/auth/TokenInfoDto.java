@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 11/10/2018
  */
 @Data
 @NoArgsConstructor

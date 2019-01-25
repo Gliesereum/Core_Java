@@ -33,7 +33,6 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 /**
  * @author vitalij
  * @version 1.0
- * @since 12/5/18
  */
 @Slf4j
 @Service

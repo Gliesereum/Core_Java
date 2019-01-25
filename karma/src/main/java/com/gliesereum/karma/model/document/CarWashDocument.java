@@ -14,7 +14,6 @@ import java.util.List;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-18
  */
 @Data
 @NoArgsConstructor

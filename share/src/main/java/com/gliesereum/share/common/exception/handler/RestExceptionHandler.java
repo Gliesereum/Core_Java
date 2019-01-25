@@ -31,7 +31,6 @@ import static com.gliesereum.share.common.exception.messages.MediaExceptionMessa
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 17/10/2018
  */
 
 @ControllerAdvice

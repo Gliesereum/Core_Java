@@ -13,7 +13,6 @@ import java.util.UUID;
 
 /**
  * @author vitalij
- * @since 10/10/2018
  */
 @RestController
 @RequestMapping("/corporation")

@@ -4,7 +4,6 @@ import java.util.List;
 
 /**
  * @author vitalij
- * @since 10/4/18
  */
 public interface EmailService {
 

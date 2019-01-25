@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 19/10/2018
  */
 
 @Component

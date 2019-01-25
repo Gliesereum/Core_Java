@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 08/10/2018
  */
 @Configuration
 public class BeanConfiguration {

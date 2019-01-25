@@ -18,7 +18,6 @@ import java.util.Map;
 
 /**
  * @author vitalij
- * @since 11/8/18
  */
 @Setter
 @Getter

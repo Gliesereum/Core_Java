@@ -12,7 +12,6 @@ import javax.persistence.Table;
 /**
  * @author vitalij
  * @version 1.0
- * @since 12/5/18
  */
 @Data
 @NoArgsConstructor

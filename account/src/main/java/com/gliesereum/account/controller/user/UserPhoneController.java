@@ -17,7 +17,6 @@ import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessa
 
 /**
  * @author vitalij
- * @since 10/10/2018
  */
 @RestController
 @RequestMapping("/phone")

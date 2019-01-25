@@ -5,7 +5,6 @@ import lombok.Setter;
 
 /**
  * @author vitalij
- * @since 10/5/18
  */
 @Getter
 @Setter

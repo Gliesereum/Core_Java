@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author vitalij
  * @version 1.0
- * @since 2018-12-13
  */
 @EnableRabbit
 @Configuration

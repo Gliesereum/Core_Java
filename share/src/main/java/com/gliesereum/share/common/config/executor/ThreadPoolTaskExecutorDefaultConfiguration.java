@@ -9,7 +9,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-26
  */
 @Configuration
 public class ThreadPoolTaskExecutorDefaultConfiguration {

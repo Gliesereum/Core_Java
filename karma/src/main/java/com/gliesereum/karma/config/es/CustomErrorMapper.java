@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-22
  */
 
 @Slf4j

@@ -10,7 +10,6 @@ import java.util.UUID;
 
 /**
  * @author vitalij
- * @since 12/4/18
  */
 @Repository
 public interface CorporationRepository extends JpaRepository<CorporationEntity, UUID> {

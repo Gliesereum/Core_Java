@@ -8,7 +8,6 @@ import java.util.UUID;
 
 /**
  * @author vitalij
- * @since 10/10/2018
  */
 @Repository
 public interface UserEmailRepository extends JpaRepository<UserEmailEntity, UUID> {

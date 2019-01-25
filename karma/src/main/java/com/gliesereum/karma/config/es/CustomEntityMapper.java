@@ -8,7 +8,6 @@ import java.io.IOException;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-22
  */
 public class CustomEntityMapper implements EntityMapper {
     private final ObjectMapper objectMapper;

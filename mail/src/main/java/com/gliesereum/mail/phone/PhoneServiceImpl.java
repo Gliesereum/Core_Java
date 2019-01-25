@@ -17,7 +17,6 @@ import java.util.Map;
 
 /**
  * @author vitalij
- * @since 10/4/18
  */
 @Service
 public class PhoneServiceImpl implements PhoneService {

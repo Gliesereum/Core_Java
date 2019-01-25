@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author vitalij
- * @since 10/12/18
  */
 @Repository
 public interface VerificationRepository extends CrudRepository<VerificationDomain, String> {

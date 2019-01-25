@@ -12,7 +12,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 19/10/2018
  */
 @Configuration
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter {

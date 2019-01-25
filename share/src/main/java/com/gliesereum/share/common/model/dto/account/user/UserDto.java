@@ -15,7 +15,6 @@ import java.util.List;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 08/10/2018
  */
 
 @Data

@@ -12,7 +12,6 @@ import java.util.Set;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 08/10/2018
  */
 public class DefaultConverterImp implements DefaultConverter {
 

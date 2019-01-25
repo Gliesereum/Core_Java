@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 11/10/2018
  */
 @Repository
 public interface TokenStoreRepository extends CrudRepository<TokenStoreDomain, String> {

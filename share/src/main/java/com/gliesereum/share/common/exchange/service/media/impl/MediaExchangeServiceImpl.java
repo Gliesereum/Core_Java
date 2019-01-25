@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * @author vitalij
  * @version 1.0
- * @since 2019-01-10
  */
 @Service
 public class MediaExchangeServiceImpl implements MediaExchangeService {

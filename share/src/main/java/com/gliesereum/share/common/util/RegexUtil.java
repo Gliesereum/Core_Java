@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-07
  */
 public class RegexUtil {
 

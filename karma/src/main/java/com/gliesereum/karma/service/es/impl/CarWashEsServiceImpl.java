@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-18
  */
 
 @Service

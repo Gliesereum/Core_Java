@@ -29,7 +29,6 @@ import static com.gliesereum.share.common.exception.messages.GroupExceptionMessa
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 04/12/2018
  */
 @Service
 public class GroupServiceImpl extends DefaultServiceImpl<GroupDto, GroupEntity> implements GroupService {
