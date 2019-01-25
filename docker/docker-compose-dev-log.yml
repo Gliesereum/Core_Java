@@ -175,8 +175,6 @@ services:
       RABBIT_PASSWORD: Af2f4dsASF
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    ports:
-      - 8200:8200
 
   permission:
     image: gls-permission:0.0.1
