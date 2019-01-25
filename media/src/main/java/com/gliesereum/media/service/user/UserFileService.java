@@ -7,7 +7,6 @@ import com.gliesereum.share.common.service.DefaultService;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-28
  */
 public interface UserFileService extends DefaultService<UserFileDto, UserFileEntity> {
 }

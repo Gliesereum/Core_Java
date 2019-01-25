@@ -8,7 +8,6 @@ import lombok.Setter;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 11/10/2018
  */
 
 @Getter

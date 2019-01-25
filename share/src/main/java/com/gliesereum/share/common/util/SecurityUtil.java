@@ -19,7 +19,6 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 18/10/2018
  */
 public class SecurityUtil {
 

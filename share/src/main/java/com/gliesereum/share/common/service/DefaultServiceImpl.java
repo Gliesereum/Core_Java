@@ -16,7 +16,6 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 08/10/2018
  */
 public abstract class DefaultServiceImpl<D extends DefaultDto, E extends DefaultEntity> implements DefaultService<D, E> {
 

@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 16/10/2018
  */
 
 @Getter

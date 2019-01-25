@@ -25,7 +25,6 @@ import java.util.Set;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 05/12/2018
  */
 @Component
 @Slf4j

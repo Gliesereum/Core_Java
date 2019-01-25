@@ -13,7 +13,6 @@ import java.util.Set;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 06/11/2018
  */
 @Data
 @NoArgsConstructor

@@ -2,7 +2,6 @@ package com.gliesereum.mail.phone;
 
 /**
  * @author vitalij
- * @since 10/4/18
  */
 public interface PhoneService {
 

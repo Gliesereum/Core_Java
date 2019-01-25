@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 /**
  * @author vitalij
  * @version 1.0
- * @since 12/5/18
  */
 @Slf4j
 @Service

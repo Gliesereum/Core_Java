@@ -14,7 +14,6 @@ import java.util.UUID;
 
 /**
  * @author vitalij
- * @since 12/4/18
  */
 @Data
 @NoArgsConstructor

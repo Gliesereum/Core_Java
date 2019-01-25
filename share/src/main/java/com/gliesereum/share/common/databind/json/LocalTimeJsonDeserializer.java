@@ -13,7 +13,6 @@ import java.time.ZoneId;
 /**
  * @author vitalij
  * @version 1.0
- * @since 2018-12-28
  */
 public class LocalTimeJsonDeserializer extends JsonDeserializer<LocalTime> {
     @Override

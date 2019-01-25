@@ -10,7 +10,6 @@ import java.io.IOException;
 
 /**
  * @author vitalij
- * @since 10/4/18
  */
 @Configuration
 public class BeanConfiguration {

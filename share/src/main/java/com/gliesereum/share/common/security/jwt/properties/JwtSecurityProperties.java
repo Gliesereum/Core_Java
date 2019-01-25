@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 19/10/2018
  */
 
 @Getter

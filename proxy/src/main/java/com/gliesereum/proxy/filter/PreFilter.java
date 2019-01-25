@@ -15,7 +15,6 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 18/10/2018
  */
 
 @Component

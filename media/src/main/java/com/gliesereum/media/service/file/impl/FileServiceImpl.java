@@ -23,7 +23,6 @@ import static com.gliesereum.share.common.exception.messages.MediaExceptionMessa
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-27
  */
 
 @Service

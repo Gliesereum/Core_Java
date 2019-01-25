@@ -27,7 +27,6 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 
 /**
  * @author vitalij
- * @since 10/10/2018
  */
 @Slf4j
 @Service

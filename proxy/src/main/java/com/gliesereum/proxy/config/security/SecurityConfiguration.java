@@ -19,7 +19,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 16/10/2018
  */
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {

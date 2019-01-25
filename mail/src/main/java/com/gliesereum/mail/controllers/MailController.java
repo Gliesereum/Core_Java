@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * @author vitalij
- * @since 10/5/18
  */
 @RestController
 @RequestMapping(value = "/")

@@ -21,7 +21,6 @@ import java.util.List;
 /**
  * @author vitalij
  * @version 1.0
- * @since 04/12/2018
  */
 @Configuration
 public class BeanConfiguration {

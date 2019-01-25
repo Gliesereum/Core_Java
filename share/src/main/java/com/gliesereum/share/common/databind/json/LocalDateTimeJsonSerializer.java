@@ -11,7 +11,6 @@ import java.time.ZoneId;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 17/10/2018
  */
 public class LocalDateTimeJsonSerializer extends JsonSerializer<LocalDateTime> {
     @Override

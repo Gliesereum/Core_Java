@@ -23,7 +23,6 @@ import static com.gliesereum.share.common.exception.messages.TokenExceptionMessa
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 11/10/2018
  */
 @Slf4j
 @Service

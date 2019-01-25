@@ -8,7 +8,6 @@ import java.util.UUID;
 
 /**
  * @author vitalij
- * @since 12/4/18
  */
 public interface UserCorporationService extends DefaultService<UserCorporationDto, UserCorporationEntity> {
 

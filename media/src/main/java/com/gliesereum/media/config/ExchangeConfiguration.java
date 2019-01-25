@@ -21,7 +21,6 @@ import java.util.List;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 05/12/2018
  */
 
 @Configuration

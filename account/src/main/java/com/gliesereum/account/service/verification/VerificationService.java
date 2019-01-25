@@ -4,7 +4,6 @@ import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType
 
 /**
  * @author vitalij
- * @since 10/12/18
  */
 public interface VerificationService {
 

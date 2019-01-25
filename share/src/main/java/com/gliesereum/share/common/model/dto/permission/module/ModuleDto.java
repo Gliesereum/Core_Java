@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 08/11/2018
  */
 
 @Data

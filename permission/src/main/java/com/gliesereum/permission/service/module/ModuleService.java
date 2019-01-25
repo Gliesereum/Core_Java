@@ -7,7 +7,6 @@ import com.gliesereum.share.common.service.DefaultService;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 08/11/2018
  */
 public interface ModuleService extends DefaultService<ModuleDto, ModuleEntity> {
 

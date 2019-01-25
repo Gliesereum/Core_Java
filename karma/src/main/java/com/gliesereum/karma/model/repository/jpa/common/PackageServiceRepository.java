@@ -9,7 +9,6 @@ import java.util.UUID;
 /**
  * @author vitalij
  * @version 1.0
- * @since 12/7/18
  */
 public interface PackageServiceRepository extends JpaRepository<PackageServiceEntity, UUID> {
 

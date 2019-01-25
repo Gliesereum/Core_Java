@@ -22,7 +22,6 @@ import java.util.Map;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 06/11/2018
  */
 @Slf4j
 @Component

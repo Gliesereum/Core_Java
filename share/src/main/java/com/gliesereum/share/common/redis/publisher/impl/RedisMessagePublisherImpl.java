@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 04/12/2018
  */
 
 @Service

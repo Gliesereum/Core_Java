@@ -22,7 +22,6 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 /**
  * @author vitalij
  * @version 1.0
- * @since 12/7/18
  */
 @RestController
 @RequestMapping("/record")

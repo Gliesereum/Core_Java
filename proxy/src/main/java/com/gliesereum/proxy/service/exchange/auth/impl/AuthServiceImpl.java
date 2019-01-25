@@ -17,7 +17,6 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 16/10/2018
  */
 
 @Slf4j

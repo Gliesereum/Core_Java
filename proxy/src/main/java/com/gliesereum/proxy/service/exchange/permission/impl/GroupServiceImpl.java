@@ -22,7 +22,6 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-07
  */
 
 @Service

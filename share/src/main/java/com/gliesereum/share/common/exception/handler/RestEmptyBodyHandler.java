@@ -15,7 +15,6 @@ import java.util.Map;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-21
  */
 
 @ControllerAdvice

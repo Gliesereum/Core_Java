@@ -16,7 +16,6 @@ import org.springframework.core.env.Environment;
 /**
  * @author vitalij
  * @version 1.0
- * @since 2018-12-13
  */
 @Slf4j
 @ComponentScan(basePackageClasses = RabbitMQDefaultConfiguration.class)

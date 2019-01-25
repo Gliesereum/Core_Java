@@ -2,7 +2,6 @@ package com.gliesereum.share.common.exception.messages;
 
 /**
  * @author vitalij
- * @since 12/10/2018
  */
 public class PhoneExceptionMessage {
 

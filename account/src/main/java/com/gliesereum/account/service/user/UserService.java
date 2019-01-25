@@ -9,7 +9,6 @@ import java.util.UUID;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 08/10/2018
  */
 public interface UserService extends DefaultService<UserDto, UserEntity> {
 

@@ -19,7 +19,6 @@ import java.util.Map;
 /**
  * @author vitalij
  * @version 1.0
- * @since 2018-12-13
  */
 @Slf4j
 @EnableRabbit

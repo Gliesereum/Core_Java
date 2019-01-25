@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 2018-12-18
  */
 public interface CarWashEsRepository extends ElasticsearchRepository<CarWashDocument, String> {
 }

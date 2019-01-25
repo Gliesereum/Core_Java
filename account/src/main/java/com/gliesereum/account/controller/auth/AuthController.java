@@ -13,7 +13,6 @@ import javax.validation.Valid;
 
 /**
  * @author vitalij
- * @since 12/10/2018
  */
 @RestController
 @RequestMapping("/auth")

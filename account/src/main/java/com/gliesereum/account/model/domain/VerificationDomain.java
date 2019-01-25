@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 /**
  * @author vitalij
- * @since 10/12/18
  */
 @Data
 @NoArgsConstructor

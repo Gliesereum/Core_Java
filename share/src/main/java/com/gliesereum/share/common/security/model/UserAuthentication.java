@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * @author yvlasiuk
  * @version 1.0
- * @since 16/10/2018
  */
 public class UserAuthentication extends UsernamePasswordAuthenticationToken {
 
