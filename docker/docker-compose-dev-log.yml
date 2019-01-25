@@ -15,8 +15,6 @@ services:
       POSTGRES_DB: postgres
     ports:
       - 5432:5432
-    networks:
-      - gls-net
 
   redis:
     image: redis:4.0.11-alpine
@@ -33,8 +31,6 @@ services:
         condition: on-failure
     ports:
       - 6379:6379
-    networks:
-      - gls-net
 
   rabbit:
     image: rabbitmq:3.7.8-management-alpine
@@ -47,8 +43,6 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-    networks:
-      - gls-net
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
@@ -67,9 +61,7 @@ services:
       timeout: 10s
       retries: 20
     volumes:
-      - ../volumes/elasticsearch:/usr/share/elasticsearch/data
-    networks:
-      - gls-net
+    - ../volumes/elasticsearch:/usr/share/elasticsearch/data
 
   kibana:
     image: docker.elastic.co/kibana/kibana:6.4.2
@@ -84,8 +76,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 20
-    networks:
-      - gls-net
 
   logstash:
     image: docker.elastic.co/logstash/logstash:6.4.2
@@ -105,9 +95,7 @@ services:
       timeout: 10s
       retries: 20
     volumes:
-      - ../log/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
-    networks:
-      - gls-net
+    - ../log/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
 
   curator:
     image: gls-curator:0.0.1
@@ -123,10 +111,8 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ../log/elk/curator:/.curator
-      - ../log/elk/curator/logs:/curator/logs/
-    networks:
-      - gls-net
+    - ../log/elk/curator:/.curator
+    - ../log/elk/curator/logs:/curator/logs/
 
   discovery:
     image: gls-discovery:0.0.1
@@ -137,8 +123,6 @@ services:
       PORT: 8761
       PROFILE: docker
       HOST: discovery
-    networks:
-      - gls-net
 
   account:
     image: gls-account:0.0.1
@@ -161,8 +145,6 @@ services:
       RABBIT_PASSWORD: Af2f4dsASF
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    networks:
-      - gls-net
 
   mail:
     image: gls-mail:0.0.1
@@ -178,8 +160,6 @@ services:
       RABBIT_PASSWORD: Af2f4dsASF
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    networks:
-      - gls-net
 
   proxy:
     image: gls-proxy:0.0.1
@@ -195,8 +175,6 @@ services:
       RABBIT_PASSWORD: Af2f4dsASF
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    networks:
-      - gls-net
 
   permission:
     image: gls-permission:0.0.1
@@ -216,8 +194,6 @@ services:
       RABBIT_PASSWORD: Af2f4dsASF
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    networks:
-      - gls-net
 
   karma:
     image: gls-karma:0.0.1
@@ -239,8 +215,6 @@ services:
       ES_PORT: 9200
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    networks:
-      - gls-net
 
   media:
     image: gls-media:0.0.1
@@ -266,8 +240,6 @@ services:
       CDN_FOLDER: karma
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
-    networks:
-      - gls-net
 
   nginx:
     image: nginx:1.15.7-alpine
@@ -279,9 +251,3 @@ services:
     ports:
       - 5601:5601
       - 8200:8200
-    networks:
-      - gls-net
-
-networks:
-  gls-net:
-    driver: host
