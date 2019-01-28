@@ -161,3 +161,42 @@ CREATE TABLE karma.car_service_class (
   CONSTRAINT car_service_class_service_class_fk FOREIGN KEY (service_class_id) REFERENCES karma.service_class (id)
 );
 
+CREATE TABLE IF NOT EXISTS karma.filter (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   value character varying,
+   title character varying,
+   service_type character varying,
+
+   CONSTRAINT filter_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.filter_attribute (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   value character varying,
+   title character varying,
+   filter_id uuid,
+
+   CONSTRAINT filter_attribute_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.car_filter_attribute (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   car_id uuid,
+   filter_attribute_id uuid,
+
+  CONSTRAINT car_filter_attribute_pk PRIMARY KEY (id),
+  CONSTRAINT car_filter_attribute_car_fk FOREIGN KEY (car_id) REFERENCES karma.car (id),
+  CONSTRAINT car_filter_attribute_filter_attribute_fk FOREIGN KEY (filter_attribute_id) REFERENCES karma.filter_attribute (id)
+);
+
+CREATE TABLE IF NOT EXISTS karma.price_filter_attribute (
+   id uuid NOT NULL DEFAULT uuid_generate_v4(),
+   price_id uuid,
+   filter_attribute_id uuid,
+
+  CONSTRAINT price_filter_attribute_pk PRIMARY KEY (id),
+  CONSTRAINT price_filter_attribute_price_fk FOREIGN KEY (price_id) REFERENCES karma.service_price (id),
+  CONSTRAINT price_filter_attribute_filter_attribute_fk FOREIGN KEY (filter_attribute_id) REFERENCES karma.filter_attribute (id)
+);
+
+

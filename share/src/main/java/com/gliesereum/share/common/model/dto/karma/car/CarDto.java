@@ -1,10 +1,8 @@
 package com.gliesereum.share.common.model.dto.karma.car;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.common.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServiceClassDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ColourCarType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,11 +41,7 @@ public class CarDto extends DefaultDto {
 
     private String note;
 
-    private CarInteriorType interior;
-
-    private CarType carBody;
-
-    private ColourCarType colour;
-
     private List<ServiceClassDto> services = new ArrayList<>();
+
+    private List<FilterAttributeDto> attributes = new ArrayList<>();
 }

@@ -1,7 +1,5 @@
 package com.gliesereum.karma.model.entity.common;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -52,16 +50,10 @@ public class ServicePriceEntity extends DefaultEntity {
             inverseJoinColumns = {@JoinColumn(name = "service_class_id", insertable = false, updatable = false)})
     private Set<ServiceClassEntity> serviceClass = new HashSet<>();
 
-    @ElementCollection(targetClass=CarInteriorType.class)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name="service_price_interior", joinColumns = @JoinColumn(name = "service_price_id"))
-    @Column(name="interior_type", nullable = false)
-    Set<CarInteriorType> interiorTypes;
-
-    @ElementCollection(targetClass=CarType.class)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name="service_price_bodies", joinColumns = @JoinColumn(name = "service_price_id"))
-    @Column(name="car_body", nullable = false)
-    Set<CarType> carBodies;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "price_filter_attribute",
+            joinColumns = {@JoinColumn(name = "price_id", insertable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "filter_attribute_id", insertable = false, updatable = false)})
+    private Set<FilterAttributeEntity> attributes = new HashSet<>();
 
 }

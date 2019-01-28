@@ -71,6 +71,16 @@ public class CarController {
         return carService.removeService(idCar, idService);
     }
 
+    @PostMapping("/filter-attribute/{idCar}/{idAttribute}")
+    public CarDto addFilterAttribute(@PathVariable("idCar") UUID idCar, @PathVariable("idAttribute") UUID idAttribute) {
+        return carService.addFilterAttribute(idCar, idAttribute);
+    }
+
+    @DeleteMapping("/remove/filter-attribute/{idCar}/{idAttribute}")
+    public CarDto removeFilterAttribute(@PathVariable("idCar") UUID idCar, @PathVariable("idAttribute") UUID idAttribute) {
+        return carService.removeFilterAttribute(idCar, idAttribute);
+    }
+
     @PutMapping
     public CarDto update(@RequestBody  @Valid CarDto car) {
         return carService.update(car);

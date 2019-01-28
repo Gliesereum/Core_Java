@@ -1,12 +1,9 @@
 package com.gliesereum.share.common.model.dto.karma.car;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -18,9 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CarInfoDto {
 
-    private CarInteriorType interiorType;
-
-    private CarType carBody;
-
     private List<String> serviceClassIds;
+
+    private List<String> filterAttributeIds;
 }

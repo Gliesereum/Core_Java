@@ -84,4 +84,14 @@ public class ServicePriceController {
         return serviceClassPriceService.getByPriceId(priceId);
     }
 
+    @PostMapping("/filter-attribute/{idPrice}/{idAttribute}")
+    public ServicePriceDto addFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
+        return servicePriceService.addFilterAttribute(idPrice, idAttribute);
+    }
+
+    @DeleteMapping("/remove/filter-attribute/{idPrice}/{idAttribute}")
+    public ServicePriceDto removeFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
+        return servicePriceService.removeFilterAttribute(idPrice, idAttribute);
+    }
+
 }

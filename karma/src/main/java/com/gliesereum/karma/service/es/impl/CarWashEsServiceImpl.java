@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -152,12 +151,13 @@ public class CarWashEsServiceImpl implements CarWashEsService {
                 serviceRootQuery.must(new TermQueryBuilder(FIELD_SERVICE_ID, serviceId.toString()));
                 if (carInfo != null) {
                     serviceRootQuery.must(createQueryValueExistOrEmpty(FIELD_CLASS_IDS, carInfo.getServiceClassIds()));
-                    if (carInfo.getInteriorType() != null) {
+                    //todo check
+                    /*if (carInfo.getInteriorType() != null) {
                         serviceRootQuery.must(createQueryValueExistOrEmpty(FIELD_INTERIOR_TYPE, Arrays.asList(carInfo.getInteriorType().name())));
                     }
                     if (carInfo.getCarBody() != null) {
                         serviceRootQuery.must(createQueryValueExistOrEmpty(FIELD_CAR_BODY, Arrays.asList(carInfo.getCarBody().name())));
-                    }
+                    }*/
                 }
                 boolQueryBuilder.must(new NestedQueryBuilder(FIELD_SERVICES, serviceRootQuery, ScoreMode.None));
             }
