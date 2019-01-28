@@ -27,15 +27,15 @@ public class WorkingSpaceEntity extends DefaultEntity {
     @Column(name = "index_number")
     private Integer indexNumber;
 
-    @Column(name = "corporation_service_id")
-    private UUID corporationServiceId;
+    @Column(name = "business_id")
+    private UUID businessId;
 
     @Column(name = "status_space")
     @Enumerated(EnumType.STRING)
     private StatusSpace statusSpace;
 
-    @Column(name = "car_service_type")
+    @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
-    private ServiceType carServiceType;
+    private ServiceType serviceType;
 
 }

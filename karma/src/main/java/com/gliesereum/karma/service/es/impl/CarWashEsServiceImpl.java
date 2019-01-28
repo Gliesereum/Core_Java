@@ -4,13 +4,13 @@ import com.gliesereum.karma.model.document.CarWashDocument;
 import com.gliesereum.karma.model.document.CarWashServiceDocument;
 import com.gliesereum.karma.model.repository.es.CarWashEsRepository;
 import com.gliesereum.karma.service.car.CarService;
-import com.gliesereum.karma.service.carwash.CarWashService;
+import com.gliesereum.karma.service.common.BaseBusinessService;
 import com.gliesereum.karma.service.common.impl.ServicePriceServiceImpl;
 import com.gliesereum.karma.service.es.CarWashEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
-import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
-import com.gliesereum.share.common.model.dto.karma.carwash.CarWashSearchDto;
+import com.gliesereum.share.common.model.dto.karma.common.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.common.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.common.ServicePriceDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -49,7 +48,7 @@ public class CarWashEsServiceImpl implements CarWashEsService {
     private final static String FIELD_CAR_BODY = "services.carBody";
 
     @Autowired
-    private CarWashService carWashService;
+    private BaseBusinessService baseBusinessService;
 
     @Autowired
     private CarService carService;
@@ -64,19 +63,19 @@ public class CarWashEsServiceImpl implements CarWashEsService {
     private CarWashEsRepository carWashEsRepository;
 
     @Override
-    public List<CarWashDto> search(CarWashSearchDto carWashSearch) {
-        List<CarWashDto> result;
+    public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
+        List<BaseBusinessDto> result;
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        if (carWashSearch != null) {
-            CarInfoDto carInfo = carService.getCarInfo(carWashSearch.getCarId());
-            addQueryByService(boolQueryBuilder, carWashSearch.getServiceIds(), carInfo);
+        if (businessSearch != null) {
+            CarInfoDto carInfo = carService.getCarInfo(businessSearch.getCarId());
+            addQueryByService(boolQueryBuilder, businessSearch.getServiceIds(), carInfo);
         }
         if (boolQueryBuilder.hasClauses()) {
             Iterable<CarWashDocument> searchResult = carWashEsRepository.search(boolQueryBuilder);
-            List<UUID> carWashIds = IterableUtils.toList(searchResult).stream().map(CarWashDocument::getId).map(UUID::fromString).collect(Collectors.toList());
-            result = carWashService.getByIds(carWashIds);
+            List<UUID> ids = IterableUtils.toList(searchResult).stream().map(CarWashDocument::getId).map(UUID::fromString).collect(Collectors.toList());
+            result = baseBusinessService.getByIds(ids);
         } else {
-            result = carWashService.getAll();
+            result = baseBusinessService.getAll();
         }
         return result;
     }
@@ -101,10 +100,10 @@ public class CarWashEsServiceImpl implements CarWashEsService {
 
     private List<CarWashDocument> collectData() {
         List<CarWashDocument> result = null;
-        List<CarWashDto> carWashList = carWashService.getAll();
+        List<BaseBusinessDto> carWashList = baseBusinessService.getAll();
         if (CollectionUtils.isNotEmpty(carWashList)) {
             result = new ArrayList<>();
-            for (CarWashDto carWash : carWashList) {
+            for (BaseBusinessDto carWash : carWashList) {
                 CarWashDocument document = defaultConverter.convert(carWash, CarWashDocument.class);
                 if (ObjectUtils.allNotNull(document)) {
                     document = insertGeoPoint(document, carWash);
@@ -116,9 +115,9 @@ public class CarWashEsServiceImpl implements CarWashEsService {
         return result;
     }
 
-    private CarWashDocument insertServices(CarWashDocument target, CarWashDto source) {
+    private CarWashDocument insertServices(CarWashDocument target, BaseBusinessDto source) {
         if (ObjectUtils.allNotNull(target, source)) {
-            List<ServicePriceDto> servicePrices = servicePriceService.getByCorporationServiceId(source.getId());
+            List<ServicePriceDto> servicePrices = servicePriceService.getByBusinessId(source.getId());
             if (CollectionUtils.isNotEmpty(servicePrices)) {
                 List<CarWashServiceDocument> services = servicePrices.stream()
                         .map(price -> {
@@ -136,7 +135,7 @@ public class CarWashEsServiceImpl implements CarWashEsService {
         return target;
     }
 
-    private CarWashDocument insertGeoPoint(CarWashDocument target, CarWashDto source) {
+    private CarWashDocument insertGeoPoint(CarWashDocument target, BaseBusinessDto source) {
         if (ObjectUtils.allNotNull(target, source)) {
             GeoPoint geoPoint = new GeoPoint(source.getLatitude(), source.getLongitude());
             target.setGeoPoint(geoPoint);
@@ -151,12 +150,13 @@ public class CarWashEsServiceImpl implements CarWashEsService {
                 serviceRootQuery.must(new TermQueryBuilder(FIELD_SERVICE_ID, serviceId.toString()));
                 if (carInfo != null) {
                     serviceRootQuery.must(createQueryValueExistOrEmpty(FIELD_CLASS_IDS, carInfo.getServiceClassIds()));
-                    if (carInfo.getInteriorType() != null) {
+                    //todo check
+                    /*if (carInfo.getInteriorType() != null) {
                         serviceRootQuery.must(createQueryValueExistOrEmpty(FIELD_INTERIOR_TYPE, Arrays.asList(carInfo.getInteriorType().name())));
                     }
                     if (carInfo.getCarBody() != null) {
                         serviceRootQuery.must(createQueryValueExistOrEmpty(FIELD_CAR_BODY, Arrays.asList(carInfo.getCarBody().name())));
-                    }
+                    }*/
                 }
                 boolQueryBuilder.must(new NestedQueryBuilder(FIELD_SERVICES, serviceRootQuery, ScoreMode.None));
             }

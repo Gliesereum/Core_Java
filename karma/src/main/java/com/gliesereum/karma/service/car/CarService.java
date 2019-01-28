@@ -26,4 +26,7 @@ public interface CarService extends DefaultService<CarDto, CarEntity> {
 
     CarInfoDto getCarInfo(UUID idCar);
 
+    CarDto addFilterAttribute(UUID idCar, UUID idAttribute);
+
+    CarDto removeFilterAttribute(UUID idCar, UUID idAttribute);
 }

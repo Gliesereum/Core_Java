@@ -37,10 +37,10 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     }
 
     @Override
-    public List<WorkingSpaceDto> getByCorporationServiceId(UUID corporationServiceId) {
+    public List<WorkingSpaceDto> getByBusinessId(UUID businessId) {
         List<WorkingSpaceDto> result = null;
-        if (corporationServiceId != null) {
-            List<WorkingSpaceEntity> entities = workTimeRepository.findByCorporationServiceId(corporationServiceId);
+        if (businessId != null) {
+            List<WorkingSpaceEntity> entities = workTimeRepository.findByBusinessId(businessId);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -50,7 +50,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public WorkingSpaceDto create(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getCarServiceType(), dto.getCorporationServiceId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
             result = super.create(dto);
         }
         return result;
@@ -60,7 +60,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public WorkingSpaceDto update(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getCarServiceType(), dto.getCorporationServiceId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
             result = super.update(dto);
         }
         return result;
@@ -71,7 +71,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
         if (id != null) {
             Optional<WorkingSpaceEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(i.getCarServiceType(), i.getCorporationServiceId());
+                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(i.getServiceType(), i.getBusinessId());
                 repository.delete(i);
             });
 

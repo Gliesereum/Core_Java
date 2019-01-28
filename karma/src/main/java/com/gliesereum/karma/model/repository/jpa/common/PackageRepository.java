@@ -2,7 +2,6 @@ package com.gliesereum.karma.model.repository.jpa.common;
 
 import com.gliesereum.karma.model.entity.common.PackageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,5 +12,5 @@ import java.util.UUID;
  */
 public interface PackageRepository extends JpaRepository<PackageEntity, UUID> {
 
-    List<PackageEntity> getByCorporationServiceId(UUID corporationServiceId);
+    List<PackageEntity> getByBusinessId(UUID businessId);
 }

@@ -1,0 +1,30 @@
+INSERT INTO karma.service_class (name, description, order_index, service_type) VALUES ('Эконом', 'авто эконом класса', 1, 'CAR_WASH');
+INSERT INTO karma.service_class (name, description, order_index, service_type) VALUES ('Стандарт', 'авто стандарт класса',2, 'CAR_WASH');
+INSERT INTO karma.service_class (name, description, order_index, service_type) VALUES ('Бизнес', 'авто бизнес класса',3, 'CAR_WASH');
+INSERT INTO karma.service_class (name, description, order_index, service_type) VALUES ('Премиум', 'авто премиум класса',4, 'CAR_WASH');
+
+INSERT INTO karma.service (name, description, service_type) VALUES ('Мойка двигателя', 'Мойка двигателя и моторного отсека, продувка', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Пылесос', 'Чистка салона пылесосом', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Снятие насекомых', 'Снятие насекомых с решетки радиатора, лобового стекла', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Чистка багажника', 'Чистка багажника (пылесос и влажная уборка)', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Обработка хрома', 'Чистка и обработка хрома', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Жидкий воск', 'Покрытие кузова жидким воском', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Полимерный воск', 'Покрытие кузова полимерным воском', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Твердый воск', 'Покрытие кузова твердым воском', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Влажная антибактериальная уборка салона', 'Влажная антибактериальная уборка салона', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Натирание пластика полимером', 'Полировка пластмассовых деталей салона химическими средствами', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Обработка кожи', 'Полировка кожаных деталей салона химическими средствами', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Чистка колесных дисков', 'Химическая чистка дисков', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Бесконтактная мойка', 'Бесконтактная мойка кузова автомобиля', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Ручная мойка', 'Ручная мойка кузова автомобиля', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Коврики', 'Ручная чистка ковриков автомобиля', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Протирание стекла', 'Протирание стекла в салоне', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Натирание резины', 'Натирание резины (чернение колес)', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Мойка резиновых ковриков', 'Мойка резиновых ковриков', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Мойка тканевых ковриков', 'Мойка тканевых ковриков', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Обработка резиновых уплотнителей дверей', 'Натирание силиконом резинок дверей', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Мойка днища автомобиля', 'Снятие грязи с днища', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Антидождь', 'Покрытие лобового стекла средствами "Антидождь"', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Снятие битума, смолы', 'Снятие битума, смолы', 'CAR_WASH');
+INSERT INTO karma.service (name, description, service_type) VALUES ('Чистка салона от шерсти', 'Чистка салона от шерсти', 'CAR_WASH');
+

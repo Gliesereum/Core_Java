@@ -51,9 +51,9 @@ public class ServicePriceController {
         return servicePriceService.update(dto);
     }
 
-    @GetMapping("/by-corporation-service/{id}")
-    public List<ServicePriceDto> getByCorporationId(@PathVariable("id") UUID id) {
-        return servicePriceService.getByCorporationServiceId(id);
+    @GetMapping("/by-business/{id}")
+    public List<ServicePriceDto> getByBusinessId(@PathVariable("id") UUID id) {
+        return servicePriceService.getByBusinessId(id);
     }
 
     @DeleteMapping("/{id}")
@@ -81,6 +81,16 @@ public class ServicePriceController {
     @GetMapping("/{priceId}/class")
     public List<ServiceClassPriceDto> getByPriceId(@PathVariable("priceId") UUID priceId) {
         return serviceClassPriceService.getByPriceId(priceId);
+    }
+
+    @PostMapping("/filter-attribute/{idPrice}/{idAttribute}")
+    public ServicePriceDto addFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
+        return servicePriceService.addFilterAttribute(idPrice, idAttribute);
+    }
+
+    @DeleteMapping("/remove/filter-attribute/{idPrice}/{idAttribute}")
+    public ServicePriceDto removeFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
+        return servicePriceService.removeFilterAttribute(idPrice, idAttribute);
     }
 
 }
