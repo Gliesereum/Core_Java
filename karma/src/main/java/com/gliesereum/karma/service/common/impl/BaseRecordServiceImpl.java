@@ -178,7 +178,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Transactional
     public BaseRecordDto create(BaseRecordDto dto) {
         if (dto != null) {
-            checkType(dto);
+            setType(dto);
             if (dto.getServiceType().equals(ServiceType.CAR_WASH)) {
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
@@ -414,10 +414,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
     }
 
-    private void checkType(BaseRecordDto dto) {
-        if (dto.getServiceType() == null) {
-            throw new ClientException(SERVICE_TYPE_IS_EMPTY);
-        }
+    private void setType(BaseRecordDto dto) {
+        BaseBusinessDto business = getBusinessByRecord(dto);
+        dto.setServiceType(business.getServiceType());
     }
 
     private List<RecordFreeTime> getFreeTimesByBusinessAndCheckWorkingTime(LocalDateTime begin, LocalDateTime finish, BaseBusinessDto business) {
