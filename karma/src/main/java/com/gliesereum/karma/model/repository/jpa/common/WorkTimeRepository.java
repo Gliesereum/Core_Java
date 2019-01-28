@@ -13,7 +13,7 @@ import java.util.UUID;
  */
 public interface WorkTimeRepository extends JpaRepository<WorkTimeEntity, UUID> {
 
-    List<WorkTimeEntity> findByCorporationServiceId(UUID corporationServiceId);
+    List<WorkTimeEntity> findByBusinessId(UUID businessId);
 
-    boolean existsByCorporationServiceIdAndDayOfWeek(UUID id, DayOfWeek dayOfWeek);
+    boolean existsByBusinessIdAndDayOfWeek(UUID businessId, DayOfWeek dayOfWeek);
 }

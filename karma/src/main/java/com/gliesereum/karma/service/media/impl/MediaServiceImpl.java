@@ -2,7 +2,6 @@ package com.gliesereum.karma.service.media.impl;
 
 import com.gliesereum.karma.model.entity.media.MediaEntity;
 import com.gliesereum.karma.model.repository.jpa.media.MediaRepository;
-import com.gliesereum.karma.service.carwash.CarWashService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;

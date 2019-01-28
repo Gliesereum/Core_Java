@@ -31,21 +31,3 @@ CREATE TABLE IF NOT EXISTS karma.model_car (
     name character varying,
     CONSTRAINT model_car_pk PRIMARY KEY (id)
 );
-
-CREATE TABLE IF NOT EXISTS karma.service_class_car (
-    id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    name character varying,
-    description character varying,
-    order_index integer,
-    CONSTRAINT service_class_car_pk PRIMARY KEY (id)
-);
-
-CREATE TABLE karma.car_service_class_car (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  car_id uuid not null,
-  service_class_car_id uuid not null,
-
-  CONSTRAINT car_service_class_car_pk PRIMARY KEY (id),
-  CONSTRAINT car_service_class_car_car_fk FOREIGN KEY (car_id) REFERENCES karma.car (id),
-  CONSTRAINT car_service_class_car_service_class_car_fk FOREIGN KEY (service_class_car_id) REFERENCES karma.service_class_car (id)
-);

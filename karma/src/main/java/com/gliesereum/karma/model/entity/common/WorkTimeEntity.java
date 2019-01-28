@@ -28,15 +28,15 @@ public class WorkTimeEntity extends DefaultEntity {
     @Column(name = "to_time")
     private LocalTime to;
 
-    @Column(name = "corporation_service_id")
-    private UUID corporationServiceId;
+    @Column(name = "business_id")
+    private UUID businessId;
 
     @Column(name = "is_work")
     private Boolean isWork;
 
-    @Column(name = "car_service_type")
+    @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
-    private ServiceType carServiceType;
+    private ServiceType serviceType;
 
     @Column(name = "day_of_week")
     @Enumerated(EnumType.STRING)

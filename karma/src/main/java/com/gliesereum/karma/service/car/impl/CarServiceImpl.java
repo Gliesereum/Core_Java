@@ -1,16 +1,20 @@
 package com.gliesereum.karma.service.car.impl;
 
 import com.gliesereum.karma.model.entity.car.CarEntity;
-import com.gliesereum.karma.model.entity.car.ServiceClassCarEntity;
+import com.gliesereum.karma.model.entity.common.FilterAttributeEntity;
+import com.gliesereum.karma.model.entity.common.ServiceClassEntity;
 import com.gliesereum.karma.model.repository.jpa.car.CarRepository;
+import com.gliesereum.karma.service.car.CarFilterAttributeService;
 import com.gliesereum.karma.service.car.CarService;
-import com.gliesereum.karma.service.car.CarServiceClassCarService;
-import com.gliesereum.karma.service.car.ServiceClassCarService;
+import com.gliesereum.karma.service.car.CarServiceClassService;
+import com.gliesereum.karma.service.common.FilterAttributeService;
+import com.gliesereum.karma.service.common.ServiceClassService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
+import com.gliesereum.share.common.model.dto.karma.car.CarFilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
-import com.gliesereum.share.common.model.dto.karma.car.CarServiceClassCarDto;
+import com.gliesereum.share.common.model.dto.karma.car.CarServiceClassDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +48,16 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     private final CarRepository carRepository;
 
     @Autowired
-    private CarServiceClassCarService carServiceClassCarService;
+    private CarServiceClassService carServiceClassService;
 
     @Autowired
-    private ServiceClassCarService serviceClassCarService;
+    private CarFilterAttributeService carFilterAttributeService;
+
+    @Autowired
+    private FilterAttributeService filterAttributeService;
+
+    @Autowired
+    private ServiceClassService serviceClassService;
 
     public CarServiceImpl(CarRepository carRepository, DefaultConverter defaultConverter) {
         super(carRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -101,7 +111,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     public CarDto addService(UUID idCar, UUID idService) {
         checkCarExistInCurrentUser(idCar);
         checkServiceExist(idService);
-        carServiceClassCarService.create(new CarServiceClassCarDto(idCar, idService));
+        carServiceClassService.create(new CarServiceClassDto(idCar, idService));
         return getById(idCar);
     }
 
@@ -109,7 +119,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     public CarDto removeService(UUID idCar, UUID idService) {
         checkCarExistInCurrentUser(idCar);
         checkServiceExist(idService);
-        carServiceClassCarService.deleteByIdCarAndIdService(idCar, idService);
+        carServiceClassService.deleteByIdCarAndIdService(idCar, idService);
         return getById(idCar);
     }
 
@@ -134,13 +144,21 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
             if(carOptional.isPresent()) {
                 CarEntity car = carOptional.get();
                 result = new CarInfoDto();
-                result.setCarBody(car.getCarBody());
-                result.setInteriorType(car.getInterior());
-                Set<ServiceClassCarEntity> services = car.getServices();
+                Set<ServiceClassEntity> services = car.getServices();
                 if (CollectionUtils.isNotEmpty(services)) {
                     result.setServiceClassIds(
                             services.stream()
-                                    .map(ServiceClassCarEntity::getId)
+                                    .map(ServiceClassEntity::getId)
+                                    .map(UUID::toString)
+                                    .collect(Collectors.toList())
+                    );
+
+                }
+                Set<FilterAttributeEntity> attributes = car.getAttributes();
+                if (CollectionUtils.isNotEmpty(attributes)) {
+                    result.setFilterAttributeIds(
+                            attributes.stream()
+                                    .map(FilterAttributeEntity::getId)
                                     .map(UUID::toString)
                                     .collect(Collectors.toList())
                     );
@@ -151,8 +169,26 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
         return result;
     }
 
+    @Override
+    @Transactional
+    public CarDto addFilterAttribute(UUID idCar, UUID idAttribute) {
+        checkCarExistInCurrentUser(idCar);
+        filterAttributeService.checkFilterAttributeExist(idAttribute);
+        carFilterAttributeService.create(new CarFilterAttributeDto(idCar,idAttribute));
+        return getById(idCar);
+    }
+
+    @Override
+    @Transactional
+    public CarDto removeFilterAttribute(UUID idCar, UUID idAttribute) {
+        checkCarExistInCurrentUser(idCar);
+        filterAttributeService.checkFilterAttributeExist(idAttribute);
+        carFilterAttributeService.deleteByCarIdAndFilterId(idCar, idAttribute);
+        return getById(idCar);
+    }
+
     private void checkServiceExist(UUID id) {
-        if (!serviceClassCarService.existsService(id)) {
+        if (!serviceClassService.existsService(id)) {
             throw new ClientException(SERVICE_CLASS_NOT_FOUND);
         }
     }

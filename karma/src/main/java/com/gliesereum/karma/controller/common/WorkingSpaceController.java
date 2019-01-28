@@ -21,9 +21,9 @@ public class WorkingSpaceController {
     @Autowired
     private WorkingSpaceService workingSpaceService;
 
-    @GetMapping("/{corporationServiceId}")
-    public List<WorkingSpaceDto> getAll(@PathVariable("corporationServiceId") UUID corporationServiceId) {
-        return workingSpaceService.getByCorporationServiceId(corporationServiceId);
+    @GetMapping("/{businessId}")
+    public List<WorkingSpaceDto> getAll(@PathVariable("businessId") UUID businessId) {
+        return workingSpaceService.getByBusinessId(businessId);
     }
 
     @PostMapping

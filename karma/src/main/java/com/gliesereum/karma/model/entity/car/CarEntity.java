@@ -1,8 +1,7 @@
 package com.gliesereum.karma.model.entity.car;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ColourCarType;
+import com.gliesereum.karma.model.entity.common.FilterAttributeEntity;
+import com.gliesereum.karma.model.entity.common.ServiceClassEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -57,22 +56,16 @@ public class CarEntity extends DefaultEntity {
     @Column(name = "note")
     private String note;
 
-    @Column(name = "interior")
-    @Enumerated(EnumType.STRING)
-    private CarInteriorType interior;
-
-    @Column(name = "car_body")
-    @Enumerated(EnumType.STRING)
-    private CarType carBody;
-
-    @Column(name = "colour")
-    @Enumerated(EnumType.STRING)
-    private ColourCarType colour;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "car_service_class",
+            joinColumns = {@JoinColumn(name = "car_id", insertable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "service_class_id", insertable = false, updatable = false)})
+    private Set<ServiceClassEntity> services = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "car_service_class_car",
+    @JoinTable(name = "car_filter_attribute",
             joinColumns = {@JoinColumn(name = "car_id", insertable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "service_class_car_id", insertable = false, updatable = false)})
-    private Set<ServiceClassCarEntity> services = new HashSet<>();
+            inverseJoinColumns = {@JoinColumn(name = "filter_attribute_id", insertable = false, updatable = false)})
+    private Set<FilterAttributeEntity> attributes = new HashSet<>();
 
 }

@@ -1,7 +1,7 @@
 package com.gliesereum.karma.service.es;
 
-import com.gliesereum.share.common.model.dto.karma.carwash.CarWashDto;
-import com.gliesereum.share.common.model.dto.karma.carwash.CarWashSearchDto;
+import com.gliesereum.share.common.model.dto.karma.common.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.common.BusinessSearchDto;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface CarWashEsService {
 
-    List<CarWashDto> search(CarWashSearchDto carWashSearch);
+    List<BaseBusinessDto> search(BusinessSearchDto businessSearch);
 
     void indexAll();
 

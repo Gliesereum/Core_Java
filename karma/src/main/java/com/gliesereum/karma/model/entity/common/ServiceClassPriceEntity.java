@@ -24,7 +24,7 @@ public class ServiceClassPriceEntity extends DefaultEntity {
     @Column(name = "price_id")
     private UUID priceId;
 
-    @Column(name = "service_class_car_id")
+    @Column(name = "service_class_id")
     private UUID serviceClassId;
 
 }
