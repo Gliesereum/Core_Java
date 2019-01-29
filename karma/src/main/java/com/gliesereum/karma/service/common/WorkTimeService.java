@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 public interface WorkTimeService extends DefaultService<WorkTimeDto, WorkTimeEntity> {
 
-    List<WorkTimeDto> getByBusinessId(UUID businessId);
+    List<WorkTimeDto> getByObjectId(UUID businessId);
 
     void delete(UUID id, ServiceType serviceType);
 }

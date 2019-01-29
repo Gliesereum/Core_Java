@@ -25,7 +25,7 @@ public class WorkTimeController {
 
     @GetMapping("/{businessId}")
     public List<WorkTimeDto> getAll(@PathVariable("businessId") UUID businessId) {
-        return workTimeService.getByBusinessId(businessId);
+        return workTimeService.getByObjectId(businessId);
     }
 
     @PostMapping

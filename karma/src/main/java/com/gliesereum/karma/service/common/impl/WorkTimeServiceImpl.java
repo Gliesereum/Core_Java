@@ -43,10 +43,10 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     @Override
-    public List<WorkTimeDto> getByBusinessId(UUID businessId) {
+    public List<WorkTimeDto> getByObjectId(UUID objectId) {
         List<WorkTimeDto> result = null;
-        if (businessId != null) {
-            List<WorkTimeEntity> entities = workTimeRepository.findByBusinessId(businessId);
+        if (objectId != null) {
+            List<WorkTimeEntity> entities = workTimeRepository.findByObjectId(objectId);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -94,7 +94,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     private void checkDayExist(WorkTimeDto dto) {
-        if (workTimeRepository.existsByBusinessIdAndDayOfWeek(dto.getObjectId(), dto.getDayOfWeek())) {
+        if (workTimeRepository.existsByObjectIdAndDayOfWeek(dto.getObjectId(), dto.getDayOfWeek())) {
             throw new ClientException(WORKING_TIME_EXIST_IN_THIS_BUSINESS);
         }
     }
