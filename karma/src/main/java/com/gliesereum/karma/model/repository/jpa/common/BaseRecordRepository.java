@@ -21,7 +21,7 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
              List<UUID> businessIds, List<UUID> targetIds, List<UUID> workingSpaceIds,
              LocalDateTime from, LocalDateTime to);
 
-     List<BaseRecordEntity> findByBusinessIdAndStatusRecordAndBeginBetween(UUID carWashId, StatusRecord status, LocalDateTime from, LocalDateTime to);
+     List<BaseRecordEntity> findByBusinessIdAndStatusRecordAndBeginBetween(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to);
 
      List<BaseRecordEntity> findAllByTargetIdInAndServiceType(List<UUID> ids, ServiceType serviceType);
 }

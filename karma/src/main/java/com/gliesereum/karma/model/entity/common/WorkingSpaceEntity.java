@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -20,9 +22,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "work_space")
 public class WorkingSpaceEntity extends DefaultEntity {
-
-    @Column(name = "worker_id")
-    private UUID workerId;
 
     @Column(name = "index_number")
     private Integer indexNumber;
@@ -37,5 +36,9 @@ public class WorkingSpaceEntity extends DefaultEntity {
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
+
+    @OneToMany
+    @JoinColumn(name = "work_space_id", insertable = false, updatable = false)
+    private Set<WorkerEntity> workers = new HashSet<>();
 
 }

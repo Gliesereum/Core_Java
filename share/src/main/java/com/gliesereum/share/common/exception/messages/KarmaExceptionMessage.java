@@ -58,5 +58,8 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage FILTER_ATTRIBUTE_NOT_FOUND_WITH_PRICE = new ExceptionMessage(1459, 400, "Filter attribute with price not found");
 
     public static final ExceptionMessage SERVICE_ID_IS_EMPTY = new ExceptionMessage(1060, 400, "Service id is empty");
+    public static final ExceptionMessage WORKING_SPACE_ID_IS_EMPTY = new ExceptionMessage(1061, 400, "Working space id is empty");
+    public static final ExceptionMessage WORKER_ID_IS_EMPTY = new ExceptionMessage(1062, 400, "Worker id is empty");
+    public static final ExceptionMessage WORKER_NOT_FOUND = new ExceptionMessage(1063, 400, "Worker not found");
 
 }

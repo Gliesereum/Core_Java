@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -18,8 +20,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class WorkingSpaceDto extends DefaultDto {
 
-    private UUID workerId;
-
     private Integer indexNumber;
 
     private UUID businessId;
@@ -27,4 +27,6 @@ public class WorkingSpaceDto extends DefaultDto {
     private StatusSpace statusSpace;
 
     private ServiceType serviceType;
+
+    private List<WorkerDto> workers = new ArrayList<>();
 }

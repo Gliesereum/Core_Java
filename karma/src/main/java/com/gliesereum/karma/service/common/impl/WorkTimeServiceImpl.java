@@ -58,7 +58,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         WorkTimeDto result = null;
         if (dto != null) {
             checkDayExist(dto);
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getObjectId());
             result = super.create(dto);
         }
         return result;
@@ -76,7 +76,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             if (!dto.getDayOfWeek().equals(time.getDayOfWeek())) {
                 checkDayExist(dto);
             }
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getObjectId());
             result = super.update(dto);
         }
         return result;
@@ -87,14 +87,14 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         if ((id != null) && (serviceType != null)) {
             Optional<WorkTimeEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(serviceType, i.getBusinessId());
+                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(serviceType, i.getObjectId());
                 repository.delete(i);
             });
         }
     }
 
     private void checkDayExist(WorkTimeDto dto) {
-        if (workTimeRepository.existsByBusinessIdAndDayOfWeek(dto.getBusinessId(), dto.getDayOfWeek())) {
+        if (workTimeRepository.existsByBusinessIdAndDayOfWeek(dto.getObjectId(), dto.getDayOfWeek())) {
             throw new ClientException(WORKING_TIME_EXIST_IN_THIS_BUSINESS);
         }
     }
