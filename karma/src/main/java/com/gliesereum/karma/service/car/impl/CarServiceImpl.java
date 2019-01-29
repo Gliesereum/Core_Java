@@ -1,14 +1,14 @@
 package com.gliesereum.karma.service.car.impl;
 
 import com.gliesereum.karma.model.entity.car.CarEntity;
-import com.gliesereum.karma.model.entity.common.FilterAttributeEntity;
-import com.gliesereum.karma.model.entity.common.ServiceClassEntity;
+import com.gliesereum.karma.model.entity.filter.FilterAttributeEntity;
+import com.gliesereum.karma.model.entity.service.ServiceClassEntity;
 import com.gliesereum.karma.model.repository.jpa.car.CarRepository;
 import com.gliesereum.karma.service.car.CarFilterAttributeService;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.car.CarServiceClassService;
-import com.gliesereum.karma.service.common.FilterAttributeService;
-import com.gliesereum.karma.service.common.ServiceClassService;
+import com.gliesereum.karma.service.filter.FilterAttributeService;
+import com.gliesereum.karma.service.service.ServiceClassService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
