@@ -15,6 +15,7 @@ import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarFilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarServiceClassDto;
+import com.gliesereum.share.common.model.dto.karma.common.FilterAttributeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -155,14 +153,9 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
                 }
                 Set<FilterAttributeEntity> attributes = car.getAttributes();
-                if (CollectionUtils.isNotEmpty(attributes)) {
-                    result.setFilterAttributeIds(
-                            attributes.stream()
-                                    .map(FilterAttributeEntity::getId)
-                                    .map(UUID::toString)
-                                    .collect(Collectors.toList())
-                    );
-
+                Set<FilterAttributeDto> attributeDtos = converter.convert(attributes, FilterAttributeDto.class);
+                if (CollectionUtils.isNotEmpty(attributeDtos)) {
+                    result.setFilterAttributes(new ArrayList<>(attributeDtos));
                 }
             }
         }

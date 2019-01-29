@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.document;
 
+import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -17,8 +18,8 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-@Document(indexName = "karma", type = "carwash")
-public class CarWashDocument {
+@Document(indexName = "karma", type = "business")
+public class BusinessDocument {
 
     @Id
     private String id;
@@ -41,8 +42,11 @@ public class CarWashDocument {
     @GeoPointField
     private GeoPoint geoPoint;
 
+    @Field(type = FieldType.Keyword)
+    private ServiceType serviceType;
+
     @Field(type = FieldType.Nested)
-    private List<CarWashServiceDocument> services;
+    private List<BusinessServiceDocument> services;
 
     @Field(type = FieldType.Nested)
     private List<WorkTimeDocument> workTimes;

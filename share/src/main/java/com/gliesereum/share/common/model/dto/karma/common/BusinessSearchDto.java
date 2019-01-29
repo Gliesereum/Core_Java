@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.common;
 
+import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +15,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class BusinessSearchDto {
 
-    private UUID carId;
+    private UUID targetId;
 
     private List<UUID> serviceIds;
+
+    private ServiceType serviceType;
 }

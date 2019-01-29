@@ -1,13 +1,12 @@
 package com.gliesereum.karma.model.document;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarInteriorType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.CarType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yvlasiuk
@@ -16,7 +15,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class CarWashServiceDocument {
+public class BusinessServiceDocument {
 
     @Field(type = FieldType.Keyword)
     private String name;
@@ -37,8 +36,9 @@ public class CarWashServiceDocument {
     private List<String> serviceClassIds;
 
     @Field(type = FieldType.Keyword)
-    private List<CarType> carBody;
+    private List<String> filterIds;
 
     @Field(type = FieldType.Keyword)
-    private List<CarInteriorType> interiorType;
+    private List<String> filterAttributeIds;
+
 }
