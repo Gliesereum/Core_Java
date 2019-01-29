@@ -34,7 +34,7 @@ public class WorkTimeDto extends DefaultDto {
     @JsonSerialize(using = LocalTimeJsonSerializer.class)
     private LocalTime to;
 
-    private UUID businessId;
+    private UUID objectId;
 
     private Boolean isWork;
 

@@ -79,13 +79,13 @@ public class BaseBusinessController {
     }
 
     @PostMapping
-    public BaseBusinessDto create(@RequestBody @Valid BaseBusinessDto carWash) {
-        return baseBusinessService.create(carWash);
+    public BaseBusinessDto create(@RequestBody @Valid BaseBusinessDto business) {
+        return baseBusinessService.create(business);
     }
 
     @PutMapping
-    public BaseBusinessDto update(@RequestBody @Valid BaseBusinessDto carWash) {
-        return baseBusinessService.update(carWash);
+    public BaseBusinessDto update(@RequestBody @Valid BaseBusinessDto business) {
+        return baseBusinessService.update(business);
     }
 
     @DeleteMapping("/{id}")
@@ -112,9 +112,9 @@ public class BaseBusinessController {
     }
 
     @DeleteMapping("/{id}/media/{mediaId}")
-    public MapResponse delete(@PathVariable("id") UUID carWashId, @PathVariable("mediaId") UUID mediaId) {
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, carWashId);
-        mediaService.delete(mediaId, carWashId);
+    public MapResponse delete(@PathVariable("id") UUID businessId, @PathVariable("mediaId") UUID mediaId) {
+        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, businessId);
+        mediaService.delete(mediaId, businessId);
         return new MapResponse("true");
     }
 
