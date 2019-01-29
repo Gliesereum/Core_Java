@@ -1,20 +1,21 @@
 package com.gliesereum.karma.service.car.impl;
 
 import com.gliesereum.karma.model.entity.car.CarEntity;
-import com.gliesereum.karma.model.entity.common.FilterAttributeEntity;
-import com.gliesereum.karma.model.entity.common.ServiceClassEntity;
+import com.gliesereum.karma.model.entity.filter.FilterAttributeEntity;
+import com.gliesereum.karma.model.entity.service.ServiceClassEntity;
 import com.gliesereum.karma.model.repository.jpa.car.CarRepository;
 import com.gliesereum.karma.service.car.CarFilterAttributeService;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.car.CarServiceClassService;
-import com.gliesereum.karma.service.common.FilterAttributeService;
-import com.gliesereum.karma.service.common.ServiceClassService;
+import com.gliesereum.karma.service.filter.FilterAttributeService;
+import com.gliesereum.karma.service.service.ServiceClassService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarFilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarServiceClassDto;
+import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -155,14 +153,9 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
                 }
                 Set<FilterAttributeEntity> attributes = car.getAttributes();
-                if (CollectionUtils.isNotEmpty(attributes)) {
-                    result.setFilterAttributeIds(
-                            attributes.stream()
-                                    .map(FilterAttributeEntity::getId)
-                                    .map(UUID::toString)
-                                    .collect(Collectors.toList())
-                    );
-
+                Set<FilterAttributeDto> attributeDtos = converter.convert(attributes, FilterAttributeDto.class);
+                if (CollectionUtils.isNotEmpty(attributeDtos)) {
+                    result.setFilterAttributes(new ArrayList<>(attributeDtos));
                 }
             }
         }

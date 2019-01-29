@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.car;
 
+import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,5 +17,5 @@ public class CarInfoDto {
 
     private List<String> serviceClassIds;
 
-    private List<String> filterAttributeIds;
+    private List<FilterAttributeDto> filterAttributes;
 }

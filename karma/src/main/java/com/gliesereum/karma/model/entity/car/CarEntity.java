@@ -1,7 +1,7 @@
 package com.gliesereum.karma.model.entity.car;
 
-import com.gliesereum.karma.model.entity.common.FilterAttributeEntity;
-import com.gliesereum.karma.model.entity.common.ServiceClassEntity;
+import com.gliesereum.karma.model.entity.filter.FilterAttributeEntity;
+import com.gliesereum.karma.model.entity.service.ServiceClassEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

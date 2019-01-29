@@ -1,7 +1,7 @@
 package com.gliesereum.karma.service.es;
 
-import com.gliesereum.share.common.model.dto.karma.common.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.common.BusinessSearchDto;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 
 import java.util.List;
 

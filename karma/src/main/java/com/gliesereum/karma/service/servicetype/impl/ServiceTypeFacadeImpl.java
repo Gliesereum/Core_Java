@@ -1,6 +1,6 @@
 package com.gliesereum.karma.service.servicetype.impl;
 
-import com.gliesereum.karma.service.common.BaseBusinessService;
+import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
