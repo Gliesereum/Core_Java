@@ -50,16 +50,16 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage CAR_ID_EMPTY = new ExceptionMessage(1453, 404, "Car id is empty");
     public static final ExceptionMessage SERVICE_PRICE_NOT_FOUND_IN_BUSINESS = new ExceptionMessage(1454, 404, "Service price not found in this business");
-    public static final ExceptionMessage TARGET_IDS_IS_EMPTY = new ExceptionMessage(1455, 400, "Target ids is empty");
+    public static final ExceptionMessage TARGET_ID_IS_EMPTY = new ExceptionMessage(1455, 400, "Target id is empty");
     public static final ExceptionMessage STATUS_TYPE_IS_EMPTY = new ExceptionMessage(1456, 400, "Status type is empty");
 
     public static final ExceptionMessage FILTER_ATTRIBUTE_NOT_FOUND = new ExceptionMessage(1457, 400, "Filter attribute not found");
     public static final ExceptionMessage FILTER_ATTRIBUTE_NOT_FOUND_BY_SERVICE_TYPE = new ExceptionMessage(1458, 400, "Filter attribute not found by this service type");
     public static final ExceptionMessage FILTER_ATTRIBUTE_NOT_FOUND_WITH_PRICE = new ExceptionMessage(1459, 400, "Filter attribute with price not found");
 
-    public static final ExceptionMessage SERVICE_ID_IS_EMPTY = new ExceptionMessage(1060, 400, "Service id is empty");
-    public static final ExceptionMessage WORKING_SPACE_ID_IS_EMPTY = new ExceptionMessage(1061, 400, "Working space id is empty");
-    public static final ExceptionMessage WORKER_ID_IS_EMPTY = new ExceptionMessage(1062, 400, "Worker id is empty");
-    public static final ExceptionMessage WORKER_NOT_FOUND = new ExceptionMessage(1063, 400, "Worker not found");
+    public static final ExceptionMessage SERVICE_ID_IS_EMPTY = new ExceptionMessage(1460, 400, "Service id is empty");
+    public static final ExceptionMessage WORKING_SPACE_ID_IS_EMPTY = new ExceptionMessage(1461, 400, "Working space id is empty");
+    public static final ExceptionMessage WORKER_ID_IS_EMPTY = new ExceptionMessage(1462, 400, "Worker id is empty");
+    public static final ExceptionMessage WORKER_NOT_FOUND = new ExceptionMessage(1463, 400, "Worker not found");
 
 }
