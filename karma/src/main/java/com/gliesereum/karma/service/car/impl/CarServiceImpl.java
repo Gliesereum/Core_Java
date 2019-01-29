@@ -15,7 +15,7 @@ import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarFilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarServiceClassDto;
-import com.gliesereum.share.common.model.dto.karma.common.FilterAttributeDto;
+import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;

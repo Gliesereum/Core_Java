@@ -1,6 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.car;
 
-import com.gliesereum.share.common.model.dto.karma.common.FilterAttributeDto;
+import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

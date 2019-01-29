@@ -27,7 +27,7 @@ public class BusinessServiceDocument {
     private String serviceId;
 
     @Field(type = FieldType.Keyword)
-    private String corporationServiceId;
+    private String businessId;
 
     @Field(type = FieldType.Integer)
     private Integer duration;
