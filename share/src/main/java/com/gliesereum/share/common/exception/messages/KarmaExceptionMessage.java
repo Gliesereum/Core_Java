@@ -62,4 +62,12 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage WORKER_ID_IS_EMPTY = new ExceptionMessage(1462, 400, "Worker id is empty");
     public static final ExceptionMessage WORKER_NOT_FOUND = new ExceptionMessage(1463, 400, "Worker not found");
 
+    public static final ExceptionMessage SERVICE_CLASS_ID_IS_EMPTY = new ExceptionMessage(1464, 400, "Service class id is empty");
+    public static final ExceptionMessage PRICE_ID_IS_EMPTY = new ExceptionMessage(1465, 400, "Price id is empty");
+    public static final ExceptionMessage PAR_SERVICE_CLASS_ID_AND_PRICE_ID_EXIST = new ExceptionMessage(1466, 400, "Par service id and price id exist");
+    public static final ExceptionMessage PACKAGE_ID_IS_EMPTY = new ExceptionMessage(1467, 400, "Package id is empty");
+    public static final ExceptionMessage PAR_SERVICE_CLASS_ID_AND_PACKAGE_ID_EXIST = new ExceptionMessage(1468, 400, "Par service id and package id exist");
+    public static final ExceptionMessage PAR_CAR_ID_AND_FILTER_ATTRIBUTE_ID_EXIST = new ExceptionMessage(1469, 400, "Par car id and attribute id exist");
+    public static final ExceptionMessage FILTER_ATTRIBUTE_ID_IS_EMPTY = new ExceptionMessage(1470, 400, "Filter attribute id is empty");
+
 }

@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.SERVICE_CLASS_NOT_FOUND;
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.SERVICE_PRICE_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -57,6 +56,7 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     @UpdateCarWashIndex
     public ServiceClassPriceDto create(ServiceClassPriceDto dto) {
         if (dto != null)
+            checkPriceServiceExist(dto.getPriceId(), dto.getServiceClassId());
             checkPermission(dto.getPriceId(), dto.getServiceClassId());
         return super.create(dto);
     }
@@ -65,6 +65,7 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     @UpdateCarWashIndex
     public ServiceClassPriceDto update(ServiceClassPriceDto dto) {
         if (dto != null)
+            checkPriceServiceExist(dto.getPriceId(), dto.getServiceClassId());
             checkPermission(dto.getPriceId(), dto.getServiceClassId());
         return super.update(dto);
     }
@@ -113,6 +114,18 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
             if (!serviceClassService.isExist(serviceClassId)) {
                 throw new ClientException(SERVICE_CLASS_NOT_FOUND);
             }
+        }
+    }
+
+    private void checkPriceServiceExist(UUID priceId, UUID serviceClassId) {
+        if (priceId == null){
+            throw new ClientException(PRICE_ID_IS_EMPTY);
+        }
+        if (serviceClassId == null){
+            throw new ClientException(SERVICE_CLASS_ID_IS_EMPTY);
+        }
+        if(serviceClassPriceRepository.existsByPriceIdAndServiceClassId(priceId, serviceClassId)){
+            throw new ClientException(PAR_SERVICE_CLASS_ID_AND_PRICE_ID_EXIST);
         }
     }
 }

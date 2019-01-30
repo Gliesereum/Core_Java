@@ -4,6 +4,7 @@ import com.gliesereum.karma.model.entity.car.CarFilterAttributeEntity;
 import com.gliesereum.karma.model.repository.jpa.car.CarFilterAttributeRepository;
 import com.gliesereum.karma.service.car.CarFilterAttributeService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.CarFilterAttributeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -35,6 +38,17 @@ public class CarFilterAttributeServiceImpl extends DefaultServiceImpl<CarFilterA
     @Transactional
     public void deleteByCarIdAndFilterId(UUID idCar, UUID filterAttributeId) {
         repository.deleteByCarIdAndFilterAttributeId(idCar, filterAttributeId);
+    }
+
+    @Override
+    public boolean existsByCarIdAndFilterAttributeId(UUID idCar, UUID filterAttributeId) {
+        if (idCar == null){
+            throw new ClientException(CAR_ID_EMPTY);
+        }
+        if (filterAttributeId == null){
+            throw new ClientException(FILTER_ATTRIBUTE_ID_IS_EMPTY);
+        }
+        return repository.existsByCarIdAndFilterAttributeId(idCar, filterAttributeId);
     }
 
 }
