@@ -39,7 +39,7 @@ public class PriceFilterAttributeServiceImpl extends DefaultServiceImpl<PriceFil
 
     @Override
     public boolean existByPriceIdAndAttributeId(UUID idPrice, UUID filterAttributeId) {
-        return existByPriceIdAndAttributeId(idPrice, filterAttributeId);
+        return repository.existsByPriceIdAndFilterAttributeId(idPrice, filterAttributeId);
     }
 
 }

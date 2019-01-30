@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface PackageServiceRepository extends JpaRepository<PackageServiceEntity, UUID> {
 
     void deleteAllByPackageIdAndServiceIdIn(UUID packageId, List<UUID> servicePricesIds);
+
+    boolean existsByPackageIdAndServiceId(UUID packageId, UUID serviceId);
 }
