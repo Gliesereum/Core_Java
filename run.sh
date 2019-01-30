@@ -42,5 +42,5 @@ sudo docker build -t gls-media:0.0.1 -f docker/media/Dockerfile  .
 sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  .   
 
 echo 'Docker deploy'                            
-docker stack deploy -c docker/docker-compose-dev-log.yml gls
+docker stack deploy -c docker/docker-compose-prod-log.yml gls
 docker ps 
