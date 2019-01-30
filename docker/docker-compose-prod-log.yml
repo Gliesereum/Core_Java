@@ -242,7 +242,8 @@ services:
     image: nginx:1.15.7-alpine
     volumes:
       - ../nginx-prod:/etc/nginx
-      - ../cert:/etc/nginx-ssl
+      - /etc/letsencrypt/live/karma.gliesereum.com/fullchain.pem:/etc/nginx-ssl/fullchain.pem
+      - /etc/letsencrypt/live/karma.gliesereum.com/privkey.pem:/etc/nginx-ssl/privkey.pem
     deploy:
       restart_policy:
         condition: on-failure
