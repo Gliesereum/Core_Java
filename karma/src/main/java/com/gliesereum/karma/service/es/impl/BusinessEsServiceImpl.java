@@ -67,7 +67,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
         List<BaseBusinessDto> result;
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        if (ObjectUtils.allNotNull(businessSearch, businessSearch.getServiceType())) {
+        if ((businessSearch != null) && (businessSearch.getServiceType() != null)) {
 
             addQueryByServiceType(boolQueryBuilder, businessSearch.getServiceType());
             switch (businessSearch.getServiceType()) {
