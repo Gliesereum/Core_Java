@@ -61,23 +61,27 @@ public class CarController {
     }
 
     @PostMapping("/service/{idCar}/{idService}")
-    public CarDto addService(@PathVariable("idCar") UUID idCar, @PathVariable("idService") UUID idService) {
-        return carService.addService(idCar, idService);
+    public MapResponse addService(@PathVariable("idCar") UUID idCar, @PathVariable("idService") UUID idService) {
+        carService.addService(idCar, idService);
+        return new MapResponse("true");
     }
 
     @DeleteMapping("/remove/service/{idCar}/{idService}")
-    public CarDto removeService(@PathVariable("idCar") UUID idCar, @PathVariable("idService") UUID idService) {
-        return carService.removeService(idCar, idService);
+    public MapResponse removeService(@PathVariable("idCar") UUID idCar, @PathVariable("idService") UUID idService) {
+        carService.removeService(idCar, idService);
+        return new MapResponse("true");
     }
 
     @PostMapping("/filter-attribute/{idCar}/{idAttribute}")
-    public CarDto addFilterAttribute(@PathVariable("idCar") UUID idCar, @PathVariable("idAttribute") UUID idAttribute) {
-        return carService.addFilterAttribute(idCar, idAttribute);
+    public MapResponse addFilterAttribute(@PathVariable("idCar") UUID idCar, @PathVariable("idAttribute") UUID idAttribute) {
+        carService.addFilterAttribute(idCar, idAttribute);
+        return new MapResponse("true");
     }
 
     @DeleteMapping("/remove/filter-attribute/{idCar}/{idAttribute}")
-    public CarDto removeFilterAttribute(@PathVariable("idCar") UUID idCar, @PathVariable("idAttribute") UUID idAttribute) {
-        return carService.removeFilterAttribute(idCar, idAttribute);
+    public MapResponse removeFilterAttribute(@PathVariable("idCar") UUID idCar, @PathVariable("idAttribute") UUID idAttribute) {
+        carService.removeFilterAttribute(idCar, idAttribute);
+        return new MapResponse("true");
     }
 
     @PutMapping

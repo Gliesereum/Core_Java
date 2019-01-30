@@ -84,13 +84,15 @@ public class ServicePriceController {
     }
 
     @PostMapping("/filter-attribute/{idPrice}/{idAttribute}")
-    public ServicePriceDto addFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
-        return servicePriceService.addFilterAttribute(idPrice, idAttribute);
+    public MapResponse addFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
+        servicePriceService.addFilterAttribute(idPrice, idAttribute);
+        return new MapResponse("true");
     }
 
     @DeleteMapping("/remove/filter-attribute/{idPrice}/{idAttribute}")
-    public ServicePriceDto removeFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
-        return servicePriceService.removeFilterAttribute(idPrice, idAttribute);
+    public MapResponse removeFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
+        servicePriceService.removeFilterAttribute(idPrice, idAttribute);
+        return new MapResponse("true");
     }
 
 }

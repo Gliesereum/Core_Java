@@ -17,7 +17,7 @@ public interface ServicePriceService extends DefaultService<ServicePriceDto, Ser
 
     List<ServicePriceDto> getByBusinessId(UUID id);
 
-    ServicePriceDto addFilterAttribute(UUID idPrice, UUID idAttribute);
+    void addFilterAttribute(UUID idPrice, UUID idAttribute);
 
-    ServicePriceDto removeFilterAttribute(UUID idPrice, UUID idAttribute);
+    void removeFilterAttribute(UUID idPrice, UUID idAttribute);
 }
