@@ -106,19 +106,17 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
     @Override
     @Transactional
-    public CarDto addService(UUID idCar, UUID idService) {
+    public void addService(UUID idCar, UUID idService) {
         checkCarExistInCurrentUser(idCar);
         checkServiceExist(idService);
         carServiceClassService.create(new CarServiceClassDto(idCar, idService));
-        return getById(idCar);
     }
 
     @Override
-    public CarDto removeService(UUID idCar, UUID idService) {
+    public void removeService(UUID idCar, UUID idService) {
         checkCarExistInCurrentUser(idCar);
         checkServiceExist(idService);
         carServiceClassService.deleteByIdCarAndIdService(idCar, idService);
-        return getById(idCar);
     }
 
     @Override
@@ -164,21 +162,19 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
     @Override
     @Transactional
-    public CarDto addFilterAttribute(UUID idCar, UUID idAttribute) {
+    public void addFilterAttribute(UUID idCar, UUID idAttribute) {
         checkCarExistInCurrentUser(idCar);
         filterAttributeService.checkFilterAttributeExist(idAttribute);
         checkCarFilterAttributeExist(idCar, idAttribute);
         carFilterAttributeService.create(new CarFilterAttributeDto(idCar,idAttribute));
-        return getById(idCar);
     }
 
     @Override
     @Transactional
-    public CarDto removeFilterAttribute(UUID idCar, UUID idAttribute) {
+    public void removeFilterAttribute(UUID idCar, UUID idAttribute) {
         checkCarExistInCurrentUser(idCar);
         filterAttributeService.checkFilterAttributeExist(idAttribute);
         carFilterAttributeService.deleteByCarIdAndFilterId(idCar, idAttribute);
-        return getById(idCar);
     }
 
     private void checkServiceExist(UUID id) {
