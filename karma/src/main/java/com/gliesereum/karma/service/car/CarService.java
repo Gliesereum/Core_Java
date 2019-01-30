@@ -20,13 +20,13 @@ public interface CarService extends DefaultService<CarDto, CarEntity> {
 
     void checkCarExistInCurrentUser(UUID id);
 
-    CarDto addService(UUID idCar, UUID idService);
+    void addService(UUID idCar, UUID idService);
 
-    CarDto removeService(UUID idCar, UUID idService);
+    void removeService(UUID idCar, UUID idService);
 
     CarInfoDto getCarInfo(UUID idCar);
 
-    CarDto addFilterAttribute(UUID idCar, UUID idAttribute);
+    void addFilterAttribute(UUID idCar, UUID idAttribute);
 
-    CarDto removeFilterAttribute(UUID idCar, UUID idAttribute);
+    void removeFilterAttribute(UUID idCar, UUID idAttribute);
 }

@@ -3,18 +3,22 @@ package com.gliesereum.karma.service.service.impl;
 import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
 import com.gliesereum.karma.model.repository.jpa.service.ServicePriceRepository;
-import com.gliesereum.karma.service.service.*;
 import com.gliesereum.karma.service.filter.FilterAttributeService;
 import com.gliesereum.karma.service.filter.FilterService;
 import com.gliesereum.karma.service.filter.PriceFilterAttributeService;
+import com.gliesereum.karma.service.service.PackageService;
+import com.gliesereum.karma.service.service.ServicePriceService;
+import com.gliesereum.karma.service.service.ServiceService;
 import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.service.*;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
 import com.gliesereum.share.common.model.dto.karma.filter.PriceFilterAttributeDto;
+import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -99,21 +103,19 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
 
     @Override
     @Transactional
-    public ServicePriceDto addFilterAttribute(UUID idPrice, UUID idAttribute) {
+    public void addFilterAttribute(UUID idPrice, UUID idAttribute) {
         ServicePriceDto price = getPrice(idPrice);
         checkFilterAttribute(idAttribute, price.getService().getServiceType());
         priceFilterAttributeService.create(new PriceFilterAttributeDto(idPrice, idAttribute));
-        return getById(idPrice);
     }
 
     @Override
     @Transactional
-    public ServicePriceDto removeFilterAttribute(UUID idPrice, UUID idAttribute) {
+    public void removeFilterAttribute(UUID idPrice, UUID idAttribute) {
         getPrice(idPrice);
         checkFilterAttribute(idAttribute);
         checkFilterAttributeExist(idPrice, idAttribute);
         priceFilterAttributeService.deleteByPriceIdAndFilterId(idPrice, idAttribute);
-        return getById(idPrice);
     }
 
     private void checkFilterAttributeExist(UUID idPrice, UUID idAttribute) {
