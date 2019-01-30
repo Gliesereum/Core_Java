@@ -110,6 +110,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     @Transactional
     public ServicePriceDto removeFilterAttribute(UUID idPrice, UUID idAttribute) {
         getPrice(idPrice);
+        checkFilterAttribute(idAttribute);
         checkFilterAttributeExist(idPrice, idAttribute);
         priceFilterAttributeService.deleteByPriceIdAndFilterId(idPrice, idAttribute);
         return getById(idPrice);
@@ -158,6 +159,13 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         FilterDto filter = filterService.getById(attribute.getFilterId());
         if (!filter.getServiceType().equals(serviceType)) {
             throw new ClientException(FILTER_ATTRIBUTE_NOT_FOUND_BY_SERVICE_TYPE);
+        }
+    }
+
+    private void checkFilterAttribute(UUID idAttribute){
+        FilterAttributeDto attribute = filterAttributeService.getById(idAttribute);
+        if (attribute == null) {
+            throw new ClientException(FILTER_ATTRIBUTE_NOT_FOUND);
         }
     }
 
