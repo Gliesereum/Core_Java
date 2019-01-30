@@ -86,7 +86,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Override
     public List<BaseRecordDto> getByParamsForClient(RecordsSearchDto search) {
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
-            throw new ClientException(TARGET_IDS_IS_EMPTY);
+            throw new ClientException(TARGET_ID_IS_EMPTY);
         }
         if (search.getServiceType() == null) {
             throw new ClientException(STATUS_TYPE_IS_EMPTY);
@@ -188,6 +188,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto != null) {
             setType(dto);
             if (dto.getServiceType().equals(ServiceType.CAR_WASH)) {
+                if (dto.getTargetId() == null) {
+                    throw new ClientException(TARGET_ID_IS_EMPTY);
+                }
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
             checkBeginTimeForRecord(dto.getBegin());

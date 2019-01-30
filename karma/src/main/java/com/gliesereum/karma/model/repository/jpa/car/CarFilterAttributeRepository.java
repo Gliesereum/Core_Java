@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface CarFilterAttributeRepository extends JpaRepository<CarFilterAttributeEntity, UUID> {
 
     void deleteByCarIdAndFilterAttributeId(UUID idCar, UUID filterAttributeId);
+
+    boolean existsByCarIdAndFilterAttributeId(UUID idCar, UUID filterAttributeId);
 }

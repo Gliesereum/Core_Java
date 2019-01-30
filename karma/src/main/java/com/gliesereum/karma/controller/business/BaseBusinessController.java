@@ -2,7 +2,7 @@ package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
-import com.gliesereum.karma.service.es.CarWashEsService;
+import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.exception.client.ClientException;
@@ -46,7 +46,7 @@ public class BaseBusinessController {
     private CommentService commentService;
 
     @Autowired
-    private CarWashEsService carWashEsService;
+    private BusinessEsService businessEsService;
 
     @GetMapping
     public List<BaseBusinessDto> getAll() {
@@ -55,7 +55,7 @@ public class BaseBusinessController {
 
     @PostMapping("/search")
     public List<BaseBusinessDto> search(@Valid @RequestBody(required = false) BusinessSearchDto businessSearch) {
-        return carWashEsService.search(businessSearch);
+        return businessEsService.search(businessSearch);
     }
 
     @GetMapping("/{id}")

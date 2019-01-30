@@ -5,7 +5,7 @@ import com.gliesereum.karma.model.document.BusinessServiceDocument;
 import com.gliesereum.karma.model.repository.es.CarWashEsRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.car.CarService;
-import com.gliesereum.karma.service.es.CarWashEsService;
+import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class CarWashEsServiceImpl implements CarWashEsService {
+public class BusinessEsServiceImpl implements BusinessEsService {
 
     private final static String EMPTY_FIELD_SCRIPT = "doc[''{0}''].values.length < 1";
     private final static String FIELD_SERVICES = "services";

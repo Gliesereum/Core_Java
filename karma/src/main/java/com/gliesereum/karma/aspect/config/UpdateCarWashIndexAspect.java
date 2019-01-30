@@ -1,6 +1,6 @@
 package com.gliesereum.karma.aspect.config;
 
-import com.gliesereum.karma.service.es.CarWashEsService;
+import com.gliesereum.karma.service.es.BusinessEsService;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
 public class UpdateCarWashIndexAspect {
 
     @Autowired
-    private CarWashEsService carWashEsService;
+    private BusinessEsService businessEsService;
 
     @AfterReturning("@annotation(com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex)")
     public void updateCarWashIndex() {
-        carWashEsService.indexAllAsync();
+        businessEsService.indexAllAsync();
     }
 
 

@@ -9,7 +9,7 @@ import java.util.List;
  * @author yvlasiuk
  * @version 1.0
  */
-public interface CarWashEsService {
+public interface BusinessEsService {
 
     List<BaseBusinessDto> search(BusinessSearchDto businessSearch);
 

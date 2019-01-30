@@ -167,6 +167,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     public CarDto addFilterAttribute(UUID idCar, UUID idAttribute) {
         checkCarExistInCurrentUser(idCar);
         filterAttributeService.checkFilterAttributeExist(idAttribute);
+        checkCarFilterAttributeExist(idCar, idAttribute);
         carFilterAttributeService.create(new CarFilterAttributeDto(idCar,idAttribute));
         return getById(idCar);
     }
@@ -183,6 +184,12 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     private void checkServiceExist(UUID id) {
         if (!serviceClassService.existsService(id)) {
             throw new ClientException(SERVICE_CLASS_NOT_FOUND);
+        }
+    }
+
+    private void checkCarFilterAttributeExist(UUID carId, UUID filterId) {
+        if(carFilterAttributeService.existsByCarIdAndFilterAttributeId(carId, filterId)){
+            throw new ClientException(PAR_CAR_ID_AND_FILTER_ATTRIBUTE_ID_EXIST);
         }
     }
 }

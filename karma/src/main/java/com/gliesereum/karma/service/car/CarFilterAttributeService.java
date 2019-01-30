@@ -14,4 +14,6 @@ public interface CarFilterAttributeService extends DefaultService<CarFilterAttri
 
     void deleteByCarIdAndFilterId(UUID idCar, UUID filterId);
 
+    boolean existsByCarIdAndFilterAttributeId(UUID idCar, UUID filterAttributeId);
+
 }
