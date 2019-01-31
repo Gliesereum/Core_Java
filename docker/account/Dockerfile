@@ -2,7 +2,7 @@ FROM openjdk:8-alpine
 
 MAINTAINER yvlasiuk
 
-ADD ./account/build/libs/account-0.0.1.jar /gls/account/
+ADD ./account-0.0.1.jar /gls/account/
 
 WORKDIR /gls/account
 

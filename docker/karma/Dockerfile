@@ -2,7 +2,7 @@ FROM openjdk:8-alpine
 
 MAINTAINER vitalij
 
-ADD ./karma/build/libs/karma-0.0.1.jar /gls/karma/
+ADD ./karma-0.0.1.jar /gls/karma/
 
 WORKDIR /gls/karma
 

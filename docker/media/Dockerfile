@@ -2,7 +2,7 @@ FROM openjdk:8-alpine
 
 MAINTAINER yvlasiuk
 
-ADD ./media/build/libs/media-0.0.1.jar /gls/media/
+ADD ./media-0.0.1.jar /gls/media/
 
 WORKDIR /gls/media
 

@@ -2,7 +2,7 @@ FROM openjdk:8-alpine
 
 MAINTAINER yvlasiuk
 
-ADD ./proxy/build/libs/proxy-0.0.1.jar /gls/proxy/
+ADD ./proxy-0.0.1.jar /gls/proxy/
 
 WORKDIR /gls/proxy
 
