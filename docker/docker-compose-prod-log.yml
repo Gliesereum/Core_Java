@@ -49,9 +49,6 @@ services:
     environment:
       http.host: 0.0.0.0
       transport.host: 127.0.0.1
-    ports:
-    - 9200:9200
-    - 9300:9300
     deploy:
       restart_policy:
         condition: on-failure
@@ -244,10 +241,13 @@ services:
   nginx:
     image: nginx:1.15.7-alpine
     volumes:
-      - ../nginx-dev:/etc/nginx
+      - ../nginx-prod:/etc/nginx
+      - /etc/letsencrypt/live/karma.gliesereum.com/fullchain.pem:/etc/nginx-ssl/fullchain.pem
+      - /etc/letsencrypt/live/karma.gliesereum.com/privkey.pem:/etc/nginx-ssl/privkey.pem
     deploy:
       restart_policy:
         condition: on-failure
     ports:
       - 5601:5601
-      - 8200:8200
+      - 80:80
+      - 443:443

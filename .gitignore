@@ -42,8 +42,15 @@ logs/
 .springBeans
 .sts4-cache
 
-/volumes
 
-nginx/nginx-logs/access.log
-nginx/nginx-logs/error.log
-nginx/nginx-logs/nginx.pid
+/volumes/**/**
+!/volumes/elasticsearch/tmp
+!/volumes/pgdata/tmp
+!/volumes/redisdata/tmp
+
+nginx-dev/nginx-logs/**
+!nginx-dev/nginx-logs/tmp
+
+nginx-prod/nginx-logs/**
+!nginx-prod/nginx-logs/tmp
+
