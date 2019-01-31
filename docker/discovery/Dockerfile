@@ -2,7 +2,7 @@ FROM openjdk:8-alpine
 
 MAINTAINER yvlasiuk
 
-ADD ./discovery/build/libs/discovery-0.0.1.jar /gls/discovery/
+ADD ./discovery-0.0.1.jar /gls/discovery/
 
 WORKDIR /gls/discovery
 

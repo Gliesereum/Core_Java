@@ -5,7 +5,7 @@ ENV CURATOR_VERSION=5.5.4
 RUN pip install elasticsearch-curator==${CURATOR_VERSION} && \
      rm -rf /var/cache/apk/*
 
-ADD ./log/elk/curator /curator
+ADD ./curator /curator
 
 USER root
 

@@ -2,7 +2,7 @@ FROM openjdk:8-alpine
 
 MAINTAINER yvlasiuk
 
-ADD ./mail/build/libs/mail-0.0.1.jar /gls/mail/
+ADD ./mail-0.0.1.jar /gls/mail/
 
 WORKDIR /gls/mail
 

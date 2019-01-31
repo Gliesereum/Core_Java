@@ -2,7 +2,7 @@ FROM openjdk:8-alpine
 
 MAINTAINER yvlasiuk
 
-ADD ./permission/build/libs/permission-0.0.1.jar /gls/permission/
+ADD ./permission-0.0.1.jar /gls/permission/
 
 WORKDIR /gls/permission
 
