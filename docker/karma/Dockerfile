@@ -27,7 +27,7 @@ ARG EUREKA_HOST
 ARG EUREKA_PORT
 
 
-CMD java -jar -d64 -server -XX:+UseG1GC -Xms500M -Xmx1536M -XX:MaxMetaspaceSize=500M -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
+CMD java -jar -d64 -server -XX:+UseG1GC -Xms500M -Xmx1536M -XX:MaxMetaspaceSize=1536M -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
 -Dspring.profiles.active=${PROFILE} \
 -Dserver.port=${PORT} \
 -Deureka.host=${EUREKA_HOST} \
