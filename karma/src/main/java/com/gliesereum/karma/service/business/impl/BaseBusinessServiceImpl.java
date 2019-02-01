@@ -3,24 +3,24 @@ package com.gliesereum.karma.service.business.impl;
 import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
-import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
+import com.gliesereum.karma.service.media.MediaService;
+import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
-import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
-import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
-import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_TYPE_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
 /**
@@ -213,6 +214,16 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             result.setRecords(emptyList);
         }
         return result;
+    }
+
+    @Override
+    public void delete(UUID id) {
+        if (id == null) {
+            throw new ClientException(ID_NOT_SPECIFIED);
+        }
+        this.currentUserHavePermissionToActionInBusiness(id);
+
+        super.delete(id);
     }
 
     private void checkCorporationId(BaseBusinessDto business) {
