@@ -32,14 +32,14 @@ docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-media
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
 
 echo 'Docker build images'
-sudo docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  .  
-sudo docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  .      
-sudo docker build -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  .         
-sudo docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  .            
-sudo docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  .
-sudo docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  .          
-sudo docker build -t gls-media:0.0.1 -f docker/media/Dockerfile  .          
-sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  .   
+sudo docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  ./discovery/build/libs/
+sudo docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  ./account/build/libs/
+sudo docker build -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  ./proxy/build/libs/
+sudo docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  ./mail/build/libs/
+sudo docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  ./permission/build/libs/
+sudo docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  ./karma/build/libs/
+sudo docker build -t gls-media:0.0.1 -f docker/media/Dockerfile  ./media/build/libs/
+sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  ./log/elk/
 
 echo 'Docker deploy'                            
 docker stack deploy -c docker/docker-compose-prod-log.yml gls
