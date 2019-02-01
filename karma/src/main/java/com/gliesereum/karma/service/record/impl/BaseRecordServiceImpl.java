@@ -5,21 +5,23 @@ import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.car.CarService;
-import com.gliesereum.karma.service.service.*;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.record.OrderService;
 import com.gliesereum.karma.service.record.RecordServiceService;
+import com.gliesereum.karma.service.service.PackageService;
+import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
-import com.gliesereum.share.common.model.dto.karma.service.*;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.*;
+import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -88,15 +90,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
             throw new ClientException(TARGET_ID_IS_EMPTY);
         }
-        if (search.getServiceType() == null) {
-            throw new ClientException(STATUS_TYPE_IS_EMPTY);
-        }
         if (search.getServiceType().equals(ServiceType.CAR_WASH)) {
             search.getTargetIds().forEach(f -> {
                 carService.checkCarExistInCurrentUser(f);
             });
         } else return Collections.emptyList(); //todo when add new service type need to add logic
-        return getByParams(search);
+        setSearch(search);
+        List<BaseRecordEntity> entities = repository.findByStatusRecordAndTargetIdInAndBeginBetweenOrderByBegin(
+                search.getStatus(), search.getTargetIds(), search.getFrom(), search.getTo());
+        return converter.convert(entities, dtoClass);
     }
 
     @Override
@@ -109,22 +111,22 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
             }
         });
-        return getByParams(search);
+        setSearch(search);
+        List<BaseRecordEntity> entities = repository.findByStatusRecordAndBusinessIdInAndBeginBetweenOrderByBegin(
+                search.getStatus(), search.getBusinessIds(), search.getFrom(), search.getTo());
+        return converter.convert(entities, dtoClass);
     }
 
-    private List<BaseRecordDto> getByParams(RecordsSearchDto search) {
+    private void setSearch(RecordsSearchDto search) {
         if (search == null || search.getStatus() == null) {
             search.setStatus(StatusRecord.CREATED);
         }
         if (search == null || search.getFrom() == null) {
-            search.setFrom(LocalDateTime.now(ZoneOffset.UTC));
+            search.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
         }
         if (search == null || search.getTo() == null) {
-            search.setTo(search.getFrom().toLocalDate().atTime(LocalTime.MAX));
+            search.setTo(search.getFrom().plusYears(1L));
         }
-        List<BaseRecordEntity> entities = repository.findByStatusRecordAndServiceTypeAndBusinessIdInAndTargetIdInAndWorkingSpaceIdInAndBeginBetweenOrderByBegin(
-                search.getStatus(), search.getServiceType(), search.getBusinessIds(), search.getTargetIds(), search.getWorkingSpaceIds(), search.getFrom(), search.getTo());
-        return converter.convert(entities, dtoClass);
     }
 
     @Override
@@ -272,7 +274,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
 
-    private void checkRecord(BaseRecordDto dto) {//todo update add TYPE ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    private void checkRecord(BaseRecordDto dto) {
         if (dto != null) {
             checkServiceChoose(dto);
             BaseBusinessDto business = getBusinessByRecord(dto);

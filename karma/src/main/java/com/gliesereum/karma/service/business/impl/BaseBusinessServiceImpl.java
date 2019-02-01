@@ -159,6 +159,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         result.setAddPhone(baseBusinessDto.getAddPhone());
         result.setLatitude(baseBusinessDto.getLatitude());
         result.setLongitude(baseBusinessDto.getLongitude());
+        result.setTimeZone(baseBusinessDto.getTimeZone());
         result.setRating(commentService.getRating(id));
 
         if (CollectionUtils.isNotEmpty(baseBusinessDto.getWorkTimes())) {

@@ -39,6 +39,8 @@ public class BusinessFullModel {
 
     private Double longitude;
 
+    private Integer timeZone;
+
     private RatingDto rating;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
