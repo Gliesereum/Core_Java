@@ -40,7 +40,7 @@ public class UserController {
 
     @PutMapping
     public UserDto update(@Valid @RequestBody UserDto user) {
-        return userService.update(user);
+        return userService.updateMe(user);
     }
 
     @GetMapping("/me")

@@ -66,11 +66,11 @@ public class SecurityUtil {
     }
 
     public static void checkUserByBanStatus() {
-        if (SecurityUtil.getUser() == null) {
+        if (isAnonymous()) {
             throw new ClientException(USER_NOT_AUTHENTICATION);
         }
         UserDto user = SecurityUtil.getUser().getUser();
-        if (user.getBanStatus().equals(BanStatus.BAN)) {
+        if ((user.getBanStatus() != null) && user.getBanStatus().equals(BanStatus.BAN)) {
             throw new ClientException(USER_IN_BAN);
         }
     }
