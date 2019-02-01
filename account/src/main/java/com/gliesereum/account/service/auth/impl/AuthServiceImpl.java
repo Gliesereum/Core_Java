@@ -220,6 +220,9 @@ public class AuthServiceImpl implements AuthService {
         TokenStoreDomain token = tokenService.getAndVerify(accessToken);
         UUID userId = UUID.fromString(token.getUserId());
         UserDto user = userService.getById(userId);
+        if(user == null) {
+            throw new ClientException(USER_NOT_FOUND);
+        }
         AuthDto auth = createModel(token, user);
         return auth;
     }
