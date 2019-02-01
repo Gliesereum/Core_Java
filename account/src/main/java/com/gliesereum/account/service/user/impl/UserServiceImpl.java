@@ -64,9 +64,8 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         return result;
     }
 
-    @Override
     @Transactional
-    public UserDto update(UserDto dto) {
+    public UserDto updateMe(UserDto dto) {
         UserDto result = null;
         if (dto != null) {
             if (SecurityUtil.isAnonymous()) {
@@ -79,6 +78,11 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             if (StringUtils.isEmpty(dto.getCoverUrl()) && !urlPattern.matcher(dto.getCoverUrl()).matches()) {
                 throw new ClientException(UPL_COVER_IS_NOT_VALID);
             }
+            UserDto byId = super.getById(dto.getId());
+            if (byId == null) {
+                throw new ClientException(USER_NOT_FOUND);
+            }
+            dto.setBanStatus(byId.getBanStatus());
             result = super.update(dto);
         }
         return result;
@@ -100,6 +104,6 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             throw new ClientException(USER_NOT_FOUND);
         }
         user.setBanStatus(status);
-        update(user);
+        super.update(user);
     }
 }
