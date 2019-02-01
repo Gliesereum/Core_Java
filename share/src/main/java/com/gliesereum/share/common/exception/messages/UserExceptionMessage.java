@@ -20,5 +20,9 @@ public class UserExceptionMessage {
     public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_CHANGE_VERIFIED_STATUS = new ExceptionMessage(1022, 400, "Don't have permission to change verified status");
     public static final ExceptionMessage KYC_STATUS_IS_EMPTY = new ExceptionMessage(1023, 400, "Verified status is empty");
     public static final ExceptionMessage CORPORATION_ID_IS_EMPTY = new ExceptionMessage(1024, 400, "Corporation id is empty");
+    public static final ExceptionMessage CORPORATION_ALREADY_HAS_PARENT = new ExceptionMessage(1025, 400, "Corporation already has parent");
+    public static final ExceptionMessage CORPORATION_HAS_NOT_PARENT = new ExceptionMessage(1026, 400, "Corporation has not any parent");
+    public static final ExceptionMessage CORPORATION_ID_EQUALS_PARENT_ID = new ExceptionMessage(1027, 400, "Corporation id equals parent id");
+    public static final ExceptionMessage PARENT_ID_IS_ONE_FROM_SOME_CHILD_ID = new ExceptionMessage(1028, 400, "Corporation id equals parent id");
 
 }
