@@ -47,6 +47,9 @@ public class AbstractBusinessEntity extends DefaultEntity {
     @Column(name = "longitude")
     private Double longitude;
 
+    @Column(name = "time_zone")
+    private Integer timeZone;
+
     @Column(name = "service_type")
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;

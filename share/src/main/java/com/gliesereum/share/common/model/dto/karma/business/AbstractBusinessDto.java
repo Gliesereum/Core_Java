@@ -46,6 +46,11 @@ public class AbstractBusinessDto extends DefaultDto {
     @Min(-180)
     private Double longitude;
 
+    @NotNull
+    @Max(720)
+    @Min(-720)
+    private Integer timeZone;
+
     private ServiceType serviceType;
 
 }

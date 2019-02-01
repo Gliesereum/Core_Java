@@ -49,6 +49,7 @@ services:
     environment:
       http.host: 0.0.0.0
       transport.host: 127.0.0.1
+      ES_JAVA_OPTS: "-Xms300M -Xmx1536M"
     ports:
     - 9200:9200
     - 9300:9300
@@ -86,6 +87,7 @@ services:
       RABBIT_PASSWORD: Af2f4dsASF
       ES_HOST: elasticsearch
       ES_PORT: 9200
+      LS_JAVA_OPTS: "-Xms100M -Xmx1G"
     deploy:
       restart_policy:
         condition: on-failure
