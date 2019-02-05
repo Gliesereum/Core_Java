@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @author vitalij
@@ -48,10 +47,7 @@ public class CorporationEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private VerifiedStatus verifiedStatus;
 
-    @Column(name = "parent_corporation_id")
-    private UUID parentCorporationId;
-
-    @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "parent_corporation_id", insertable = false, updatable = false)
-    private Set<CorporationEntity> childrenCorporation = new HashSet<>();
+    @OneToMany
+    @JoinColumn(name = "corporation_id", insertable = false, updatable = false)
+    private Set<CorporationSharedOwnershipEntity> corporationSharedOwnerships = new HashSet<>();
 }

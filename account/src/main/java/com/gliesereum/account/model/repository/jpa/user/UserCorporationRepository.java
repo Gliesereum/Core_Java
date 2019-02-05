@@ -4,6 +4,7 @@ import com.gliesereum.account.model.entity.UserCorporationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -12,6 +13,6 @@ import java.util.UUID;
 @Repository
 public interface UserCorporationRepository extends JpaRepository<UserCorporationEntity, UUID> {
 
-    UserCorporationEntity findByUserIdAndCorporationId(UUID userId, UUID corporationId);
+    List<UserCorporationEntity> findByUserIdAndCorporationIdIn(UUID userId, List<UUID> corporationIds);
 
 }

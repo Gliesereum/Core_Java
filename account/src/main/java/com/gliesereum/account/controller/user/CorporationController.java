@@ -3,11 +3,13 @@ package com.gliesereum.account.controller.user;
 import com.gliesereum.account.service.user.CorporationService;
 import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,29 +49,29 @@ public class CorporationController {
         return new MapResponse("true");
     }
 
-    @PostMapping("/user/{idCorporation}/{idUser}")
-    public MapResponse addUserToCorporation(@PathVariable("idCorporation") UUID idCorporation, @PathVariable("idUser") UUID idUser) {
-        service.addUser(idCorporation, idUser);
+    @PostMapping("/owner")
+    public MapResponse addOwnerCorporation(@Valid @RequestBody CorporationSharedOwnershipDto dto) {
+        service.addOwnerCorporation(dto);
         return new MapResponse("true");
     }
 
-    @DeleteMapping("/user/{idCorporation}/{idUser}")
-    public MapResponse removeUserToCorporation(@PathVariable("idCorporation") UUID idCorporation, @PathVariable("idUser") UUID idUser) {
-        service.removeUser(idCorporation, idUser);
+    @DeleteMapping("/owner/{id}")
+    public MapResponse removeOwnerCorporation(@PathVariable("id") UUID id) {
+        service.removeOwnerCorporation(id);
         return new MapResponse("true");
     }
 
     @PostMapping("/kyc/status")
     public MapResponse updateKyc(@RequestParam(value = "status") KYCStatus status,
-                                 @RequestParam(value = "idCorporation") UUID idCorporation) {
-        service.updateKycStatus(status,idCorporation);
+                                 @RequestParam(value = "corporationId") UUID corporationId) {
+        service.updateKycStatus(status,corporationId);
         return new MapResponse("true");
     }
 
     @PostMapping("/kyc/upload-document")
     public MapResponse uploadDocument(@RequestParam("file") MultipartFile file,
-                                      @RequestParam(value = "idCorporation") UUID idCorporation) {
-        service.uploadDocument(file, idCorporation);
+                                      @RequestParam(value = "corporationId") UUID corporationId) {
+        service.uploadDocument(file, corporationId);
         return new MapResponse("true");
     }
 
