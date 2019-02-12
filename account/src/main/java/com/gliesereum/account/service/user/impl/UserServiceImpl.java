@@ -8,6 +8,7 @@ import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -34,13 +36,18 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     public static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
     private static final Class<UserDto> DTO_CLASS = UserDto.class;
     private static final Class<UserEntity> ENTITY_CLASS = UserEntity.class;
+
     @Autowired
     private UserEmailService emailService;
+
     @Autowired
     private UserPhoneService phoneService;
 
+    private final UserRepository userRepository;
+
     public UserServiceImpl(UserRepository userRepository, DefaultConverter defaultConverter) {
         super(userRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -59,6 +66,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         UserDto result = null;
         if (dto != null) {
             dto.setBanStatus(BanStatus.UNBAN);
+            dto.setKycStatus(KYCStatus.KYC_NOT_PASSED);
             result = super.create(dto);
         }
         return result;
@@ -66,12 +74,17 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
 
     @Override
     @Transactional
-    public UserDto update(UserDto dto) {
+    public UserDto updateUser(UserDto dto) {
         UserDto result = null;
         if (dto != null) {
             if (SecurityUtil.isAnonymous()) {
                 throw new ClientException(USER_NOT_AUTHENTICATION);
             }
+            UserDto user = getById(dto.getId());
+            if (user == null) {
+                throw new ClientException(USER_NOT_FOUND);
+            }
+            dto.setKycStatus(user.getKycStatus());
             dto.setId(SecurityUtil.getUserId());
             if (StringUtils.isEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {
                 throw new ClientException(UPL_AVATAR_IS_NOT_VALID);
@@ -85,6 +98,16 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     }
 
     @Override
+    public void updateKycStatus(UUID id, KYCStatus status) {
+        UserDto user = getById(id);
+        if (user == null) {
+            throw new ClientException(USER_NOT_FOUND);
+        }
+        user.setKycStatus(user.getKycStatus());
+        super.update(user);
+    }
+
+    @Override
     public void banById(UUID id) {
         changeBanStatus(id, BanStatus.BAN);
     }
@@ -92,6 +115,12 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Override
     public void unBanById(UUID id) {
         changeBanStatus(id, BanStatus.UNBAN);
+    }
+
+    @Override
+    public List<UserDto> getAllKycRequest() {
+        List<UserEntity> entities = userRepository.findByKycStatus(KYCStatus.KYC_IN_PROCESS);
+        return converter.convert(entities, DTO_CLASS);
     }
 
     private void changeBanStatus(UUID id, BanStatus status) {

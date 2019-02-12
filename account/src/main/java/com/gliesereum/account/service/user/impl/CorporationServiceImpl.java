@@ -2,7 +2,6 @@ package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.CorporationEntity;
 import com.gliesereum.account.model.repository.jpa.user.CorporationRepository;
-import com.gliesereum.account.service.depository.DepositoryService;
 import com.gliesereum.account.service.user.CorporationService;
 import com.gliesereum.account.service.user.CorporationSharedOwnershipService;
 import com.gliesereum.account.service.user.UserCorporationService;
@@ -10,12 +9,13 @@ import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
-import com.gliesereum.share.common.exchange.service.media.MediaExchangeService;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
-import com.gliesereum.share.common.model.dto.account.user.*;
-import com.gliesereum.share.common.model.dto.media.UserFileDto;
+import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
+import com.gliesereum.share.common.model.dto.account.user.UserCorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,18 +23,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.NOT_EXIST_BY_ID;
-import static com.gliesereum.share.common.exception.messages.MediaExceptionMessage.UPLOAD_FAILED;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
@@ -57,12 +52,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private DepositoryService depositoryService;
-
-    @Autowired
-    private MediaExchangeService mediaExchangeService;
 
     public CorporationServiceImpl(CorporationRepository corporationRepository, DefaultConverter converter) {
         super(corporationRepository, converter, DTO_CLASS, ENTITY_CLASS);
@@ -139,11 +128,8 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     }
 
     @Override
-    public void updateKycStatus(KYCStatus status, UUID idCorporation) {
-        if (status == null) {
-            throw new ClientException(KYC_STATUS_IS_EMPTY);
-        }
-        CorporationDto corporation = getCorporationById(idCorporation);
+    public void updateKycStatus(UUID id, KYCStatus status) {
+        CorporationDto corporation = getById(id);
         corporation.setKYCStatus(status);
         if (status.equals(KYCStatus.KYC_PASSED)) {
             corporation.setVerifiedStatus(VerifiedStatus.VERIFIED);
@@ -151,36 +137,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             corporation.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
         }
         super.update(corporation);
-    }
-
-    @Override
-    public List<CorporationDto> getAllRequest() {
-        List<CorporationEntity> entities = corporationRepository.findByKYCStatus(KYCStatus.KYC_IN_PROCESS);
-        return converter.convert(entities, DTO_CLASS);
-    }
-
-    @Override
-    public void uploadDocument(MultipartFile file, UUID idCorporation) {
-        checkCurrentUserForPermissionActionThisCorporation(idCorporation);
-        CorporationDto corporation = getById(idCorporation);
-        if (corporation == null) {
-            throw new ClientException(CORPORATION_NOT_FOUND);
-        }
-        encryptAndSave(file, idCorporation);
-        if (!corporation.getKYCStatus().equals(KYCStatus.KYC_PASSED)) {
-            corporation.setKYCStatus(KYCStatus.KYC_IN_PROCESS);
-            super.update(corporation);
-        }
-    }
-
-    @Override
-    public void deleteDocument(String path, UUID idCorporation) {
-        checkCurrentUserForPermissionActionThisCorporation(idCorporation);
-        CorporationDto corporation = getById(idCorporation);
-        if (corporation == null) {
-            throw new ClientException(CORPORATION_NOT_FOUND);
-        }
-        mediaExchangeService.deleteFile(path);
     }
 
     private void checkCorporationSharedOwnerships(CorporationSharedOwnershipDto dto) {
@@ -219,10 +175,17 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         }
     }
 
-    private void checkCurrentUserForPermissionActionThisCorporation(UUID id) {
+    @Override
+    public List<CorporationDto> getAllKycRequest() {
+        List<CorporationEntity> entities = corporationRepository.findByKYCStatus(KYCStatus.KYC_IN_PROCESS);
+        return converter.convert(entities, DTO_CLASS);
+    }
+
+    @Override
+    public void checkCurrentUserForPermissionActionThisCorporation(UUID id) {
         SecurityUtil.checkUserByBanStatus();
         UUID userId = SecurityUtil.getUserId();
-        CorporationDto corporation = getCorporationById(id);
+        CorporationDto corporation = getById(id);
         List<CorporationSharedOwnershipDto> sharedOwnerships = corporation.getCorporationSharedOwnerships();
         if (CollectionUtils.isEmpty(sharedOwnerships) ||
                 !sharedOwnerships.stream().map(CorporationSharedOwnershipDto::getOwnerId).collect(Collectors.toList()).contains(userId)) {
@@ -230,7 +193,8 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         }
     }
 
-    private CorporationDto getCorporationById(UUID id) {
+    @Override
+    public CorporationDto getById(UUID id) {
         if (id == null) {
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
@@ -253,32 +217,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         }
     }
 
-    private void encryptAndSave(MultipartFile multipart, UUID idCorporation) {
-        File file = null;
-        try {
-            file = multipartFileToFile(multipart);
-            //todo encrypt, gzip file
-            UserFileDto userFile = mediaExchangeService.uploadFile(file);
-            if (userFile != null) {
-                depositoryService.create(new DepositoryDto(userFile.getUrl(), idCorporation));
-            } else {
-                throw new ClientException(UPLOAD_FAILED);
-            }
-        } finally {
-            if (file != null && file.exists())
-                file.delete();
-        }
-    }
 
-    private File multipartFileToFile(MultipartFile multipart) {
-        File file = new File(multipart.getOriginalFilename());
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            file.createNewFile();
-            fos.write(multipart.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
+
 
 }
