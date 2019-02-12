@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.ANONYMOUS_CANT_COMMENT;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.BUSINESS_NOT_FOUND;
 
@@ -127,6 +128,11 @@ public class BaseBusinessController {
     @GetMapping("/{id}/comment")
     public List<CommentFullDto> getCommentByBusiness(@PathVariable("id") UUID id) {
         return commentService.findFullByObjectId(id);
+    }
+
+    @GetMapping("/{id}/comment/current-user")
+    public CommentFullDto getCommentByBusinessForUser(@PathVariable("id") UUID id) {
+        return commentService.findByObjectIdForCurrentUser(id);
     }
 
     @PostMapping("/{id}/comment")
