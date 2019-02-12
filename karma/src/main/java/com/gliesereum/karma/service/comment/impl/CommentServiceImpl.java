@@ -11,18 +11,19 @@ import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
 /**
@@ -80,6 +81,26 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
 
                 }
 
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public CommentFullDto findByObjectIdForCurrentUser(UUID objectId) {
+        CommentFullDto result = null;
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        UUID userId = SecurityUtil.getUserId();
+        if (objectId != null) {
+            CommentEntity entity = commentRepository.findByObjectIdAndOwnerId(objectId, userId);
+            result = converter.convert(entity, CommentFullDto.class);
+            if (result != null) {
+                UserDto user = SecurityUtil.getUser().getUser();
+                result.setLastName(user.getLastName());
+                result.setMiddleName(user.getMiddleName());
+                result.setFirstName(user.getFirstName());
             }
         }
         return result;

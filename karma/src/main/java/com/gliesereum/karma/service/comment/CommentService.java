@@ -19,6 +19,8 @@ public interface CommentService extends DefaultService<CommentDto, CommentEntity
 
     List<CommentFullDto> findFullByObjectId(UUID objectId);
 
+    CommentFullDto findByObjectIdForCurrentUser(UUID objectId);
+
     CommentDto addComment(UUID objectId, UUID userId, CommentDto comment);
 
     CommentDto updateComment(UUID userId, CommentDto comment);
