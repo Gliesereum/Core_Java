@@ -16,6 +16,7 @@ import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
@@ -198,11 +199,11 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             List<MediaDto> emptyList = Collections.emptyList();
             result.setMedia(emptyList);
         }
-        List<CommentDto> comments = commentService.findByObjectId(id);
+        List<CommentFullDto> comments = commentService.findFullByObjectId( id);
         if (CollectionUtils.isNotEmpty(comments)) {
             result.setComments(comments);
         } else {
-            List<CommentDto> emptyList = Collections.emptyList();
+            List<CommentFullDto> emptyList = Collections.emptyList();
             result.setComments(emptyList);
         }
         List<BaseRecordDto> records = baseRecordService.getByBusinessIdAndStatusRecord(id, StatusRecord.CREATED,

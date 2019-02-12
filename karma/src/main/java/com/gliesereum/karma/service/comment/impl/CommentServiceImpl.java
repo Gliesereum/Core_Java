@@ -5,7 +5,10 @@ import com.gliesereum.karma.model.repository.jpa.comment.CommentRepository;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
@@ -34,6 +39,9 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
     private final CommentRepository commentRepository;
 
     @Autowired
+    private UserExchangeService userExchangeService;
+
+    @Autowired
     public CommentServiceImpl(CommentRepository commentRepository, DefaultConverter defaultConverter) {
         super(commentRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.commentRepository = commentRepository;
@@ -45,6 +53,34 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
         if (objectId != null) {
             List<CommentEntity> entities = commentRepository.findByObjectId(objectId);
             result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public List<CommentFullDto> findFullByObjectId(UUID objectId) {
+        List<CommentFullDto> result = null;
+        if (objectId != null) {
+            List<CommentEntity> entities = commentRepository.findByObjectId(objectId);
+            result = converter.convert(entities, CommentFullDto.class);
+            if (CollectionUtils.isNotEmpty(result)) {
+                List<UUID> ownerIds = result.stream().map(CommentFullDto::getOwnerId).collect(Collectors.toList());
+                List<UserDto> users = userExchangeService.findByIds(ownerIds);
+                if (CollectionUtils.isNotEmpty(users)) {
+                    result.forEach(i -> {
+                        for (UserDto user : users) {
+                            if (user.getId().equals(i.getOwnerId())) {
+                                i.setFirstName(user.getFirstName());
+                                i.setLastName(user.getLastName());
+                                i.setMiddleName(user.getMiddleName());
+                                break;
+                            }
+                        }
+                    });
+
+                }
+
+            }
         }
         return result;
     }

@@ -10,6 +10,7 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
@@ -124,8 +125,8 @@ public class BaseBusinessController {
     }
 
     @GetMapping("/{id}/comment")
-    public List<CommentDto> getCommentByBusiness(@PathVariable("id") UUID id) {
-        return commentService.findByObjectId(id);
+    public List<CommentFullDto> getCommentByBusiness(@PathVariable("id") UUID id) {
+        return commentService.findFullByObjectId(id);
     }
 
     @PostMapping("/{id}/comment")

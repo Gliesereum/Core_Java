@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -53,7 +54,7 @@ public class BusinessFullModel {
 
     private List<MediaDto> media = new ArrayList<>();
 
-    private List<CommentDto> comments = new ArrayList<>();
+    private List<CommentFullDto> comments = new ArrayList<>();
 
     private List<BaseRecordDto> records = new ArrayList<>();
 }
