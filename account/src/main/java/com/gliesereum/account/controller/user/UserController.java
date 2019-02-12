@@ -28,6 +28,11 @@ public class UserController {
         return userService.getById(id);
     }
 
+    @GetMapping("/by-ids")
+    public List<UserDto> getByIds(@RequestParam("ids") List<UUID> ids) {
+        return userService.getByIds(ids);
+    }
+
     @GetMapping
     public List<UserDto> getAll() {
         return userService.getAll();
