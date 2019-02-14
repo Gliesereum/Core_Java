@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -33,4 +34,7 @@ public class CommentEntity extends DefaultEntity {
 
     @Column(name = "owner_id")
     private UUID ownerId;
+
+    @Column(name = "date_created")
+    private LocalDateTime dateCreated;
 }
