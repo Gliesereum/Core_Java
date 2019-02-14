@@ -14,6 +14,8 @@ import java.util.UUID;
 
 public interface CommentRepository extends JpaRepository<CommentEntity, UUID> {
 
+    List<CommentEntity> findByObjectIdOrderByDateCreatedDesc(UUID objectId);
+
     List<CommentEntity> findByObjectId(UUID objectId);
 
     boolean existsByObjectIdAndOwnerId(UUID objectId, UUID ownerId);

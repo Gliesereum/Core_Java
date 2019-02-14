@@ -53,7 +53,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
     public List<CommentDto> findByObjectId(UUID objectId) {
         List<CommentDto> result = null;
         if (objectId != null) {
-            List<CommentEntity> entities = commentRepository.findByObjectId(objectId);
+            List<CommentEntity> entities = commentRepository.findByObjectIdOrderByDateCreatedDesc(objectId);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -63,7 +63,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
     public List<CommentFullDto> findFullByObjectId(UUID objectId) {
         List<CommentFullDto> result = null;
         if (objectId != null) {
-            List<CommentEntity> entities = commentRepository.findByObjectId(objectId);
+            List<CommentEntity> entities = commentRepository.findByObjectIdOrderByDateCreatedDesc(objectId);
             result = converter.convert(entities, CommentFullDto.class);
             if (CollectionUtils.isNotEmpty(result)) {
                 List<UUID> ownerIds = result.stream().map(CommentFullDto::getOwnerId).collect(Collectors.toList());
