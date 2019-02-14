@@ -195,7 +195,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
-            checkBeginTimeForRecord(dto.getBegin());
+            BaseBusinessDto business = getBusinessByRecord(dto);
+            checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
             dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
             dto.setPrice(getPriceByRecord(dto));
             dto.setStatusRecord(StatusRecord.CREATED);
@@ -216,8 +217,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Override
     public BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto) {
         if (dto != null) {
-            checkBeginTimeForRecord(dto.getBegin());
             BaseBusinessDto business = getBusinessByRecord(dto);
+            checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
             Long duration = getDurationByRecord(dto);
             dto.setFinish(dto.getBegin().plusMinutes(duration));
 
@@ -410,11 +411,12 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return business;
     }
 
-    private void checkBeginTimeForRecord(LocalDateTime time) {
+    private void checkBeginTimeForRecord(LocalDateTime time, Integer timeZoneOffset) {
         if (time == null) {
             throw new ClientException(TIME_BEGIN_EMPTY);
         }
-        if (time.plusMinutes(3L).isBefore(LocalDateTime.now(ZoneOffset.UTC))) {
+        LocalDateTime currentTime = LocalDateTime.now(ZoneOffset.UTC).plusMinutes(timeZoneOffset);
+        if (time.plusMinutes(3L).isBefore(currentTime)) {
             throw new ClientException(TIME_BEGIN_PAST);
         }
     }
