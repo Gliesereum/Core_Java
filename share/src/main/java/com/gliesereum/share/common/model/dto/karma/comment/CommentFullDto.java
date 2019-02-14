@@ -1,10 +1,15 @@
 package com.gliesereum.share.common.model.dto.karma.comment;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -30,4 +35,8 @@ public class CommentFullDto extends DefaultDto {
     private String lastName;
 
     private String middleName;
+
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
+    private LocalDateTime dateCreated;
 }
