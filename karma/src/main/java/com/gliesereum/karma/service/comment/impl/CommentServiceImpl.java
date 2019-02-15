@@ -130,6 +130,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
         }
         existed.setRating(comment.getRating());
         existed.setText(comment.getText());
+        existed.setDateCreated(LocalDateTime.now());
         return update(existed);
     }
 
