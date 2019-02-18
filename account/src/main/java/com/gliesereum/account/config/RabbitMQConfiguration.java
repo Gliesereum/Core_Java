@@ -23,11 +23,9 @@ import org.springframework.core.env.Environment;
 public class RabbitMQConfiguration {
 
     private final String MAIL_QUEUE = "spring.rabbitmq.queue-mail";
-    @Autowired
-    private Environment environment;
 
     @Bean
-    public Queue queue() {
+    public Queue queue(Environment environment) {
         return new Queue(environment.getRequiredProperty(MAIL_QUEUE));
     }
 

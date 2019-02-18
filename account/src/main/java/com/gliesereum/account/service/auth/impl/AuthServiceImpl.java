@@ -85,17 +85,13 @@ public class AuthServiceImpl implements AuthService {
         AuthDto result;
         UserDto user = null;
         if (verificationService.checkVerification(value, code)) {
-            switch (type) {
-                case EMAIL: {
-                    UserEmailDto email = emailService.getByValue(value);
-                    user = userService.getById(email.getUserId());
-                    break;
-                }
-                case PHONE: {
-                    UserPhoneDto phone = phoneService.getByValue(value);
-                    user = userService.getById(phone.getUserId());
-                    break;
-                }
+            if (type.equals(VerificationType.EMAIL)) {
+                UserEmailDto email = emailService.getByValue(value);
+                user = userService.getById(email.getUserId());
+            }
+            if (type.equals(VerificationType.PHONE)){
+                UserPhoneDto phone = phoneService.getByValue(value);
+                user = userService.getById(phone.getUserId());
             }
             if (user != null) {
                 TokenStoreDomain token = tokenService.generate(user.getId().toString());
@@ -116,21 +112,17 @@ public class AuthServiceImpl implements AuthService {
             checkValueByExist(value, type, true);
             UserDto newUser = userService.create(new UserDto());
             if (newUser != null) {
-                switch (type) {
-                    case EMAIL: {
-                        UserEmailDto newEmail = new UserEmailDto();
-                        newEmail.setEmail(value);
-                        newEmail.setUserId(newUser.getId());
-                        emailService.create(newEmail);
-                        break;
-                    }
-                    case PHONE: {
-                        UserPhoneDto newPhone = new UserPhoneDto();
-                        newPhone.setPhone(value);
-                        newPhone.setUserId(newUser.getId());
-                        phoneService.create(newPhone);
-                        break;
-                    }
+                if(type.equals(VerificationType.EMAIL)) {
+                    UserEmailDto newEmail = new UserEmailDto();
+                    newEmail.setEmail(value);
+                    newEmail.setUserId(newUser.getId());
+                    emailService.create(newEmail);
+                }
+                if (type.equals(VerificationType.PHONE)){
+                    UserPhoneDto newPhone = new UserPhoneDto();
+                    newPhone.setPhone(value);
+                    newPhone.setUserId(newUser.getId());
+                    phoneService.create(newPhone);
                 }
                 TokenStoreDomain token = tokenService.generate(newUser.getId().toString());
                 result = createModel(token, newUser);
@@ -223,8 +215,7 @@ public class AuthServiceImpl implements AuthService {
         if(user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }
-        AuthDto auth = createModel(token, user);
-        return auth;
+        return createModel(token, user);
     }
 
     private void checkField(Map<String, String> params) {
@@ -240,19 +231,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void checkValueByExist(String value, VerificationType verificationType, boolean isNew) {
-        switch (verificationType) {
-            case PHONE: {
-                boolean exist = phoneService.checkPhoneByExist(value);
-                if (isNew && exist) throw new ClientException(PHONE_EXIST);
-                if (!isNew && !exist) throw new ClientException(PHONE_NOT_FOUND);
-                break;
-            }
-            case EMAIL: {
-                boolean exist = emailService.checkEmailByExist(value);
-                if (isNew && exist) throw new ClientException(EMAIL_EXIST);
-                if (!isNew && !exist) throw new ClientException(EMAIL_NOT_FOUND);
-                break;
-            }
+        if (verificationType.equals(VerificationType.PHONE)) {
+            boolean exist = phoneService.checkPhoneByExist(value);
+            if (isNew && exist) throw new ClientException(PHONE_EXIST);
+            if (!isNew && !exist) throw new ClientException(PHONE_NOT_FOUND);
+        }
+        if (verificationType.equals(VerificationType.EMAIL)) {
+            boolean exist = emailService.checkEmailByExist(value);
+            if (isNew && exist) throw new ClientException(EMAIL_EXIST);
+            if (!isNew && !exist) throw new ClientException(EMAIL_NOT_FOUND);
         }
     }
 
