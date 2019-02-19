@@ -26,8 +26,8 @@ zuul:
       path: /karma/v1/**
       service-id: karma-service
     media-service:
-      path: /media/v1/**
-      service-id: media-service
+      path: /file/v1/**
+      service-id: file-service
   ignored-services: '*'
   prefix: /api
   host:

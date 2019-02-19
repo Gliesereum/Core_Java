@@ -1,7 +1,7 @@
 package com.gliesereum.share.common.exchange.service.media.impl;
 
 import com.gliesereum.share.common.exchange.service.media.MediaExchangeService;
-import com.gliesereum.share.common.model.dto.media.UserFileDto;
+import com.gliesereum.share.common.model.dto.file.UserFileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
