@@ -53,16 +53,12 @@ public class PhoneServiceImpl implements PhoneService {
         try {
             final String url = environment.getProperty(API_PHONE_URL) + "single";
 
-            Map<String, String> body = new HashMap();
-            body.put("auth_type", environment.getProperty(AUTH_TYPE));
-            body.put("login", environment.getProperty(LOGIN));
-            body.put("token", environment.getProperty(TOKEN));
+            Map<String, String> body = getBody();
             body.put("alphaname", environment.getProperty(ALPHA_NAME));
             body.put("text", text);
             body.put("phone", phone);
 
-            HttpEntity httpEntity = new HttpEntity<>(body, getHeaders());
-            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+            ResponseEntity<String> responseEntity = sendRequest(body, url);
             PhoneResponse response = mapper.readValue(responseEntity.getBody(), PhoneResponse.class);
 
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
@@ -82,13 +78,7 @@ public class PhoneServiceImpl implements PhoneService {
         try {
             final String url = environment.getProperty(API_PHONE_URL) + "balance";
 
-            Map<String, String> body = new HashMap();
-            body.put("auth_type", environment.getProperty(AUTH_TYPE));
-            body.put("login", environment.getProperty(LOGIN));
-            body.put("token", environment.getProperty(TOKEN));
-
-            HttpEntity httpEntity = new HttpEntity<>(body, getHeaders());
-            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+            ResponseEntity<String> responseEntity = sendRequest(getBody(), url);
             PhoneResponse response = mapper.readValue(responseEntity.getBody(), PhoneResponse.class);
 
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
@@ -103,6 +93,19 @@ public class PhoneServiceImpl implements PhoneService {
             logger.error(error);
             return error;
         }
+    }
+
+    private Map<String, String> getBody() {
+        Map<String, String> body = new HashMap();
+        body.put("auth_type", environment.getProperty(AUTH_TYPE));
+        body.put("login", environment.getProperty(LOGIN));
+        body.put("token", environment.getProperty(TOKEN));
+        return body;
+    }
+
+    private ResponseEntity<String> sendRequest(Map<String, String> body, String url) {
+        HttpEntity httpEntity = new HttpEntity<>(body, getHeaders());
+        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
     }
 
 }
