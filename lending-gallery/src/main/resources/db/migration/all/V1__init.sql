@@ -1,2 +1,2 @@
-CREATE SCHEMA IF NOT EXISTS lending-gallery;
+CREATE SCHEMA IF NOT EXISTS lending_gallery;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA pg_catalog;
