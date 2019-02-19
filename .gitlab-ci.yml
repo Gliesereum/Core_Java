@@ -16,7 +16,7 @@ git-pull:
     - cd $PROJECT_HOME
     - git pull
   only:
-    - karma/dev
+    - gls/dev
 
 gradle-build:
   stage: build
@@ -31,7 +31,7 @@ gradle-build:
     - sudo gradle clean build -b=karma/build.gradle
     - sudo gradle clean build -b=media/build.gradle
   only:
-    - karma/dev
+    - gls/dev
 
 docker-stop-container:
   stage: stop-container
@@ -42,7 +42,7 @@ docker-stop-container:
     - sleep 30
     - docker rm $(docker ps -a -q) --force
   only:
-    - karma/dev
+    - gls/dev
   allow_failure: true
 
 docker-clean-image:
@@ -59,7 +59,7 @@ docker-clean-image:
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-media')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
   only:
-    - karma/dev
+    - gls/dev
   allow_failure: true
     
 docker-image-package:
@@ -76,7 +76,7 @@ docker-image-package:
     - sudo docker build -t gls-media:0.0.1 -f docker/media/Dockerfile  ./media/build/libs/
     - sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  ./log/elk/
   only:
-    - karma/dev
+    - gls/dev
 
 docker-deploy:
   stage: deploy
@@ -86,4 +86,4 @@ docker-deploy:
     - docker stack deploy -c docker/docker-compose-dev-log.yml gls
     - docker ps
   only:
-    - karma/dev
+    - gls/dev
