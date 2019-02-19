@@ -15,4 +15,5 @@ import java.util.UUID;
 public interface CorporationRepository extends JpaRepository<CorporationEntity, UUID> {
 
     List<CorporationEntity> findByKYCStatus(KYCStatus status);
+
 }

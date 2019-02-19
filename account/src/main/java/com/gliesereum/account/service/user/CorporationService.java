@@ -3,8 +3,8 @@ package com.gliesereum.account.service.user;
 import com.gliesereum.account.model.entity.CorporationEntity;
 import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.service.DefaultService;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,15 +14,13 @@ import java.util.UUID;
  */
 public interface CorporationService extends DefaultService<CorporationDto, CorporationEntity> {
 
-    void addUser(UUID idCorporation, UUID idUser);
+    void addOwnerCorporation(CorporationSharedOwnershipDto dto);
 
-    void removeUser(UUID idCorporation, UUID idUser);
+    void removeOwnerCorporation(UUID id);
 
-    void updateKycStatus(KYCStatus status, UUID idCorporation);
+    void updateKycStatus(UUID id, KYCStatus status);
 
-    List<CorporationDto> getAllRequest();
+    List<CorporationDto> getAllKycRequest();
 
-    void uploadDocument(MultipartFile file, UUID idCorporation);
-
-    void deleteDocument(String path, UUID idCorporation);
+    void checkCurrentUserForPermissionActionThisCorporation(UUID id);
 }

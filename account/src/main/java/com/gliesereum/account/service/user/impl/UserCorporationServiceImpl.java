@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -31,8 +32,8 @@ public class UserCorporationServiceImpl extends DefaultServiceImpl<UserCorporati
     }
 
     @Override
-    public UserCorporationDto getByUserIdAndCorporationId(UUID userId, UUID corporationId) {
-        UserCorporationEntity entity = userCorporationRepository.findByUserIdAndCorporationId(userId, corporationId);
-        return converter.convert(entity, dtoClass);
+    public List<UserCorporationDto> getAllByUserIdAndCorporationId(UUID userId, List<UUID> corporationIds) {
+        List<UserCorporationEntity> list = userCorporationRepository.findByUserIdAndCorporationIdIn(userId, corporationIds);
+        return converter.convert(list, dtoClass);
     }
 }
