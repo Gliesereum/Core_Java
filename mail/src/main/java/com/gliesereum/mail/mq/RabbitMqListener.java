@@ -5,6 +5,7 @@ import com.gliesereum.mail.email.EmailService;
 import com.gliesereum.mail.phone.PhoneService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -36,7 +37,7 @@ public class RabbitMqListener {
     @Autowired
     private PhoneService phoneService;
 
-    @RabbitListener(queues = "verificationQueue")
+    @RabbitListener(queuesToDeclare = @Queue(name = "verificationQueue", ignoreDeclarationExceptions = "true"))
     public void processQueue(String message) {
         Map<String, String> model = getModelByJson(message);
         if (!CollectionUtils.isEmpty(model)) {

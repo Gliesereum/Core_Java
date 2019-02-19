@@ -18,10 +18,10 @@ import java.util.List;
 public class MailController {
 
     @Autowired
-    PhoneService phoneService;
+    private PhoneService phoneService;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @PostMapping(value = "/phone/single")
     public void sendSingleMessageToPhone(@RequestParam(value = "phone") String phone,

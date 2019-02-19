@@ -19,13 +19,10 @@ import org.springframework.core.env.Environment;
         basePackageClasses = RabbitMQDefaultConfiguration.class)
 public class LoggingDefaultConfiguration {
 
-    @Autowired
-    private Environment environment;
-
-    private final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
+    private static final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
 
     @Bean
-    public Queue queue() {
+    public Queue queue(Environment environment) {
         return new Queue(environment.getRequiredProperty(QUEUE_LOGSTASH));
     }
 }
