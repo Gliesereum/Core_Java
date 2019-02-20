@@ -218,8 +218,8 @@ services:
       EUREKA_HOST: discovery
       EUREKA_PORT: 8761
 
-  media:
-    image: gls-media:0.0.1
+  file:
+    image: gls-file:0.0.1
     deploy:
       restart_policy:
         condition: on-failure
