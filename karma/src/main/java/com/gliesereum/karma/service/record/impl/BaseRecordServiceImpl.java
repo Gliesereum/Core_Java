@@ -323,7 +323,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
                 int sumByPackage = packageDto.getServices().stream().mapToInt(ServicePriceDto::getPrice).sum();
                 if (packageDto.getDiscount() > 0) {
-                    result += (sumByPackage - ((sumByPackage / 100) * packageDto.getDiscount()));
+                    result += (int)(sumByPackage - ((sumByPackage / 100.0f) * packageDto.getDiscount()));
                 } else {
                     result += sumByPackage;
                 }

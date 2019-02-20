@@ -1,6 +1,6 @@
 package com.gliesereum.share.common.exchange.service.media;
 
-import com.gliesereum.share.common.model.dto.media.UserFileDto;
+import com.gliesereum.share.common.model.dto.file.UserFileDto;
 
 import java.io.File;
 

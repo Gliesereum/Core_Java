@@ -1,21 +1,23 @@
+# serivce name
 spring:
   application:
-    name: lending-gallery-service
+    name: file-service
   mvc:
     logResolvedException: false
-  jackson:
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
-  main:
-    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
-module-url: /lending-gallery/v1
+module-url: /file/v1
+
 
 server:
-  port: 8260
+  port: 8250
 
 db:
-  schema: lending_gallery
+  schema: file
 
 security:
   properties:
@@ -23,6 +25,7 @@ security:
     jwtPrefix: JWT
     jwtSecret: CnfxFqbCKHLqzT9LGruE
 
+# eureka server url
 eureka:
   client:
     serviceUrl:
@@ -39,6 +42,6 @@ exchange:
   endpoint:
     permission:
       endpointUpdatePack: http://permission-service/endpoint/pack
-    account:
-      userIsExist: http://account-service/user/exist
-      findByIds: http://account-service/user/by-ids
+
+multipart:
+  compatibleParentTypes: image, application
