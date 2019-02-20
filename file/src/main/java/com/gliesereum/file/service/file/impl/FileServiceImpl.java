@@ -6,16 +6,23 @@ import com.gliesereum.file.service.user.UserFileService;
 import com.gliesereum.share.common.exception.CustomException;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exception.messages.CommonExceptionMessage;
+import com.gliesereum.share.common.model.dto.file.FileResponseDto;
 import com.gliesereum.share.common.model.dto.file.UserFileDto;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.MediaExceptionMessage.*;
@@ -26,6 +33,7 @@ import static com.gliesereum.share.common.exception.messages.MediaExceptionMessa
  */
 
 @Service
+@Slf4j
 public class FileServiceImpl implements FileService {
 
     private static final String DEFAULT_FILENAME = "file";
@@ -40,7 +48,28 @@ public class FileServiceImpl implements FileService {
     private String[] compatibleParentTypes;
 
     @Override
-    public UserFileDto uploadFile(UUID userId, MultipartFile multipartFile) {
+    public FileResponseDto loadFile(UUID fileId, UUID userId) {
+        FileResponseDto fileResponse = null;
+        if (ObjectUtils.allNotNull(fileId, userId)) {
+            UserFileDto userFile = userFileService.getById(fileId);
+            if (userFile == null) {
+                throw new ClientException(USER_FILE_NOT_FOUND);
+            }
+            if (!userHaveAccessToFile(userFile, userId)) {
+                throw new ClientException(CURRENT_USER_DONT_HAVE_ACCESS_TO_FILE);
+            }
+            Resource resource = cdnService.loadFile(userFile.getFilename());
+            if (resource != null) {
+                fileResponse = new FileResponseDto();
+                fileResponse.setResource(resource);
+                fileResponse.setUserFile(userFile);
+            }
+        }
+        return fileResponse;
+    }
+
+    @Override
+    public UserFileDto uploadFile(UUID userId, UserFileDto userFile, MultipartFile multipartFile) {
         String resultUrl = null;
         if ((multipartFile == null) || (multipartFile.isEmpty())) {
             throw new ClientException(MULTIPART_DATA_EMTPY);
@@ -55,13 +84,39 @@ public class FileServiceImpl implements FileService {
         File file = null;
         try {
             file = convertMultipartToFile(multipartFile);
-            resultUrl = cdnService.uploadFile(filename, file);
+            resultUrl = cdnService.uploadFile(filename, file, userFile.getOpen());
 
         } finally {
-            if (file != null && file.exists())
-            file.delete();
+            if (file != null && file.exists()) {
+                try {
+                    Files.delete(file.toPath());
+                } catch (IOException e) {
+                    log.warn("Error while delete uploaded file", e);
+                }
+            }
         }
-        return userFileService.create(new UserFileDto(filename, resultUrl, contentType, fileSize, userId));
+        return userFileService.create(insertFileInfo(userFile, filename, resultUrl, contentType, fileSize, userId));
+    }
+
+    @Override
+    public void changeAccessToFile(UserFileDto userFile) {
+        if ((userFile != null) && StringUtils.isNotEmpty(userFile.getFilename()) && (userFile.getOpen() != null)) {
+            cdnService.changeAccessToFile(userFile.getFilename(), userFile.getOpen());
+        }
+    }
+
+    @Override
+    public void delete(String filename) {
+        cdnService.delete(filename);
+    }
+
+    private UserFileDto insertFileInfo(UserFileDto userFile, String fileName, String fileUrl, String contentType, long fileSize, UUID userId) {
+        userFile.setFilename(fileName);
+        userFile.setUrl(fileUrl);
+        userFile.setSize(fileSize);
+        userFile.setUserId(userId);
+        userFile.setMediaType(contentType);
+        return userFile;
     }
 
     private void validContentType(String contentType) {
@@ -104,5 +159,15 @@ public class FileServiceImpl implements FileService {
         }
 
         return file;
+    }
+
+    private boolean userHaveAccessToFile(UserFileDto userFile, UUID userId) {
+        if (userFile.getUserId().equals(userId)) {
+            return true;
+        }
+        if (CollectionUtils.isNotEmpty(userFile.getReaderIds()) && userFile.getReaderIds().contains(userId)) {
+            return true;
+        }
+        return false;
     }
 }

@@ -15,7 +15,7 @@ CREATE TABLE file.user_file
 CREATE TABLE file.user_file_key
 (
     user_file_id uuid not null,
-    key uuid not null,
+    key character varying not null,
     CONSTRAINT user_file_key_user_file_id_fk FOREIGN KEY (user_file_id) REFERENCES file.user_file (id)
 );
 

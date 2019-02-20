@@ -7,8 +7,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 1MB
-      max-request-size: 1MB
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 module-url: /file/v1
 
@@ -44,4 +44,4 @@ exchange:
       endpointUpdatePack: http://permission-service/endpoint/pack
 
 multipart:
-  compatibleParentTypes: image
+  compatibleParentTypes: image, application

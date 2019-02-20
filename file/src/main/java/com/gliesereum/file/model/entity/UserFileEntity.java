@@ -50,6 +50,6 @@ public class UserFileEntity extends DefaultEntity {
     @ElementCollection
     @CollectionTable(name="user_file_reader", joinColumns=@JoinColumn(name="user_file_id"))
     @Column(name="reader_id")
-    private List<String> readerIds;
+    private List<UUID> readerIds;
 
 }

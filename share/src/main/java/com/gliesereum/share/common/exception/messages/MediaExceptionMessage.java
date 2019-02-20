@@ -13,6 +13,7 @@ public class MediaExceptionMessage {
     public static final ExceptionMessage MAX_UPLOAD_SIZE_EXCEEDED = new ExceptionMessage(1514, 400, "Maximum upload size exceeded");
     public static final ExceptionMessage UPLOAD_FAILED = new ExceptionMessage(1515, 400, "Upload file failed");
 
-
+    public static final ExceptionMessage USER_FILE_NOT_FOUND = new ExceptionMessage(1516, 400, "User file not found");
+    public static final ExceptionMessage CURRENT_USER_DONT_HAVE_ACCESS_TO_FILE = new ExceptionMessage(1517, 401, "User don't have access to file");
 
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,13 +29,14 @@ public class UserFileDto extends DefaultDto {
 
     private UUID userId;
 
+    @NotNull
     private Boolean open;
 
     private Boolean crypto;
 
     private List<String> keys;
 
-    private List<String> readerIds;
+    private List<UUID> readerIds;
 
     public UserFileDto(String filename, String resultUrl, String contentType, long fileSize, UUID userId) {
         this.filename = filename;
