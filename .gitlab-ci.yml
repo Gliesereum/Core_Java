@@ -14,7 +14,7 @@ git-pull:
   script:
     - echo 'Git pull'
     - cd $PROJECT_HOME
-    - git pull
+    - sudo git pull
   only:
     - gls/dev
 

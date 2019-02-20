@@ -5,7 +5,7 @@ pwd
 whoami
 
 echo 'Git pull' 
-git pull
+sudo git pull
 
 echo 'Gradle build'                               
 sudo gradle clean build -b=account/build.gradle    
