@@ -2,9 +2,9 @@ FROM openjdk:8-alpine
 
 MAINTAINER yvlasiuk
 
-ADD ./media-0.0.1.jar /gls/media/
+ADD ./file-0.0.1.jar /gls/file/
 
-WORKDIR /gls/media
+WORKDIR /gls/file
 
 ARG PORT
 
@@ -50,4 +50,4 @@ CMD java -jar -d64 -server -XX:+UseG1GC -Xms300M -Xmx1G -XX:MaxMetaspaceSize=1G 
 -Dcdn.region=${CDN_REGION} \
 -Dcdn.bucket=${CDN_BUCKET} \
 -Dcdn.folder=${CDN_FOLDER} \
-./media-0.0.1.jar
+./file-0.0.1.jar
