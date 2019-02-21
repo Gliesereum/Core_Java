@@ -131,7 +131,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
                 BaseBusinessDto business = businessMap.get(f.getBusinessId());
                 if(business == null){
-                    business = baseBusinessService.getById(f.getBusinessId());
+                    business = baseBusinessService.getByIdIgnoreState(f.getBusinessId());
                     if(business != null){
                         f.setBusiness(business);
                         businessMap.put(business.getId(), business);
@@ -142,7 +142,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
                 PackageDto packageDto = packageMap.get(f.getPackageId());
                 if(packageDto == null){
-                    packageDto = packageService.getById(f.getPackageId());
+                    packageDto = packageService.getByIdIgnoreState(f.getPackageId());
                     if(packageDto != null){
                         f.setPackageDto(packageDto);
                         packageMap.put(packageDto.getId(), packageDto);

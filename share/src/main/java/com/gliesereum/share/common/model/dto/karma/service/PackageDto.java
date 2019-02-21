@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.service;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,8 @@ public class PackageDto extends DefaultDto {
     private Integer duration;
 
     private UUID businessId;
+
+    private ObjectState objectState;
 
     private List<UUID> servicesIds = new ArrayList<>();
 

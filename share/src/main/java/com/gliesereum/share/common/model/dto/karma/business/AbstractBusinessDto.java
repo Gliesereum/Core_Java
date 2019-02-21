@@ -2,6 +2,7 @@ package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -52,5 +53,7 @@ public class AbstractBusinessDto extends DefaultDto {
     private Integer timeZone;
 
     private ServiceType serviceType;
+
+    private ObjectState objectState;
 
 }

@@ -10,10 +10,11 @@ import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -61,8 +63,42 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
 
     @Override
     public List<PackageDto> getByBusinessId(UUID id) {
-        List<PackageEntity> entities = repository.getByBusinessId(id);
+        List<PackageEntity> entities = repository.getByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public PackageDto getByIdIgnoreState(UUID id) {
+        PackageDto result = null;
+        if (id != null) {
+            Optional<PackageEntity> entity = repository.findById(id);
+            if (entity.isPresent()) {
+                result = converter.convert(entity.get(), dtoClass);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<PackageDto> getAll() {
+        List<PackageEntity> entities = repository.getAllByObjectState(ObjectState.ACTIVE);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public PackageDto getById(UUID id) {
+        PackageEntity entity = repository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        return converter.convert(entity, dtoClass);
+    }
+
+    @Override
+    public List<PackageDto> getByIds(Iterable<UUID> ids) {
+        List<PackageDto> result = null;
+        if (ids != null) {
+            List<PackageEntity> entities = repository.getAllByIdInAndObjectState(ids, ObjectState.ACTIVE);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
     }
 
     @Override
@@ -76,12 +112,16 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
 
     }
 
-
     @Override
     @Transactional
     public PackageDto update(PackageDto dto) {
         checkPermission(dto);
         checkServicesInBusiness(dto);
+        PackageDto oldDto = getById(dto.getId());
+        if (oldDto == null) {
+            throw new ClientException(PACKAGE_NOT_FOUND);
+        }
+        dto.setObjectState(oldDto.getObjectState());
         PackageDto result = super.update(dto);
         deletePackageServicePrice(dto);
         setServices(dto, result);
@@ -91,13 +131,15 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     @Override
     @Transactional
     public void delete(UUID id) {
-        if (id != null) {
-            PackageDto dto = getById(id);
-            if (dto != null) {
-                deletePackageServicePrice(dto);
-            }
-            super.delete(id);
+        if (id == null) {
+            throw new ClientException(ID_NOT_SPECIFIED);
         }
+        PackageDto dto = getById(id);
+        if (dto == null) {
+            throw new ClientException(SERVICE_NOT_FOUND);
+        }
+        dto.setObjectState(ObjectState.DELETED);
+        super.update(dto);
     }
 
     private void deletePackageServicePrice(PackageDto dto) {
