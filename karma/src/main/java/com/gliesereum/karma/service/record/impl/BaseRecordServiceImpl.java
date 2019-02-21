@@ -87,6 +87,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public List<BaseRecordDto> getByParamsForClient(RecordsSearchDto search) {
+        List<BaseRecordDto> result = null;
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
             throw new ClientException(TARGET_ID_IS_EMPTY);
         }
@@ -96,13 +97,16 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             });
         } else return Collections.emptyList(); //todo when add new service type need to add logic
         setSearch(search);
-        List<BaseRecordEntity> entities = repository.findByStatusRecordAndTargetIdInAndBeginBetweenOrderByBegin(
+        List<BaseRecordEntity> entities = repository.findByStatusRecordAndTargetIdInAndBeginBetweenOrderByBeginDesc(
                 search.getStatus(), search.getTargetIds(), search.getFrom(), search.getTo());
-        return converter.convert(entities, dtoClass);
+        result = converter.convert(entities, dtoClass);
+        setFullModelRecord(result);
+        return result;
     }
 
     @Override
     public List<BaseRecordDto> getByParamsForCorporation(RecordsSearchDto search) {
+        List<BaseRecordDto> result = null;
         if (CollectionUtils.isEmpty(search.getBusinessIds())) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
@@ -114,7 +118,41 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         setSearch(search);
         List<BaseRecordEntity> entities = repository.findByStatusRecordAndBusinessIdInAndBeginBetweenOrderByBegin(
                 search.getStatus(), search.getBusinessIds(), search.getFrom(), search.getTo());
-        return converter.convert(entities, dtoClass);
+        result = converter.convert(entities, dtoClass);
+        setFullModelRecord(result);
+        return result;
+    }
+
+    private void setFullModelRecord(List<BaseRecordDto> list) {
+        if (CollectionUtils.isNotEmpty(list)) {
+            Map<UUID, PackageDto> packageMap = new HashMap<>();
+            Map<UUID, BaseBusinessDto> businessMap = new HashMap<>();
+            list.forEach(f -> {
+
+                BaseBusinessDto business = businessMap.get(f.getBusinessId());
+                if(business == null){
+                    business = baseBusinessService.getById(f.getBusinessId());
+                    if(business != null){
+                        f.setBusiness(business);
+                        businessMap.put(business.getId(), business);
+                    }
+                } else {
+                    f.setBusiness(business);
+                }
+
+                PackageDto packageDto = packageMap.get(f.getPackageId());
+                if(packageDto == null){
+                    packageDto = packageService.getById(f.getPackageId());
+                    if(packageDto != null){
+                        f.setPackageDto(packageDto);
+                        packageMap.put(packageDto.getId(), packageDto);
+                    }
+                } else {
+                    f.setPackageDto(packageDto);
+                }
+
+            });
+        }
     }
 
     private void setSearch(RecordsSearchDto search) {
@@ -255,6 +293,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public List<BaseRecordDto> getAllByUser(ServiceType serviceType) {
+        List<BaseRecordDto> result = null;
         if (serviceType == null) {
             throw new ClientException(SERVICE_TYPE_IS_EMPTY);
         }
@@ -270,8 +309,10 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             ids.add(SecurityUtil.getUserId()); //todo when add new service type need to add logic
         }
         List<BaseRecordEntity> entities = repository.findAllByTargetIdInAndServiceType(ids, serviceType);
-        entities.sort(Comparator.comparing(BaseRecordEntity::getBegin));
-        return converter.convert(entities, dtoClass);
+        entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
+        result = converter.convert(entities, dtoClass);
+        setFullModelRecord(result);
+        return result;
     }
 
 
@@ -323,7 +364,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
                 int sumByPackage = packageDto.getServices().stream().mapToInt(ServicePriceDto::getPrice).sum();
                 if (packageDto.getDiscount() > 0) {
-                    result += (int)(sumByPackage - ((sumByPackage / 100.0f) * packageDto.getDiscount()));
+                    result += (int) (sumByPackage - ((sumByPackage / 100.0f) * packageDto.getDiscount()));
                 } else {
                     result += sumByPackage;
                 }
