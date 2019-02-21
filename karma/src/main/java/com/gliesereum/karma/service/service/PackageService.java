@@ -14,4 +14,6 @@ import java.util.UUID;
 public interface PackageService extends DefaultService<PackageDto, PackageEntity> {
 
     List<PackageDto> getByBusinessId(UUID id);
+
+    PackageDto getByIdIgnoreState(UUID id);
 }

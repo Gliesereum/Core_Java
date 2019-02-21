@@ -2,6 +2,7 @@ package com.gliesereum.share.common.model.dto.karma.service;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,8 @@ public class ServicePriceDto extends DefaultDto {
     private UUID businessId;
 
     private ServiceDto service;
+
+    private ObjectState objectState;
 
     @NotNull
     @Max(1440)

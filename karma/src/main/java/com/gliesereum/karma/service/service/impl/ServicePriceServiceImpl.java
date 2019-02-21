@@ -19,6 +19,7 @@ import com.gliesereum.share.common.model.dto.karma.filter.PriceFilterAttributeDt
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
@@ -77,19 +79,57 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         return super.create(setCustomName(dto));
     }
 
-
     @Override
+    @Transactional
     @UpdateCarWashIndex
     public ServicePriceDto update(ServicePriceDto dto) {
         checkPermission(dto);
+        ServicePriceDto oldDto = getById(dto.getId());
+        if (oldDto == null) {
+            throw new ClientException(SERVICE_NOT_FOUND);
+        }
+        dto.setObjectState(oldDto.getObjectState());
         return super.update(setCustomName(dto));
+    }
+
+    @Override
+    @Transactional
+    public void delete(UUID id) {
+        if (id == null) {
+            throw new ClientException(ID_NOT_SPECIFIED);
+        }
+        ServicePriceDto dto = getPrice(id);
+        dto.setObjectState(ObjectState.DELETED);
+        super.update(dto);
+    }
+
+    @Override
+    public List<ServicePriceDto> getAll() {
+        List<ServicePriceEntity> entities = servicePriceRepository.getAllByObjectState(ObjectState.ACTIVE);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public ServicePriceDto getById(UUID id) {
+        ServicePriceEntity entity = servicePriceRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        return converter.convert(entity, dtoClass);
+    }
+
+    @Override
+    public List<ServicePriceDto> getByIds(Iterable<UUID> ids) {
+        List<ServicePriceDto> result = null;
+        if (ids != null) {
+            List<ServicePriceEntity> entities = servicePriceRepository.getAllByIdInAndObjectState(ids, ObjectState.ACTIVE);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
     }
 
     @Override
     public List<ServicePriceDto> getAllByPackage(UUID id) {
         PackageDto packageDto = packageService.getById(id);
         if (packageDto != null && CollectionUtils.isNotEmpty(packageDto.getServices())) {
-            return packageDto.getServices();
+            return packageDto.getServices().stream().filter(f -> f.getObjectState().equals(ObjectState.ACTIVE)).collect(Collectors.toList());
         }
         List<ServicePriceDto> emptyList = Collections.emptyList();
         return emptyList;
@@ -97,7 +137,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
 
     @Override
     public List<ServicePriceDto> getByBusinessId(UUID id) {
-        List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessId(id);
+        List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
     }
 
@@ -164,7 +204,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         }
     }
 
-    private void checkFilterAttribute(UUID idAttribute){
+    private void checkFilterAttribute(UUID idAttribute) {
         FilterAttributeDto attribute = filterAttributeService.getById(idAttribute);
         if (attribute == null) {
             throw new ClientException(FILTER_ATTRIBUTE_NOT_FOUND);

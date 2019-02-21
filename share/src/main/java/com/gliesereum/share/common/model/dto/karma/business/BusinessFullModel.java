@@ -1,12 +1,12 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
-import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
-import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
-import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -43,6 +43,8 @@ public class BusinessFullModel {
     private Integer timeZone;
 
     private RatingDto rating;
+
+    private ObjectState objectState;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 

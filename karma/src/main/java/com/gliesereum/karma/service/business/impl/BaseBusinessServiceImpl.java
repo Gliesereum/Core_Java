@@ -15,24 +15,26 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
-import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -105,8 +107,42 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    public List<BaseBusinessDto> getAll() {
+        List<BaseBusinessEntity> entities = baseBusinessRepository.getAllByObjectState(ObjectState.ACTIVE);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public BaseBusinessDto getById(UUID id) {
+        BaseBusinessEntity entity = baseBusinessRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        return converter.convert(entity, dtoClass);
+    }
+
+    @Override
+    public BaseBusinessDto getByIdIgnoreState(UUID id) {
+        BaseBusinessDto result = null;
+        if (id != null) {
+            Optional<BaseBusinessEntity> entity = baseBusinessRepository.findById(id);
+            if (entity.isPresent()) {
+                result = converter.convert(entity.get(), dtoClass);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<BaseBusinessDto> getByIds(Iterable<UUID> ids) {
+        List<BaseBusinessDto> result = null;
+        if (ids != null) {
+            List<BaseBusinessEntity> entities = baseBusinessRepository.getAllByIdInAndObjectState(ids, ObjectState.ACTIVE);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
     public boolean existByIdAndCorporationIds(UUID id, List<UUID> corporationIds) {
-        return baseBusinessRepository.existsByIdAndCorporationIdIn(id, corporationIds);
+        return baseBusinessRepository.existsByIdAndCorporationIdInAndObjectState(id, corporationIds, ObjectState.ACTIVE);
     }
 
     @Override
@@ -123,7 +159,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds) {
         List<BaseBusinessDto> result = null;
         if (CollectionUtils.isNotEmpty(corporationIds)) {
-            List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationIdIn(corporationIds);
+            List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -136,7 +172,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             if (!SecurityUtil.userHavePermissionToCorporation(corporationId)) {
                 throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
             }
-            List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationId(corporationId);
+            List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationIdAndObjectState(corporationId, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -162,6 +198,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         result.setLatitude(baseBusinessDto.getLatitude());
         result.setLongitude(baseBusinessDto.getLongitude());
         result.setTimeZone(baseBusinessDto.getTimeZone());
+        result.setObjectState(baseBusinessDto.getObjectState());
         result.setRating(commentService.getRating(id));
 
         if (CollectionUtils.isNotEmpty(baseBusinessDto.getWorkTimes())) {
@@ -199,7 +236,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             List<MediaDto> emptyList = Collections.emptyList();
             result.setMedia(emptyList);
         }
-        List<CommentFullDto> comments = commentService.findFullByObjectId( id);
+        List<CommentFullDto> comments = commentService.findFullByObjectId(id);
         if (CollectionUtils.isNotEmpty(comments)) {
             result.setComments(comments);
         } else {
@@ -218,13 +255,18 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    @Transactional
     public void delete(UUID id) {
         if (id == null) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
         this.currentUserHavePermissionToActionInBusiness(id);
-
-        super.delete(id);
+        BaseBusinessDto dto = getById(id);
+        if (dto == null) {
+            throw new ClientException(BUSINESS_NOT_FOUND);
+        }
+        dto.setObjectState(ObjectState.DELETED);
+        super.update(dto);
     }
 
     private void checkCorporationId(BaseBusinessDto business) {
@@ -238,7 +280,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     private void checkType(BaseBusinessDto dto) {
-        if(dto.getServiceType() == null){
+        if (dto.getServiceType() == null) {
             throw new ClientException(SERVICE_TYPE_IS_EMPTY);
         }
     }

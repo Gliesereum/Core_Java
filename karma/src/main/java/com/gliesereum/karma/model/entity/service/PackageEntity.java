@@ -1,6 +1,7 @@
 package com.gliesereum.karma.model.entity.service;
 
 import com.gliesereum.share.common.model.entity.DefaultEntity;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,10 @@ public class PackageEntity extends DefaultEntity {
 
     @Column(name = "business_id")
     private UUID businessId;
+
+    @Column(name = "object_state")
+    @Enumerated(EnumType.STRING)
+    private ObjectState objectState;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "package_service",
