@@ -122,9 +122,9 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      PORT: 8761
-      PROFILE: docker
-      HOST: discovery
+      server.port: 8761
+      spring.profiles.active: docker
+      eureka.instance.hostname: discovery
 
   account:
     image: gls-account:0.0.1
@@ -132,21 +132,21 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      PORT: 8210
-      PROFILE: docker
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: Af2f4dsASF
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: Af2f4dsASF
-      RABBIT_HOST: rabbit
-      RABBIT_PORT: 5672
-      RABBIT_USER: rabbit
-      RABBIT_PASSWORD: Af2f4dsASF
-      EUREKA_HOST: discovery
-      EUREKA_PORT: 8761
+      server.port: 8210
+      spring.profiles.active: docker
+      db.host: postgres
+      db.port: 5432
+      db.username: postgres
+      db.password: Af2f4dsASF
+      redis.host: redis
+      redis.port: 6379
+      redis.password: Af2f4dsASF
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
 
   mail:
     image: gls-mail:0.0.1
@@ -154,14 +154,14 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      PORT: 8220
-      PROFILE: docker
-      RABBIT_HOST: rabbit
-      RABBIT_PORT: 5672
-      RABBIT_USER: rabbit
-      RABBIT_PASSWORD: Af2f4dsASF
-      EUREKA_HOST: discovery
-      EUREKA_PORT: 8761
+      server.port: 8220
+      spring.profiles.active: docker
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
 
   proxy:
     image: gls-proxy:0.0.1
@@ -169,14 +169,14 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      PORT: 8200
-      PROFILE: docker
-      RABBIT_HOST: rabbit
-      RABBIT_PORT: 5672
-      RABBIT_USER: rabbit
-      RABBIT_PASSWORD: Af2f4dsASF
-      EUREKA_HOST: discovery
-      EUREKA_PORT: 8761
+      server.port: 8200
+      spring.profiles.active: docker
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
 
   permission:
     image: gls-permission:0.0.1
@@ -184,18 +184,18 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      PORT: 8230
-      PROFILE: docker
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: Af2f4dsASF
-      RABBIT_HOST: rabbit
-      RABBIT_PORT: 5672
-      RABBIT_USER: rabbit
-      RABBIT_PASSWORD: Af2f4dsASF
-      EUREKA_HOST: discovery
-      EUREKA_PORT: 8761
+      server.port: 8230
+      spring.profiles.active: docker
+      db.host: postgres
+      db.port: 5432
+      db.username: postgres
+      db.password: Af2f4dsASF
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
 
   karma:
     image: gls-karma:0.0.1
@@ -203,20 +203,20 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      PORT: 8230
-      PROFILE: docker
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: Af2f4dsASF
-      RABBIT_HOST: rabbit
-      RABBIT_PORT: 5672
-      RABBIT_USER: rabbit
-      RABBIT_PASSWORD: Af2f4dsASF
-      ES_HOST: elasticsearch
-      ES_PORT: 9200
-      EUREKA_HOST: discovery
-      EUREKA_PORT: 8761
+      server.port: 8230
+      spring.profiles.active: docker
+      db.host: postgres
+      db.port: 5432
+      db.username: postgres
+      db.password: Af2f4dsASF
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      es.host: elasticsearch
+      es.port: 9200
+      eureka.host: discovery
+      eureka.port: 8761
 
   file:
     image: gls-file:0.0.1
@@ -224,24 +224,24 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      PORT: 8250
-      PROFILE: docker
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: Af2f4dsASF
-      RABBIT_HOST: rabbit
-      RABBIT_PORT: 5672
-      RABBIT_USER: rabbit
-      RABBIT_PASSWORD: Af2f4dsASF
-      CDN_ACCESS_KEY: XJSIQ6UA5HZEHMH3DDUP
-      CDN_SECRET_KEY: C5PSCSJgAG4VaCYUSJaK9SA/pDHX/kE7BLatMHEz90I
-      CDN_HOST: sgp1.digitaloceanspaces.com
-      CDN_REGION: sgp1
-      CDN_BUCKET: glcdn
-      CDN_FOLDER: karma
-      EUREKA_HOST: discovery
-      EUREKA_PORT: 8761
+      server.port: 8250
+      spring.profiles.active: docker
+      db.host: postgres
+      db.port: 5432
+      db.username: postgres
+      db.password: Af2f4dsASF
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      cdn.accessKey: XJSIQ6UA5HZEHMH3DDUP
+      cdn.secretKey: C5PSCSJgAG4VaCYUSJaK9SA/pDHX/kE7BLatMHEz90I
+      cdn.host: sgp1.digitaloceanspaces.com
+      cdn.region: sgp1
+      cdn.bucket: glcdn
+      cdn.folder: karma
+      eureka.host: discovery
+      eureka.port: 8761
 
   nginx:
     image: nginx:1.15.7-alpine
