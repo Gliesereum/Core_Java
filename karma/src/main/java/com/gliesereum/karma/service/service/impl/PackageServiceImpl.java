@@ -106,6 +106,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     public PackageDto create(PackageDto dto) {
         checkPermission(dto);
         checkServicesInBusiness(dto);
+        dto.setObjectState(ObjectState.ACTIVE);
         PackageDto result = super.create(dto);
         setServices(dto, result);
         return result;
