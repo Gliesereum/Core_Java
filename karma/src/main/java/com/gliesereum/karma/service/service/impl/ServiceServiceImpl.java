@@ -37,6 +37,16 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
     }
 
     @Override
+    public ServiceDto create(ServiceDto dto) {
+        ServiceDto result = null;
+        if (dto != null) {
+            dto.setObjectState(ObjectState.ACTIVE);
+            result = super.create(dto);
+        }
+        return result;
+    }
+
+    @Override
     @Transactional
     public ServiceDto update(ServiceDto dto) {
         ServiceDto oldDto = getById(dto.getId());

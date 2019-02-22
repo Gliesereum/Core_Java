@@ -76,6 +76,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     @UpdateCarWashIndex
     public ServicePriceDto create(ServicePriceDto dto) {
         checkPermission(dto);
+        dto.setObjectState(ObjectState.ACTIVE);
         return super.create(setCustomName(dto));
     }
 
