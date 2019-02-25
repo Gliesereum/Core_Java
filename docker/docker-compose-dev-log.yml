@@ -1,20 +1,20 @@
 version: '3.1'
 
 services:
-  postgres:
-    image: postgres:10.5-alpine
-    command: postgres -c 'max_connections=500' -c 'shared_buffers=256MB'
-    volumes:
-      - ../volumes/pgdata/:/var/lib/postgresql/data
-    deploy:
-      restart_policy:
-        condition: on-failure
-    environment:
-      POSTGRES_PASSWORD: Af2f4dsASF
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
-    ports:
-      - 5432:5432
+#  postgres:
+#    image: postgres:10.5-alpine
+#    command: postgres -c 'max_connections=500' -c 'shared_buffers=256MB'
+#    volumes:
+#      - ../volumes/pgdata/:/var/lib/postgresql/data
+#    deploy:
+#      restart_policy:
+#        condition: on-failure
+#    environment:
+#      POSTGRES_PASSWORD: Af2f4dsASF
+#      POSTGRES_USER: postgres
+#      POSTGRES_DB: postgres
+#    ports:
+#      - 5432:5432
 
   redis:
     image: redis:4.0.11-alpine
@@ -187,10 +187,11 @@ services:
     environment:
       server.port: 8230
       spring.profiles.active: docker
-      db.host: postgres
-      db.port: 5432
-      db.username: postgres
-      db.password: Af2f4dsASF
+      db.host: db-postgresql-fra1-37757-do-user-3517380-0.db.ondigitalocean.com
+      db.database: defaultdb
+      db.port: 25060
+      db.username: doadmin
+      db.password: sfnb4k42qcunuqgr
       rabbit.host: rabbit
       rabbit.port: 5672
       rabbit.user: rabbit
@@ -206,10 +207,11 @@ services:
     environment:
       server.port: 8230
       spring.profiles.active: docker
-      db.host: postgres
-      db.port: 5432
-      db.username: postgres
-      db.password: Af2f4dsASF
+      db.host: db-postgresql-fra1-37757-do-user-3517380-0.db.ondigitalocean.com
+      db.database: defaultdb
+      db.port: 25060
+      db.username: doadmin
+      db.password: sfnb4k42qcunuqgr
       rabbit.host: rabbit
       rabbit.port: 5672
       rabbit.user: rabbit
@@ -227,10 +229,11 @@ services:
     environment:
       server.port: 8250
       spring.profiles.active: docker
-      db.host: postgres
-      db.port: 5432
-      db.username: postgres
-      db.password: Af2f4dsASF
+      db.host: db-postgresql-fra1-37757-do-user-3517380-0.db.ondigitalocean.com
+      db.database: defaultdb
+      db.port: 25060
+      db.username: doadmin
+      db.password: sfnb4k42qcunuqgr
       rabbit.host: rabbit
       rabbit.port: 5672
       rabbit.user: rabbit

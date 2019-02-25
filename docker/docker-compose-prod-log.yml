@@ -130,6 +130,7 @@ services:
       server.port: 8210
       spring.profiles.active: docker
       db.host: postgres
+      db.database: postgres
       db.port: 5432
       db.username: postgres
       db.password: Af2f4dsASF
@@ -182,6 +183,7 @@ services:
       server.port: 8230
       spring.profiles.active: docker
       db.host: postgres
+      db.database: postgres
       db.port: 5432
       db.username: postgres
       db.password: Af2f4dsASF
@@ -201,6 +203,7 @@ services:
       server.port: 8230
       spring.profiles.active: docker
       db.host: postgres
+      db.database: postgres
       db.port: 5432
       db.username: postgres
       db.password: Af2f4dsASF
@@ -222,6 +225,7 @@ services:
       server.port: 8250
       spring.profiles.active: docker
       db.host: postgres
+      db.database: postgres
       db.port: 5432
       db.username: postgres
       db.password: Af2f4dsASF

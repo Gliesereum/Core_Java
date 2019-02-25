@@ -1,7 +1,7 @@
 spring:
   # datasource configuration
   datasource:
-    url: jdbc:postgresql://${db.host}:${db.port}/postgres
+    url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
     username: ${db.username}
     password: ${db.password}
   jpa:
