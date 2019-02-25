@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,8 +28,8 @@ public class CorporationEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "edrpou")
-    private String edrpou;
+    @Column(name = "company_type")
+    private String companyType;
 
     @Column(name = "address")
     private String address;
@@ -38,6 +39,18 @@ public class CorporationEntity extends DefaultEntity {
 
     @Column(name = "cover_url")
     private String coverUrl;
+
+    @Column(name = "business_activity")
+    private String businessActivity;
+
+    @Column(name = "rc_number")
+    private String rcNumber;
+
+    @Column(name = "place_incorporation")
+    private String placeIncorporation;
+
+    @Column(name = "date_incorporation")
+    private LocalDateTime dateIncorporation;
 
     @Column(name = "kyc_status")
     @Enumerated(EnumType.STRING)
