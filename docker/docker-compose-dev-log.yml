@@ -134,10 +134,10 @@ services:
     environment:
       server.port: 8210
       spring.profiles.active: docker
-      db.host: postgres
-      db.port: 5432
-      db.username: postgres
-      db.password: Af2f4dsASF
+      db.host: db-postgresql-fra1-37757-do-user-3517380-0.db.ondigitalocean.com
+      db.port: 25060
+      db.username: doadmin
+      db.password: sfnb4k42qcunuqgr
       redis.host: redis
       redis.port: 6379
       redis.password: Af2f4dsASF
