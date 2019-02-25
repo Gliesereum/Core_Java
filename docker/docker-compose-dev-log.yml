@@ -135,7 +135,7 @@ services:
       server.port: 8210
       spring.profiles.active: docker
       db.host: 46.101.182.178
-      db.database: postgres
+      db.database: glsdev
       db.port: 26780
       db.username: postgres
       db.password: GliesereumAdmin0013
@@ -188,7 +188,7 @@ services:
       server.port: 8230
       spring.profiles.active: docker
       db.host: 46.101.182.178
-      db.database: postgres
+      db.database: glsdev
       db.port: 26780
       db.username: postgres
       db.password: GliesereumAdmin0013
@@ -208,7 +208,7 @@ services:
       server.port: 8230
       spring.profiles.active: docker
       db.host: 46.101.182.178
-      db.database: postgres
+      db.database: glsdev
       db.port: 26780
       db.username: postgres
       db.password: GliesereumAdmin0013
@@ -230,7 +230,7 @@ services:
       server.port: 8250
       spring.profiles.active: docker
       db.host: 46.101.182.178
-      db.database: postgres
+      db.database: glsdev
       db.port: 26780
       db.username: postgres
       db.password: GliesereumAdmin0013
