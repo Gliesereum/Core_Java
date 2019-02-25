@@ -135,6 +135,7 @@ services:
       server.port: 8210
       spring.profiles.active: docker
       db.host: db-postgresql-fra1-37757-do-user-3517380-0.db.ondigitalocean.com
+      db.database: defaultdb
       db.port: 25060
       db.username: doadmin
       db.password: sfnb4k42qcunuqgr
