@@ -134,11 +134,11 @@ services:
     environment:
       server.port: 8210
       spring.profiles.active: docker
-      db.host: postgres
+      db.host: 46.101.182.178
       db.database: postgres
-      db.port: 5432
+      db.port: 26780
       db.username: postgres
-      db.password: Af2f4dsASF
+      db.password: GliesereumAdmin0013
       redis.host: redis
       redis.port: 6379
       redis.password: Af2f4dsASF
@@ -187,11 +187,11 @@ services:
     environment:
       server.port: 8230
       spring.profiles.active: docker
-      db.host: postgres
+      db.host: 46.101.182.178
       db.database: postgres
-      db.port: 5432
+      db.port: 26780
       db.username: postgres
-      db.password: Af2f4dsASF
+      db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
       rabbit.user: rabbit
@@ -207,11 +207,11 @@ services:
     environment:
       server.port: 8230
       spring.profiles.active: docker
-      db.host: postgres
+      db.host: 46.101.182.178
       db.database: postgres
-      db.port: 5432
+      db.port: 26780
       db.username: postgres
-      db.password: Af2f4dsASF
+      db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
       rabbit.user: rabbit
@@ -229,11 +229,11 @@ services:
     environment:
       server.port: 8250
       spring.profiles.active: docker
-      db.host: postgres
+      db.host: 46.101.182.178
       db.database: postgres
-      db.port: 5432
+      db.port: 26780
       db.username: postgres
-      db.password: Af2f4dsASF
+      db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
       rabbit.user: rabbit
