@@ -16,21 +16,21 @@ services:
 #    ports:
 #      - 5432:5432
 
-  redis:
-    image: redis:4.0.11-alpine
-    command: >
-      --loglevel ${REDIS_LOGLEVEL:-notice}
-      --save 900 1
-      --save 300 10
-      --save 60 10000
-      --requirepass Af2f4dsASF
-    volumes:
-      - ../volumes/redisdata/:/data
-    deploy:
-      restart_policy:
-        condition: on-failure
-    ports:
-      - 6379:6379
+#  redis:
+#    image: redis:4.0.11-alpine
+#    command: >
+#      --loglevel ${REDIS_LOGLEVEL:-notice}
+#      --save 900 1
+#      --save 300 10
+#      --save 60 10000
+#      --requirepass Af2f4dsASF
+#    volumes:
+#      - ../volumes/redisdata/:/data
+#    deploy:
+#      restart_policy:
+#        condition: on-failure
+#    ports:
+#      - 6379:6379
 
   rabbit:
     image: rabbitmq:3.7.8-management-alpine
@@ -139,9 +139,9 @@ services:
       db.port: 26780
       db.username: postgres
       db.password: GliesereumAdmin0013
-      redis.host: redis
+      redis.host: 46.101.182.178
       redis.port: 6379
-      redis.password: Af2f4dsASF
+      redis.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
       rabbit.user: rabbit
