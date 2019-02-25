@@ -9,7 +9,7 @@ public enum KYCStatus {
     KYC_IN_PROCESS,
     KYC_PASSED,
     KYC_REJECTED,
-    KYC_POSTPONED;
+    KYC_SENT_TO_REWORK;
 
     public String toString() {
         return name().toLowerCase();

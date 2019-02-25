@@ -1,5 +1,9 @@
 package com.gliesereum.share.common.model.dto.account.user;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
@@ -9,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -25,9 +30,9 @@ public class CorporationDto extends DefaultDto {
 
     private String description;
 
-    @Size(min = 8, max = 8)
+    @Size(min = 2)
     @NotEmpty
-    private String edrpou;
+    private String companyType;
 
     @Size(min = 6)
     @NotEmpty
@@ -36,6 +41,20 @@ public class CorporationDto extends DefaultDto {
     private String logoUrl;
 
     private String coverUrl;
+
+    @Size(min = 2)
+    @NotEmpty
+    private String businessActivity;
+
+    private String rcNumber;
+
+    @Size(min = 2)
+    @NotEmpty
+    private String placeIncorporation;
+
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
+    private LocalDateTime dateIncorporation;
 
     private KYCStatus kYCStatus;
 
