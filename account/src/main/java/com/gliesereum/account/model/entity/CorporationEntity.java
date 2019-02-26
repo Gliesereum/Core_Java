@@ -31,8 +31,26 @@ public class CorporationEntity extends DefaultEntity {
     @Column(name = "company_type")
     private String companyType;
 
-    @Column(name = "address")
-    private String address;
+    @Column(name = "index")
+    private String index;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "region")
+    private String region;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "building_number")
+    private String buildingNumber;
+
+    @Column(name = "office_number")
+    private String officeNumber;
 
     @Column(name = "logo_url")
     private String logoUrl;
@@ -63,4 +81,8 @@ public class CorporationEntity extends DefaultEntity {
     @OneToMany
     @JoinColumn(name = "corporation_id", insertable = false, updatable = false)
     private Set<CorporationSharedOwnershipEntity> corporationSharedOwnerships = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "corporation_id", insertable = false, updatable = false)
+    private Set<CorporationEmployeeEntity> corporationEmployees = new HashSet<>();
 }

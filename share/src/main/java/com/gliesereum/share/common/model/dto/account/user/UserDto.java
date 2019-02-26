@@ -37,10 +37,6 @@ public class UserDto extends DefaultDto {
 
     @Size(min = 3)
     @NotEmpty
-    private String position;
-
-    @Size(min = 3)
-    @NotEmpty
     private String country;
 
     @Size(min = 3)

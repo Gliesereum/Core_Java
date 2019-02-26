@@ -32,9 +32,6 @@ public class UserEntity extends DefaultEntity {
     @Column(name = "middle_name")
     private String middleName;
 
-    @Column(name = "position")
-    private String position;
-
     @Column(name = "country")
     private String country;
 
