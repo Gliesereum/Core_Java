@@ -37,10 +37,6 @@ public class UserDto extends DefaultDto {
 
     @Size(min = 3)
     @NotEmpty
-    private String position;
-
-    @Size(min = 3)
-    @NotEmpty
     private String country;
 
     @Size(min = 3)
@@ -65,7 +61,7 @@ public class UserDto extends DefaultDto {
 
     private BanStatus banStatus;
 
-    private KYCStatus kycStatus;
+    private Boolean kycApproved;
 
     private List<CorporationDto> corporation = new ArrayList<>();
 }

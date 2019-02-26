@@ -32,9 +32,6 @@ public class UserEntity extends DefaultEntity {
     @Column(name = "middle_name")
     private String middleName;
 
-    @Column(name = "position")
-    private String position;
-
     @Column(name = "country")
     private String country;
 
@@ -61,9 +58,8 @@ public class UserEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private BanStatus banStatus;
 
-    @Column(name = "kyc_status")
-    @Enumerated(EnumType.STRING)
-    private KYCStatus kycStatus;
+    @Column(name = "kyc_approved")
+    private Boolean kycApproved;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_corporation",

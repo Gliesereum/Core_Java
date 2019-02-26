@@ -17,8 +17,8 @@ public interface UserService extends DefaultService<UserDto, UserEntity> {
     void banById(UUID id);
 
     void unBanById(UUID id);
-
-    List<UserDto> getAllKycRequest();
+    //TODO: KYC REFACTOR
+    //List<UserDto> getAllKycRequest();
 
     void updateKycStatus(UUID id, KYCStatus status);
 

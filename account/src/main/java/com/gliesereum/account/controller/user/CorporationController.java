@@ -1,7 +1,9 @@
 package com.gliesereum.account.controller.user;
 
+import com.gliesereum.account.service.user.CorporationEmployeeService;
 import com.gliesereum.account.service.user.CorporationService;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.CorporationEmployeeDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class CorporationController {
 
     @Autowired
     private CorporationService service;
+
+    @Autowired
+    private CorporationEmployeeService employeeService;
 
     @GetMapping
     public List<CorporationDto> getAll() {
@@ -56,6 +61,32 @@ public class CorporationController {
     @DeleteMapping("/owner/{id}")
     public MapResponse removeOwnerCorporation(@PathVariable("id") UUID id) {
         service.removeOwnerCorporation(id);
+        return new MapResponse("true");
+    }
+
+    @GetMapping("/employee/{corporationId}")
+    public List<CorporationEmployeeDto> employeeGetAll(@PathVariable("corporationId") UUID corporationId) {
+        return employeeService.getAllByCorporationId(corporationId);
+    }
+
+    @GetMapping("/employee/{id}")
+    public CorporationEmployeeDto employeeGetById(@PathVariable("id") UUID id) {
+        return employeeService.getById(id);
+    }
+
+    @PostMapping("/employee")
+    public CorporationEmployeeDto employeeCreate(@RequestBody CorporationEmployeeDto dto) {
+        return employeeService.create(dto);
+    }
+
+    @PutMapping("/employee")
+    public CorporationEmployeeDto employeeUpdate(@RequestBody CorporationEmployeeDto dto) {
+        return employeeService.update(dto);
+    }
+
+    @DeleteMapping("/employee/{id}")
+    public MapResponse employeeDelete(@PathVariable("id") UUID id) {
+        employeeService.delete(id);
         return new MapResponse("true");
     }
 }

@@ -1,9 +1,9 @@
 spring:
   # datasource configuration
   datasource:
-    url: jdbc:postgresql://207.154.239.122:5432/postgres
+    url: jdbc:postgresql://46.101.182.178:26780/glsdev
     username: postgres
-    password: Af2f4dsASF
+    password: GliesereumAdmin0013
   jpa:
     hibernate:
       ddl-auto: validate

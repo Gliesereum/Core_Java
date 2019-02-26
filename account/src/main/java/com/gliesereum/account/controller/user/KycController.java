@@ -29,30 +29,30 @@ public class KycController {
         service.updateKycStatus(status, objectId, isCorporation);
         return new MapResponse("true");
     }
+    //TODO: KYC REFACTOR
+//    @PostMapping("/upload-document")
+//    public MapResponse uploadDocument(@RequestParam("file") MultipartFile file,
+//                                      @RequestParam(value = "isCorporation") boolean isCorporation,
+//                                      @RequestParam(value = "objectId") UUID objectId) {
+//        service.uploadDocument(file, objectId, isCorporation);
+//        return new MapResponse("true");
+//    }
 
-    @PostMapping("/upload-document")
-    public MapResponse uploadDocument(@RequestParam("file") MultipartFile file,
-                                      @RequestParam(value = "isCorporation") boolean isCorporation,
-                                      @RequestParam(value = "objectId") UUID objectId) {
-        service.uploadDocument(file, objectId, isCorporation);
-        return new MapResponse("true");
-    }
+//    @DeleteMapping("/delete-document")
+//    public MapResponse deleteDocument(@RequestParam("path") String path,
+//                                      @RequestParam(value = "isCorporation") boolean isCorporation,
+//                                      @RequestParam(value = "objectId") UUID objectId) {
+//        service.deleteDocument(path, objectId, isCorporation);
+//        return new MapResponse("true");
+//    }
 
-    @DeleteMapping("/delete-document")
-    public MapResponse deleteDocument(@RequestParam("path") String path,
-                                      @RequestParam(value = "isCorporation") boolean isCorporation,
-                                      @RequestParam(value = "objectId") UUID objectId) {
-        service.deleteDocument(path, objectId, isCorporation);
-        return new MapResponse("true");
-    }
+//    @GetMapping("/corporation/request")
+//    public List<CorporationDto> getCorporationRequest() {
+//        return service.getAllCorporationKycRequest();
+//    }
 
-    @GetMapping("/corporation/request")
-    public List<CorporationDto> getCorporationRequest() {
-        return service.getAllCorporationKycRequest();
-    }
-
-    @GetMapping("/user/request")
-    public List<UserDto> getUserRequest() {
-        return service.getAllUserKycRequest();
-    }
+//    @GetMapping("/user/request")
+//    public List<UserDto> getUserRequest() {
+//        return service.getAllUserKycRequest();
+//    }
 }

@@ -30,36 +30,41 @@ public class CorporationDto extends DefaultDto {
 
     private String description;
 
-    @Size(min = 2)
-    @NotEmpty
-    private String companyType;
+    private String index;
 
-    @Size(min = 6)
-    @NotEmpty
-    private String address;
+    private String country;
+
+    private String region;
+
+    private String city;
+
+    private String street;
+
+    private String buildingNumber;
+
+    private String officeNumber;
 
     private String logoUrl;
 
     private String coverUrl;
 
-    @Size(min = 2)
-    @NotEmpty
-    private String businessActivity;
-
     private String rcNumber;
 
-    @Size(min = 2)
-    @NotEmpty
+    private String companyType;
+
+    private String businessActivity;
+
     private String placeIncorporation;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime dateIncorporation;
 
-    private KYCStatus kYCStatus;
+    private Boolean kycApproved;
 
     private VerifiedStatus verifiedStatus;
 
     private List<CorporationSharedOwnershipDto> corporationSharedOwnerships;
 
+    private List<CorporationEmployeeDto> corporationEmployees;
 }

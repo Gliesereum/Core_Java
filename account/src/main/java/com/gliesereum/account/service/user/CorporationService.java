@@ -18,9 +18,10 @@ public interface CorporationService extends DefaultService<CorporationDto, Corpo
 
     void removeOwnerCorporation(UUID id);
 
-    void updateKycStatus(UUID id, KYCStatus status);
+    //TODO: KYC REFACTOR
+   // void updateKycStatus(UUID id, KYCStatus status);
 
-    List<CorporationDto> getAllKycRequest();
+    //List<CorporationDto> getAllKycRequest();
 
     void checkCurrentUserForPermissionActionThisCorporation(UUID id);
 }

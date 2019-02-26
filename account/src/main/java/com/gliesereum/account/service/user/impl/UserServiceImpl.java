@@ -33,12 +33,15 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> implements UserService {
 
     private static final String URL_PATTERN = "^(https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
-    public static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
+    private static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
     private static final Class<UserDto> DTO_CLASS = UserDto.class;
     private static final Class<UserEntity> ENTITY_CLASS = UserEntity.class;
+
     private final UserRepository userRepository;
+
     @Autowired
     private UserEmailService emailService;
+
     @Autowired
     private UserPhoneService phoneService;
 
@@ -63,7 +66,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         UserDto result = null;
         if (dto != null) {
             dto.setBanStatus(BanStatus.UNBAN);
-            dto.setKycStatus(KYCStatus.KYC_NOT_PASSED);
+            dto.setKycApproved(false);
             result = super.create(dto);
         }
         return result;
@@ -100,7 +103,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         if (user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }
-        user.setKycStatus(user.getKycStatus());
+        user.setKycApproved(user.getKycApproved());
         super.update(user);
     }
 
@@ -113,12 +116,12 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     public void unBanById(UUID id) {
         changeBanStatus(id, BanStatus.UNBAN);
     }
-
-    @Override
-    public List<UserDto> getAllKycRequest() {
-        List<UserEntity> entities = userRepository.findByKycStatus(KYCStatus.KYC_IN_PROCESS);
-        return converter.convert(entities, DTO_CLASS);
-    }
+    //TODO: KYC REFACTOR
+//    @Override
+//    public List<UserDto> getAllKycRequest() {
+//        List<UserEntity> entities = userRepository.findByKycStatus(KYCStatus.KYC_IN_PROCESS);
+//        return converter.convert(entities, DTO_CLASS);
+//    }
 
     private void changeBanStatus(UUID id, BanStatus status) {
         UserDto user = getById(id);
