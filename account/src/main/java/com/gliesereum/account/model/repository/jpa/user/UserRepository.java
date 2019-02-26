@@ -14,6 +14,6 @@ import java.util.UUID;
  */
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
-
-    List<UserEntity> findByKycStatus(KYCStatus status);
+    //TODO: KYC REFACTOR
+   //List<UserEntity> findByKycStatus(KYCStatus status);
 }

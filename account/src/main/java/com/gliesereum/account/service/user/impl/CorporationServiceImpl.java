@@ -63,7 +63,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     public CorporationDto create(CorporationDto dto) {
         CorporationDto result = null;
         SecurityUtil.checkUserByBanStatus();
-        dto.setKYCStatus(KYCStatus.KYC_NOT_PASSED);
+        dto.setKycApproved(false);
         dto.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
         result = super.create(dto);
         if (result != null) {
@@ -95,7 +95,8 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             if (byId == null) {
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
-            checkByUpdateStatus(dto, byId);
+            //checkByUpdateStatus(dto, byId);
+            dto.setKycApproved(byId.getKycApproved());
             CorporationEntity entity = converter.convert(dto, entityClass);
             entity = corporationRepository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
@@ -126,18 +127,18 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         }
         sharedOwnershipService.delete(id);
     }
-
-    @Override
-    public void updateKycStatus(UUID id, KYCStatus status) {
-        CorporationDto corporation = getById(id);
-        corporation.setKYCStatus(status);
-        if (status.equals(KYCStatus.KYC_PASSED)) {
-            corporation.setVerifiedStatus(VerifiedStatus.VERIFIED);
-        } else {
-            corporation.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
-        }
-        super.update(corporation);
-    }
+    //TODO: KYC REFACTOR
+//    @Override
+//    public void updateKycStatus(UUID id, KYCStatus status) {
+//        CorporationDto corporation = getById(id);
+//        corporation.setKYCStatus(status);
+//        if (status.equals(KYCStatus.KYC_PASSED)) {
+//            corporation.setVerifiedStatus(VerifiedStatus.VERIFIED);
+//        } else {
+//            corporation.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
+//        }
+//        super.update(corporation);
+//    }
 
     private void checkCorporationSharedOwnerships(CorporationSharedOwnershipDto dto) {
         if (dto.getShare() <= 0 || dto.getShare() > 100) {
@@ -174,12 +175,12 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             }
         }
     }
-
-    @Override
-    public List<CorporationDto> getAllKycRequest() {
-        List<CorporationEntity> entities = corporationRepository.findByKYCStatus(KYCStatus.KYC_IN_PROCESS);
-        return converter.convert(entities, DTO_CLASS);
-    }
+    //TODO: KYC REFACTOR
+//    @Override
+//    public List<CorporationDto> getAllKycRequest() {
+//        List<CorporationEntity> entities = corporationRepository.findByKYCStatus(KYCStatus.KYC_IN_PROCESS);
+//        return converter.convert(entities, DTO_CLASS);
+//    }
 
     @Override
     public void checkCurrentUserForPermissionActionThisCorporation(UUID id) {
@@ -204,18 +205,18 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         }
         return corporation;
     }
-
-    private void checkByUpdateStatus(CorporationDto dto, CorporationDto corporation) {
-        if (corporation == null) {
-            throw new ClientException(CORPORATION_NOT_FOUND);
-        }
-        if (!corporation.getKYCStatus().equals(dto.getKYCStatus())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_CHANGE_KYS_STATUS);
-        }
-        if (!corporation.getVerifiedStatus().equals(dto.getVerifiedStatus())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_CHANGE_VERIFIED_STATUS);
-        }
-    }
+    //TODO: KYC REFACTOR
+//    private void checkByUpdateStatus(CorporationDto dto, CorporationDto corporation) {
+//        if (corporation == null) {
+//            throw new ClientException(CORPORATION_NOT_FOUND);
+//        }
+//        if (!corporation.getKYCStatus().equals(dto.getKYCStatus())) {
+//            throw new ClientException(DONT_HAVE_PERMISSION_TO_CHANGE_KYS_STATUS);
+//        }
+//        if (!corporation.getVerifiedStatus().equals(dto.getVerifiedStatus())) {
+//            throw new ClientException(DONT_HAVE_PERMISSION_TO_CHANGE_VERIFIED_STATUS);
+//        }
+//    }
 
 
 

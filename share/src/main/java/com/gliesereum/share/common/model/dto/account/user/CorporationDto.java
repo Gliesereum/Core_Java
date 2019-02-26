@@ -60,7 +60,7 @@ public class CorporationDto extends DefaultDto {
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime dateIncorporation;
 
-    private KYCStatus kYCStatus;
+    private Boolean kycApproved;
 
     private VerifiedStatus verifiedStatus;
 

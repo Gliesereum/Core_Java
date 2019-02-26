@@ -61,7 +61,7 @@ public class UserDto extends DefaultDto {
 
     private BanStatus banStatus;
 
-    private KYCStatus kycStatus;
+    private Boolean kycApproved;
 
     private List<CorporationDto> corporation = new ArrayList<>();
 }

@@ -70,13 +70,8 @@ public class CorporationEntity extends DefaultEntity {
     @Column(name = "date_incorporation")
     private LocalDateTime dateIncorporation;
 
-    @Column(name = "kyc_status")
-    @Enumerated(EnumType.STRING)
-    private KYCStatus kYCStatus;
-
-    @Column(name = "verified_status")
-    @Enumerated(EnumType.STRING)
-    private VerifiedStatus verifiedStatus;
+    @Column(name = "kyc_approved")
+    private Boolean kycApproved;
 
     @OneToMany
     @JoinColumn(name = "corporation_id", insertable = false, updatable = false)

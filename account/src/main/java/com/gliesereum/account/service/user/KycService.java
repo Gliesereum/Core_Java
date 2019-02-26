@@ -14,13 +14,13 @@ import java.util.UUID;
 public interface KycService {
 
     void updateKycStatus(KYCStatus status, UUID objectId, boolean isCorporation);
+    //TODO: KYC REFACTOR
+   // List<CorporationDto> getAllCorporationKycRequest();
 
-    List<CorporationDto> getAllCorporationKycRequest();
+    //List<UserDto> getAllUserKycRequest();
 
-    List<UserDto> getAllUserKycRequest();
-
-    void uploadDocument(MultipartFile file, UUID objectId, boolean isCorporation);
-
-    void deleteDocument(String path, UUID objectId, boolean isCorporation);
+//    void uploadDocument(MultipartFile file, UUID objectId, boolean isCorporation);
+//
+//    void deleteDocument(String path, UUID objectId, boolean isCorporation);
 
 }
