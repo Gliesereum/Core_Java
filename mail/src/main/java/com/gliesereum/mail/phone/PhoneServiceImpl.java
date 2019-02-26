@@ -28,7 +28,7 @@ public class PhoneServiceImpl implements PhoneService {
     private final String LOGIN = "phone.login";
     private final String TOKEN = "phone.token";
     private final String ALPHA_NAME = "phone.alpha-name";
-    private final String ADMIN_EMAIL = "admin.email";
+    private final String LOG_EMAIL = "spring.mail.log-email";
 
     @Autowired
     private Environment environment;
@@ -62,10 +62,13 @@ public class PhoneServiceImpl implements PhoneService {
             PhoneResponse response = mapper.readValue(responseEntity.getBody(), PhoneResponse.class);
 
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                logger.info("Massage: {} send to phone: {}", text, phone);
+                String massage = "Massage: " + text + "\nSend to phone: " + phone;
+                logger.info(massage);
+                String logInfoToEmail = massage + "\nBalance: " + checkBalance();
+                emailService.sendSimpleMessage(environment.getProperty(LOG_EMAIL), "Dispatch service info", logInfoToEmail);
             } else {
                 logger.error(response.getError());
-                emailService.sendSimpleMessage(environment.getProperty(ADMIN_EMAIL), "Phone service error", response.getError());
+                emailService.sendSimpleMessage(environment.getProperty(LOG_EMAIL), "Phone service error", response.getError());
             }
         } catch (Exception e) {
             String error = "Error to send request for send phone message: " + e.getMessage();

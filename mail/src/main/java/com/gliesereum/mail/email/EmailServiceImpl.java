@@ -51,6 +51,7 @@ public class EmailServiceImpl implements EmailService {
             message.setTo(to);
             message.setSubject(subject);
             message.setText(text);
+            message.setFrom(environment.getProperty(RECEIVER));
 
             emailSender.send(message);
             logger.info("\nSend email, date: [{}] to: {}", LocalDateTime.now(), to);

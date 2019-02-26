@@ -1,15 +1,13 @@
-admin:
-  email: gliesereum@gmail.com
-
 spring:
   mail:
     default-encoding: UTF-8
-    host: smtp.gmail.com
-    username: gliesereum@gmail.com
-    password: GliesereumAdmin0013
-    from: GLIESEREUM<gliesereum@gmail.com>
+    host: mail.adm.tools
+    username: support@gliesereum.com
+    password: Support0013
+    from: GLIESEREUM<support@gliesereum.com>
     subject: Gliesereum verification mail
     chanel-verification: verificationQueue
+    log-email: log@gliesereum.com
     port: 465
     protocol: smtp
     properties:
