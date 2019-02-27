@@ -5,7 +5,6 @@ import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.BorrowerOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
-import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,12 +57,6 @@ public class OfferController {
         return investorOfferService.updateState(state, id);
     }
 
-    @DeleteMapping("/investor/{id}")
-    public MapResponse deleteInvestorOffer(@PathVariable("id") UUID id) {
-        investorOfferService.delete(id);
-        return new MapResponse("true");
-    }
-
     @GetMapping("/borrower")
     public List<BorrowerOfferDto> getAllBorrowerOffers() {
         return borrowerOfferService.getAll();
@@ -73,7 +66,6 @@ public class OfferController {
     public List<BorrowerOfferDto> getAllBorrowerOffersByState(@RequestParam("state") OfferStateType state) {
         return borrowerOfferService.getAllByState(state);
     }
-
 
     @GetMapping("/borrower/{id}")
     public BorrowerOfferDto getByIdBorrowerOffer(@PathVariable("id") UUID id) {
@@ -89,11 +81,5 @@ public class OfferController {
     public BorrowerOfferDto updateBorrowerOfferState(@RequestParam("state") OfferStateType state,
                                                      @RequestParam("id") UUID id) {
         return borrowerOfferService.updateState(state, id);
-    }
-
-    @DeleteMapping("/borrower/{id}")
-    public MapResponse deleteBorrowerOffer(@PathVariable("id") UUID id) {
-        borrowerOfferService.delete(id);
-        return new MapResponse("true");
     }
 }    
