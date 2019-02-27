@@ -1,6 +1,6 @@
-package com.gliesereum.lendinggallery.model.repository.jpa.dividend;
+package com.gliesereum.lendinggallery.model.repository.jpa.offer;
 
-import com.gliesereum.lendinggallery.model.entity.dividend.DividendEntity;
+import com.gliesereum.lendinggallery.model.entity.offer.DividendEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
