@@ -20,3 +20,17 @@ CREATE TABLE IF NOT EXISTS lending_gallery.borrower_offer(
 
   CONSTRAINT borrower_offer_pk PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS lending_gallery.operation_story(
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+
+  customer_id uuid,
+  art_bond_id uuid,
+  sum integer,
+  create_date TIMESTAMP without time zone DEFAULT NOW(),
+  name character varying,
+  description character varying,
+  operation_type character varying,
+
+  CONSTRAINT operation_story_pk PRIMARY KEY (id)
+);
