@@ -10,7 +10,6 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
@@ -95,7 +94,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             if (byId == null) {
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
-            //checkByUpdateStatus(dto, byId);
             dto.setKycApproved(byId.getKycApproved());
             CorporationEntity entity = converter.convert(dto, entityClass);
             entity = corporationRepository.saveAndFlush(entity);
@@ -127,18 +125,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         }
         sharedOwnershipService.delete(id);
     }
-    //TODO: KYC REFACTOR
-//    @Override
-//    public void updateKycStatus(UUID id, KYCStatus status) {
-//        CorporationDto corporation = getById(id);
-//        corporation.setKYCStatus(status);
-//        if (status.equals(KYCStatus.KYC_PASSED)) {
-//            corporation.setVerifiedStatus(VerifiedStatus.VERIFIED);
-//        } else {
-//            corporation.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
-//        }
-//        super.update(corporation);
-//    }
 
     private void checkCorporationSharedOwnerships(CorporationSharedOwnershipDto dto) {
         if (dto.getShare() <= 0 || dto.getShare() > 100) {
@@ -175,12 +161,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             }
         }
     }
-    //TODO: KYC REFACTOR
-//    @Override
-//    public List<CorporationDto> getAllKycRequest() {
-//        List<CorporationEntity> entities = corporationRepository.findByKYCStatus(KYCStatus.KYC_IN_PROCESS);
-//        return converter.convert(entities, DTO_CLASS);
-//    }
 
     @Override
     public void checkCurrentUserForPermissionActionThisCorporation(UUID id) {
@@ -189,7 +169,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         CorporationDto corporation = getById(id);
         List<CorporationSharedOwnershipDto> sharedOwnerships = corporation.getCorporationSharedOwnerships();
         if (CollectionUtils.isEmpty(sharedOwnerships) ||
-                !sharedOwnerships.stream().map(CorporationSharedOwnershipDto::getOwnerId).collect(Collectors.toList()).contains(userId)) {
+                sharedOwnerships.stream().noneMatch(i -> i.getOwnerId().equals(userId))) {
             throw new ClientException(USER_DONT_HAVE_PERMISSION_TO_CORPORATION);
         }
     }
@@ -199,26 +179,17 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         if (id == null) {
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
-        CorporationDto corporation = getById(id);
+        CorporationDto corporation = super.getById(id);
         if (corporation == null) {
             throw new ClientException(CORPORATION_NOT_FOUND);
         }
         return corporation;
     }
-    //TODO: KYC REFACTOR
-//    private void checkByUpdateStatus(CorporationDto dto, CorporationDto corporation) {
-//        if (corporation == null) {
-//            throw new ClientException(CORPORATION_NOT_FOUND);
-//        }
-//        if (!corporation.getKYCStatus().equals(dto.getKYCStatus())) {
-//            throw new ClientException(DONT_HAVE_PERMISSION_TO_CHANGE_KYS_STATUS);
-//        }
-//        if (!corporation.getVerifiedStatus().equals(dto.getVerifiedStatus())) {
-//            throw new ClientException(DONT_HAVE_PERMISSION_TO_CHANGE_VERIFIED_STATUS);
-//        }
-//    }
 
-
-
-
+    @Override
+    public void setKycApproved(UUID objectId) {
+        CorporationDto corporation = getById(objectId);
+        corporation.setKycApproved(true);
+        super.update(corporation);
+    }
 }

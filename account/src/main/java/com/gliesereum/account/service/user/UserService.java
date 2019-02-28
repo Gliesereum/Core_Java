@@ -1,11 +1,9 @@
 package com.gliesereum.account.service.user;
 
 import com.gliesereum.account.model.entity.UserEntity;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultService;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -17,10 +15,8 @@ public interface UserService extends DefaultService<UserDto, UserEntity> {
     void banById(UUID id);
 
     void unBanById(UUID id);
-    //TODO: KYC REFACTOR
-    //List<UserDto> getAllKycRequest();
-
-    void updateKycStatus(UUID id, KYCStatus status);
 
     UserDto updateMe(UserDto dto);
+
+    void setKycApproved(UUID objectId);
 }

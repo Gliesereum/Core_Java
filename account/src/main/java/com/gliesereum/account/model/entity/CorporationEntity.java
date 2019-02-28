@@ -1,7 +1,5 @@
 package com.gliesereum.account.model.entity;
 
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

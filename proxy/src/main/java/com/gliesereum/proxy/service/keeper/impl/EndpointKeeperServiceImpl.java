@@ -87,7 +87,7 @@ public class EndpointKeeperServiceImpl implements EndpointKeeperService {
         int endpointIndex = StringUtils.ordinalIndexOf(uri, "/", 3);
         String modulePath = uri.substring(0, endpointIndex);
         String endpointPath = uri.substring(endpointIndex);
-        return new RequestUriDto(modulePath, RegexUtil.removeUUIDToStart(endpointPath));
+        return new RequestUriDto(modulePath, RegexUtil.removeUUIDToStar(endpointPath));
     }
 
 
