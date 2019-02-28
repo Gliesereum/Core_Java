@@ -115,6 +115,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             if (CollectionUtils.isNotEmpty(offers)) {
                 offers.forEach(f -> {
                     OperationsStoryDto story = new OperationsStoryDto();
+                    story.setName(artBond.getName());
+                    story.setSum(f.getSumInvestment());
+                    story.setDescription(null);
                     story.setArtBondId(f.getArtBondId());
                     story.setCreate(LocalDateTime.now());
                     story.setOperationType(OperationType.PURCHASE);

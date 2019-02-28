@@ -40,17 +40,4 @@ public class OperationsStoryDto extends DefaultDto {
     private LocalDateTime create;
 
     private OperationType operationType;
-
-    public OperationsStoryDto(UUID customerId, UUID artBondId, ArtBondDto artBond,
-                              Integer sum, String name, String description,
-                              LocalDateTime create, OperationType operationType) {
-        this.customerId = customerId;
-        this.artBondId = artBondId;
-        this.artBond = artBond;
-        this.sum = sum;
-        this.name = name;
-        this.description = description;
-        this.create = create;
-        this.operationType = operationType;
-    }
 }
