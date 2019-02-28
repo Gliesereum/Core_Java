@@ -4,17 +4,25 @@ import com.gliesereum.lendinggallery.model.entity.artbond.ArtBondEntity;
 import com.gliesereum.lendinggallery.model.repository.jpa.artbond.ArtBondRepository;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.media.MediaService;
+import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
+import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +42,12 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Autowired
     private MediaService mediaService;
+
+    @Autowired
+    private InvestorOfferService investorOfferService;
+
+    @Autowired
+    private OperationsStoryService storyService;
 
     private static final Class<ArtBondDto> DTO_CLASS = ArtBondDto.class;
     private static final Class<ArtBondEntity> ENTITY_CLASS = ArtBondEntity.class;
@@ -59,6 +73,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public ArtBondDto update(ArtBondDto dto) {
+        ArtBondDto artBond = getById(dto.getId());
+        dto.setStatusType(artBond.getStatusType());
+        dto.setSpecialStatusType(artBond.getSpecialStatusType());
         ArtBondDto result = super.update(dto);
         setMedia(result);
         return result;
@@ -75,11 +92,35 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public ArtBondDto getArtBondById(UUID id) {
         ArtBondDto result = getById(id);
-        if(result == null){
+        if (result == null) {
             throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
         }
         setMedia(result);
         return result;
+    }
+
+    @Override
+    @Transactional
+    public ArtBondDto updateStatus(StatusType status, UUID id) {
+        ArtBondDto artBond = getById(id);
+        if (artBond == null) {
+            throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
+        }
+        artBond.setStatusType(status);
+        if (status.equals(StatusType.COMPLETED_COLLECTION)) {
+            List<InvestorOfferDto> offers = investorOfferService.getAllByArtBond(id);
+            if (CollectionUtils.isNotEmpty(offers)) {
+                offers.forEach(f -> {
+                    OperationsStoryDto story = new OperationsStoryDto();
+                    story.setArtBondId(f.getArtBondId());
+                    story.setCreate(LocalDateTime.now());
+                    story.setOperationType(OperationType.PURCHASE);
+                    story.setCustomerId(f.getCustomerId());
+                    storyService.create(story);
+                });
+            }
+        }
+        return super.update(artBond);
     }
 
     private void setMedia(ArtBondDto dto) {

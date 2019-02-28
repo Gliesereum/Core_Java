@@ -59,6 +59,12 @@ public class ArtBondController {
         return service.getAllByStatus(status);
     }
 
+    @PutMapping("/status")
+    public ArtBondDto updateStatus(@RequestParam("status") StatusType status,
+                                   @RequestParam("id") UUID id) {
+        return service.updateStatus(status, id);
+    }
+
     @GetMapping("/media/by-block-type")
     public List<MediaDto> getFilesByBlockType(@RequestParam("objectId") UUID objectId,
                                               @RequestParam("blockMediaType") BlockMediaType blockMediaType) {

@@ -17,4 +17,6 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
     List<ArtBondDto> getAllByStatus(StatusType status);
 
     ArtBondDto getArtBondById(UUID id);
+
+    ArtBondDto updateStatus(StatusType status, UUID id);
 }

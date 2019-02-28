@@ -20,7 +20,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class ArtBondDto extends DefaultDto {
 
-    private Long price;
+    private Integer price;
 
     private String name;
 

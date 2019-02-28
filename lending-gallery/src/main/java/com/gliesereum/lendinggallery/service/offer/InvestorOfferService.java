@@ -17,4 +17,6 @@ public interface InvestorOfferService extends DefaultService<InvestorOfferDto, I
     List<InvestorOfferDto> getAllByState(OfferStateType state);
 
     InvestorOfferDto updateState(OfferStateType state, UUID id);
+
+    List<InvestorOfferDto> getAllByArtBond(UUID id);
 }

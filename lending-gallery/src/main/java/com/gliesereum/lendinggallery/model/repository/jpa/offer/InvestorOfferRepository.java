@@ -14,4 +14,7 @@ import java.util.UUID;
 public interface InvestorOfferRepository extends JpaRepository<InvestorOfferEntity, UUID> {
 
     List<InvestorOfferEntity> findAllByStateType(OfferStateType stateType);
+
+    List<InvestorOfferEntity> findAllByArtBondId(UUID artBondId);
+
 }
