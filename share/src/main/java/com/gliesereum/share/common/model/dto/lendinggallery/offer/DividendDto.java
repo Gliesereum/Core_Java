@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.model.dto.lendinggallery.dividend;
+package com.gliesereum.share.common.model.dto.lendinggallery.offer;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.Data;

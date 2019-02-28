@@ -1,4 +1,4 @@
-package com.gliesereum.lendinggallery.model.entity.dividend;
+package com.gliesereum.lendinggallery.model.entity.offer;
 
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
