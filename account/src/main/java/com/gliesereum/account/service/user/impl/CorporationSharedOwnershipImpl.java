@@ -7,11 +7,13 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author vitalij
@@ -20,25 +22,37 @@ import java.util.UUID;
 @Service
 public class CorporationSharedOwnershipImpl extends DefaultServiceImpl<CorporationSharedOwnershipDto, CorporationSharedOwnershipEntity> implements CorporationSharedOwnershipService {
 
-    @Autowired
-    CorporationSharedOwnershipRepository repository;
-
     private static final Class<CorporationSharedOwnershipDto> DTO_CLASS = CorporationSharedOwnershipDto.class;
     private static final Class<CorporationSharedOwnershipEntity> ENTITY_CLASS = CorporationSharedOwnershipEntity.class;
 
+    private final CorporationSharedOwnershipRepository corporationSharedOwnershipRepository;
+
     public CorporationSharedOwnershipImpl(CorporationSharedOwnershipRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.corporationSharedOwnershipRepository = repository;
     }
 
     @Override
     public List<CorporationSharedOwnershipDto> getAllByUserId(UUID id) {
-        List<CorporationSharedOwnershipEntity> entities = repository.findByOwnerId(id);
+        List<CorporationSharedOwnershipEntity> entities = corporationSharedOwnershipRepository.findByOwnerId(id);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public List<CorporationSharedOwnershipDto> getAllByCorporationOwnerId(UUID id) {
-        List<CorporationSharedOwnershipEntity> entities = repository.findByCorporationOwnerId(id);
+        List<CorporationSharedOwnershipEntity> entities = corporationSharedOwnershipRepository.findByCorporationOwnerId(id);
         return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<UUID> getAllCorporationIdByUserId(UUID id) {
+        List<UUID> result = null;
+        List<CorporationSharedOwnershipDto> founded = getAllByUserId(id);
+        if (CollectionUtils.isNotEmpty(founded)) {
+            result = founded.stream()
+                    .map(CorporationSharedOwnershipDto::getCorporationId)
+                    .collect(Collectors.toList());
+        }
+        return result;
     }
 }

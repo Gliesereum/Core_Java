@@ -14,6 +14,8 @@ public interface DefaultService<D extends DefaultDto, E extends DefaultEntity> {
 
     D create(D dto);
 
+    List<D> create(List<D> dtos);
+
     D update(D dto);
 
     D getById(UUID id);

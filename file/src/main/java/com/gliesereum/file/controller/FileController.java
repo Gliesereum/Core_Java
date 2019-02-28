@@ -51,26 +51,17 @@ public class FileController {
 
     @GetMapping("/load/{fileId}")
     public ResponseEntity<Resource> loadFile(@PathVariable UUID fileId) {
-        ResponseEntity<Resource> result = null;
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         FileResponseDto fileResponse = fileService.loadFile(fileId, SecurityUtil.getUserId());
-        if (fileResponse != null) {
-            Resource resource = fileResponse.getResource();
-            UserFileDto userFile = fileResponse.getUserFile();
+        return getResourceResponseEntity(fileResponse);
+    }
 
-            result = ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(userFile.getMediaType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + userFile.getFilename() + "\"")
-                    //.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + userFile.getFilename() + "\"")
-                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(userFile.getSize()))
-                    .body(resource);
-
-        } else {
-            result = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return result;
+    @GetMapping("/load/private/{fileId}")
+    public ResponseEntity<Resource> loadPrivateFile(@PathVariable UUID fileId) {
+        FileResponseDto fileResponse = fileService.loadPrivateFile(fileId);
+        return getResourceResponseEntity(fileResponse);
     }
 
     @GetMapping("/info/user")
@@ -115,6 +106,25 @@ public class FileController {
     @GetMapping("/uploaded")
     public ObjectListing getAllUploaded() {
         return cdnService.getAllFiles();
+    }
+
+    private ResponseEntity<Resource> getResourceResponseEntity(FileResponseDto fileResponse) {
+        ResponseEntity<Resource> result;
+        if (fileResponse != null) {
+            Resource resource = fileResponse.getResource();
+            UserFileDto userFile = fileResponse.getUserFile();
+
+            result = ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(userFile.getMediaType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + userFile.getFilename() + "\"")
+                    //.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + userFile.getFilename() + "\"")
+                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(userFile.getSize()))
+                    .body(resource);
+
+        } else {
+            result = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return result;
     }
 
 }

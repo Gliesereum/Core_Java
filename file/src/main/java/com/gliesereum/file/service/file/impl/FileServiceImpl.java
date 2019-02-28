@@ -58,12 +58,20 @@ public class FileServiceImpl implements FileService {
             if (!userHaveAccessToFile(userFile, userId)) {
                 throw new ClientException(CURRENT_USER_DONT_HAVE_ACCESS_TO_FILE);
             }
-            Resource resource = cdnService.loadFile(userFile.getFilename());
-            if (resource != null) {
-                fileResponse = new FileResponseDto();
-                fileResponse.setResource(resource);
-                fileResponse.setUserFile(userFile);
+            fileResponse = loadFile(userFile);
+        }
+        return fileResponse;
+    }
+
+    @Override
+    public FileResponseDto loadPrivateFile(UUID fileId) {
+        FileResponseDto fileResponse = null;
+        if (fileId != null) {
+            UserFileDto userFile = userFileService.getById(fileId);
+            if (userFile == null) {
+                throw new ClientException(USER_FILE_NOT_FOUND);
             }
+            fileResponse = loadFile(userFile);
         }
         return fileResponse;
     }
@@ -108,6 +116,17 @@ public class FileServiceImpl implements FileService {
     @Override
     public void delete(String filename) {
         cdnService.delete(filename);
+    }
+
+    private FileResponseDto loadFile(UserFileDto userFile) {
+        FileResponseDto fileResponse = null;
+        Resource resource = cdnService.loadFile(userFile.getFilename());
+        if (resource != null) {
+            fileResponse = new FileResponseDto();
+            fileResponse.setResource(resource);
+            fileResponse.setUserFile(userFile);
+        }
+        return fileResponse;
     }
 
     private UserFileDto insertFileInfo(UserFileDto userFile, String fileName, String fileUrl, String contentType, long fileSize, UUID userId) {
