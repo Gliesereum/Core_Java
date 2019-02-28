@@ -72,6 +72,13 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     }
 
     @Override
+    public ArtBondDto create(ArtBondDto dto) {
+        dto.setStatusType(StatusType.WAITING_COLLECTION);
+        dto.setSpecialStatusType(SpecialStatusType.ACTIVE);
+        return super.create(dto);
+    }
+
+    @Override
     public ArtBondDto update(ArtBondDto dto) {
         ArtBondDto artBond = getById(dto.getId());
         dto.setStatusType(artBond.getStatusType());
