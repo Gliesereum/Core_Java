@@ -106,6 +106,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         if (artBond == null) {
             throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
         }
+        if (artBond.getStatusType().equals(status)) {
+            return artBond;
+        }
         artBond.setStatusType(status);
         if (status.equals(StatusType.COMPLETED_COLLECTION)) {
             List<InvestorOfferDto> offers = investorOfferService.getAllByArtBond(id);
