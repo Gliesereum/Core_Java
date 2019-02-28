@@ -3,6 +3,7 @@ package com.gliesereum.share.common.util;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.security.model.UserAuthentication;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,8 +41,8 @@ public class SecurityUtil {
     public static List<UUID> getUserCorporationIds() {
         List<UUID> result = null;
         UserAuthentication user = getUser();
-        if ((user != null) && (user.getUser() != null) && (CollectionUtils.isNotEmpty(user.getUser().getCorporation()))) {
-            result = user.getUser().getCorporation().stream().map(CorporationDto::getId).collect(Collectors.toList());
+        if ((user != null) && (user.getUser() != null) && (CollectionUtils.isNotEmpty(user.getUser().getCorporationIds()))) {
+            result = user.getUser().getCorporationIds();
         }
         return result;
     }

@@ -2,13 +2,13 @@ package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserRepository;
+import com.gliesereum.account.service.user.CorporationSharedOwnershipService;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -44,6 +43,9 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
 
     @Autowired
     private UserPhoneService phoneService;
+
+    @Autowired
+    private CorporationSharedOwnershipService corporationSharedOwnershipService;
 
     public UserServiceImpl(UserRepository userRepository, DefaultConverter defaultConverter) {
         super(userRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -98,16 +100,6 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     }
 
     @Override
-    public void updateKycStatus(UUID id, KYCStatus status) {
-        UserDto user = getById(id);
-        if (user == null) {
-            throw new ClientException(USER_NOT_FOUND);
-        }
-        user.setKycApproved(user.getKycApproved());
-        super.update(user);
-    }
-
-    @Override
     public void banById(UUID id) {
         changeBanStatus(id, BanStatus.BAN);
     }
@@ -116,12 +108,6 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     public void unBanById(UUID id) {
         changeBanStatus(id, BanStatus.UNBAN);
     }
-    //TODO: KYC REFACTOR
-//    @Override
-//    public List<UserDto> getAllKycRequest() {
-//        List<UserEntity> entities = userRepository.findByKycStatus(KYCStatus.KYC_IN_PROCESS);
-//        return converter.convert(entities, DTO_CLASS);
-//    }
 
     private void changeBanStatus(UUID id, BanStatus status) {
         UserDto user = getById(id);
@@ -129,6 +115,25 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             throw new ClientException(USER_NOT_FOUND);
         }
         user.setBanStatus(status);
+        super.update(user);
+    }
+
+    @Override
+    public UserDto getById(UUID id) {
+        UserDto byId = super.getById(id);
+        if(byId != null) {
+            byId.setCorporationIds(corporationSharedOwnershipService.getAllCorporationIdByUserId(byId.getId()));
+        }
+        return byId;
+    }
+
+    @Override
+    public void setKycApproved(UUID objectId) {
+        UserDto user = super.getById(objectId);
+        if (user == null) {
+            throw new ClientException(USER_NOT_FOUND);
+        }
+        user.setKycApproved(true);
         super.update(user);
     }
 }

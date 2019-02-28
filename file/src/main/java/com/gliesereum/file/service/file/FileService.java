@@ -15,9 +15,12 @@ public interface FileService {
 
     FileResponseDto loadFile(UUID fileId, UUID userId);
 
+    FileResponseDto loadPrivateFile(UUID fileId);
+
     UserFileDto uploadFile(UUID userId, UserFileDto userFile, MultipartFile multipartFile);
 
     void changeAccessToFile(UserFileDto userFile);
 
     void delete(String filename);
+
 }

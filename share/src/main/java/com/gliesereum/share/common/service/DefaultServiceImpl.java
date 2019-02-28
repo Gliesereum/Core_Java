@@ -4,6 +4,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +37,23 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
 
     public D create(D dto) {
         if (dto != null) {
+            dto.setId(null);
             E entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
         }
         return dto;
+    }
+
+    @Override
+    public List<D> create(List<D> dtos) {
+        if (CollectionUtils.isNotEmpty(dtos)) {
+            List<E> entities = converter.convert(dtos, entityClass);
+            entities = repository.saveAll(entities);
+            repository.flush();
+            dtos = converter.convert(entities, dtoClass);
+        }
+        return dtos;
     }
 
     public D update(D dto) {

@@ -19,7 +19,7 @@ public class RegexUtil {
         return uuidPattern.matcher(str).matches();
     }
 
-    public static String removeUUIDToStart(String str) {
+    public static String removeUUIDToStar(String str) {
         if (StringUtils.isNotEmpty(str)) {
             str = str.replaceAll(UUID_REGEX, "*");
         }
