@@ -41,7 +41,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     private static final Class<CorporationDto> DTO_CLASS = CorporationDto.class;
     private static final Class<CorporationEntity> ENTITY_CLASS = CorporationEntity.class;
 
-    private final CorporationRepository corporationRepository;
+    private final CorporationRepository repository;
 
     @Autowired
     private UserCorporationService userCorporationService;
@@ -52,9 +52,9 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     @Autowired
     private UserService userService;
 
-    public CorporationServiceImpl(CorporationRepository corporationRepository, DefaultConverter converter) {
-        super(corporationRepository, converter, DTO_CLASS, ENTITY_CLASS);
-        this.corporationRepository = corporationRepository;
+    public CorporationServiceImpl(CorporationRepository repository, DefaultConverter converter) {
+        super(repository, converter, DTO_CLASS, ENTITY_CLASS);
+        this.repository = repository;
     }
 
     @Override
@@ -90,13 +90,13 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
             checkCurrentUserForPermissionActionThisCorporation(dto.getId());
-            CorporationDto byId = super.getById(dto.getId());
+            CorporationEntity byId = repository.findByIdAndObjectState(dto.getId(), ObjectState.ACTIVE);
             if (byId == null) {
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
             dto.setKycApproved(byId.getKycApproved());
             CorporationEntity entity = converter.convert(dto, entityClass);
-            entity = corporationRepository.saveAndFlush(entity);
+            entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
         }
         return dto;
@@ -182,11 +182,11 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         if (id == null) {
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
-        CorporationDto corporation = super.getById(id);
+        CorporationEntity corporation = repository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         if (corporation == null) {
             throw new ClientException(CORPORATION_NOT_FOUND);
         }
-        return corporation;
+        return converter.convert(corporation, dtoClass);
     }
 
     @Override
@@ -194,7 +194,10 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         List<CorporationDto> result = null;
         List<UUID> corporationIds = sharedOwnershipService.getAllCorporationIdByUserId(userId);
         if (CollectionUtils.isNotEmpty(corporationIds)) {
-            result = super.getByIds(corporationIds);
+            List<CorporationEntity> entities = repository.findAllByIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                result = converter.convert(entities, dtoClass);
+            }
         }
         return result;
     }
