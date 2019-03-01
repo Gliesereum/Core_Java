@@ -15,6 +15,7 @@ import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.dto.account.user.UserCorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.NOT_EXIST_BY_ID;
@@ -103,9 +103,12 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     }
 
     @Override
+    @Transactional
     public void delete(UUID id) {
         checkCurrentUserForPermissionActionThisCorporation(id);
-        super.delete(id);
+        CorporationDto dto = getById(id);
+        dto.setObjectState(ObjectState.DELETED);
+        super.update(dto);
     }
 
     @Override
