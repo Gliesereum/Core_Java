@@ -190,6 +190,16 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     }
 
     @Override
+    public List<CorporationDto> getByUserId(UUID userId) {
+        List<CorporationDto> result = null;
+        List<UUID> corporationIds = sharedOwnershipService.getAllCorporationIdByUserId(userId);
+        if (CollectionUtils.isNotEmpty(corporationIds)) {
+            result = super.getByIds(corporationIds);
+        }
+        return result;
+    }
+
+    @Override
     public void setKycApproved(UUID objectId) {
         CorporationDto corporation = getById(objectId);
         corporation.setKycApproved(true);

@@ -251,9 +251,12 @@ services:
     image: nginx:1.15.7-alpine
     volumes:
       - ../nginx-dev:/etc/nginx
+      - /etc/letsencrypt/live/dev.gliesereum.com/fullchain.pem:/etc/nginx-ssl/fullchain.pem
+      - /etc/letsencrypt/live/dev.gliesereum.com/privkey.pem:/etc/nginx-ssl/privkey.pem
     deploy:
       restart_policy:
         condition: on-failure
     ports:
       - 5601:5601
-      - 8200:8200
+      - 80:80
+      - 443:443

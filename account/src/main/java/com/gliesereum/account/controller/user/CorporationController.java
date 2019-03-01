@@ -2,16 +2,20 @@ package com.gliesereum.account.controller.user;
 
 import com.gliesereum.account.service.user.CorporationEmployeeService;
 import com.gliesereum.account.service.user.CorporationService;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationEmployeeDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.response.MapResponse;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 
 /**
  * @author vitalij
@@ -44,6 +48,14 @@ public class CorporationController {
     @PutMapping
     public CorporationDto update(@RequestBody CorporationDto dto) {
         return service.update(dto);
+    }
+
+    @GetMapping("/by-user")
+    public List<CorporationDto> byUser() {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        return service.getByUserId(SecurityUtil.getUserId());
     }
 
     @DeleteMapping("/{id}")
