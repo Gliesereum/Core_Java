@@ -6,7 +6,8 @@ package com.gliesereum.share.common.model.dto.lendinggallery.enumerated;
  */
 public enum StatusType {
 
-    ACTIVE,
-    WAITING,
-    COMPLETED;
+    ACTIVE_COLLECTION,
+    WAITING_COLLECTION,
+    COMPLETED_COLLECTION,
+    CLOSED;
 }

@@ -21,7 +21,7 @@ import javax.persistence.*;
 public class ArtBondEntity extends DefaultEntity {
 
     @Column(name = "price")
-    private Long price;
+    private Integer price;
 
     @Column(name = "name")
     private String name;

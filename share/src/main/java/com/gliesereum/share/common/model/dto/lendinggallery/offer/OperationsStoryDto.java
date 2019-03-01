@@ -25,7 +25,7 @@ public class OperationsStoryDto extends DefaultDto {
 
     private UUID customerId;
 
-    private UUID atrBondId;
+    private UUID artBondId;
 
     private ArtBondDto artBond;
 

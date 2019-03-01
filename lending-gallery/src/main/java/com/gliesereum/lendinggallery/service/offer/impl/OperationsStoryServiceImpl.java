@@ -88,7 +88,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
 
     private void setArtBond(OperationsStoryDto dto) {
         if (dto != null) {
-            ArtBondDto artBond = artBondService.getById(dto.getAtrBondId());
+            ArtBondDto artBond = artBondService.getById(dto.getArtBondId());
             if(artBond == null){
                 throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
             }

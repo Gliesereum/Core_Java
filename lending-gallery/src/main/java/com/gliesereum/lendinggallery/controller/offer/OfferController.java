@@ -31,6 +31,11 @@ public class OfferController {
         return investorOfferService.getAll();
     }
 
+    @GetMapping("/art-bond")
+    public List<InvestorOfferDto> getAllOffersByArtBond(@RequestParam("id") UUID id) {
+        return investorOfferService.getAllByArtBond(id);
+    }
+
     @GetMapping("/investor/by-state")
     public List<InvestorOfferDto> getAllInvestorOffersByState(@RequestParam("state") OfferStateType state) {
         return investorOfferService.getAllByState(state);
