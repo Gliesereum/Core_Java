@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author vitalij
@@ -32,4 +33,9 @@ public class ContentEntity extends DefaultEntity {
     @Column(name = "content_type")
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
+
+    @ElementCollection
+    @CollectionTable(name="content_tag", joinColumns=@JoinColumn(name="content_id"))
+    @Column(name="tag")
+    private List<String> tags;
 }

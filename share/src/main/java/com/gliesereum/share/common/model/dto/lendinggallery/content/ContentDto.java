@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author vitalij
@@ -30,4 +31,6 @@ public class ContentDto extends DefaultDto {
     private LocalDateTime create;
 
     private ContentType contentType;
+
+    private List<String> tags;
 }

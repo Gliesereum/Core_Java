@@ -7,7 +7,7 @@ package com.gliesereum.share.common.model.dto.lendinggallery.enumerated;
 public enum OfferStateType {
 
     REQUEST,
-    DECLINED,
+    REFUSED,
     IN_PROCESS,
     COMPLETED;
 }

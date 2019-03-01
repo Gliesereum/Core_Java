@@ -17,6 +17,12 @@ CREATE TABLE IF NOT EXISTS lending_gallery.art_bond (
    CONSTRAINT art_bond_pk PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS lending_gallery.art_bond_tag(
+    art_bond_id uuid not null,
+    tag character varying not null,
+    CONSTRAINT art_bond_tag_fk FOREIGN KEY (art_bond_id) REFERENCES lending_gallery.art_bond (id)
+);
+
 CREATE TABLE IF NOT EXISTS lending_gallery.media(
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
   object_id uuid NOT NULL,
