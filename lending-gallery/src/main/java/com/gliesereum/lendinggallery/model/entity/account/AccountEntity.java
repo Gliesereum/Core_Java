@@ -17,5 +17,5 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "account")
-public class AccountEntity extends DefaultEntity {
+public class AccountEntity extends DefaultEntity { //todo remote if not use
 }

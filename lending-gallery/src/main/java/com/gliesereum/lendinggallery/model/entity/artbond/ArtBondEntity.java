@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author vitalij
@@ -63,5 +64,10 @@ public class ArtBondEntity extends DefaultEntity {
     @Column(name = "special_service_type")
     @Enumerated(EnumType.STRING)
     private SpecialStatusType specialStatusType;
+
+    @ElementCollection
+    @CollectionTable(name="art_bond_tag", joinColumns=@JoinColumn(name="art_bond_id"))
+    @Column(name="tag")
+    private List<String> tags;
 
 }

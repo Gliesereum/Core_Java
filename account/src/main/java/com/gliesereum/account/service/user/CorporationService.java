@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.service.DefaultService;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,4 +20,6 @@ public interface CorporationService extends DefaultService<CorporationDto, Corpo
     void checkCurrentUserForPermissionActionThisCorporation(UUID id);
 
     void setKycApproved(UUID objectId);
+
+    List<CorporationDto> getByUserId(UUID userId);
 }

@@ -48,6 +48,8 @@ public class ArtBondDto extends DefaultDto {
 
     private SpecialStatusType specialStatusType;
 
+    private List<String> tags;
+
     private List<MediaDto> images = new ArrayList<>();
 
     private List<MediaDto> authorInfo = new ArrayList<>();
