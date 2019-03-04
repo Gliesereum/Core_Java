@@ -7,12 +7,14 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
 
 /**
@@ -42,6 +44,15 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
         if(entity == null){
             throw new ClientException(CUSTOMER_NOT_FOUND_BY_USER_ID);
         }
+        return converter.convert(entity, dtoClass);
+    }
+
+    @Override
+    public CustomerDto getByUser() {
+        if(SecurityUtil.isAnonymous()){
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        CustomerEntity entity = repository.findByUserId(SecurityUtil.getUserId());
         return converter.convert(entity, dtoClass);
     }
 }
