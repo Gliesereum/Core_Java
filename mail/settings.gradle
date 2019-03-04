@@ -1,1 +1,4 @@
 rootProject.name = 'mail'
+
+include 'share'
+project(':share').projectDir = new File(settingsDir,  '../share')

@@ -1,6 +1,5 @@
 package com.gliesereum.mail.phone;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.mail.email.EmailService;
 import com.gliesereum.mail.phone.response.PhoneResponse;
 import org.slf4j.Logger;
@@ -34,10 +33,7 @@ public class PhoneServiceImpl implements PhoneService {
     private Environment environment;
 
     @Autowired
-    ObjectMapper mapper;
-
-    @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
     private EmailService emailService;
@@ -58,8 +54,8 @@ public class PhoneServiceImpl implements PhoneService {
             body.put("text", text);
             body.put("phone", phone);
 
-            ResponseEntity<String> responseEntity = sendRequest(body, url);
-            PhoneResponse response = mapper.readValue(responseEntity.getBody(), PhoneResponse.class);
+            ResponseEntity<PhoneResponse> responseEntity = sendRequest(body, url, PhoneResponse.class);
+            PhoneResponse response = responseEntity.getBody();
 
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 String massage = "Massage: " + text + "\nSend to phone: " + phone;
@@ -73,6 +69,7 @@ public class PhoneServiceImpl implements PhoneService {
         } catch (Exception e) {
             String error = "Error to send request for send phone message: " + e.getMessage();
             logger.error(error);
+            throw e;
         }
     }
 
@@ -81,9 +78,8 @@ public class PhoneServiceImpl implements PhoneService {
         try {
             final String url = environment.getProperty(API_PHONE_URL) + "balance";
 
-            ResponseEntity<String> responseEntity = sendRequest(getBody(), url);
-            PhoneResponse response = mapper.readValue(responseEntity.getBody(), PhoneResponse.class);
-
+            ResponseEntity<PhoneResponse> responseEntity = sendRequest(getBody(), url, PhoneResponse.class);
+            PhoneResponse response = responseEntity.getBody();
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 logger.info("Balance: {} date: {}", response.getBalance(), new Date().toString());
                 return response.getBalance();
@@ -94,21 +90,21 @@ public class PhoneServiceImpl implements PhoneService {
         } catch (Exception e) {
             String error = "Error to send request for check balance: " + e.getMessage();
             logger.error(error);
-            return error;
+            throw e;
         }
     }
 
     private Map<String, String> getBody() {
-        Map<String, String> body = new HashMap();
+        Map<String, String> body = new HashMap<>();
         body.put("auth_type", environment.getProperty(AUTH_TYPE));
         body.put("login", environment.getProperty(LOGIN));
         body.put("token", environment.getProperty(TOKEN));
         return body;
     }
 
-    private ResponseEntity<String> sendRequest(Map<String, String> body, String url) {
+    private <T> ResponseEntity<T> sendRequest(Map<String, String> body, String url, Class<T> responseClass) {
         HttpEntity httpEntity = new HttpEntity<>(body, getHeaders());
-        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, responseClass);
     }
 
 }

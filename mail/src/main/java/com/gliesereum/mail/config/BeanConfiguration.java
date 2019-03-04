@@ -1,5 +1,6 @@
 package com.gliesereum.mail.config;
 
+import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpResponse;
@@ -17,19 +18,7 @@ public class BeanConfiguration {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(new ResponseErrorHandler() {
-            @Override
-            public boolean hasError(ClientHttpResponse response) throws IOException {
-                return response.getStatusCode().is5xxServerError();
-            }
-
-            @Override
-            public void handleError(ClientHttpResponse response) throws IOException {
-                if(response.getStatusCode().is4xxClientError()){
-                    throw new RuntimeException();
-                }
-            }
-        });
+        restTemplate.setErrorHandler(new RestTemplateErrorHandler());
         return restTemplate;
     }
 }

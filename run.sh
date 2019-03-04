@@ -15,6 +15,7 @@ sudo gradle clean build -b=mail/build.gradle
 sudo gradle clean build -b=permission/build.gradle 
 sudo gradle clean build -b=karma/build.gradle      
 sudo gradle clean build -b=file/build.gradle
+sudo gradle clean build -b=lending-gallery/build.gradle
 
 echo 'Docker stop containers'       
 docker stack rm gls                 
@@ -29,6 +30,7 @@ docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-mail'
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-permission')
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-karma')     
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-file')
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-lending-gallery')
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
 
 echo 'Docker build images'
@@ -39,6 +41,7 @@ sudo docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  ./mail/build/libs
 sudo docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  ./permission/build/libs/
 sudo docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  ./karma/build/libs/
 sudo docker build -t gls-file:0.0.1 -f docker/file/Dockerfile  ./file/build/libs/
+sudo docker build -t gls-lending-gallery:0.0.1 -f docker/lending-gallery/Dockerfile  ./lending-gallery/build/libs/
 sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  ./log/elk/
 
 echo 'Docker deploy'                            
