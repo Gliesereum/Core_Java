@@ -34,12 +34,13 @@ public class EmailServiceImpl implements EmailService {
     private static Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     private final String RECEIVER = "spring.mail.from";
+    private final String SUBJECT = "spring.mail.subject";
 
     @Autowired
     private Environment environment;
 
     @Autowired
-    public JavaMailSender emailSender;
+    public JavaMailSender mailSender;
 
     @Autowired
     private Configuration freemarkerConfig;
@@ -53,7 +54,7 @@ public class EmailServiceImpl implements EmailService {
             message.setText(text);
             message.setFrom(environment.getProperty(RECEIVER));
 
-            emailSender.send(message);
+            mailSender.send(message);
             logger.info("\nSend email, date: [{}] to: {}", LocalDateTime.now(), to);
         } catch (MailException exception) {
             exception.printStackTrace();
@@ -61,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendSingleVerificationMessage(String to, String subject, String code) {
+    public void sendSingleVerificationMessage(String to, String code) {
         try {
             MimeMessagePreparator preparatory = new MimeMessagePreparator() {
                 public void prepare(MimeMessage mimeMessage) throws MessagingException, IOException, TemplateException {
@@ -69,7 +70,7 @@ public class EmailServiceImpl implements EmailService {
                             MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                             StandardCharsets.UTF_8.name());
                     message.setTo(to);
-                    message.setSubject(subject);
+                    message.setSubject(environment.getProperty(SUBJECT));
                     message.setFrom(environment.getProperty(RECEIVER));
 
                     Map<String, String> model = new HashMap<>();
@@ -82,7 +83,7 @@ public class EmailServiceImpl implements EmailService {
                     message.setText(text, true);
                 }
             };
-            emailSender.send(preparatory);
+            mailSender.send(preparatory);
             logger.info("\nSend email, date: [{}] to: {}", LocalDateTime.now(), to);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -114,7 +115,7 @@ public class EmailServiceImpl implements EmailService {
             preparatoryList.add(preparatory);
         }
         if (!preparatoryList.isEmpty()) {
-            emailSender.send(preparatoryList.toArray(new MimeMessagePreparator[preparatoryList.size()]));
+            mailSender.send(preparatoryList.toArray(new MimeMessagePreparator[preparatoryList.size()]));
             logger.info("\nSend emails, date: [{}] to: {}", LocalDateTime.now(), listTo);
         }
     }

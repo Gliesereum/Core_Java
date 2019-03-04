@@ -37,6 +37,6 @@ exchange:
   endpoint:
     permission:
       endpointUpdatePack: http://permission-service/endpoint/pack
-    media:
-      upload: http://media-service/file/upload
-      delete: http://media-service/file/delete
+    mail:
+      emailVerification: http://mail-service/email/verification
+      phoneVerification: http://mail-service/phone/single

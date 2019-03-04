@@ -19,4 +19,6 @@ public class ExchangeProperties {
     private AccountProperty account;
 
     private PermissionProperty permission;
+
+    private MailProperty mail;
 }

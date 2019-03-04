@@ -3,6 +3,8 @@ package com.gliesereum.account.config;
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizationInterceptor;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
+import com.gliesereum.share.common.exchange.service.mail.MailExchangeService;
+import com.gliesereum.share.common.exchange.service.mail.impl.MailExchangeServiceImpl;
 import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,5 +46,10 @@ public class ExchangeConfiguration {
     @ConditionalOnMissingBean
     public RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor(JwtSecurityProperties jwtSecurityProperties) {
         return new RestTemplateAuthorizationInterceptor(jwtSecurityProperties);
+    }
+
+    @Bean
+    public MailExchangeService mailExchangeService(RestTemplate restTemplate, ExchangeProperties exchangeProperties) {
+        return new MailExchangeServiceImpl(restTemplate, exchangeProperties);
     }
 }
