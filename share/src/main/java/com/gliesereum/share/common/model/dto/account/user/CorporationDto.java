@@ -62,8 +62,6 @@ public class CorporationDto extends DefaultDto {
 
     private Boolean kycApproved;
 
-    private VerifiedStatus verifiedStatus;
-
     private ObjectState objectState;
 
     private List<CorporationSharedOwnershipDto> corporationSharedOwnerships;
