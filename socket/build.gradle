@@ -1,0 +1,62 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.1.RELEASE'
+		springCloudVersion = 'Finchley.SR2'
+		modelMapperVersion = '2.3.0'
+		jjwtVersion = '0.9.1'
+		commonsCollectionsVersion = '4.2'
+		commonsLangVersion = '3.8.1'
+		commonsIOVersion = '2.6'
+		lombokVersion = '1.18.2'
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.gliesereum'
+version = '0.0.1'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+dependencies {
+	implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+	implementation('org.springframework.boot:spring-boot-starter-security')
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-amqp')
+	implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
+	implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
+	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
+	implementation "commons-io:commons-io:${commonsIOVersion}"
+	
+	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+
+	implementation (project(':share')) {
+		transitive = false
+	}
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}

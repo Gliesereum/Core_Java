@@ -1,0 +1,8 @@
+spring:
+  rabbitmq:
+    host: 207.154.239.122
+    port: 5672
+    password: Af2f4dsASF
+    username: rabbit
+    queue-logstash: logstash
+    queue-mail: verificationQueue
