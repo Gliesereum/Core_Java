@@ -31,6 +31,11 @@ public class CustomerController {
         return service.getById(id);
     }
 
+    @GetMapping("/user")
+    public CustomerDto getByCurrentUser() {
+        return service.getByUser();
+    }
+
     @PostMapping
     public CustomerDto create(@Valid @RequestBody CustomerDto dto) {
         return service.create(dto);

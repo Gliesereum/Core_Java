@@ -25,9 +25,12 @@ zuul:
     karma-service:
       path: /karma/v1/**
       service-id: karma-service
-    media-service:
+    file-service:
       path: /file/v1/**
       service-id: file-service
+    lending-gallery-service:
+      path: /lending-gallery/v1/**
+      service-id: lending-gallery-service
   ignored-services: '*'
   prefix: /api
   host:
