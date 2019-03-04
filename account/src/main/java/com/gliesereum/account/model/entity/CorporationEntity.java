@@ -1,6 +1,7 @@
 package com.gliesereum.account.model.entity;
 
 import com.gliesereum.share.common.model.entity.DefaultEntity;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -70,6 +71,10 @@ public class CorporationEntity extends DefaultEntity {
 
     @Column(name = "kyc_approved")
     private Boolean kycApproved;
+
+    @Column(name = "object_state")
+    @Enumerated(EnumType.STRING)
+    private ObjectState objectState;
 
     @OneToMany
     @JoinColumn(name = "corporation_id", insertable = false, updatable = false)
