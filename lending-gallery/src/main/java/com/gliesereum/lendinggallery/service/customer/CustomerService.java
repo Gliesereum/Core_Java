@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface CustomerService extends DefaultService<CustomerDto, CustomerEntity> {
 
     CustomerDto findByUserId(UUID id);
+
+    CustomerDto getByUser();
 }
