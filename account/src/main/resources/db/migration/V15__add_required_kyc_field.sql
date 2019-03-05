@@ -1,2 +1,2 @@
 ALTER table account.kyc_field
-  ADD required boolean not null;
+  ADD required boolean not null default true;
