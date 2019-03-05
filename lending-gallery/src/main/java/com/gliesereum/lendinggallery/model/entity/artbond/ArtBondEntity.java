@@ -24,6 +24,12 @@ public class ArtBondEntity extends DefaultEntity {
     @Column(name = "price")
     private Integer price;
 
+    @Column(name = "dividend_percent")
+    private Integer dividendPercent;
+
+    @Column(name = "reward_percent")
+    private Integer rewardPercent;
+
     @Column(name = "name")
     private String name;
 

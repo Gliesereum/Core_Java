@@ -22,6 +22,10 @@ public class ArtBondDto extends DefaultDto {
 
     private Integer price;
 
+    private Integer dividendPercent;
+
+    private Integer rewardPercent;
+
     private String name;
 
     private String description;
