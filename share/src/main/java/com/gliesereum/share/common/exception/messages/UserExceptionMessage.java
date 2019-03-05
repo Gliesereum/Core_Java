@@ -26,5 +26,6 @@ public class UserExceptionMessage {
     public static final ExceptionMessage CORPORATION_UNVERIFIED = new ExceptionMessage(1028, 400, "Corporation unverified");
     public static final ExceptionMessage CORPORATION_SHARED_OWNERSHIP_ID_IS_EMPTY = new ExceptionMessage(1029, 400, "Corporation shared ownership id is empty");
     public static final ExceptionMessage CORPORATION_SHARED_OWNERSHIP_NOT_FOUND = new ExceptionMessage(1030, 400, "Corporation shared ownership not found");
+    public static final ExceptionMessage USER_ID_IS_EMPTY = new ExceptionMessage(1031, 400, "User id is empty");
 
 }

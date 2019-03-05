@@ -8,10 +8,12 @@ import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_ID_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
 
 /**
@@ -58,37 +61,65 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    public WorkerDto findByUserIdAndBusinessId(UUID userId, UUID businessId) {
+        if (businessId == null) {
+            throw new ClientException(BUSINESS_ID_EMPTY);
+        }
+        if (userId == null) {
+            throw new ClientException(USER_ID_IS_EMPTY);
+        }
+        WorkerEntity entity = repository.findByUserIdAndBusinessId(userId, businessId);
+        return converter.convert(entity, dtoClass);
+    }
+
+    @Override
+    public List<WorkerDto> findByUserId(UUID userId) {
+        if (userId == null) {
+            throw new ClientException(USER_ID_IS_EMPTY);
+        }
+        List<WorkerEntity> entities = repository.findAllByUserId(userId);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public WorkerDto create(WorkerDto dto){
-        checkWorker(dto.getWorkerId());
-        checkWorkingSpace(dto.getWorkingSpaceId());
+        checkWorker(dto.getUserId());
+        checkWorkingSpace(dto);
         return super.create(dto);
     }
 
     @Override
     public WorkerDto update(WorkerDto dto){
-        checkWorker(dto.getWorkerId());
-        checkWorkingSpace(dto.getWorkingSpaceId());
+        checkWorker(dto.getUserId());
+        checkWorkingSpace(dto);
         return super.update(dto);
     }
 
-    private void checkWorker(UUID workerId){
-        if (workerId == null) {
-            throw new ClientException(WORKER_ID_IS_EMPTY);
+    private void checkWorker(UUID userId){
+        if (userId == null) {
+            throw new ClientException(USER_ID_IS_EMPTY);
         }
-        if (!userExchangeService.userIsExist(workerId)) {
+        if (!userExchangeService.userIsExist(userId)) {
             throw new ClientException(USER_NOT_FOUND);
         }
     }
 
-    private void checkWorkingSpace(UUID workingSpaceId) {
-        if (workingSpaceId == null) {
+    private void checkWorkingSpace(WorkerDto dto) {
+        if (dto.getWorkingSpaceId() == null) {
             throw new ClientException(WORKING_SPACE_ID_IS_EMPTY);
         }
-        WorkingSpaceDto workingSpace = workingSpaceService.getById(workingSpaceId);
-        if (workingSpace == null) {
+        if (dto.getBusinessId() == null) {
+            throw new ClientException(BUSINESS_ID_EMPTY);
+        }
+        BaseBusinessDto business = baseBusinessService.getById(dto.getBusinessId());
+        if(business != null){
+            throw new ClientException(BUSINESS_NOT_FOUND);
+        }
+        List<WorkingSpaceDto> workingSpaces = workingSpaceService.getByBusinessId(dto.getBusinessId());
+        if (CollectionUtils.isEmpty(workingSpaces)) {
             throw new ClientException(WORKING_SPACE_NOT_FOUND);
         }
-        if (baseBusinessService.currentUserHavePermissionToActionInBusiness(workingSpace.getBusinessId())) {
+        if (baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
         }
     }

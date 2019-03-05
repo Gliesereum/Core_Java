@@ -111,7 +111,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
         search.getBusinessIds().forEach(f -> {
-            if (!baseBusinessService.currentUserHavePermissionToActionInBusiness(f)) {
+            if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(f)) {
                 throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
             }
         });
@@ -242,7 +242,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Transactional
     public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
         if (dto.getBusinessId() != null &&
-                !baseBusinessService.currentUserHavePermissionToActionInBusiness(dto.getBusinessId())) {
+                !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
         return createRecord(dto);
@@ -423,7 +423,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto == null) {
             throw new ClientException(RECORD_NOT_FOUND);
         }
-        if (!isUser && !baseBusinessService.currentUserHavePermissionToActionInBusiness(dto.getBusinessId())) {
+        if (!isUser && !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
         if (isUser && dto.getServiceType().equals(ServiceType.CAR_WASH)) {
