@@ -1,4 +1,4 @@
-package com.gliesereum.account.controller;
+package com.gliesereum.account.controller.kyc;
 
 import com.gliesereum.account.service.kyc.KycFieldService;
 import com.gliesereum.account.service.kyc.KycRequestService;
