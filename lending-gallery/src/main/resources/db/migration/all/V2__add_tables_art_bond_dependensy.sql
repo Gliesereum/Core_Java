@@ -1,6 +1,8 @@
 CREATE TABLE IF NOT EXISTS lending_gallery.art_bond (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    price integer,
+   dividend_percent integer,
+   reward_percent integer,
    name character varying,
    description character varying,
    author character varying,

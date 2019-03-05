@@ -23,7 +23,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByBusinessIdAndStatusRecord(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to);
 
-    List<BaseRecordDto> getByParamsForCorporation(RecordsSearchDto search);
+    List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
 
     BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId, Boolean isUser);
 
@@ -36,4 +36,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto);
 
     List<BaseRecordDto> getAllByUser(ServiceType serviceType);
+
+    BaseRecordDto createFromBusiness(BaseRecordDto dto);
 }

@@ -63,7 +63,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         CorporationDto result = null;
         SecurityUtil.checkUserByBanStatus();
         dto.setKycApproved(false);
-        dto.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
         result = super.create(dto);
         if (result != null) {
             userCorporationService.create(new UserCorporationDto(SecurityUtil.getUserId(), result.getId())); //todo in a future remove user-corporation
@@ -156,11 +155,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                 ExceptionMessage corporationNotFound = CORPORATION_NOT_FOUND;
                 corporationNotFound.setMessage("Corporation with id: " + dto.getCorporationOwnerId() + " not found");
                 throw new ClientException(corporationNotFound);
-            }
-            if (corporation.getVerifiedStatus().equals(VerifiedStatus.UNVERIFIED)) {
-                ExceptionMessage corporationUnverified = CORPORATION_UNVERIFIED;
-                corporationUnverified.setMessage("Corporation with id: " + dto.getCorporationOwnerId() + " unverified");
-                throw new ClientException(corporationUnverified);
             }
         }
     }

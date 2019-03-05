@@ -194,7 +194,11 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
             for (KycFieldDto requiredField : requiredFields) {
                 String value = values.get(requiredField.getId());
                 if (StringUtils.isEmpty(value)) {
-                    throw new ClientException(KYC_REQUIRED_FIELD_IS_MISSED);
+                    if (requiredField.getRequired()) {
+                        throw new ClientException(KYC_REQUIRED_FIELD_IS_MISSED);
+                    } else {
+                        continue;
+                    }
                 }
                 KycFieldType fieldType = requiredField.getFieldType();
                 if ((fieldType != null) && (fieldType.equals(KycFieldType.FILE_ID))) {
