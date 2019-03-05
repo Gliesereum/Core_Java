@@ -4,6 +4,8 @@ import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.business.WorkerService;
+import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.record.BaseRecordService;
@@ -11,10 +13,7 @@ import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
-import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
@@ -32,14 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_TYPE_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
  * @author vitalij
@@ -69,6 +66,12 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     @Autowired
     private BaseRecordService baseRecordService;
 
+    @Autowired
+    private WorkerService workerService;
+
+    @Autowired
+    private WorkingSpaceService workingSpaceService;
+
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.baseBusinessRepository = repository;
@@ -96,7 +99,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             if (dto.getId() == null) {
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
-            this.currentUserHavePermissionToActionInBusiness(dto.getId());
+            this.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getId());
             checkCorporationId(dto);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
@@ -130,6 +133,27 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    public List<BaseBusinessDto> getAllBusinessByCurrentUser() {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
+        Set<BaseBusinessDto> set = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(SecurityUtil.getUserCorporationIds())) {
+            set.addAll(getByCorporationIds(SecurityUtil.getUserCorporationIds()));
+        }
+        List<WorkerDto> workers = workerService.findByUserId(SecurityUtil.getUserId());
+        if (CollectionUtils.isNotEmpty(workers)) {
+            workers.forEach(f -> {
+                BaseBusinessDto business = getById(f.getBusinessId());
+                if (business != null) {
+                    set.add(business);
+                }
+            });
+        }
+        return new ArrayList<>(set);
+    }
+
+    @Override
     public List<BaseBusinessDto> getByIds(Iterable<UUID> ids) {
         List<BaseBusinessDto> result = null;
         if (ids != null) {
@@ -145,13 +169,24 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public boolean currentUserHavePermissionToActionInBusiness(UUID businessId) {
+    public boolean currentUserHavePermissionToActionInBusinessLikeOwner(UUID businessId) {
         boolean result = false;
         List<UUID> userCorporationIds = SecurityUtil.getUserCorporationIds();
         if (CollectionUtils.isNotEmpty(userCorporationIds)) {
             result = existByIdAndCorporationIds(businessId, userCorporationIds);
         }
         return result;
+    }
+
+    @Override
+    public boolean currentUserHavePermissionToActionInBusinessLikeWorker(UUID businessId) {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
+        if (businessId == null) {
+            throw new ClientException(BUSINESS_ID_EMPTY);
+        }
+        return workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), businessId) != null;
     }
 
     @Override
@@ -259,7 +294,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (id == null) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
-        this.currentUserHavePermissionToActionInBusiness(id);
+        this.currentUserHavePermissionToActionInBusinessLikeOwner(id);
         BaseBusinessDto dto = getById(id);
         if (dto == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
