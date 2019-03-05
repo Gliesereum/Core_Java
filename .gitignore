@@ -48,9 +48,9 @@ logs/
 !/volumes/pgdata/tmp
 !/volumes/redisdata/tmp
 
-nginx-dev/nginx-logs/**
-!nginx-dev/nginx-logs/tmp
+config/nginx-dev/nginx-logs/**
+!config/nginx-dev/nginx-logs/tmp
 
-nginx-prod/nginx-logs/**
-!nginx-prod/nginx-logs/tmp
+config/nginx-prod/nginx-logs/**
+!config/nginx-prod/nginx-logs/tmp
 

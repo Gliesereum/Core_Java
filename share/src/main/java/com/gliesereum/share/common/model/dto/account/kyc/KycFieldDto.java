@@ -36,4 +36,7 @@ public class KycFieldDto extends DefaultDto {
 
     @NotNull
     private KycRequestType requestType;
+
+    @NotNull
+    private Boolean required;
 }

@@ -43,6 +43,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    volumes:
+      - ../config/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
@@ -92,7 +94,7 @@ services:
       timeout: 10s
       retries: 20
     volumes:
-    - ../log/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
+    - ../config/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
 
   curator:
     image: gls-curator:0.0.1
@@ -108,8 +110,8 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-    - ../log/elk/curator:/.curator
-    - ../log/elk/curator/logs:/curator/logs/
+    - ../config/elk/curator:/.curator
+    - ../config/elk/curator/logs:/curator/logs/
 
   discovery:
     image: gls-discovery:0.0.1

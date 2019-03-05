@@ -39,4 +39,7 @@ public class KycFieldEntity extends DefaultEntity {
     @Column(name = "kyc_request_type")
     @Enumerated(EnumType.STRING)
     private KycRequestType requestType;
+
+    @Column(name = "required")
+    private Boolean required;
 }

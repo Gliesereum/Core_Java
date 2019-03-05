@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: socket-service
+  mvc:
+    logResolvedException: false
+
+module-url: /socket/v1
+
+server:
+  port: 8270
+
+
+security:
+  properties:
+    jwtHeader: Service-Authorization
+    jwtPrefix: JWT
+    jwtSecret: CnfxFqbCKHLqzT9LGruE
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${eureka.host:localhost}:${eureka.port:8761}/eureka
+    registry-fetch-interval-seconds: 20
+    availability-zones:
+      default: defaultZone
+    region: default
+    enabled: true
+  instance:
+    prefer-ip-address: true
+
+exchange:
+  endpoint:
+    permission:
+      endpointUpdatePack: http://permission-service/endpoint/pack
+    account:
+      userIsExist: http://account-service/user/exist
+      findByIds: http://account-service/user/by-ids

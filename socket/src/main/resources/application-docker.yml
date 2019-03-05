@@ -1,0 +1,7 @@
+spring:
+  rabbitmq:
+    host: ${rabbit.host}
+    port: ${rabbit.port}
+    password: ${rabbit.password}
+    username: ${rabbit.user}
+    queue-logstash: logstash
