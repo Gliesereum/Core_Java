@@ -41,6 +41,11 @@ public class RecordController {
         return service.create(dto);
     }
 
+    @PostMapping("/from-business")
+    public BaseRecordDto createFromBusiness(@Valid @RequestBody BaseRecordDto dto) {
+        return service.createFromBusiness(dto);
+    }
+
     @PostMapping("/status/record")
     public BaseRecordDto updateStatusRecord(
             @RequestParam("isUser") Boolean isUser,
@@ -89,14 +94,9 @@ public class RecordController {
         return service.getByParamsForClient(search);
     }
 
-    @PostMapping("/corporation/params")
-    public List<BaseRecordDto> getByParamsForCorporation(@RequestBody RecordsSearchDto search) {
-        return service.getByParamsForCorporation(search);
-    }
-
-    @PostMapping("/map/params")
-    public List<BaseRecordDto> getByParamsForMap(@RequestBody RecordsSearchDto search) {
-        return service.getByParamsForCorporation(search);
+    @PostMapping("/business/params")
+    public List<BaseRecordDto> getByParamsForBusiness(@RequestBody RecordsSearchDto search) {
+        return service.getByParamsForBusiness(search);
     }
 
     @PostMapping("/free-time")

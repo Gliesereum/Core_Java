@@ -105,7 +105,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<BaseRecordDto> getByParamsForCorporation(RecordsSearchDto search) {
+    public List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search) {
         List<BaseRecordDto> result = null;
         if (CollectionUtils.isEmpty(search.getBusinessIds())) {
             throw new ClientException(BUSINESS_ID_EMPTY);
@@ -233,23 +233,37 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
-            BaseBusinessDto business = getBusinessByRecord(dto);
-            checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
-            dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
-            dto.setPrice(getPriceByRecord(dto));
-            dto.setStatusRecord(StatusRecord.CREATED);
-            checkRecord(dto);
-            BaseRecordDto result = super.create(dto);
-            if (result != null) {
-                result.setServicesIds(dto.getServicesIds());
-                dto.getServicesIds().forEach(f -> {
-                    recordServiceService.create(new RecordServiceDto(result.getId(), f));
-                });
-                createOrders(result);
-            }
-            return result;
+           return createRecord(dto);
         }
         return null;
+    }
+
+    @Override
+    @Transactional
+    public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
+        if (dto.getBusinessId() != null &&
+                !baseBusinessService.currentUserHavePermissionToActionInBusiness(dto.getBusinessId())) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
+        }
+        return createRecord(dto);
+    }
+
+    private BaseRecordDto createRecord(BaseRecordDto dto) {
+        BaseBusinessDto business = getBusinessByRecord(dto);
+        checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
+        dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
+        dto.setPrice(getPriceByRecord(dto));
+        dto.setStatusRecord(StatusRecord.CREATED);
+        checkRecord(dto);
+        BaseRecordDto result = super.create(dto);
+        if (result != null) {
+            result.setServicesIds(dto.getServicesIds());
+            dto.getServicesIds().forEach(f -> {
+                recordServiceService.create(new RecordServiceDto(result.getId(), f));
+            });
+            createOrders(result);
+        }
+        return result;
     }
 
     @Override
