@@ -77,7 +77,7 @@ docker-image-package:
     - sudo docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  ./karma/build/libs/
     - sudo docker build -t gls-file:0.0.1 -f docker/file/Dockerfile  ./file/build/libs/
     - sudo docker build -t gls-lending-gallery:0.0.1 -f docker/lending-gallery/Dockerfile  ./lending-gallery/build/libs/
-    - sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  ./log/elk/
+    - sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  ./config/log/elk/
   only:
     - gls/dev
 
