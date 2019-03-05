@@ -11,6 +11,7 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -54,5 +55,19 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
         }
         CustomerEntity entity = repository.findByUserId(SecurityUtil.getUserId());
         return converter.convert(entity, dtoClass);
+    }
+
+    @Override
+    @Transactional
+    public CustomerDto create(CustomerDto dto) {
+        checkExist();
+        return super.create(dto);
+    }
+
+    private void checkExist(){
+        CustomerDto saveCustomer = getByUser();
+        if(saveCustomer != null){
+            throw new ClientException(CUSTOMER_ALREADY_EXIST);
+        }
     }
 }
