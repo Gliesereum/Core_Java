@@ -137,29 +137,20 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_NOT_AUTHENTICATION);
         }
-        Map<UUID, BaseBusinessDto> map = new HashMap<>();
-        List<BaseBusinessDto> result = new ArrayList<>();
-
+        Set<BaseBusinessDto> set = new HashSet<>();
         if (CollectionUtils.isNotEmpty(SecurityUtil.getUserCorporationIds())) {
-            List<BaseBusinessDto> list = getByCorporationIds(SecurityUtil.getUserCorporationIds());
-            if (CollectionUtils.isNotEmpty(list)) {
-                list.forEach(f -> map.put(f.getId(), f));
-            }
+            set.addAll(getByCorporationIds(SecurityUtil.getUserCorporationIds()));
         }
-
         List<WorkerDto> workers = workerService.findByUserId(SecurityUtil.getUserId());
         if (CollectionUtils.isNotEmpty(workers)) {
             workers.forEach(f -> {
                 BaseBusinessDto business = getById(f.getBusinessId());
                 if (business != null) {
-                    map.put(business.getId(), business);
+                    set.add(business);
                 }
             });
         }
-        if (!map.isEmpty()) {
-            result.addAll(map.values());
-        }
-        return result;
+        return new ArrayList<>(set);
     }
 
     @Override
