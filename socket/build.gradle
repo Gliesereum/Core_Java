@@ -37,6 +37,7 @@ repositories {
 dependencies {
 	implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
 	implementation('org.springframework.boot:spring-boot-starter-security')
+	implementation('org.springframework.boot:spring-boot-starter-websocket')
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-amqp')
 	implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
@@ -44,7 +45,10 @@ dependencies {
 	implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
 	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 	implementation "commons-io:commons-io:${commonsIOVersion}"
-	
+
+	compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.8.5.RELEASE'
+
+
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	

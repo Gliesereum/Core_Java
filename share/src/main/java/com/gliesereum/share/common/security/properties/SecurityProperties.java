@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.security.jwt.properties;
+package com.gliesereum.share.common.security.properties;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author yvlasiuk
@@ -18,14 +19,23 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Configuration
 @ConfigurationProperties(prefix = "security.properties")
-public class JwtSecurityProperties {
+public class SecurityProperties extends JwtSecurityProperties {
 
     @NotBlank
-    private String jwtHeader;
+    private String checkAccessUrl;
 
     @NotBlank
-    private String jwtPrefix;
+    private String bearerHeader;
 
     @NotBlank
-    private String jwtSecret;
+    private String bearerPrefix;
+
+    @NotNull
+    private Boolean endpointKeeperEnable;
+
+    @NotBlank
+    private String getUserGroupUrl;
+
+    @NotBlank
+    private String getPermissionMapUrl;
 }

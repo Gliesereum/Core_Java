@@ -1,6 +1,6 @@
 package com.gliesereum.proxy;
 
-import com.gliesereum.proxy.config.security.properties.SecurityProperties;
+import com.gliesereum.share.common.security.properties.SecurityProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

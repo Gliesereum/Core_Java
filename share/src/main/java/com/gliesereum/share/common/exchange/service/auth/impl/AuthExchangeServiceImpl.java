@@ -1,7 +1,7 @@
-package com.gliesereum.proxy.service.exchange.auth.impl;
+package com.gliesereum.share.common.exchange.service.auth.impl;
 
-import com.gliesereum.proxy.config.security.properties.SecurityProperties;
-import com.gliesereum.proxy.service.exchange.auth.AuthService;
+import com.gliesereum.share.common.exchange.service.auth.AuthExchangeService;
+import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.share.common.exception.CustomException;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +21,17 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
 
 @Slf4j
 @Service
-public class AuthServiceImpl implements AuthService {
+public class AuthExchangeServiceImpl implements AuthExchangeService {
 
-    @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
     private SecurityProperties securityProperties;
+
+    @Autowired
+    public AuthExchangeServiceImpl(RestTemplate restTemplate, SecurityProperties securityProperties) {
+        this.restTemplate = restTemplate;
+        this.securityProperties = securityProperties;
+    }
 
     @Override
     @Cacheable(value = "tokenInfo", key="#accessToken", unless="#result == null")

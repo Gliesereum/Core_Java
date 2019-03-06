@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
-import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
+import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import com.gliesereum.share.common.security.model.UserAuthentication;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

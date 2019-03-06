@@ -5,7 +5,7 @@ import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizatio
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.mail.MailExchangeService;
 import com.gliesereum.share.common.exchange.service.mail.impl.MailExchangeServiceImpl;
-import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
+import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -1,6 +1,6 @@
 package com.gliesereum.proxy.service.exchange.permission.impl;
 
-import com.gliesereum.proxy.config.security.properties.SecurityProperties;
+import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.proxy.service.exchange.permission.GroupUserService;
 import com.gliesereum.share.common.exception.CustomException;
 import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
