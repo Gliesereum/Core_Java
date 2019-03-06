@@ -25,13 +25,13 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
 
-    BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId, Boolean isUser);
+    BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId);
 
-    BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status, Boolean isUser);
+    BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status);
 
-    BaseRecordDto updateStatusRecord(UUID idRecord, StatusRecord status, Boolean isUser);
+    BaseRecordDto canceledRecord(UUID idRecord);
 
-    BaseRecordDto updateTimeRecord(UUID idRecord, Long beginTime, Boolean isUser);
+    BaseRecordDto updateTimeRecord(UUID idRecord, Long beginTime);
 
     BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto);
 

@@ -26,6 +26,7 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_TYPE_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
  * @author vitalij
@@ -130,9 +132,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             list.forEach(f -> {
 
                 BaseBusinessDto business = businessMap.get(f.getBusinessId());
-                if(business == null){
+                if (business == null) {
                     business = baseBusinessService.getByIdIgnoreState(f.getBusinessId());
-                    if(business != null){
+                    if (business != null) {
                         f.setBusiness(business);
                         businessMap.put(business.getId(), business);
                     }
@@ -141,9 +143,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
 
                 PackageDto packageDto = packageMap.get(f.getPackageId());
-                if(packageDto == null){
+                if (packageDto == null) {
                     packageDto = packageService.getByIdIgnoreState(f.getPackageId());
-                    if(packageDto != null){
+                    if (packageDto != null) {
                         f.setPackageDto(packageDto);
                         packageMap.put(packageDto.getId(), packageDto);
                     }
@@ -169,16 +171,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
-    public BaseRecordDto updateTimeRecord(UUID idRecord, Long beginTime, Boolean isUser) {
+    public BaseRecordDto updateTimeRecord(UUID idRecord, Long beginTime) {
 
         LocalDateTime begin = LocalDateTime.ofInstant(Instant.ofEpochMilli(beginTime),
                 TimeZone.getDefault().toZoneId());
 
         BaseRecordDto dto = getById(idRecord);
-        if (dto == null) {
-            throw new ClientException(RECORD_NOT_FOUND);
-        }
-        checkPermissionToUpdate(dto, isUser);
+        checkPermissionToUpdate(dto);
         dto.setBegin(begin);
         LocalDateTime finish = begin.plusMinutes(getDurationByRecord(dto));
         dto.setFinish(finish);
@@ -188,9 +187,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
-    public BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId, Boolean isUser) {
+    public BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId) {
         BaseRecordDto dto = getById(idRecord);
-        checkPermissionToUpdate(dto, isUser);
+        checkPermissionToUpdate(dto);
         BaseBusinessDto business = getBusinessByRecord(dto);
         if (dto.getWorkingSpaceId() == null) {
             throw new ClientException(WORKING_SPACE_ID_EMPTY);
@@ -206,19 +205,22 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
-    public BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status, Boolean isUser) {
+    public BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status) {
         BaseRecordDto dto = getById(idRecord);
-        checkPermissionToUpdate(dto, isUser);
+        checkPermissionToUpdate(dto);
         dto.setStatusProcess(status);
+        if(status.equals(StatusProcess.COMPLETED)){
+            dto.setStatusRecord(StatusRecord.COMPLETED);
+        }
         return super.update(dto);
     }
 
     @Override
     @Transactional
-    public BaseRecordDto updateStatusRecord(UUID idRecord, StatusRecord status, Boolean isUser) {
+    public BaseRecordDto canceledRecord(UUID idRecord) {
         BaseRecordDto dto = getById(idRecord);
-        checkPermissionToUpdate(dto, isUser);
-        dto.setStatusRecord(status);
+        checkPermissionToUpdate(dto);
+        dto.setStatusRecord(StatusRecord.CANCELED);
         return super.update(dto);
     }
 
@@ -233,7 +235,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
-           return createRecord(dto);
+            return createRecord(dto);
         }
         return null;
     }
@@ -419,18 +421,17 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
     }
 
-    private void checkPermissionToUpdate(BaseRecordDto dto, Boolean isUser) {
-        if (dto == null) {
-            throw new ClientException(RECORD_NOT_FOUND);
+    private void checkPermissionToUpdate(BaseRecordDto dto) {
+        if (SecurityUtil.isAnonymous()) throw new ClientException(USER_NOT_AUTHENTICATION);
+        if (dto == null) throw new ClientException(RECORD_NOT_FOUND);
+        boolean ownerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId());
+        boolean workerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId());
+        boolean userPermission = false;
+        if (dto.getServiceType().equals(ServiceType.CAR_WASH)) {
+            userPermission = carService.carExistByIdAndUserId(dto.getTargetId(), SecurityUtil.getUserId());
         }
-        if (!isUser && !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId())) {
+        if (!BooleanUtils.or(new Boolean[]{ownerPermission,workerPermission,userPermission})){
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
-        }
-        if (isUser && dto.getServiceType().equals(ServiceType.CAR_WASH)) {
-            CarDto car = carService.getById(dto.getTargetId());
-            if (car != null && !car.getUserId().equals(SecurityUtil.getUserId())) {
-                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
-            }
         }
     }
 
