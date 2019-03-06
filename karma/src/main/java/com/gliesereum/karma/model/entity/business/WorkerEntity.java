@@ -21,14 +21,17 @@ import java.util.UUID;
 @Table(name = "worker")
 public class WorkerEntity extends DefaultEntity {
 
-    @Column(name = "worker_id")
-    private UUID workerId;
+    @Column(name = "user_id")
+    private UUID userId;
 
     @Column(name = "position")
     private String position;
 
     @Column(name = "work_space_id")
     private UUID workingSpaceId;
+
+    @Column(name = "business_id")
+    private UUID businessId;
 
     @OneToMany
     @JoinColumn(name = "object_id", insertable = false, updatable = false)

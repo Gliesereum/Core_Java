@@ -17,5 +17,6 @@ public class LandingGalleryExceptionMessage {
     public static final ExceptionMessage ART_BOND_NOT_AVAILABLE_FOR_INVESTMENT = new ExceptionMessage(1609, 404, "Art bond not available for investment");
     public static final ExceptionMessage SUM_OF_INVESTMENT_CAN_NOT_BE_ZERO = new ExceptionMessage(1610, 404, "Sum of investment can't be 0");
     public static final ExceptionMessage SUM_EXCEEDS_AMOUNT_ALLOWED_FOR_INVESTMENT = new ExceptionMessage(1611, 404, "Sum exceeds the amount allowed for investment");
+    public static final ExceptionMessage CUSTOMER_ALREADY_EXIST = new ExceptionMessage(1612, 404, "Customer already exist");
 
 }

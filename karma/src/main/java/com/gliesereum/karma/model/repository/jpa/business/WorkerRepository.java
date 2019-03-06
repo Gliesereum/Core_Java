@@ -13,4 +13,8 @@ import java.util.UUID;
 public interface WorkerRepository extends JpaRepository<WorkerEntity, UUID> {
 
     List<WorkerEntity> findAllByWorkingSpaceId(UUID workingSpaceId);
+
+    List<WorkerEntity> findAllByUserId(UUID userId);
+
+    WorkerEntity findByUserIdAndBusinessId(UUID userId, UUID businessId);
 }
