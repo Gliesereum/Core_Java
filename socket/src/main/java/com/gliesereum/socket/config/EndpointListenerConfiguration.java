@@ -1,6 +1,8 @@
 package com.gliesereum.socket.config;
 
+import com.gliesereum.share.common.config.executor.ThreadPoolTaskExecutorDefaultConfiguration;
 import com.gliesereum.share.common.config.migration.EndpointListenerDefaultConfiguration;
+import com.gliesereum.share.common.migration.EndpointsListener;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  */
 @Configuration
-@ComponentScan(basePackageClasses = EndpointListenerDefaultConfiguration.class)
+@ComponentScan(basePackageClasses = {
+        EndpointsListener.class,
+        ThreadPoolTaskExecutorDefaultConfiguration.class
+})
 public class EndpointListenerConfiguration {
 }

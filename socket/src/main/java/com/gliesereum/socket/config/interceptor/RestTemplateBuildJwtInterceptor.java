@@ -29,9 +29,11 @@ public class RestTemplateBuildJwtInterceptor implements ClientHttpRequestInterce
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        String jwtToken = jwtTokenFactory.getJwtToken(SecurityUtil.getUser());
-        if (StringUtils.isNotEmpty(jwtToken)) {
-            request.getHeaders().add(securityProperties.getJwtHeader(), securityProperties.getJwtPrefix() + " " + jwtToken);
+        if (SecurityUtil.getUser() != null) {
+            String jwtToken = jwtTokenFactory.getJwtToken(SecurityUtil.getUser());
+            if (StringUtils.isNotEmpty(jwtToken)) {
+                request.getHeaders().add(securityProperties.getJwtHeader(), securityProperties.getJwtPrefix() + " " + jwtToken);
+            }
         }
         return execution.execute(request, body);
     }

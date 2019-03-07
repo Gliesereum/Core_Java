@@ -77,7 +77,7 @@ public class WebSocketInboundInterceptor implements ChannelInterceptor {
             throw new ClientException(SUBSCRIBE_POINT_NOT_FOUND);
         }
         SocketSubscribeFacade socketSubscribeFacade = socketSubscribeFacadeMap.get(subscribePoint.getFacadeName());
-        if(socketSubscribeFacade == null) {
+        if (socketSubscribeFacade == null) {
             throw new ClientException(SUBSCRIBE_POINT_NOT_AVAILABLE);
         }
         socketSubscribeFacade.validateSubscribe(subscribeInfo);

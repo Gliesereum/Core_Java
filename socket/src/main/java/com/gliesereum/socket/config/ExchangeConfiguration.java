@@ -6,6 +6,8 @@ import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.exchange.service.account.impl.UserExchangeServiceImpl;
 import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
 import com.gliesereum.share.common.exchange.service.karma.impl.KarmaExchangeServiceImpl;
+import com.gliesereum.share.common.exchange.service.permission.EndpointExchangeService;
+import com.gliesereum.share.common.exchange.service.permission.impl.EndpointExchangeServiceImpl;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
 import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.socket.config.interceptor.RestTemplateBuildJwtInterceptor;
@@ -49,6 +51,12 @@ public class ExchangeConfiguration {
     @Bean
     public RestTemplateBuildJwtInterceptor restTemplateBuildJwtInterceptor(JwtTokenFactory jwtTokenFactory, SecurityProperties securityProperties) {
         return new RestTemplateBuildJwtInterceptor(jwtTokenFactory, securityProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public EndpointExchangeService endpointExchangeService(ExchangeProperties exchangeProperties, RestTemplate restTemplate) {
+        return new EndpointExchangeServiceImpl(restTemplate, exchangeProperties);
     }
 
     @Bean
