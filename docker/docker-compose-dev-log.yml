@@ -280,6 +280,7 @@ services:
       spring.profiles.active: docker
       rabbit.host: rabbit
       rabbit.port: 5672
+      rabbit.stompPort: 61613
       rabbit.user: rabbit
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
