@@ -122,6 +122,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         setSearch(search);
         List<BaseRecordEntity> entities = repository.findByStatusRecordInAndBusinessIdInAndBeginBetweenOrderByBegin(
                 search.getStatus(), search.getBusinessIds(), search.getFrom(), search.getTo());
+        entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
         return result;
