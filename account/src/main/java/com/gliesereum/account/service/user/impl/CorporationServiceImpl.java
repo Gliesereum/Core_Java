@@ -10,7 +10,6 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.dto.account.user.UserCorporationDto;
@@ -24,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,6 +63,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         CorporationDto result = null;
         SecurityUtil.checkUserByBanStatus();
         dto.setKycApproved(false);
+        dto.setObjectState(ObjectState.ACTIVE);
         result = super.create(dto);
         if (result != null) {
             userCorporationService.create(new UserCorporationDto(SecurityUtil.getUserId(), result.getId())); //todo in a future remove user-corporation
@@ -94,6 +95,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
             dto.setKycApproved(byId.getKycApproved());
+            dto.setObjectState(byId.getObjectState());
             CorporationEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
@@ -191,6 +193,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             List<CorporationEntity> entities = repository.findAllByIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = converter.convert(entities, dtoClass);
+                result.sort(Comparator.comparing(CorporationDto::getName));
             }
         }
         return result;

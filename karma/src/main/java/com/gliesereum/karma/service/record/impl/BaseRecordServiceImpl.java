@@ -99,7 +99,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             });
         } else return Collections.emptyList(); //todo when add new service type need to add logic
         setSearch(search);
-        List<BaseRecordEntity> entities = repository.findByStatusRecordAndTargetIdInAndBeginBetweenOrderByBeginDesc(
+        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
                 search.getStatus(), search.getTargetIds(), search.getFrom(), search.getTo());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
@@ -118,7 +118,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             }
         });
         setSearch(search);
-        List<BaseRecordEntity> entities = repository.findByStatusRecordAndBusinessIdInAndBeginBetweenOrderByBegin(
+        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndBusinessIdInAndBeginBetweenOrderByBegin(
                 search.getStatus(), search.getBusinessIds(), search.getFrom(), search.getTo());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
@@ -158,8 +158,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     private void setSearch(RecordsSearchDto search) {
-        if (search == null || search.getStatus() == null) {
-            search.setStatus(StatusRecord.CREATED);
+        if (search == null || CollectionUtils.isEmpty(search.getStatus())) {
+            search.setStatus(Arrays.asList(StatusRecord.values()));
         }
         if (search == null || search.getFrom() == null) {
             search.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
@@ -209,7 +209,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
         dto.setStatusProcess(status);
-        if(status.equals(StatusProcess.COMPLETED)){
+        if (status.equals(StatusProcess.COMPLETED)) {
             dto.setStatusRecord(StatusRecord.COMPLETED);
         }
         return super.update(dto);
@@ -430,7 +430,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto.getServiceType().equals(ServiceType.CAR_WASH)) {
             userPermission = carService.carExistByIdAndUserId(dto.getTargetId(), SecurityUtil.getUserId());
         }
-        if (!BooleanUtils.or(new Boolean[]{ownerPermission,workerPermission,userPermission})){
+        if (!BooleanUtils.or(new Boolean[]{ownerPermission, workerPermission, userPermission})) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
     }
