@@ -4,7 +4,7 @@ MAINTAINER yvlasiuk
 
 ADD ./socket-0.0.1.jar /gls/socket/
 
-WORKDIR /gls/karma
+WORKDIR /gls/socket
 
 ARG PROFILE
 ARG PROFILE="docker"
