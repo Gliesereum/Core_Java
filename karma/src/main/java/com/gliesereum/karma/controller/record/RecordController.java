@@ -1,11 +1,10 @@
 package com.gliesereum.karma.controller.record;
 
 import com.gliesereum.karma.service.record.BaseRecordService;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -46,36 +45,30 @@ public class RecordController {
         return service.createFromBusiness(dto);
     }
 
-    @PostMapping("/status/record")
-    public BaseRecordDto updateStatusRecord(
-            @RequestParam("isUser") Boolean isUser,
-            @RequestParam("idRecord") UUID idRecord,
-            @RequestParam("status") StatusRecord status) {
-        return service.updateStatusRecord(idRecord, status, isUser);
+    @PostMapping("/record/canceled")
+    public BaseRecordDto canceledRecord(@RequestParam("idRecord") UUID idRecord) {
+        return service.canceledRecord(idRecord);
     }
 
     @PostMapping("/time/record")
     public BaseRecordDto updateTimeRecord(
-            @RequestParam("isUser") Boolean isUser,
             @RequestParam("idRecord") UUID idRecord,
             @RequestParam("beginTime") Long beginTime) {
-        return service.updateTimeRecord(idRecord, beginTime, isUser);
+        return service.updateTimeRecord(idRecord, beginTime);
     }
 
     @PostMapping("/status/process")
     public BaseRecordDto updateStatusProcess(
-            @RequestParam("isUser") Boolean isUser,
             @RequestParam("idRecord") UUID idRecord,
             @RequestParam("status") StatusProcess status) {
-        return service.updateStatusProgress(idRecord, status, isUser);
+        return service.updateStatusProgress(idRecord, status);
     }
 
     @PostMapping("/working/space")
     public BaseRecordDto updateWorkingSpace(
-            @RequestParam("isUser") Boolean isUser,
             @RequestParam("idRecord") UUID idRecord,
             @RequestParam("workingSpaceId") UUID workingSpaceId) {
-        return service.updateWorkingSpace(idRecord, workingSpaceId, isUser);
+        return service.updateWorkingSpace(idRecord, workingSpaceId);
     }
 
     @DeleteMapping("/{id}")

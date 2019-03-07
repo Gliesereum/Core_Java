@@ -1,6 +1,6 @@
 package com.gliesereum.proxy.filter;
 
-import com.gliesereum.proxy.config.security.properties.SecurityProperties;
+import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.proxy.service.keeper.EndpointKeeperService;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
 import com.gliesereum.share.common.util.SecurityUtil;

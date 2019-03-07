@@ -2,6 +2,7 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
+    stompPort: 61613
     password: guest
     username: guest
     queue-logstash: logstash

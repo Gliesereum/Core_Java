@@ -1,11 +1,16 @@
 package com.gliesereum.socket.config;
 
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
-import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizationInterceptor;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.exchange.service.account.impl.UserExchangeServiceImpl;
-import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
+import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
+import com.gliesereum.share.common.exchange.service.karma.impl.KarmaExchangeServiceImpl;
+import com.gliesereum.share.common.exchange.service.permission.EndpointExchangeService;
+import com.gliesereum.share.common.exchange.service.permission.impl.EndpointExchangeServiceImpl;
+import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
+import com.gliesereum.share.common.security.properties.SecurityProperties;
+import com.gliesereum.socket.config.interceptor.RestTemplateBuildJwtInterceptor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -30,11 +35,11 @@ public class ExchangeConfiguration {
     @Bean
     @LoadBalanced
     @ConditionalOnMissingBean
-    public RestTemplate restTemplate(RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor) {
+    public RestTemplate restTemplate(RestTemplateBuildJwtInterceptor restTemplateBuildJwtInterceptor) {
         RestTemplate restTemplate = new RestTemplate();
         List<ClientHttpRequestInterceptor> existed = restTemplate.getInterceptors();
         List<ClientHttpRequestInterceptor> clientHttpRequestInterceptors = new ArrayList<>();
-        clientHttpRequestInterceptors.add(restTemplateAuthorizationInterceptor);
+        clientHttpRequestInterceptors.add(restTemplateBuildJwtInterceptor);
         if (CollectionUtils.isNotEmpty(existed)) {
             clientHttpRequestInterceptors.addAll(existed);
         }
@@ -44,13 +49,23 @@ public class ExchangeConfiguration {
     }
 
     @Bean
+    public RestTemplateBuildJwtInterceptor restTemplateBuildJwtInterceptor(JwtTokenFactory jwtTokenFactory, SecurityProperties securityProperties) {
+        return new RestTemplateBuildJwtInterceptor(jwtTokenFactory, securityProperties);
+    }
+
+    @Bean
     @ConditionalOnMissingBean
-    public RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor(JwtSecurityProperties jwtSecurityProperties) {
-        return new RestTemplateAuthorizationInterceptor(jwtSecurityProperties);
+    public EndpointExchangeService endpointExchangeService(ExchangeProperties exchangeProperties, RestTemplate restTemplate) {
+        return new EndpointExchangeServiceImpl(restTemplate, exchangeProperties);
     }
 
     @Bean
     public UserExchangeService userExchangeService(RestTemplate restTemplate, ExchangeProperties exchangeProperties) {
         return new UserExchangeServiceImpl(restTemplate, exchangeProperties);
+    }
+
+    @Bean
+    public KarmaExchangeService karmaExchangeService(RestTemplate restTemplate, ExchangeProperties exchangeProperties) {
+        return new KarmaExchangeServiceImpl(restTemplate, exchangeProperties);
     }
 }

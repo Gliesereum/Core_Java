@@ -170,6 +170,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     @Override
     public boolean currentUserHavePermissionToActionInBusinessLikeOwner(UUID businessId) {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
         boolean result = false;
         List<UUID> userCorporationIds = SecurityUtil.getUserCorporationIds();
         if (CollectionUtils.isNotEmpty(userCorporationIds)) {

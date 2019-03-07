@@ -1,6 +1,6 @@
 package com.gliesereum.share.common.exchange.interceptor;
 
-import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
+import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpRequest;

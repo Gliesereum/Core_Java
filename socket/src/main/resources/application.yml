@@ -7,14 +7,7 @@ spring:
 module-url: /socket/v1
 
 server:
-  port: 8270
-
-
-security:
-  properties:
-    jwtHeader: Service-Authorization
-    jwtPrefix: JWT
-    jwtSecret: CnfxFqbCKHLqzT9LGruE
+  port: 8550
 
 eureka:
   client:
@@ -28,6 +21,18 @@ eureka:
   instance:
     prefer-ip-address: true
 
+security:
+  properties:
+    checkAccessUrl: http://account-service/auth/check
+    bearerHeader: Authorization
+    bearerPrefix: Bearer
+    jwtHeader: Service-Authorization
+    jwtPrefix: JWT
+    jwtSecret: CnfxFqbCKHLqzT9LGruE
+    endpointKeeperEnable: false
+    getUserGroupUrl: http://permission-service/group-user/my-group
+    getPermissionMapUrl: http://permission-service/group/permission-map
+
 exchange:
   endpoint:
     permission:
@@ -35,3 +40,5 @@ exchange:
     account:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
+    karma:
+      businessForCurrentUser: http://karma-service/business/by-current-user

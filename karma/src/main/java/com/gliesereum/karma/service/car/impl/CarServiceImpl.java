@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_ID_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
@@ -130,6 +131,23 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
         if (!carRepository.existsByIdAndUserId(id, SecurityUtil.getUserId())) {
             throw new ClientException(CAR_NOT_FOUND);
         }
+    }
+
+    @Override
+    @Transactional
+    public CarDto getById(UUID id) {
+        return super.getById(id);
+    }
+
+    @Override
+    public boolean carExistByIdAndUserId(UUID id, UUID userId) {
+        if (id == null) {
+            throw new ClientException(CAR_ID_EMPTY);
+        }
+        if (userId == null) {
+            throw new ClientException(USER_ID_IS_EMPTY);
+        }
+        return carRepository.existsByIdAndUserId(id, userId);
     }
 
     @Override
