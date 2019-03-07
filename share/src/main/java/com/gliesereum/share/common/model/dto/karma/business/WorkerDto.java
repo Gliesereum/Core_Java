@@ -18,11 +18,13 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class WorkerDto extends DefaultDto {
 
-    private UUID workerId;
+    private UUID userId;
 
     private String position;
 
     private UUID workingSpaceId;
+
+    private UUID businessId;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 

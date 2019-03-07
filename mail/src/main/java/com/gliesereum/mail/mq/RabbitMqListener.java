@@ -1,10 +1,12 @@
 package com.gliesereum.mail.mq;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.mail.email.EmailService;
 import com.gliesereum.mail.phone.PhoneService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -25,25 +27,23 @@ import java.util.Map;
 @Component
 public class RabbitMqListener {
 
-    private final String SUBJECT = "spring.mail.subject";
-
-    @Autowired
-    private Environment environment;
-
     @Autowired
     private EmailService emailService;
 
     @Autowired
     private PhoneService phoneService;
 
-    @RabbitListener(queues = "verificationQueue")
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @RabbitListener(queuesToDeclare = @Queue(name = "verificationQueue", ignoreDeclarationExceptions = "true"))
     public void processQueue(String message) {
         Map<String, String> model = getModelByJson(message);
         if (!CollectionUtils.isEmpty(model)) {
             if (!StringUtils.isEmpty(model.get("type"))) {
                 switch (model.get("type").toUpperCase()) {
                     case "EMAIL": {
-                        emailService.sendSingleVerificationMessage(model.get("value"), environment.getProperty(SUBJECT), model.get("code"));
+                        emailService.sendSingleVerificationMessage(model.get("value"), model.get("code"));
                         break;
                     }
                     case "PHONE": {
@@ -56,12 +56,11 @@ public class RabbitMqListener {
     }
 
     private Map<String, String> getModelByJson(String json) {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         try {
-            result = (HashMap<String, String>) new ObjectMapper().readValue(json, HashMap.class);
+            result = objectMapper.readValue(json, new TypeReference<Map<String, String>>(){});
         } catch (IOException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error("Error while read json", e);
         }
         return result;
     }

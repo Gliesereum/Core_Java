@@ -23,7 +23,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.ANONYMOUS_CANT_COMMENT;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.BUSINESS_NOT_FOUND;
 
@@ -94,6 +93,11 @@ public class BaseBusinessController {
     public MapResponse delete(@PathVariable("id") UUID id) {
         baseBusinessService.delete(id);
         return new MapResponse("true");
+    }
+
+    @GetMapping("/by-current-user")
+    public List<BaseBusinessDto> getAllBusinessByUser() {
+        return baseBusinessService.getAllBusinessByCurrentUser();
     }
 
     @GetMapping("/{id}/media")

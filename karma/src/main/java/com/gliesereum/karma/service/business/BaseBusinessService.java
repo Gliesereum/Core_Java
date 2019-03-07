@@ -17,11 +17,18 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     boolean existByIdAndCorporationIds(UUID id, List<UUID> corporationIds);
 
-    boolean currentUserHavePermissionToActionInBusiness(UUID businessId);
+    boolean currentUserHavePermissionToActionInBusinessLikeOwner(UUID businessId);
+
+    boolean currentUserHavePermissionToActionInBusinessLikeWorker(UUID businessId);
 
     List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds);
 
     BusinessFullModel getFullModelById(UUID id);
 
     List<BaseBusinessDto> getByCorporationId(UUID corporationId);
+
+    BaseBusinessDto getByIdIgnoreState(UUID id);
+
+    List<BaseBusinessDto> getAllBusinessByCurrentUser();
 }
+

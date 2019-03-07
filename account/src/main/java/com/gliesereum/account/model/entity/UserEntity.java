@@ -2,7 +2,6 @@ package com.gliesereum.account.model.entity;
 
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,9 +31,6 @@ public class UserEntity extends DefaultEntity {
     @Column(name = "middle_name")
     private String middleName;
 
-    @Column(name = "position")
-    private String position;
-
     @Column(name = "country")
     private String country;
 
@@ -61,13 +57,7 @@ public class UserEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private BanStatus banStatus;
 
-    @Column(name = "kyc_status")
-    @Enumerated(EnumType.STRING)
-    private KYCStatus kycStatus;
+    @Column(name = "kyc_approved")
+    private Boolean kycApproved;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "user_corporation",
-            joinColumns = {@JoinColumn(name = "user_id", insertable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "corporation_id", insertable = false, updatable = false)})
-    private Set<CorporationEntity> corporation = new HashSet<>();
 }

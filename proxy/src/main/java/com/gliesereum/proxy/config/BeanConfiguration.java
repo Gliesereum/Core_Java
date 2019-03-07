@@ -1,9 +1,8 @@
 package com.gliesereum.proxy.config;
 
-import com.gliesereum.proxy.config.security.properties.SecurityProperties;
+import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizationInterceptor;
-import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;

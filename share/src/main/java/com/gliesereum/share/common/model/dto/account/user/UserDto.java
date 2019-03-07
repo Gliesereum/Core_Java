@@ -3,7 +3,6 @@ package com.gliesereum.share.common.model.dto.account.user;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -34,10 +34,6 @@ public class UserDto extends DefaultDto {
     @Size(min = 3)
     @NotEmpty
     private String middleName;
-
-    @Size(min = 3)
-    @NotEmpty
-    private String position;
 
     @Size(min = 3)
     @NotEmpty
@@ -65,7 +61,7 @@ public class UserDto extends DefaultDto {
 
     private BanStatus banStatus;
 
-    private KYCStatus kycStatus;
+    private Boolean kycApproved;
 
-    private List<CorporationDto> corporation = new ArrayList<>();
+    private List<UUID> corporationIds = new ArrayList<>();
 }

@@ -2,6 +2,7 @@ package com.gliesereum.karma.model.entity.service;
 
 import com.gliesereum.karma.model.entity.filter.FilterAttributeEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,10 @@ public class ServicePriceEntity extends DefaultEntity {
 
     @Column(name ="duration")
     private Integer duration;
+
+    @Column(name = "object_state")
+    @Enumerated(EnumType.STRING)
+    private ObjectState objectState;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "service_class_price",

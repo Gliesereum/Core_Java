@@ -2,6 +2,7 @@ package com.gliesereum.mail.controllers;
 
 import com.gliesereum.mail.email.EmailService;
 import com.gliesereum.mail.phone.PhoneService;
+import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,15 +19,16 @@ import java.util.List;
 public class MailController {
 
     @Autowired
-    PhoneService phoneService;
+    private PhoneService phoneService;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @PostMapping(value = "/phone/single")
-    public void sendSingleMessageToPhone(@RequestParam(value = "phone") String phone,
-                                         @RequestParam(value = "text") String text) {
-        phoneService.sendSingleMessage(phone, text);
+    public MapResponse sendSingleMessageToPhone(@RequestParam(value = "to") String phone,
+                                                @RequestParam(value = "message") String message) {
+        phoneService.sendSingleMessage(phone, message);
+        return MapResponse.resultTrue();
     }
 
     @PostMapping(value = "/phone/check/balance")
@@ -37,21 +39,21 @@ public class MailController {
     @PostMapping(value = "/email/single")
     public void sendSingleMessageToEmail(@RequestParam(value = "to") String to,
                                          @RequestParam(value = "subject") String subject,
-                                         @RequestParam(value = "text") String text) {
-        emailService.sendSimpleMessage(to, subject, text);
+                                         @RequestParam(value = "message") String message) {
+        emailService.sendSimpleMessage(to, subject, message);
     }
 
     @PostMapping(value = "/email/verification")
-    public void sendSingleVerificationMessage(@RequestParam(value = "to") String to,
-                                              @RequestParam(value = "subject") String subject,
-                                              @RequestParam(value = "code") String code) {
-        emailService.sendSingleVerificationMessage(to, subject, code);
+    public MapResponse sendSingleVerificationMessage(@RequestParam(value = "to") String to,
+                                                     @RequestParam(value = "message") String message) {
+        emailService.sendSingleVerificationMessage(to, message);
+        return MapResponse.resultTrue();
     }
 
     @PostMapping(value = "/email/distribution")
     public void sendEmailsMessages(@RequestParam(value = "listTo") List<String> listTo,
                                    @RequestParam(value = "subject") String subject,
-                                   @RequestParam(value = "text") String text) {
-        emailService.sendEmailsMessages(listTo, subject, text);
+                                   @RequestParam(value = "message") String message) {
+        emailService.sendEmailsMessages(listTo, subject, message);
     }
 }

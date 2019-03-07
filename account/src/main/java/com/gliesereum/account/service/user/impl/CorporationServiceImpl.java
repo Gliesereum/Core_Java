@@ -10,12 +10,11 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.dto.account.user.UserCorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.NOT_EXIST_BY_ID;
@@ -42,7 +41,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     private static final Class<CorporationDto> DTO_CLASS = CorporationDto.class;
     private static final Class<CorporationEntity> ENTITY_CLASS = CorporationEntity.class;
 
-    private final CorporationRepository corporationRepository;
+    private final CorporationRepository repository;
 
     @Autowired
     private UserCorporationService userCorporationService;
@@ -53,9 +52,9 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     @Autowired
     private UserService userService;
 
-    public CorporationServiceImpl(CorporationRepository corporationRepository, DefaultConverter converter) {
-        super(corporationRepository, converter, DTO_CLASS, ENTITY_CLASS);
-        this.corporationRepository = corporationRepository;
+    public CorporationServiceImpl(CorporationRepository repository, DefaultConverter converter) {
+        super(repository, converter, DTO_CLASS, ENTITY_CLASS);
+        this.repository = repository;
     }
 
     @Override
@@ -63,8 +62,8 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     public CorporationDto create(CorporationDto dto) {
         CorporationDto result = null;
         SecurityUtil.checkUserByBanStatus();
-        dto.setKYCStatus(KYCStatus.KYC_NOT_PASSED);
-        dto.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
+        dto.setKycApproved(false);
+        dto.setObjectState(ObjectState.ACTIVE);
         result = super.create(dto);
         if (result != null) {
             userCorporationService.create(new UserCorporationDto(SecurityUtil.getUserId(), result.getId())); //todo in a future remove user-corporation
@@ -91,22 +90,26 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
             checkCurrentUserForPermissionActionThisCorporation(dto.getId());
-            CorporationDto byId = super.getById(dto.getId());
+            CorporationEntity byId = repository.findByIdAndObjectState(dto.getId(), ObjectState.ACTIVE);
             if (byId == null) {
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
-            checkByUpdateStatus(dto, byId);
+            dto.setKycApproved(byId.getKycApproved());
+            dto.setObjectState(byId.getObjectState());
             CorporationEntity entity = converter.convert(dto, entityClass);
-            entity = corporationRepository.saveAndFlush(entity);
+            entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
         }
         return dto;
     }
 
     @Override
+    @Transactional
     public void delete(UUID id) {
         checkCurrentUserForPermissionActionThisCorporation(id);
-        super.delete(id);
+        CorporationDto dto = getById(id);
+        dto.setObjectState(ObjectState.DELETED);
+        super.update(dto);
     }
 
     @Override
@@ -125,18 +128,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             throw new ClientException(CORPORATION_SHARED_OWNERSHIP_NOT_FOUND);
         }
         sharedOwnershipService.delete(id);
-    }
-
-    @Override
-    public void updateKycStatus(UUID id, KYCStatus status) {
-        CorporationDto corporation = getById(id);
-        corporation.setKYCStatus(status);
-        if (status.equals(KYCStatus.KYC_PASSED)) {
-            corporation.setVerifiedStatus(VerifiedStatus.VERIFIED);
-        } else {
-            corporation.setVerifiedStatus(VerifiedStatus.UNVERIFIED);
-        }
-        super.update(corporation);
     }
 
     private void checkCorporationSharedOwnerships(CorporationSharedOwnershipDto dto) {
@@ -167,18 +158,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                 corporationNotFound.setMessage("Corporation with id: " + dto.getCorporationOwnerId() + " not found");
                 throw new ClientException(corporationNotFound);
             }
-            if (corporation.getVerifiedStatus().equals(VerifiedStatus.UNVERIFIED)) {
-                ExceptionMessage corporationUnverified = CORPORATION_UNVERIFIED;
-                corporationUnverified.setMessage("Corporation with id: " + dto.getCorporationOwnerId() + " unverified");
-                throw new ClientException(corporationUnverified);
-            }
         }
-    }
-
-    @Override
-    public List<CorporationDto> getAllKycRequest() {
-        List<CorporationEntity> entities = corporationRepository.findByKYCStatus(KYCStatus.KYC_IN_PROCESS);
-        return converter.convert(entities, DTO_CLASS);
     }
 
     @Override
@@ -188,7 +168,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         CorporationDto corporation = getById(id);
         List<CorporationSharedOwnershipDto> sharedOwnerships = corporation.getCorporationSharedOwnerships();
         if (CollectionUtils.isEmpty(sharedOwnerships) ||
-                !sharedOwnerships.stream().map(CorporationSharedOwnershipDto::getOwnerId).collect(Collectors.toList()).contains(userId)) {
+                sharedOwnerships.stream().noneMatch(i -> i.getOwnerId().equals(userId))) {
             throw new ClientException(USER_DONT_HAVE_PERMISSION_TO_CORPORATION);
         }
     }
@@ -198,26 +178,31 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         if (id == null) {
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
-        CorporationDto corporation = getById(id);
+        CorporationEntity corporation = repository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         if (corporation == null) {
             throw new ClientException(CORPORATION_NOT_FOUND);
         }
-        return corporation;
+        return converter.convert(corporation, dtoClass);
     }
 
-    private void checkByUpdateStatus(CorporationDto dto, CorporationDto corporation) {
-        if (corporation == null) {
-            throw new ClientException(CORPORATION_NOT_FOUND);
+    @Override
+    public List<CorporationDto> getByUserId(UUID userId) {
+        List<CorporationDto> result = null;
+        List<UUID> corporationIds = sharedOwnershipService.getAllCorporationIdByUserId(userId);
+        if (CollectionUtils.isNotEmpty(corporationIds)) {
+            List<CorporationEntity> entities = repository.findAllByIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                result = converter.convert(entities, dtoClass);
+                result.sort(Comparator.comparing(CorporationDto::getName));
+            }
         }
-        if (!corporation.getKYCStatus().equals(dto.getKYCStatus())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_CHANGE_KYS_STATUS);
-        }
-        if (!corporation.getVerifiedStatus().equals(dto.getVerifiedStatus())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_CHANGE_VERIFIED_STATUS);
-        }
+        return result;
     }
 
-
-
-
+    @Override
+    public void setKycApproved(UUID objectId) {
+        CorporationDto corporation = getById(objectId);
+        corporation.setKycApproved(true);
+        super.update(corporation);
+    }
 }

@@ -28,7 +28,7 @@ public class ServiceTypeFacadeImpl implements ServiceTypeFacade {
         if (serviceType != null) {
             switch (serviceType) {
                 case CAR_WASH:
-                    result = baseBusinessService.currentUserHavePermissionToActionInBusiness(corporationServiceId);
+                    result = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(corporationServiceId);
                     break;
             }
         }

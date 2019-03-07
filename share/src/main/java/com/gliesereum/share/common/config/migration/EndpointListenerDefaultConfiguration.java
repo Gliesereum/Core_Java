@@ -7,7 +7,7 @@ import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.permission.EndpointExchangeService;
 import com.gliesereum.share.common.exchange.service.permission.impl.EndpointExchangeServiceImpl;
 import com.gliesereum.share.common.migration.EndpointsListener;
-import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
+import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

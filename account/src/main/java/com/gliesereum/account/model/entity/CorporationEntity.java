@@ -1,13 +1,13 @@
 package com.gliesereum.account.model.entity;
 
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,11 +27,29 @@ public class CorporationEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "edrpou")
-    private String edrpou;
+    @Column(name = "company_type")
+    private String companyType;
 
-    @Column(name = "address")
-    private String address;
+    @Column(name = "index")
+    private String index;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "region")
+    private String region;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "building_number")
+    private String buildingNumber;
+
+    @Column(name = "office_number")
+    private String officeNumber;
 
     @Column(name = "logo_url")
     private String logoUrl;
@@ -39,15 +57,30 @@ public class CorporationEntity extends DefaultEntity {
     @Column(name = "cover_url")
     private String coverUrl;
 
-    @Column(name = "kyc_status")
-    @Enumerated(EnumType.STRING)
-    private KYCStatus kYCStatus;
+    @Column(name = "business_activity")
+    private String businessActivity;
 
-    @Column(name = "verified_status")
+    @Column(name = "rc_number")
+    private String rcNumber;
+
+    @Column(name = "place_incorporation")
+    private String placeIncorporation;
+
+    @Column(name = "date_incorporation")
+    private LocalDateTime dateIncorporation;
+
+    @Column(name = "kyc_approved")
+    private Boolean kycApproved;
+
+    @Column(name = "object_state")
     @Enumerated(EnumType.STRING)
-    private VerifiedStatus verifiedStatus;
+    private ObjectState objectState;
 
     @OneToMany
     @JoinColumn(name = "corporation_id", insertable = false, updatable = false)
     private Set<CorporationSharedOwnershipEntity> corporationSharedOwnerships = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "corporation_id", insertable = false, updatable = false)
+    private Set<CorporationEmployeeEntity> corporationEmployees = new HashSet<>();
 }

@@ -42,3 +42,8 @@ exchange:
     account:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
+
+notification:
+  topicName: amq.topic
+  businessRecordRouting: karma.businessRecord
+  userRecordRouting: karma.userRecord

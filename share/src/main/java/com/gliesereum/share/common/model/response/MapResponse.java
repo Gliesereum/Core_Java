@@ -29,6 +29,10 @@ public class MapResponse extends HashMap<String, Object> {
         put(key, value);
     }
 
+    public static MapResponse resultTrue() {
+        return new MapResponse("true");
+    }
+
     public Builder builder() {
         return this.new Builder();
     }

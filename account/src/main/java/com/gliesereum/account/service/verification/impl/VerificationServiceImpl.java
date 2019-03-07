@@ -1,22 +1,21 @@
 package com.gliesereum.account.service.verification.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.account.model.domain.VerificationDomain;
 import com.gliesereum.account.model.repository.redis.VerificationRepository;
 import com.gliesereum.account.service.verification.VerificationService;
+import com.gliesereum.share.common.exchange.service.mail.MailExchangeService;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 /**
  * @author vitalij
@@ -29,12 +28,15 @@ public class VerificationServiceImpl implements VerificationService {
     private VerificationRepository repository;
 
     @Autowired
+    private MailExchangeService mailExchangeService;
+
+/*    @Autowired
     private Environment environment;
 
     @Autowired
     private RabbitTemplate template;
 
-    private final String MAIL_QUEUE = "spring.rabbitmq.queue-mail";
+    private final String MAIL_QUEUE = "spring.rabbitmq.queue-mail";*/
 
     @Override
     public boolean checkVerification(@NotNull String value, @NotNull String code) {
@@ -60,6 +62,14 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
     private void sendCode(String value, String code, VerificationType type) {
+        if (type.equals(VerificationType.PHONE)) {
+            mailExchangeService.sendPhoneVerification(value, code);
+        } else if (type.equals(VerificationType.EMAIL)) {
+            mailExchangeService.sendEmailVerification(value, code);
+        }
+    }
+
+  /*  private void sendCode(String value, String code, VerificationType type) {
         try {
             Map<String, String> model = new HashMap<>();
             model.put("code", code);
@@ -73,7 +83,7 @@ public class VerificationServiceImpl implements VerificationService {
             log.error(e.getMessage());
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Scheduled(fixedDelay = 600000)
     private void deleteByTime() {

@@ -2,13 +2,13 @@ package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserRepository;
+import com.gliesereum.account.service.user.CorporationSharedOwnershipService;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
 import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -33,14 +32,20 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> implements UserService {
 
     private static final String URL_PATTERN = "^(https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
-    public static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
+    private static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
     private static final Class<UserDto> DTO_CLASS = UserDto.class;
     private static final Class<UserEntity> ENTITY_CLASS = UserEntity.class;
+
     private final UserRepository userRepository;
+
     @Autowired
     private UserEmailService emailService;
+
     @Autowired
     private UserPhoneService phoneService;
+
+    @Autowired
+    private CorporationSharedOwnershipService corporationSharedOwnershipService;
 
     public UserServiceImpl(UserRepository userRepository, DefaultConverter defaultConverter) {
         super(userRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -63,7 +68,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         UserDto result = null;
         if (dto != null) {
             dto.setBanStatus(BanStatus.UNBAN);
-            dto.setKycStatus(KYCStatus.KYC_NOT_PASSED);
+            dto.setKycApproved(false);
             result = super.create(dto);
         }
         return result;
@@ -95,16 +100,6 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     }
 
     @Override
-    public void updateKycStatus(UUID id, KYCStatus status) {
-        UserDto user = getById(id);
-        if (user == null) {
-            throw new ClientException(USER_NOT_FOUND);
-        }
-        user.setKycStatus(user.getKycStatus());
-        super.update(user);
-    }
-
-    @Override
     public void banById(UUID id) {
         changeBanStatus(id, BanStatus.BAN);
     }
@@ -114,18 +109,31 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         changeBanStatus(id, BanStatus.UNBAN);
     }
 
-    @Override
-    public List<UserDto> getAllKycRequest() {
-        List<UserEntity> entities = userRepository.findByKycStatus(KYCStatus.KYC_IN_PROCESS);
-        return converter.convert(entities, DTO_CLASS);
-    }
-
     private void changeBanStatus(UUID id, BanStatus status) {
         UserDto user = getById(id);
         if (user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }
         user.setBanStatus(status);
+        super.update(user);
+    }
+
+    @Override
+    public UserDto getById(UUID id) {
+        UserDto byId = super.getById(id);
+        if(byId != null) {
+            byId.setCorporationIds(corporationSharedOwnershipService.getAllCorporationIdByUserId(byId.getId()));
+        }
+        return byId;
+    }
+
+    @Override
+    public void setKycApproved(UUID objectId) {
+        UserDto user = super.getById(objectId);
+        if (user == null) {
+            throw new ClientException(USER_NOT_FOUND);
+        }
+        user.setKycApproved(true);
         super.update(user);
     }
 }

@@ -1,7 +1,6 @@
 package com.gliesereum.account.service.user;
 
 import com.gliesereum.account.model.entity.CorporationEntity;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.service.DefaultService;
@@ -18,9 +17,9 @@ public interface CorporationService extends DefaultService<CorporationDto, Corpo
 
     void removeOwnerCorporation(UUID id);
 
-    void updateKycStatus(UUID id, KYCStatus status);
-
-    List<CorporationDto> getAllKycRequest();
-
     void checkCurrentUserForPermissionActionThisCorporation(UUID id);
+
+    void setKycApproved(UUID objectId);
+
+    List<CorporationDto> getByUserId(UUID userId);
 }

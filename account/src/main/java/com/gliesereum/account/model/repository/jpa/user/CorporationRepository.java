@@ -1,7 +1,7 @@
 package com.gliesereum.account.model.repository.jpa.user;
 
 import com.gliesereum.account.model.entity.CorporationEntity;
-import com.gliesereum.share.common.model.dto.account.enumerated.KYCStatus;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +14,8 @@ import java.util.UUID;
 @Repository
 public interface CorporationRepository extends JpaRepository<CorporationEntity, UUID> {
 
-    List<CorporationEntity> findByKYCStatus(KYCStatus status);
+    CorporationEntity findByIdAndObjectState(UUID id, ObjectState state);
+
+    List<CorporationEntity> findAllByIdInAndObjectState(List<UUID> ids, ObjectState state);
 
 }
