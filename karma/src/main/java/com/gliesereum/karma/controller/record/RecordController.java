@@ -40,7 +40,7 @@ public class RecordController {
         return service.create(dto);
     }
 
-    @PostMapping("/from-business")
+    @PostMapping("/create/from-business")
     public BaseRecordDto createFromBusiness(@Valid @RequestBody BaseRecordDto dto) {
         return service.createFromBusiness(dto);
     }

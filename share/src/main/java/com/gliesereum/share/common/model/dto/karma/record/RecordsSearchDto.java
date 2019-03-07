@@ -21,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class RecordsSearchDto {
 
-    private StatusRecord status;
+    private List<StatusRecord> status;
 
     private ServiceType serviceType;
 

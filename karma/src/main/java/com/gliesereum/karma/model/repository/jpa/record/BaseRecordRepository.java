@@ -16,11 +16,11 @@ import java.util.UUID;
  */
 public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UUID>{
 
-     List<BaseRecordEntity> findByStatusRecordAndBusinessIdInAndBeginBetweenOrderByBegin(
-             StatusRecord status, List<UUID> businessIds, LocalDateTime from, LocalDateTime to);
+     List<BaseRecordEntity> findByStatusRecordInAndBusinessIdInAndBeginBetweenOrderByBegin(
+             List<StatusRecord> status, List<UUID> businessIds, LocalDateTime from, LocalDateTime to);
 
-     List<BaseRecordEntity> findByStatusRecordAndTargetIdInAndBeginBetweenOrderByBeginDesc(
-             StatusRecord status, List<UUID> targetIds, LocalDateTime from, LocalDateTime to);
+     List<BaseRecordEntity> findByStatusRecordInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
+             List<StatusRecord> status, List<UUID> targetIds, LocalDateTime from, LocalDateTime to);
 
      List<BaseRecordEntity> findByBusinessIdAndStatusRecordAndBeginBetween(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to);
 
