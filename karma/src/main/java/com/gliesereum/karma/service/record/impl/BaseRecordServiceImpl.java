@@ -265,6 +265,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
         dto.setPrice(getPriceByRecord(dto));
         dto.setStatusRecord(StatusRecord.CREATED);
+        dto.setStatusProcess(StatusProcess.WAITING);
         checkRecord(dto);
         BaseRecordDto result = super.create(dto);
         if (result != null) {
