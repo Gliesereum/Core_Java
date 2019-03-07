@@ -21,4 +21,6 @@ public class ExchangeProperties {
     private PermissionProperty permission;
 
     private MailProperty mail;
+
+    private KarmaProperties karma;
 }

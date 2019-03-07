@@ -1,5 +1,7 @@
 package com.gliesereum.karma.service.record.impl;
 
+import com.gliesereum.karma.aspect.annotation.RecordCreate;
+import com.gliesereum.karma.aspect.annotation.RecordUpdate;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -171,6 +173,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    @RecordUpdate
     public BaseRecordDto updateTimeRecord(UUID idRecord, Long beginTime) {
 
         LocalDateTime begin = LocalDateTime.ofInstant(Instant.ofEpochMilli(beginTime),
@@ -187,6 +190,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    @RecordUpdate
     public BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId) {
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
@@ -205,6 +209,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    @RecordUpdate
     public BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status) {
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
@@ -217,6 +222,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    @RecordUpdate
     public BaseRecordDto canceledRecord(UUID idRecord) {
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
@@ -226,6 +232,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    @RecordCreate
     public BaseRecordDto create(BaseRecordDto dto) {
         if (dto != null) {
             setType(dto);
@@ -242,6 +249,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    @RecordCreate
     public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
         if (dto.getBusinessId() != null &&
                 !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId())) {

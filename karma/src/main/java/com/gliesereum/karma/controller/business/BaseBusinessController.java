@@ -100,7 +100,6 @@ public class BaseBusinessController {
         return baseBusinessService.getAllBusinessByCurrentUser();
     }
 
-
     @GetMapping("/{id}/media")
     public List<MediaDto> getMediaByBusiness(@PathVariable("id") UUID id) {
         return mediaService.getByObjectId(id);

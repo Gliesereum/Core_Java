@@ -1,6 +1,6 @@
 package com.gliesereum.lendinggallery;
 
-import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
+import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;

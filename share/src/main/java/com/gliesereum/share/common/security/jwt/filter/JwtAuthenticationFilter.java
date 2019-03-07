@@ -1,7 +1,7 @@
 package com.gliesereum.share.common.security.jwt.filter;
 
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
-import com.gliesereum.share.common.security.jwt.properties.JwtSecurityProperties;
+import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import com.gliesereum.share.common.security.model.UserAuthentication;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

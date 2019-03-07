@@ -1,9 +1,10 @@
-package com.gliesereum.proxy.config.security.filter;
+package com.gliesereum.share.common.security.bearer.filter;
 
-import com.gliesereum.proxy.config.security.properties.SecurityProperties;
-import com.gliesereum.proxy.service.exchange.auth.AuthService;
+import com.gliesereum.share.common.exchange.service.auth.AuthExchangeService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.security.model.UserAuthentication;
+import com.gliesereum.share.common.security.properties.SecurityProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,30 +22,26 @@ import java.io.IOException;
  * @version 1.0
  */
 @Component
+@Slf4j
 public class BearerAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private SecurityProperties securityProperties;
 
     @Autowired
-    private AuthService authService;
+    private AuthExchangeService authService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader(securityProperties.getBearerHeader());
         String bearerToken = StringUtils.removeStart(header, securityProperties.getBearerPrefix());
         if (StringUtils.startsWith(header, securityProperties.getBearerPrefix()) && StringUtils.isNotBlank(bearerToken)) {
-            try {
-                bearerToken = bearerToken.trim();
-                AuthDto auth = authService.checkAccessToken(bearerToken);
-                if (auth != null) {
-                    SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(auth.getUser(), auth.getTokenInfo()));
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-
-            } catch (Exception e) {
-                throw e;
+            bearerToken = bearerToken.trim();
+            AuthDto auth = authService.checkAccessToken(bearerToken);
+            if (auth != null) {
+                SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(auth.getUser(), auth.getTokenInfo()));
+                filterChain.doFilter(request, response);
+                return;
             }
         }
         SecurityContextHolder.getContext().setAuthentication(new UserAuthentication());

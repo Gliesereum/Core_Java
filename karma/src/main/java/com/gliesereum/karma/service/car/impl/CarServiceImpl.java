@@ -134,6 +134,12 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     }
 
     @Override
+    @Transactional
+    public CarDto getById(UUID id) {
+        return super.getById(id);
+    }
+
+    @Override
     public boolean carExistByIdAndUserId(UUID id, UUID userId) {
         if (id == null) {
             throw new ClientException(CAR_ID_EMPTY);

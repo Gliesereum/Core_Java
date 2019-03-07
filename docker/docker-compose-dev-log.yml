@@ -270,6 +270,22 @@ services:
       eureka.host: discovery
       eureka.port: 8761
 
+  socket:
+    image: gls-socket:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      server.port: 8550
+      spring.profiles.active: docker
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.stompPort: 61613
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
+
   nginx:
     image: nginx:1.15.7-alpine
     volumes:
