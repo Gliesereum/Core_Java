@@ -6,6 +6,7 @@ package com.gliesereum.share.common.model.dto.karma.enumerated;
  */
 public enum StatusProcess {
 
+    WAITING,
     STARTED,
     IN_PROCESS,
     COMPLETED,
