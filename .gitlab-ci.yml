@@ -31,6 +31,7 @@ gradle-build:
     - sudo gradle clean build -b=karma/build.gradle
     - sudo gradle clean build -b=file/build.gradle
     - sudo gradle clean build -b=lending-gallery/build.gradle
+    - sudo gradle clean build -b=socket/build.gradle
   only:
     - gls/dev
 
@@ -58,8 +59,9 @@ docker-clean-image:
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-permission')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-karma')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-file')
-    - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
     - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-lending-gallery')
+    - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-socket')
+    - docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
   only:
     - gls/dev
   allow_failure: true
@@ -77,6 +79,7 @@ docker-image-package:
     - sudo docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  ./karma/build/libs/
     - sudo docker build -t gls-file:0.0.1 -f docker/file/Dockerfile  ./file/build/libs/
     - sudo docker build -t gls-lending-gallery:0.0.1 -f docker/lending-gallery/Dockerfile  ./lending-gallery/build/libs/
+    - sudo docker build -t gls-socket:0.0.1 -f docker/socket/Dockerfile  ./socket/build/libs/
     - sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  ./config/elk/
   only:
     - gls/dev

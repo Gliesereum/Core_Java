@@ -7,7 +7,7 @@ spring:
 module-url: /socket/v1
 
 server:
-  port: 8270
+  port: 8550
 
 eureka:
   client:
