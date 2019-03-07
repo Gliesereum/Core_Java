@@ -193,7 +193,8 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             List<CorporationEntity> entities = repository.findAllByIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = converter.convert(entities, dtoClass);
-                result.sort(Comparator.comparing(CorporationDto::getName));
+
+                result.sort(Comparator.comparing(i -> (i.getName() != null) ? i.getName() : ""));
             }
         }
         return result;
