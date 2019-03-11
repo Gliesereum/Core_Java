@@ -27,6 +27,7 @@ spring:
     port: ${rabbit.port}
     password: ${rabbit.password}
     username: ${rabbit.user}
+    queue-logstash: logstash
 
 phone:
   url: https://acemountmedia.com/api/
