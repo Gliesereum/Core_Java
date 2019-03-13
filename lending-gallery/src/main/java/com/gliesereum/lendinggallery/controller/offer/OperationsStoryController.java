@@ -1,6 +1,7 @@
 package com.gliesereum.lendinggallery.controller.offer;
 
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 
 /**
  * @author vitalij
@@ -29,12 +32,20 @@ public class OperationsStoryController {
 
     @GetMapping("by-user")
     public List<OperationsStoryDto> getAllByUser() {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
         return service.getAllByUserId(SecurityUtil.getUserId());
     }
 
     @GetMapping("by-customer/{customerId}")
     public List<OperationsStoryDto> getAllByCustomer(@PathVariable("customerId") UUID customerId) {
         return service.getAllByCustomerId(customerId);
+    }
+
+    @GetMapping("by-user/by-art-bond/{artBondId}")
+    public List<OperationsStoryDto> getAllForUserByArtBondId(@PathVariable("artBondId") UUID artBondId) {
+        return service.getAllForUserByArtBondId(artBondId);
     }
 
     @GetMapping("/{id}")

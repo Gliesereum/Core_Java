@@ -9,8 +9,7 @@ public enum StatusProcess {
     WAITING,
     STARTED,
     IN_PROCESS,
-    COMPLETED,
-    CANCELED;
+    COMPLETED;
 
     public String toString() {
         return name().toLowerCase();

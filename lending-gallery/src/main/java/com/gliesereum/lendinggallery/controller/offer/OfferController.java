@@ -2,15 +2,19 @@ package com.gliesereum.lendinggallery.controller.offer;
 
 import com.gliesereum.lendinggallery.service.offer.BorrowerOfferService;
 import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.BorrowerOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 
 /**
  * @author vitalij
@@ -39,6 +43,11 @@ public class OfferController {
     @GetMapping("/investor/by-state")
     public List<InvestorOfferDto> getAllInvestorOffersByState(@RequestParam("state") OfferStateType state) {
         return investorOfferService.getAllByState(state);
+    }
+
+    @GetMapping("/investor/user")
+    public List<InvestorOfferDto> getAllInvestorOffersByUser() {
+        return investorOfferService.getAllByUser();
     }
 
     @GetMapping("/investor/{id}")
@@ -70,6 +79,14 @@ public class OfferController {
     @GetMapping("/borrower/by-state")
     public List<BorrowerOfferDto> getAllBorrowerOffersByState(@RequestParam("state") OfferStateType state) {
         return borrowerOfferService.getAllByState(state);
+    }
+
+    @GetMapping("/borrower/user")
+    public List<BorrowerOfferDto> getAllBorrowerOffersByUser() {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        return borrowerOfferService.getAllByUser();
     }
 
     @GetMapping("/borrower/{id}")

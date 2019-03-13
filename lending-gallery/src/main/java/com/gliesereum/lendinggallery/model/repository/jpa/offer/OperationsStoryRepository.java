@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface OperationsStoryRepository extends JpaRepository<OperationsStoryEntity, UUID> {
 
     List<OperationsStoryEntity> findAllByCustomerIdOrderByCreate(UUID customerId);
+
+    List<OperationsStoryEntity> findAllByCustomerIdAndAtrBondIdOrderByCreate(UUID customerId, UUID artBondId);
 }

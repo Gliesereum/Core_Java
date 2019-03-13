@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.record;
 
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
@@ -40,4 +41,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     BaseRecordDto createFromBusiness(BaseRecordDto dto);
 
     BaseRecordDto getFullModelById(UUID id);
+
+    BaseRecordDto updateStatusPay(UUID idRecord, StatusPay status);
 }

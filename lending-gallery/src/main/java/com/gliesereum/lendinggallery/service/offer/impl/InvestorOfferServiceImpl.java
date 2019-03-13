@@ -75,6 +75,12 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     }
 
     @Override
+    public List<InvestorOfferDto> getAllByUser() {
+        List<InvestorOfferEntity> entities = repository.findAllByCustomerIdOrderByCreate( getCustomer().getUserId());
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public InvestorOfferDto create(InvestorOfferDto dto) {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
@@ -128,5 +134,12 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         if ((artBond.getPrice() - commonSum) < dto.getSumInvestment()) {
             throw new ClientException(SUM_EXCEEDS_AMOUNT_ALLOWED_FOR_INVESTMENT);
         }
+    }
+
+    private CustomerDto getCustomer(){
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        return customerService.findByUserId(SecurityUtil.getUserId());
     }
 }
