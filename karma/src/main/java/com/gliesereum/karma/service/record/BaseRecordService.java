@@ -38,4 +38,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     List<BaseRecordDto> getAllByUser(ServiceType serviceType);
 
     BaseRecordDto createFromBusiness(BaseRecordDto dto);
+
+    BaseRecordDto getFullModelById(UUID id);
 }

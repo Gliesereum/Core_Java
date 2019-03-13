@@ -32,7 +32,7 @@ public class RecordController {
 
     @GetMapping("/{id}")
     public BaseRecordDto getById(@PathVariable("id") UUID id) {
-        return service.getById(id);
+        return service.getFullModelById(id);
     }
 
     @PostMapping
@@ -45,26 +45,26 @@ public class RecordController {
         return service.createFromBusiness(dto);
     }
 
-    @PostMapping("/record/canceled")
+    @PutMapping("/record/canceled")
     public BaseRecordDto canceledRecord(@RequestParam("idRecord") UUID idRecord) {
         return service.canceledRecord(idRecord);
     }
 
-    @PostMapping("/time/record")
+    @PutMapping("/time/record")
     public BaseRecordDto updateTimeRecord(
             @RequestParam("idRecord") UUID idRecord,
             @RequestParam("beginTime") Long beginTime) {
         return service.updateTimeRecord(idRecord, beginTime);
     }
 
-    @PostMapping("/status/process")
+    @PutMapping("/status/process")
     public BaseRecordDto updateStatusProcess(
             @RequestParam("idRecord") UUID idRecord,
             @RequestParam("status") StatusProcess status) {
         return service.updateStatusProgress(idRecord, status);
     }
 
-    @PostMapping("/working/space")
+    @PutMapping("/working/space")
     public BaseRecordDto updateWorkingSpace(
             @RequestParam("idRecord") UUID idRecord,
             @RequestParam("workingSpaceId") UUID workingSpaceId) {

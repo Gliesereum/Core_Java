@@ -115,7 +115,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
         search.getBusinessIds().forEach(f -> {
-            if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(f)) {
+            if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(f) &&
+                    !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(f)) {
                 throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
             }
         });
@@ -257,6 +258,18 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
         return createRecord(dto);
+    }
+
+    @Override
+    public BaseRecordDto getFullModelById(UUID id) {
+        BaseRecordDto result = null;
+        BaseRecordDto byId = getById(id);
+        if (byId != null) {
+            List<BaseRecordDto> list = Arrays.asList(byId);
+            setFullModelRecord(list);
+            result = list.get(0);
+        }
+        return result;
     }
 
     private BaseRecordDto createRecord(BaseRecordDto dto) {
