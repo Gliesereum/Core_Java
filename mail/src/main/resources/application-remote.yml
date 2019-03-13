@@ -27,6 +27,7 @@ spring:
     port: 5672
     password: Af2f4dsASF
     username: rabbit
+    queue-logstash: logstash
 
 phone:
   url: https://acemountmedia.com/api/
