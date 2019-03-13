@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -54,9 +55,19 @@ public class ArtBondController {
         return new MapResponse("true");
     }
 
+    @GetMapping("/by-tags")
+    public List<ArtBondDto> getAllByTags(@RequestBody List<String> tags) {
+        return service.getAllByTags(tags);
+    }
+
     @GetMapping("/status")
     public List<ArtBondDto> getAllByStatus(@RequestParam("status") StatusType status) {
         return service.getAllByStatus(status);
+    }
+
+    @GetMapping("/by-user")
+    public List<ArtBondDto> getAllByUser() {
+        return service.getAllByUser();
     }
 
     @PutMapping("/status")
@@ -85,5 +96,10 @@ public class ArtBondController {
     public MapResponse delete(@PathVariable("id") UUID id, @PathVariable("mediaId") UUID mediaId) {
         mediaService.delete(mediaId, id);
         return new MapResponse("true");
+    }
+
+    @GetMapping("/currency-exchange")
+    public Map<String, Integer> currencyExchange(@RequestParam("sum") Long sum) {
+        return service.currencyExchange(sum);
     }
 }

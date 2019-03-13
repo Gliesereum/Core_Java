@@ -17,4 +17,6 @@ public interface BorrowerOfferService extends DefaultService<BorrowerOfferDto, B
     List<BorrowerOfferDto> getAllByState(OfferStateType state);
 
     BorrowerOfferDto updateState(OfferStateType state, UUID id);
+
+    List<BorrowerOfferDto> getAllByUser();
 }

@@ -61,15 +61,17 @@ public class BorrowerOfferServiceImpl extends DefaultServiceImpl<BorrowerOfferDt
     }
 
     @Override
+    public List<BorrowerOfferDto> getAllByUser() {
+        List<BorrowerOfferEntity> entities = repository.findAllByCustomerIdOrderByCreate(getCustomer().getUserId());
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public BorrowerOfferDto create(BorrowerOfferDto dto) {
         if (dto == null) {
             throw new ClientException(MODEL_IS_EMPTY);
         }
-        if(SecurityUtil.isAnonymous()){
-            throw new ClientException(USER_IS_ANONYMOUS);
-        }
-        CustomerDto customer = customerService.findByUserId(SecurityUtil.getUserId());
-        dto.setCustomerId(customer.getId());
+        dto.setCustomerId(getCustomer().getId());
         return super.create(dto);
     }
 
@@ -82,6 +84,13 @@ public class BorrowerOfferServiceImpl extends DefaultServiceImpl<BorrowerOfferDt
             throw new ClientException(OFFER_NOT_FOUND_BY_ID);
         }
         return result;
+    }
+
+    private CustomerDto getCustomer(){
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        return customerService.findByUserId(SecurityUtil.getUserId());
     }
 
 }

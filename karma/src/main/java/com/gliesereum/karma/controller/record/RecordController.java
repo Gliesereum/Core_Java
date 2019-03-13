@@ -2,6 +2,7 @@ package com.gliesereum.karma.controller.record;
 
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
@@ -62,6 +63,13 @@ public class RecordController {
             @RequestParam("idRecord") UUID idRecord,
             @RequestParam("status") StatusProcess status) {
         return service.updateStatusProgress(idRecord, status);
+    }
+
+    @PutMapping("/status/pay")
+    public BaseRecordDto updateStatusPay(
+            @RequestParam("idRecord") UUID idRecord,
+            @RequestParam("status") StatusPay status) {
+        return service.updateStatusPay(idRecord, status);
     }
 
     @PutMapping("/working/space")

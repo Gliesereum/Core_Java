@@ -32,6 +32,11 @@ public class ContentController {
         return service.getAllByContentType(type);
     }
 
+    @GetMapping("/by-tags")
+    public List<ContentDto> getAllByTags(@RequestBody List<String> tags) {
+        return service.getAllByTags(tags);
+    }
+
     @GetMapping("/{id}")
     public ContentDto getById(@PathVariable("id") UUID id) {
         return service.getById(id);

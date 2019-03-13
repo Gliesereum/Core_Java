@@ -14,4 +14,6 @@ import java.util.UUID;
 public interface BorrowerOfferRepository extends JpaRepository<BorrowerOfferEntity, UUID> {
 
     List<BorrowerOfferEntity> findAllByStateType(OfferStateType stateType);
+
+    List<BorrowerOfferEntity> findAllByCustomerIdOrderByCreate(UUID userId);
 }

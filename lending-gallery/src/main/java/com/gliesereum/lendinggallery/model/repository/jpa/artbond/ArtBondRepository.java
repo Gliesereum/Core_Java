@@ -15,4 +15,6 @@ import java.util.UUID;
 public interface ArtBondRepository extends JpaRepository<ArtBondEntity, UUID> {
 
     List<ArtBondEntity> findAllByStatusTypeAndSpecialStatusType(StatusType statusType, SpecialStatusType specialStatusType);
+
+    List<ArtBondEntity> findAllByTagsContains(List<String> tags);
 }

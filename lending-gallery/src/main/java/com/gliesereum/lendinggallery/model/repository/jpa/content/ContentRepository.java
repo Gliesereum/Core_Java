@@ -14,4 +14,6 @@ import java.util.UUID;
 public interface ContentRepository extends JpaRepository<ContentEntity, UUID> {
 
     List<ContentEntity> findAllByContentType(ContentType type);
+
+    List<ContentEntity> findAllByTagsContainsOrderByCreate(List<String> tags);
 }

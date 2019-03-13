@@ -55,11 +55,16 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
 
     @Override
     public List<OperationsStoryDto> getAllByUserId(UUID userId) {
-        if (SecurityUtil.isAnonymous()) {
-            throw new ClientException(USER_IS_ANONYMOUS);
+        List<OperationsStoryEntity> entities = repository.findAllByCustomerIdOrderByCreate(getCustomer().getId());
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<OperationsStoryDto> getAllForUserByArtBondId(UUID artBondId) {
+        if(artBondId == null || !artBondService.isExist(artBondId)){
+            throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
         }
-        CustomerDto customer = customerService.findByUserId(SecurityUtil.getUserId());
-        List<OperationsStoryEntity> entities = repository.findAllByCustomerIdOrderByCreate(customer.getId());
+        List<OperationsStoryEntity> entities = repository.findAllByCustomerIdAndAtrBondIdOrderByCreate(getCustomer().getId(), artBondId);
         return converter.convert(entities, dtoClass);
     }
 
@@ -94,5 +99,12 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             }
             dto.setArtBond(artBond);
         }
+    }
+
+    private CustomerDto getCustomer(){
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        return customerService.findByUserId(SecurityUtil.getUserId());
     }
 }

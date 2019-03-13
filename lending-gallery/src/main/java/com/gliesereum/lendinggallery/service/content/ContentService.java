@@ -14,4 +14,6 @@ import java.util.List;
 public interface ContentService extends DefaultService<ContentDto, ContentEntity> {
 
     List<ContentDto> getAllByContentType(ContentType type);
+
+    List<ContentDto> getAllByTags(List<String> tags);
 }

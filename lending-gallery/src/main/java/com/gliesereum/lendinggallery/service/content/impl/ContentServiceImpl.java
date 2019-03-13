@@ -8,9 +8,11 @@ import com.gliesereum.share.common.model.dto.lendinggallery.content.ContentDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.ContentType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +36,15 @@ public class ContentServiceImpl extends DefaultServiceImpl<ContentDto, ContentEn
     @Override
     public List<ContentDto> getAllByContentType(ContentType type) {
         List<ContentEntity> entities = repository.findAllByContentType(type);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<ContentDto> getAllByTags(List<String> tags) {
+        if(CollectionUtils.isEmpty(tags)){
+            return new ArrayList<>();
+        }
+        List<ContentEntity> entities = repository.findAllByTagsContainsOrderByCreate(tags);
         return converter.convert(entities, dtoClass);
     }
 }

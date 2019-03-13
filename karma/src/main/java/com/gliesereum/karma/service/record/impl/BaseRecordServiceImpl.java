@@ -19,6 +19,7 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.*;
@@ -272,6 +273,14 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return result;
     }
 
+    @Override
+    public BaseRecordDto updateStatusPay(UUID idRecord, StatusPay status) {
+        BaseRecordDto dto = getById(idRecord);
+        checkPermissionToUpdate(dto);
+        dto.setStatusPay(status);
+        return super.update(dto);
+    }
+
     private BaseRecordDto createRecord(BaseRecordDto dto) {
         BaseBusinessDto business = getBusinessByRecord(dto);
         checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
@@ -279,6 +288,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setPrice(getPriceByRecord(dto));
         dto.setStatusRecord(StatusRecord.CREATED);
         dto.setStatusProcess(StatusProcess.WAITING);
+        dto.setStatusPay(StatusPay.NOT_PAID);
         checkRecord(dto);
         BaseRecordDto result = super.create(dto);
         if (result != null) {

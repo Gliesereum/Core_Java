@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusTyp
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -19,4 +20,10 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
     ArtBondDto getArtBondById(UUID id);
 
     ArtBondDto updateStatus(StatusType status, UUID id);
+
+    List<ArtBondDto> getAllByTags(List<String> tags);
+
+    List<ArtBondDto> getAllByUser();
+
+    Map<String, Integer> currencyExchange(Long sum);
 }

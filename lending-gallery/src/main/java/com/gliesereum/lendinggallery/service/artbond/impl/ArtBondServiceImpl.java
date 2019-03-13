@@ -9,23 +9,25 @@ import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import yahoofinance.YahooFinance;
+import yahoofinance.quotes.fx.FxQuote;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.ART_BOND_NOT_FOUND_BY_ID;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.ID_IS_EMPTY;
 
@@ -134,6 +136,42 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             }
         }
         return super.update(artBond);
+    }
+
+    @Override
+    public List<ArtBondDto> getAllByTags(List<String> tags) {
+        if (CollectionUtils.isEmpty(tags)) {
+            return new ArrayList<>();
+        }
+        List<ArtBondEntity> entities = repository.findAllByTagsContains(tags);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<ArtBondDto> getAllByUser() {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        List<InvestorOfferDto> offers = investorOfferService.getAllByUser();
+        List<UUID> ids = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(offers)) {
+            ids = offers.stream().filter(io -> !io.getStateType().equals(OfferStateType.REFUSED)).map(m -> m.getArtBondId()).collect(Collectors.toList());
+        }
+        return getByIds(ids);
+    }
+
+    @Override
+    public Map<String, Integer> currencyExchange(Long sum) {
+        Map<String, Integer> result = new HashMap<>();
+        try {
+            FxQuote rubToUsd = YahooFinance.getFx("USDRUB=X");
+            FxQuote rubToEur = YahooFinance.getFx("EURRUB=X");
+            FxQuote usdToEur = YahooFinance.getFx("USDEUR=X");
+            FxQuote eurToUsd = YahooFinance.getFx("EURUSD=X");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     private void setMedia(ArtBondDto dto) {
