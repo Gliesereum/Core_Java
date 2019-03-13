@@ -31,5 +31,4 @@ spring:
     password: Af2f4dsASF
     username: rabbit
     queue-logstash: logstash
-    queue-mail: verificationQueue
 

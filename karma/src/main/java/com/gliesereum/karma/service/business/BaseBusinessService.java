@@ -30,5 +30,7 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
     BaseBusinessDto getByIdIgnoreState(UUID id);
 
     List<BaseBusinessDto> getAllBusinessByCurrentUser();
+
+    List<BusinessFullModel> getAllFullBusinessByCurrentUser();
 }
 

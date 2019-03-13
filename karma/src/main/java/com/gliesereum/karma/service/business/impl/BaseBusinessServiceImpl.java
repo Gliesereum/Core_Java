@@ -5,7 +5,6 @@ import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkerService;
-import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.record.BaseRecordService;
@@ -68,9 +67,6 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     @Autowired
     private WorkerService workerService;
-
-    @Autowired
-    private WorkingSpaceService workingSpaceService;
 
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -151,6 +147,16 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             });
         }
         return new ArrayList<>(set);
+    }
+
+    @Override
+    public List<BusinessFullModel> getAllFullBusinessByCurrentUser() {
+        List<BusinessFullModel> result = new ArrayList<>();
+        List<BaseBusinessDto> list = getAllBusinessByCurrentUser();
+        if(CollectionUtils.isNotEmpty(list)){
+            list.forEach(f->result.add(getFullModelById(f.getId())));
+        }
+        return result;
     }
 
     @Override
