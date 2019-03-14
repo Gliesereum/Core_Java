@@ -216,6 +216,10 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status) {
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
+        if (dto.getStatusRecord().equals(StatusRecord.CANCELED) ||
+                dto.getStatusRecord().equals(StatusRecord.COMPLETED)) {
+            throw new ClientException(CAN_NOT_CHANGE_STATUS_CANCELED_OR_COMPLETED_RECORD);
+        }
         dto.setStatusProcess(status);
         if (status.equals(StatusProcess.COMPLETED)) {
             dto.setStatusRecord(StatusRecord.COMPLETED);
