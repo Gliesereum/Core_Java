@@ -224,6 +224,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (status.equals(StatusProcess.COMPLETED)) {
             dto.setStatusRecord(StatusRecord.COMPLETED);
         }
+        if (status.equals(StatusProcess.CANCELED)) {
+            dto.setStatusRecord(StatusRecord.CANCELED);
+        }
         return super.update(dto);
     }
 
@@ -234,6 +237,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
         dto.setStatusRecord(StatusRecord.CANCELED);
+        dto.setStatusProcess(StatusProcess.CANCELED);
         return super.update(dto);
     }
 
