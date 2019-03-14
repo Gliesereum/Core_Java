@@ -1,6 +1,7 @@
 package com.gliesereum.lendinggallery.model.repository.jpa.offer;
 
 import com.gliesereum.lendinggallery.model.entity.offer.OperationsStoryEntity;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,5 +15,7 @@ public interface OperationsStoryRepository extends JpaRepository<OperationsStory
 
     List<OperationsStoryEntity> findAllByCustomerIdOrderByCreate(UUID customerId);
 
-    List<OperationsStoryEntity> findAllByCustomerIdAndAtrBondIdOrderByCreate(UUID customerId, UUID artBondId);
+    List<OperationsStoryEntity> findAllByCustomerIdAndArtBondIdOrderByCreate(UUID customerId, UUID artBondId);
+
+    List<OperationsStoryEntity> findAllByCustomerIdAndOperationType(UUID customerId, OperationType operationType);
 }

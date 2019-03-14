@@ -9,10 +9,12 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +33,10 @@ import static com.gliesereum.share.common.exception.messages.LandingGalleryExcep
 @Service
 public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsStoryDto, OperationsStoryEntity> implements OperationsStoryService {
 
-    @Autowired
-    private OperationsStoryRepository repository;
+    private static final Class<OperationsStoryDto> DTO_CLASS = OperationsStoryDto.class;
+    private static final Class<OperationsStoryEntity> ENTITY_CLASS = OperationsStoryEntity.class;
+
+    private final OperationsStoryRepository operationsStoryRepository;
 
     @Autowired
     private CustomerService customerService;
@@ -40,22 +44,20 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     @Autowired
     private ArtBondService artBondService;
 
-    private static final Class<OperationsStoryDto> DTO_CLASS = OperationsStoryDto.class;
-    private static final Class<OperationsStoryEntity> ENTITY_CLASS = OperationsStoryEntity.class;
-
-    public OperationsStoryServiceImpl(OperationsStoryRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    public OperationsStoryServiceImpl(OperationsStoryRepository operationsStoryRepository, DefaultConverter defaultConverter) {
+        super(operationsStoryRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.operationsStoryRepository = operationsStoryRepository;
     }
 
     @Override
     public List<OperationsStoryDto> getAllByCustomerId(UUID customerId) {
-        List<OperationsStoryEntity> entities = repository.findAllByCustomerIdOrderByCreate(customerId);
+        List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(customerId);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public List<OperationsStoryDto> getAllByUserId(UUID userId) {
-        List<OperationsStoryEntity> entities = repository.findAllByCustomerIdOrderByCreate(getCustomer().getId());
+        List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(getCustomer().getId());
         return converter.convert(entities, dtoClass);
     }
 
@@ -64,7 +66,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         if(artBondId == null || !artBondService.isExist(artBondId)){
             throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
         }
-        List<OperationsStoryEntity> entities = repository.findAllByCustomerIdAndAtrBondIdOrderByCreate(getCustomer().getId(), artBondId);
+        List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdAndArtBondIdOrderByCreate(getCustomer().getId(), artBondId);
         return converter.convert(entities, dtoClass);
     }
 
@@ -88,6 +90,16 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     public OperationsStoryDto getById(UUID id) {
         OperationsStoryDto result = super.getById(id);
         setArtBond(result);
+        return result;
+    }
+
+    @Override
+    public List<OperationsStoryDto> getAllByCustomerIdAndOperationType(UUID customerId, OperationType operationType) {
+        List<OperationsStoryDto> result = null;
+        if (ObjectUtils.allNotNull(customerId, operationType)) {
+            List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdAndOperationType(customerId, operationType);
+            result = converter.convert(entities, dtoClass);
+        }
         return result;
     }
 

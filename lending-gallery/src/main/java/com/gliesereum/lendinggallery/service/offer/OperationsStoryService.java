@@ -1,6 +1,7 @@
 package com.gliesereum.lendinggallery.service.offer;
 
 import com.gliesereum.lendinggallery.model.entity.offer.OperationsStoryEntity;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -18,4 +19,6 @@ public interface OperationsStoryService extends DefaultService<OperationsStoryDt
     List<OperationsStoryDto> getAllByUserId(UUID userId);
 
     List<OperationsStoryDto> getAllForUserByArtBondId(UUID artBondId);
+
+    List<OperationsStoryDto> getAllByCustomerIdAndOperationType(UUID customerId, OperationType operationType);
 }

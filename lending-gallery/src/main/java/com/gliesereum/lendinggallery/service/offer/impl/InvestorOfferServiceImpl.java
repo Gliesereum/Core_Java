@@ -124,9 +124,9 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             throw new ClientException(ART_BOND_NOT_AVAILABLE_FOR_INVESTMENT);
         }
         List<InvestorOfferDto> offers = getAllByArtBond(artBond.getId());
-        int commonSum = 0;
+        double commonSum = 0;
         if (CollectionUtils.isNotEmpty(offers)) {
-            commonSum = offers.stream().mapToInt(InvestorOfferDto::getSumInvestment).sum();
+            commonSum = offers.stream().mapToDouble(InvestorOfferDto::getSumInvestment).sum();
         }
         if(dto.getSumInvestment() == null || dto.getSumInvestment() == 0){
             throw new ClientException(SUM_OF_INVESTMENT_CAN_NOT_BE_ZERO);
