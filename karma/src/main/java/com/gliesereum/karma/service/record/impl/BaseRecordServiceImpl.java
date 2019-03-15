@@ -270,6 +270,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
+    @Transactional
     public BaseRecordDto getFullModelById(UUID id) {
         BaseRecordDto result = null;
         BaseRecordDto byId = getById(id);
