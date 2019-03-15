@@ -12,10 +12,12 @@ import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import yahoofinance.quotes.fx.FxQuote;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -170,6 +173,39 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             FxQuote eurToUsd = YahooFinance.getFx("EURUSD=X");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public List<PaymentCalendarDto> getPaymentCalendar(UUID id) {
+        List<PaymentCalendarDto> result = null;
+        if (id != null) {
+            ArtBondDto artBound = super.getById(id);
+            if (artBound != null) {
+                result = getPaymentCalendar(artBound, artBound.getPaymentStartDate(), 1L);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, LocalDateTime paymentStartDate, Long stockCount) {
+        List<PaymentCalendarDto> result = new ArrayList<>();
+        if (ObjectUtils.allNotNull(artBond, paymentStartDate)) {
+            if (ObjectUtils.allNotNull(artBond.getDividendPercent(), artBond.getPaymentPeriod(), artBond.getPaymentFinishDate())) {
+                LocalDateTime paymentDate = paymentStartDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
+                while (paymentDate.isBefore(artBond.getPaymentFinishDate())) {
+                    PaymentCalendarDto paymentCalendar = new PaymentCalendarDto();
+                    paymentCalendar.setArtBond(artBond);
+                    paymentCalendar.setDividendPercent(artBond.getDividendPercent());
+                    paymentCalendar.setDate(paymentDate);
+                    double purchaseValue = stockCount * artBond.getStockPrice();
+                    paymentCalendar.setDividendValue(purchaseValue / 100 * artBond.getDividendPercent());
+                    result.add(paymentCalendar);
+                    paymentDate = paymentDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
+                }
+            }
         }
         return result;
     }

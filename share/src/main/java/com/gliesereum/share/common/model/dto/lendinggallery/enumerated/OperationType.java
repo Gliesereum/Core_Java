@@ -6,5 +6,5 @@ package com.gliesereum.share.common.model.dto.lendinggallery.enumerated;
  */
 public enum OperationType {
 
-    PURCHASE, PAYMENT;
+    PURCHASE, PAYMENT, PAYMENT_REWARD;
 }

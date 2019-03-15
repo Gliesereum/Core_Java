@@ -25,10 +25,13 @@ public class OperationsStoryEntity extends DefaultEntity {
     private UUID customerId;
 
     @Column(name = "art_bond_id")
-    private UUID atrBondId;
+    private UUID artBondId;
 
     @Column(name ="sum")
-    private Integer sum;
+    private Double sum;
+
+    @Column(name = "stock_count")
+    private Integer stockCount;
 
     @Column(name = "name")
     private String name;

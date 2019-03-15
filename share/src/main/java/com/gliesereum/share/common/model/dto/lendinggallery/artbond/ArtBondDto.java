@@ -1,5 +1,9 @@
 package com.gliesereum.share.common.model.dto.lendinggallery.artbond;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
@@ -8,6 +12,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +27,10 @@ import java.util.List;
 public class ArtBondDto extends DefaultDto {
 
     private Integer price;
+
+    private Integer stockCount;
+
+    private Double stockPrice;
 
     private Integer dividendPercent;
 
@@ -61,5 +71,15 @@ public class ArtBondDto extends DefaultDto {
     private List<MediaDto> artBondInfo = new ArrayList<>();
 
     private List<MediaDto> documents = new ArrayList<>();
+
+    private Integer paymentPeriod;
+
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
+    private LocalDateTime paymentStartDate;
+
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
+    private LocalDateTime paymentFinishDate;
 
 }

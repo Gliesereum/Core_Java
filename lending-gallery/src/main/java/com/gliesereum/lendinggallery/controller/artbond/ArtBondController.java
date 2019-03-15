@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -101,5 +102,10 @@ public class ArtBondController {
     @GetMapping("/currency-exchange")
     public Map<String, Integer> currencyExchange(@RequestParam("sum") Long sum) {
         return service.currencyExchange(sum);
+    }
+
+    @GetMapping("/{id}/payment-calendar")
+    public List<PaymentCalendarDto> getPaymentCalendar(@PathVariable UUID id) {
+        return service.getPaymentCalendar(id);
     }
 }
