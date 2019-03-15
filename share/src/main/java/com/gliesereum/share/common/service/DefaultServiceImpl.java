@@ -68,6 +68,20 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
         return dto;
     }
 
+    @Override
+    public List<D> update(List<D> dtos) {
+        if (CollectionUtils.isNotEmpty(dtos)) {
+            if (dtos.stream().anyMatch(i -> i.getId() == null)) {
+                throw new ClientException(ID_NOT_SPECIFIED);
+            }
+            List<E> entities = converter.convert(dtos, entityClass);
+            entities = repository.saveAll(entities);
+            repository.flush();
+            dtos = converter.convert(entities, dtoClass);
+        }
+        return dtos;
+    }
+
     public D getById(UUID id) {
         D result = null;
         if (id != null) {

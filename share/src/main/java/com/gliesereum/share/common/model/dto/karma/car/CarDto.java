@@ -40,6 +40,8 @@ public class CarDto extends DefaultDto {
 
     private String note;
 
+    private Boolean favorite;
+
     private List<ServiceClassDto> services = new ArrayList<>();
 
     private List<FilterAttributeDto> attributes = new ArrayList<>();

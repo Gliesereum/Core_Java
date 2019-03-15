@@ -56,6 +56,9 @@ public class CarEntity extends DefaultEntity {
     @Column(name = "note")
     private String note;
 
+    @Column(name = "favorite")
+    private Boolean favorite;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "car_service_class",
             joinColumns = {@JoinColumn(name = "car_id", insertable = false, updatable = false)},

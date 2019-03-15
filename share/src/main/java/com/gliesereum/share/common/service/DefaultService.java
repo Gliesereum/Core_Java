@@ -18,6 +18,8 @@ public interface DefaultService<D extends DefaultDto, E extends DefaultEntity> {
 
     D update(D dto);
 
+    List<D> update(List<D> dtos);
+
     D getById(UUID id);
 
     List<D> getByIds(Iterable<UUID> ids);
