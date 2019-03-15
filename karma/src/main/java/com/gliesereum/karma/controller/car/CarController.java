@@ -60,6 +60,11 @@ public class CarController {
         return carService.create(car);
     }
 
+    @PostMapping("/set-favorite/{idCar}")
+    public CarDto setFavorite(@PathVariable("idCar") UUID idCar) {
+        return carService.setFavorite(idCar);
+    }
+
     @PostMapping("/service/{idCar}/{idService}")
     public MapResponse addService(@PathVariable("idCar") UUID idCar, @PathVariable("idService") UUID idService) {
         carService.addService(idCar, idService);

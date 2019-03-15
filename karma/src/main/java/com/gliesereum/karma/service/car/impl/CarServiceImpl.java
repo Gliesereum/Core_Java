@@ -82,6 +82,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
                 throw new ClientException(USER_IS_ANONYMOUS);
             }
             dto.setUserId(userId);
+            dto.setFavorite(false);
             dto = super.create(dto);
         }
         return dto;
@@ -104,6 +105,8 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
         }
         return dto;
     }
+
+
 
     @Override
     @Transactional
@@ -193,6 +196,33 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
         checkCarExistInCurrentUser(idCar);
         filterAttributeService.checkFilterAttributeExist(idAttribute);
         carFilterAttributeService.deleteByCarIdAndFilterId(idCar, idAttribute);
+    }
+
+    @Override
+    public CarDto setFavorite(UUID idCar) {
+        if (idCar == null) {
+            throw new ClientException(ID_NOT_SPECIFIED);
+        }
+        UUID userId = SecurityUtil.getUserId();
+        if (userId == null) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        List<CarDto> cars = getAllByUserId(SecurityUtil.getUserId());
+        if (CollectionUtils.isEmpty(cars)) {
+            throw new ClientException(CAR_NOT_FOUND);
+        }
+        Optional<CarDto> car = cars.stream().filter(i -> i.getId().equals(idCar)).findFirst();
+        if (car.isPresent()) {
+            car.get().setFavorite(true);
+        } else {
+            throw new ClientException(CAR_NOT_FOUND);
+        }
+        CarDto result = super.update(car.get());
+        List<CarDto> other = cars.stream().filter(i -> !i.getId().equals(idCar)).peek(i -> i.setFavorite(false)).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(other)) {
+            super.update(other);
+        }
+        return result;
     }
 
     private void checkServiceExist(UUID id) {
