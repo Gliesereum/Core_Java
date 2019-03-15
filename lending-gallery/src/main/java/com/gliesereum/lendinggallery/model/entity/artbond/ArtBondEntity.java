@@ -6,8 +6,10 @@ import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,6 +25,12 @@ public class ArtBondEntity extends DefaultEntity {
 
     @Column(name = "price")
     private Integer price;
+
+    @Column(name = "stock_count")
+    private Integer stockCount;
+
+    @Formula(value = "COALESCE(price, 0) / COALESCE(stock_count, 1)")
+    private Double stockPrice;
 
     @Column(name = "dividend_percent")
     private Integer dividendPercent;
@@ -75,5 +83,14 @@ public class ArtBondEntity extends DefaultEntity {
     @CollectionTable(name="art_bond_tag", joinColumns=@JoinColumn(name="art_bond_id"))
     @Column(name="tag")
     private List<String> tags;
+
+    @Column(name = "payment_period")
+    private Integer paymentPeriod;
+
+    @Column(name = "payment_start_date")
+    private LocalDateTime paymentStartDate;
+
+    @Column(name = "payment_finish_date")
+    private LocalDateTime paymentFinishDate;
 
 }

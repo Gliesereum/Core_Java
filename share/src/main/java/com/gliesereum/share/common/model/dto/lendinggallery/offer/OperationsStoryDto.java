@@ -29,7 +29,9 @@ public class OperationsStoryDto extends DefaultDto {
 
     private ArtBondDto artBond;
 
-    private Integer sum;
+    private Double sum;
+
+    private Integer stockCount;
 
     private String name;
 
