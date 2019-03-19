@@ -31,4 +31,6 @@ public interface CarService extends DefaultService<CarDto, CarEntity> {
     void addFilterAttribute(UUID idCar, UUID idAttribute);
 
     void removeFilterAttribute(UUID idCar, UUID idAttribute);
+
+    CarDto setFavorite(UUID idCar);
 }
