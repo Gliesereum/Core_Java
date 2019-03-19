@@ -29,20 +29,28 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_TYPE_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_DONT_HAVE_ANY_CORPORATION;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
@@ -287,6 +295,99 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         checkPermissionToUpdate(dto);
         dto.setStatusPay(status);
         return super.update(dto);
+    }
+
+    @Override
+    public void getReport(HttpServletResponse response, ReportFilterDto filter) {
+        BaseBusinessDto business = baseBusinessService.getByIdIgnoreState(filter.getBusinessId());
+        if (business == null) {
+            throw new ClientException(BUSINESS_NOT_FOUND);
+        }
+        List<BaseRecordDto> records = getRecordsByReportFilter(filter);
+        if (CollectionUtils.isNotEmpty(records)) {
+            records.sort(Comparator.comparing(BaseRecordDto::getBegin));
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        String name = business.getName().concat(" (")
+                .concat(filter.getFrom().format(formatter)).concat(" - ")
+                .concat(filter.getTo().format(formatter)).concat(" ).csv");
+        String[] CSV_HEADER = {"Begin process", "Finish process", "Price", "Pay"};
+        CSVPrinter printer = null;
+        PrintWriter writer = null;
+        if (filter.getFrom().toLocalDate().equals(filter.getTo().toLocalDate())) {
+            formatter = DateTimeFormatter.ofPattern("HH:mm");
+        }
+        try {
+            response.setContentType("text/csv");
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; file=" + name);
+            writer = response.getWriter();
+            printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(CSV_HEADER));
+            Integer total = records.stream().mapToInt(s -> s.getPrice()).sum();
+            Integer totalPaid = records.stream().filter(f -> f.getStatusPay().equals(StatusPay.PAID)).mapToInt(s -> s.getPrice()).sum();
+            Integer totalNotPaid = records.stream().filter(f -> f.getStatusPay().equals(StatusPay.NOT_PAID)).mapToInt(s -> s.getPrice()).sum();
+
+            for (BaseRecordDto record : records) {
+                List<String> data = Arrays.asList(
+                        record.getBegin().format(formatter),
+                        record.getFinish().format(formatter),
+                        record.getPrice().toString(),
+                        getPayStatus(record.getStatusPay()));
+                printer.printRecord(data);
+            }
+            List<String> totalNotPaidDate = Arrays.asList("Not paid", "", totalNotPaid.toString(), "");
+            printer.printRecord(totalNotPaidDate);
+            List<String> totalPaidDate = Arrays.asList("Paid", "", totalPaid.toString(), "");
+            printer.printRecord(totalPaidDate);
+            List<String> totalDate = Arrays.asList("Total", "", total.toString(), "");
+            printer.printRecord(totalDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                writer.flush();
+                writer.close();
+                printer.flush();
+                printer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String getPayStatus(StatusPay status) {
+        String result = null;
+        switch (status) {
+            case PAID:
+                result = "yes";
+                break;
+            case NOT_PAID:
+                result = "no";
+                break;
+        }
+        return result;
+    }
+
+
+    private List<BaseRecordDto> getRecordsByReportFilter(ReportFilterDto filter) {
+        SecurityUtil.checkUserByBanStatus();
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
+        if (CollectionUtils.isEmpty(SecurityUtil.getUserCorporationIds())) {
+            throw new ClientException(USER_DONT_HAVE_ANY_CORPORATION);
+        }
+        if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(filter.getBusinessId())) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+        }
+        if (filter.getFrom() == null) {
+            filter.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
+        }
+        if (filter.getTo() == null || filter.getFrom().isAfter(filter.getTo())) {
+            filter.setTo(filter.getFrom().toLocalDate().atStartOfDay().plusDays(1).minusSeconds(1));
+        }
+        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndBusinessIdInAndBeginBetweenOrderByBegin(
+                Arrays.asList(StatusRecord.COMPLETED), Arrays.asList(filter.getBusinessId()), filter.getFrom(), filter.getTo());
+        return converter.convert(entities, dtoClass);
     }
 
     private BaseRecordDto createRecord(BaseRecordDto dto) {

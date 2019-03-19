@@ -6,10 +6,12 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.ReportFilterDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -86,7 +88,7 @@ public class RecordController {
     }
 
     @GetMapping("/client/all")
-    public List<BaseRecordDto> getAllByUser(@RequestParam("serviceType")ServiceType serviceType) {
+    public List<BaseRecordDto> getAllByUser(@RequestParam("serviceType") ServiceType serviceType) {
         return service.getAllByUser(serviceType);
     }
 
@@ -103,5 +105,10 @@ public class RecordController {
     @PostMapping("/free-time")
     public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
+    }
+
+    @GetMapping("/report")
+    public void getReport(@Valid @RequestBody ReportFilterDto filter, HttpServletResponse response) {
+        service.getReport(response, filter);
     }
 }
