@@ -11,6 +11,7 @@ buildscript {
 		commonsLangVersion = '3.8.1'
 		commonsIOVersion = '2.6'
 		lombokVersion = '1.18.2'
+		apacheCsvVersion = '1.5'
 	}
 	repositories {
 		mavenCentral()
@@ -58,7 +59,9 @@ dependencies {
 	
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
-	
+
+	compile group: 'org.apache.commons', name: 'commons-csv', version: ${apacheCsvVersion}
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 
 	implementation (project(':share')) {
