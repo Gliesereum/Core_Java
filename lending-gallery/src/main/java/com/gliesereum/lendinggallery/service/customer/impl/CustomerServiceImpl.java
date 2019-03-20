@@ -44,6 +44,8 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
 
     private final CustomerRepository customerRepository;
 
+    private static final Integer PAYMENT_PERIOD_DAYS = 30;
+
     @Autowired
     private OperationsStoryService operationsStoryService;
 
@@ -140,18 +142,18 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                     long daysAfterPaymentStart = ChronoUnit.DAYS.between(paymentStartDate, currentDate);
                     long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate, currentDate);
                     long daysPayment = ChronoUnit.DAYS.between(paymentStartDate, artBond.getPaymentFinishDate());
+                    int paymentPeriodDays = PAYMENT_PERIOD_DAYS * artBond.getPaymentPeriod();
 
                     double purchaseValue = stockCount * artBond.getStockPrice();
                     double dividendValue = purchaseValue / 100 * artBond.getDividendPercent();
                     double rewardValue = purchaseValue / 100 * artBond.getRewardPercent();
 
-                    double nkd = (dividendValue / daysAfterPaymentStart) * daysAfterLastPayment + (rewardValue / daysPayment) * daysAfterPaymentStart;
+                    double nkd = (dividendValue / paymentPeriodDays) * daysAfterLastPayment + (rewardValue / daysPayment) * daysAfterPaymentStart;
 
                     result.setBalance(balance);
                     result.setProfit(profit);
                     result.setNkd(nkd);
                 }
-
             }
         }
         return result;
