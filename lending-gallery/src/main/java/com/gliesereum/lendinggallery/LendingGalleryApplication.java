@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class LendingGalleryApplication {
 
 	public static void main(String[] args) {
+		System.out.println(12 % 6);
 		SpringApplication.run(LendingGalleryApplication.class, args);
 	}
 }
