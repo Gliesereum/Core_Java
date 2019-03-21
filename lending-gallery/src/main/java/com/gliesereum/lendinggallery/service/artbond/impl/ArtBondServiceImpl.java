@@ -42,8 +42,11 @@ import static com.gliesereum.share.common.exception.messages.LandingGalleryExcep
 @Service
 public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEntity> implements ArtBondService {
 
-    @Autowired
-    private ArtBondRepository repository;
+    private static final Class<ArtBondDto> DTO_CLASS = ArtBondDto.class;
+    private static final Class<ArtBondEntity> ENTITY_CLASS = ArtBondEntity.class;
+    private static final Integer PAYMENT_PERIOD_DAYS = 30;
+
+    private final ArtBondRepository artBondRepository;
 
     @Autowired
     private MediaService mediaService;
@@ -54,16 +57,15 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Autowired
     private OperationsStoryService storyService;
 
-    private static final Class<ArtBondDto> DTO_CLASS = ArtBondDto.class;
-    private static final Class<ArtBondEntity> ENTITY_CLASS = ArtBondEntity.class;
 
-    public ArtBondServiceImpl(ArtBondRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    public ArtBondServiceImpl(ArtBondRepository artBondRepository, DefaultConverter defaultConverter) {
+        super(artBondRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.artBondRepository = artBondRepository;
     }
 
     @Override
     public List<ArtBondDto> getAllByStatus(StatusType status) {
-        List<ArtBondEntity> entities = repository.findAllByStatusTypeAndSpecialStatusType(status, SpecialStatusType.ACTIVE);
+        List<ArtBondEntity> entities = artBondRepository.findAllByStatusTypeAndSpecialStatusType(status, SpecialStatusType.ACTIVE);
         List<ArtBondDto> result = converter.convert(entities, dtoClass);
         result.forEach(f -> setMedia(f));
         return result;
@@ -146,7 +148,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         if (CollectionUtils.isEmpty(tags)) {
             return new ArrayList<>();
         }
-        List<ArtBondEntity> entities = repository.findAllByTagsContains(tags);
+        List<ArtBondEntity> entities = artBondRepository.findAllByTagsContains(tags);
         return converter.convert(entities, dtoClass);
     }
 
@@ -206,6 +208,41 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
                     paymentDate = paymentDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
                 }
             }
+        }
+        return result;
+    }
+
+    @Override
+    public Double getNkd(UUID artBondId) {
+        Double result = null;
+        ArtBondDto artBond = getById(artBondId);
+        if (artBond != null) {
+            double dividendValue = artBond.getStockPrice() / 100 * artBond.getDividendPercent();
+            int paymentPeriod = artBond.getPaymentPeriod();
+            long daysAfterLastPayment = PAYMENT_PERIOD_DAYS * paymentPeriod;
+            double rewardValue = artBond.getStockPrice() / 100 * artBond.getRewardPercent();
+            long daysAfterPaymentStart =  PAYMENT_PERIOD_DAYS * paymentPeriod;
+            long daysPayment = ChronoUnit.DAYS.between(artBond.getPaymentStartDate(), artBond.getPaymentFinishDate());
+            result = calculateNkd(dividendValue, paymentPeriod, daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
+        }
+        return result;
+    }
+
+    @Override
+    public double calculateNkd(double dividendValue, int paymentPeriod, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart) {
+        long paymentPeriodDays = PAYMENT_PERIOD_DAYS * paymentPeriod;
+        return (dividendValue / paymentPeriodDays) * daysAfterLastPayment + (rewardValue / daysPayment) * daysAfterPaymentStart;
+    }
+
+    @Override
+    public Map<String, Integer> getPercentPerYear(UUID artBondId) {
+        Map<String, Integer> result = null;
+        ArtBondDto artBond = getById(artBondId);
+        if (artBond != null) {
+            result = new HashMap<>();
+            int countDividendPayment = 12 % artBond.getPaymentPeriod();
+            result.put("min", artBond.getRewardPercent());
+            result.put("max", artBond.getRewardPercent() + (countDividendPayment * artBond.getDividendPercent()));
         }
         return result;
     }

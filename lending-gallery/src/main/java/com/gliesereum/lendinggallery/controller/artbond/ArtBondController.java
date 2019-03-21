@@ -108,4 +108,24 @@ public class ArtBondController {
     public List<PaymentCalendarDto> getPaymentCalendar(@PathVariable UUID id) {
         return service.getPaymentCalendar(id);
     }
+
+    @GetMapping("/{id}/nkd")
+    public MapResponse getNkdByArtBond(@PathVariable UUID id) {
+        Double nkd = service.getNkd(id);
+        MapResponse response = null;
+        if (nkd != null) {
+            response = new MapResponse("nkd", nkd);
+        }
+        return response;
+    }
+
+    @GetMapping("/{id}/percent-per-year")
+    public MapResponse percentPerYear(@PathVariable UUID id) {
+        Map<String, Integer> result = service.getPercentPerYear(id);
+        MapResponse response = null;
+        if (result != null) {
+            response = new MapResponse(result);
+        }
+        return response;
+    }
 }
