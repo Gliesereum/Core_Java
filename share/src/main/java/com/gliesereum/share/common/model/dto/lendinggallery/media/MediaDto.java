@@ -30,5 +30,7 @@ public class MediaDto extends DefaultDto {
 
     private UUID fileId;
 
+    private String url;
+
     private BlockMediaType blockMediaType;
 }
