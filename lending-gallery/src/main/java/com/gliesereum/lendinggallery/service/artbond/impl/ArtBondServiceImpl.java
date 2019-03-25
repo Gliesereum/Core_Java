@@ -55,7 +55,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     private InvestorOfferService investorOfferService;
 
     @Autowired
-    private OperationsStoryService storyService;
+    private OperationsStoryService operationsStoryService;
 
 
     public ArtBondServiceImpl(ArtBondRepository artBondRepository, DefaultConverter defaultConverter) {
@@ -67,14 +67,14 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public List<ArtBondDto> getAllByStatus(StatusType status) {
         List<ArtBondEntity> entities = artBondRepository.findAllByStatusTypeAndSpecialStatusType(status, SpecialStatusType.ACTIVE);
         List<ArtBondDto> result = converter.convert(entities, dtoClass);
-        result.forEach(f -> setMedia(f));
+        result.forEach(f -> setAdditionalField(f));
         return result;
     }
 
     @Override
     public List<ArtBondDto> getAll() {
         List<ArtBondDto> result = super.getAll();
-        result.forEach(f -> setMedia(f));
+        result.forEach(f -> setAdditionalField(f));
         return result;
     }
 
@@ -91,7 +91,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setStatusType(artBond.getStatusType());
         dto.setSpecialStatusType(artBond.getSpecialStatusType());
         ArtBondDto result = super.update(dto);
-        setMedia(result);
+        setAdditionalField(result);
         return result;
     }
 
@@ -109,7 +109,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         if (result == null) {
             throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
         }
-        setMedia(result);
+        setAdditionalField(result);
         return result;
     }
 
@@ -136,7 +136,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
                     story.setCreate(LocalDateTime.now());
                     story.setOperationType(OperationType.PURCHASE);
                     story.setCustomerId(f.getCustomerId());
-                    storyService.create(story);
+                    operationsStoryService.create(story);
                 });
             }
         }
@@ -183,11 +183,17 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public List<PaymentCalendarDto> getPaymentCalendar(UUID id) {
         List<PaymentCalendarDto> result = null;
         if (id != null) {
-            ArtBondDto artBound = super.getById(id);
-            if (artBound != null) {
-                result = getPaymentCalendar(artBound, artBound.getPaymentStartDate(), 1L);
-            }
+            ArtBondDto artBond = super.getById(id);
+            result = getPaymentCalendar(artBond);
         }
+        return result;
+    }
+
+    public List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond) {
+        List<PaymentCalendarDto> result = null;
+            if (artBond != null) {
+                result = getPaymentCalendar(artBond, artBond.getPaymentStartDate(), 1L);
+            }
         return result;
     }
 
@@ -214,8 +220,12 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public Double getNkd(UUID artBondId) {
-        Double result = null;
         ArtBondDto artBond = getById(artBondId);
+        return getNkd(artBond);
+    }
+
+    public Double getNkd(ArtBondDto artBond) {
+        Double result = null;
         if (artBond != null) {
             double dividendValue = artBond.getStockPrice() / 100 * artBond.getDividendPercent();
             int paymentPeriod = artBond.getPaymentPeriod();
@@ -236,8 +246,12 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public Map<String, Integer> getPercentPerYear(UUID artBondId) {
-        Map<String, Integer> result = null;
         ArtBondDto artBond = getById(artBondId);
+        return getPercentPerYear(artBond);
+    }
+
+    public Map<String, Integer> getPercentPerYear(ArtBondDto artBond) {
+        Map<String, Integer> result = null;
         if (artBond != null) {
             result = new HashMap<>();
             int countDividendPayment = 12 % artBond.getPaymentPeriod();
@@ -245,6 +259,27 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             result.put("max", artBond.getRewardPercent() + (countDividendPayment * artBond.getDividendPercent()));
         }
         return result;
+    }
+
+    @Override
+    public Double getAmountCollected(UUID id) {
+        Double result = null;
+        if (id != null) {
+            List<OperationsStoryDto> allPurchaseByArtBond = operationsStoryService.getAllPurchaseByArtBond(id);
+            if (CollectionUtils.isNotEmpty(allPurchaseByArtBond)) {
+                result = allPurchaseByArtBond.stream().mapToDouble(OperationsStoryDto::getSum).sum();
+            }
+        }
+        return result;
+    }
+
+    private void setAdditionalField(ArtBondDto dto) {
+        setMedia(dto);
+
+        dto.setPaymentCalendar(getPaymentCalendar(dto));
+        dto.setNkd(getNkd(dto));
+        dto.setPercentPerYear(getPercentPerYear(dto));
+        dto.setAmountCollected(getAmountCollected(dto.getId()));
     }
 
     private void setMedia(ArtBondDto dto) {

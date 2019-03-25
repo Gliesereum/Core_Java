@@ -128,4 +128,14 @@ public class ArtBondController {
         }
         return response;
     }
+
+    @GetMapping("/{id}/amount-collected")
+    public MapResponse getAmountCollected(@PathVariable UUID id) {
+        Double result = service.getAmountCollected(id);
+        MapResponse response = null;
+        if (result != null) {
+            response = new MapResponse("amountCollected", result);
+        }
+        return response;
+    }
 }
