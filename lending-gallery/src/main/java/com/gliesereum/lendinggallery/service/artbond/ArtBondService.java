@@ -29,11 +29,11 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
 
     Map<String, Integer> currencyExchange(Long sum);
 
-    List<PaymentCalendarDto> getPaymentCalendar(UUID id);
+    List<PaymentCalendarDto> getPaymentCalendar(UUID id, boolean setArtBond);
 
-    List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond);
+    List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, boolean setArtBond);
 
-    List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, LocalDateTime paymentStartDate, Long stockCount);
+    List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, LocalDateTime paymentStartDate, Long stockCount, boolean setArtBond);
 
     Double getNkd(UUID artBondId);
 

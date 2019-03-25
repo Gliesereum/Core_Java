@@ -99,7 +99,7 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                 result = new ArrayList<>();
                 for (Map.Entry<UUID, Long> purchasedStock : purchasedStocks.entrySet()) {
                     ArtBondDto artBond = artBondService.getById(purchasedStock.getKey());
-                    List<PaymentCalendarDto> paymentCalendar = artBondService.getPaymentCalendar(artBond, artBond.getPaymentStartDate(), purchasedStock.getValue());
+                    List<PaymentCalendarDto> paymentCalendar = artBondService.getPaymentCalendar(artBond, artBond.getPaymentStartDate(), purchasedStock.getValue(), true);
                     if (CollectionUtils.isNotEmpty(paymentCalendar)) {
                         result.addAll(paymentCalendar);
                     }

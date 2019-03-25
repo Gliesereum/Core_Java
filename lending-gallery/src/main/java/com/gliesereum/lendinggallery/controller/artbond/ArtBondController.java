@@ -106,7 +106,7 @@ public class ArtBondController {
 
     @GetMapping("/{id}/payment-calendar")
     public List<PaymentCalendarDto> getPaymentCalendar(@PathVariable UUID id) {
-        return service.getPaymentCalendar(id);
+        return service.getPaymentCalendar(id, false);
     }
 
     @GetMapping("/{id}/nkd")
