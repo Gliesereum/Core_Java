@@ -32,6 +32,8 @@ public class ArtBondDto extends DefaultDto {
 
     private Double stockPrice;
 
+    private Double baseDividend;
+
     private Integer dividendPercent;
 
     private Integer rewardPercent;

@@ -32,6 +32,9 @@ public class ArtBondEntity extends DefaultEntity {
     @Formula(value = "COALESCE(price, 0) / COALESCE(stock_count, 1)")
     private Double stockPrice;
 
+    @Formula(value = "(COALESCE(price, 0) / COALESCE(stock_count, 1)) / 100 * COALESCE(dividend_percent, 0)")
+    private Double baseDividend;
+
     @Column(name = "dividend_percent")
     private Integer dividendPercent;
 
