@@ -180,32 +180,34 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     }
 
     @Override
-    public List<PaymentCalendarDto> getPaymentCalendar(UUID id) {
+    public List<PaymentCalendarDto> getPaymentCalendar(UUID id, boolean setArtBond) {
         List<PaymentCalendarDto> result = null;
         if (id != null) {
             ArtBondDto artBond = super.getById(id);
-            result = getPaymentCalendar(artBond);
+            result = getPaymentCalendar(artBond, setArtBond);
         }
         return result;
     }
 
-    public List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond) {
+    public List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, boolean setArtBond) {
         List<PaymentCalendarDto> result = null;
             if (artBond != null) {
-                result = getPaymentCalendar(artBond, artBond.getPaymentStartDate(), 1L);
+                result = getPaymentCalendar(artBond, artBond.getPaymentStartDate(), 1L, setArtBond);
             }
         return result;
     }
 
     @Override
-    public List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, LocalDateTime paymentStartDate, Long stockCount) {
+    public List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, LocalDateTime paymentStartDate, Long stockCount, boolean setArtBond) {
         List<PaymentCalendarDto> result = new ArrayList<>();
         if (ObjectUtils.allNotNull(artBond, paymentStartDate)) {
             if (ObjectUtils.allNotNull(artBond.getDividendPercent(), artBond.getPaymentPeriod(), artBond.getPaymentFinishDate())) {
                 LocalDateTime paymentDate = paymentStartDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
                 while (paymentDate.isBefore(artBond.getPaymentFinishDate())) {
                     PaymentCalendarDto paymentCalendar = new PaymentCalendarDto();
-                    paymentCalendar.setArtBond(artBond);
+                    if (setArtBond) {
+                        paymentCalendar.setArtBond(artBond);
+                    }
                     paymentCalendar.setDividendPercent(artBond.getDividendPercent());
                     paymentCalendar.setDate(paymentDate);
                     double purchaseValue = stockCount * artBond.getStockPrice();
@@ -263,7 +265,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public Double getAmountCollected(UUID id) {
-        Double result = null;
+        Double result = 0.0;
         if (id != null) {
             List<OperationsStoryDto> allPurchaseByArtBond = operationsStoryService.getAllPurchaseByArtBond(id);
             if (CollectionUtils.isNotEmpty(allPurchaseByArtBond)) {
@@ -276,7 +278,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     private void setAdditionalField(ArtBondDto dto) {
         setMedia(dto);
 
-        dto.setPaymentCalendar(getPaymentCalendar(dto));
+        dto.setPaymentCalendar(getPaymentCalendar(dto, false));
         dto.setNkd(getNkd(dto));
         dto.setPercentPerYear(getPercentPerYear(dto));
         dto.setAmountCollected(getAmountCollected(dto.getId()));
