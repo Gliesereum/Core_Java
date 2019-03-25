@@ -14,6 +14,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStor
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,6 +100,18 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         if (ObjectUtils.allNotNull(customerId, operationType)) {
             List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdAndOperationType(customerId, operationType);
             result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public List<OperationsStoryDto> getAllPurchaseByArtBond(UUID artBondId) {
+        List<OperationsStoryDto> result = null;
+        if(artBondId != null) {
+            List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByArtBondIdAndOperationType(artBondId, OperationType.PURCHASE);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                result = converter.convert(entities, dtoClass);
+            }
         }
         return result;
     }

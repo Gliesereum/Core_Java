@@ -33,6 +33,9 @@ public class MediaEntity extends DefaultEntity {
     @Column(name = "file_id")
     private UUID fileId;
 
+    @Column(name = "url")
+    private String url;
+
     @Column(name = "block_media_type")
     @Enumerated(EnumType.STRING)
     private BlockMediaType blockMediaType;

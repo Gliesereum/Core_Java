@@ -8,14 +8,15 @@ import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vitalij
@@ -31,6 +32,8 @@ public class ArtBondDto extends DefaultDto {
     private Integer stockCount;
 
     private Double stockPrice;
+
+    private Double baseDividend;
 
     private Integer dividendPercent;
 
@@ -58,6 +61,10 @@ public class ArtBondDto extends DefaultDto {
 
     private String literature;
 
+    private String article;
+
+    private String blockchain;
+
     private StatusType statusType;
 
     private SpecialStatusType specialStatusType;
@@ -81,5 +88,13 @@ public class ArtBondDto extends DefaultDto {
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime paymentFinishDate;
+
+    private List<PaymentCalendarDto> paymentCalendar = new ArrayList<>();
+
+    private Double nkd;
+
+    private Map<String, Integer> percentPerYear;
+
+    private Double amountCollected;
 
 }

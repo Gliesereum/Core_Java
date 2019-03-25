@@ -31,11 +31,19 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
 
     List<PaymentCalendarDto> getPaymentCalendar(UUID id);
 
+    List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond);
+
     List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, LocalDateTime paymentStartDate, Long stockCount);
 
     Double getNkd(UUID artBondId);
 
+    Double getNkd(ArtBondDto artBond);
+
     double calculateNkd(double dividendValue, int paymentPeriod, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart);
 
     Map<String, Integer> getPercentPerYear(UUID artBondId);
+
+    Map<String, Integer> getPercentPerYear(ArtBondDto artBond);
+
+    Double getAmountCollected(UUID id);
 }
