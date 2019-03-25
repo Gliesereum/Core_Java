@@ -58,6 +58,8 @@ public class ArtBondDto extends DefaultDto {
 
     private String literature;
 
+    private String article;
+
     private StatusType statusType;
 
     private SpecialStatusType specialStatusType;
