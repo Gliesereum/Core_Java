@@ -263,7 +263,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public Double getAmountCollected(UUID id) {
-        Double result = null;
+        Double result = 0.0;
         if (id != null) {
             List<OperationsStoryDto> allPurchaseByArtBond = operationsStoryService.getAllPurchaseByArtBond(id);
             if (CollectionUtils.isNotEmpty(allPurchaseByArtBond)) {
