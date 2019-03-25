@@ -12,7 +12,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +58,8 @@ public class ArtBondDto extends DefaultDto {
     private String literature;
 
     private String article;
+
+    private String blockchain;
 
     private StatusType statusType;
 
