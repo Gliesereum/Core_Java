@@ -74,6 +74,12 @@ public class ArtBondEntity extends DefaultEntity {
     @Column(name = "literature")
     private String literature;
 
+    @Column(name = "article")
+    private String article;
+
+    @Column(name = "blockchain")
+    private String blockchain;
+
     @Column(name = "status_type")
     @Enumerated(EnumType.STRING)
     private StatusType statusType;
