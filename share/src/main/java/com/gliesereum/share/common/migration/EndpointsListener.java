@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yvlasiuk
@@ -49,6 +50,8 @@ public class EndpointsListener implements ApplicationListener<ApplicationReadyEv
     public void onApplicationEvent(ApplicationReadyEvent event) {
         Runnable migrationTask = () -> {
             try {
+                log.info("Wait 5 minutes to run migrate endpoint task");
+                TimeUnit.MINUTES.sleep(5);
                 log.info("Run migrate service endpoints");
                 List<EndpointDto> endpoints = new ArrayList<>();
                 Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
