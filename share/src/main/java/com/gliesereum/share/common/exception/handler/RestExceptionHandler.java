@@ -58,6 +58,14 @@ public class RestExceptionHandler {
         return buildResponse(errorResponse, VALIDATION_ERROR.getHttpCode(), ex);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(INVALID_REQUEST_PARAMS);
+        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return buildResponse(errorResponse, INVALID_REQUEST_PARAMS.getHttpCode(), ex);
+    }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(METHOD_NOT_SUPPORTED);
