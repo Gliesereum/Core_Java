@@ -256,7 +256,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         Map<String, Integer> result = null;
         if (artBond != null) {
             result = new HashMap<>();
-            int countDividendPayment = 12 % artBond.getPaymentPeriod();
+            int countDividendPayment = 12 / artBond.getPaymentPeriod();
             result.put("min", artBond.getRewardPercent());
             result.put("max", artBond.getRewardPercent() + (countDividendPayment * artBond.getDividendPercent()));
         }
