@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,6 +94,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         }
         checkModel(dto);
         dto.setCustomerId(getCustomer().getId());
+        dto.setCreate(LocalDateTime.now());
         return super.create(dto);
     }
 
