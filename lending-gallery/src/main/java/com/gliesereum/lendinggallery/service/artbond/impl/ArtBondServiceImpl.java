@@ -282,7 +282,11 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setNkd(getNkd(dto));
         dto.setPercentPerYear(getPercentPerYear(dto));
         dto.setAmountCollected(getAmountCollected(dto.getId()));
-        dto.setMyOffers(investorOfferService.getAllByArtBondAndCurrentUser(dto.getId()));
+        List<InvestorOfferDto> offers = investorOfferService.getAllByArtBondAndCurrentUser(dto.getId());
+        if(CollectionUtils.isEmpty(offers)){
+            offers = Collections.emptyList();
+        }
+        dto.setMyOffers(offers);
     }
 
     private void setMedia(ArtBondDto dto) {
