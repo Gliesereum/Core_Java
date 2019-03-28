@@ -24,6 +24,9 @@ public class InvestorOfferEntity extends DefaultEntity {
     @Column(name = "sum_investment")
     private Integer sumInvestment;
 
+    @Column(name = "stock_count")
+    private Integer stockCount;
+
     @Column(name = "customer_id")
     private UUID customerId;
 

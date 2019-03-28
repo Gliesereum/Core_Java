@@ -76,7 +76,13 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Override
     public List<InvestorOfferDto> getAllByUser() {
-        List<InvestorOfferEntity> entities = repository.findAllByCustomerIdOrderByCreate( getCustomer().getUserId());
+        List<InvestorOfferEntity> entities = repository.findAllByCustomerIdOrderByCreate(getCustomer().getId());
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<InvestorOfferDto> getAllByArtBondAndCurrentUser(UUID artBondId) {
+        List<InvestorOfferEntity> entities = repository.findAllByArtBondIdAndCustomerIdOrderByCreate(artBondId, getCustomer().getId());
         return converter.convert(entities, dtoClass);
     }
 
@@ -86,8 +92,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         checkModel(dto);
-        CustomerDto customer = customerService.findByUserId(SecurityUtil.getUserId());
-        dto.setCustomerId(customer.getId());
+        dto.setCustomerId(getCustomer().getId());
         return super.create(dto);
     }
 
@@ -123,20 +128,25 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                 artBond.getSpecialStatusType().equals(SpecialStatusType.BLOCKED)) {
             throw new ClientException(ART_BOND_NOT_AVAILABLE_FOR_INVESTMENT);
         }
-        List<InvestorOfferDto> offers = getAllByArtBond(artBond.getId());
-        double commonSum = 0;
-        if (CollectionUtils.isNotEmpty(offers)) {
-            commonSum = offers.stream().mapToDouble(InvestorOfferDto::getSumInvestment).sum();
-        }
-        if(dto.getSumInvestment() == null || dto.getSumInvestment() == 0){
+        if (dto.getStockCount() == null || dto.getStockCount() == 0) {
             throw new ClientException(SUM_OF_INVESTMENT_CAN_NOT_BE_ZERO);
         }
-        if ((artBond.getPrice() - commonSum) < dto.getSumInvestment()) {
+        List<InvestorOfferDto> offers = getAllByArtBond(artBond.getId());
+        Integer commonSum = 0;
+        if (CollectionUtils.isNotEmpty(offers)) {
+            commonSum = offers.stream().mapToInt(InvestorOfferDto::getSumInvestment).sum();
+        }
+
+        Double sumInvesting = artBond.getStockPrice() * dto.getStockCount();
+
+        if ((artBond.getPrice() - commonSum) < sumInvesting) {
             throw new ClientException(SUM_EXCEEDS_AMOUNT_ALLOWED_FOR_INVESTMENT);
         }
+
+        dto.setSumInvestment(sumInvesting.intValue());
     }
 
-    private CustomerDto getCustomer(){
+    private CustomerDto getCustomer() {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
         }

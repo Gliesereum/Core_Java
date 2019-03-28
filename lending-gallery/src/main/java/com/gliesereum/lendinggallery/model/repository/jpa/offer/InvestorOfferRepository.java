@@ -19,4 +19,6 @@ public interface InvestorOfferRepository extends JpaRepository<InvestorOfferEnti
 
     List<InvestorOfferEntity> findAllByCustomerIdOrderByCreate(UUID customerId);
 
+    List<InvestorOfferEntity> findAllByArtBondIdAndCustomerIdOrderByCreate(UUID artBondId, UUID customerId);
+
 }
