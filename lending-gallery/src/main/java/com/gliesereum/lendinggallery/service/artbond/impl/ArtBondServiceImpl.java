@@ -130,7 +130,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
                 offers.forEach(f -> {
                     OperationsStoryDto story = new OperationsStoryDto();
                     story.setName(artBond.getName());
-                    story.setSum(f.getSumInvestment());
+                    story.setSum(f.getSumInvestment().doubleValue());
                     story.setDescription(null);
                     story.setArtBondId(f.getArtBondId());
                     story.setCreate(LocalDateTime.now());
@@ -282,6 +282,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setNkd(getNkd(dto));
         dto.setPercentPerYear(getPercentPerYear(dto));
         dto.setAmountCollected(getAmountCollected(dto.getId()));
+        dto.setMyOffers(investorOfferService.getAllByArtBondAndCurrentUser(dto.getId()));
     }
 
     private void setMedia(ArtBondDto dto) {

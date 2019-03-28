@@ -22,7 +22,9 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class InvestorOfferDto extends DefaultDto {
 
-    private Double sumInvestment;
+    private Integer sumInvestment;
+
+    private Integer stockCount;
 
     private UUID customerId;
 
