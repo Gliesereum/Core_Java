@@ -17,6 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -43,67 +44,52 @@ public class RestExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode(ex.getErrorCode());
         errorResponse.setMessage(ex.getMessage());
-        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
-        errorResponse.setTimestamp(LocalDateTime.now());
-
-        return buildResponse(errorResponse, ex.getHttpCode(), ex);
+        errorResponse.setHttpCode(ex.getHttpCode());
+        return buildResponse(errorResponse,ex);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(VALIDATION_ERROR);
-        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
-        errorResponse.setTimestamp(LocalDateTime.now());
         addBindingInfo(errorResponse, ex.getBindingResult());
-        return buildResponse(errorResponse, VALIDATION_ERROR.getHttpCode(), ex);
+        return buildResponse(errorResponse, ex);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(INVALID_REQUEST_PARAMS);
-        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
-        errorResponse.setTimestamp(LocalDateTime.now());
-        return buildResponse(errorResponse, INVALID_REQUEST_PARAMS.getHttpCode(), ex);
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, WebRequest request) {
+        return buildResponse(new ErrorResponse(INVALID_REQUEST_PARAMS), ex);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(METHOD_NOT_SUPPORTED);
-        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
-        errorResponse.setTimestamp(LocalDateTime.now());
-        return buildResponse(errorResponse, METHOD_NOT_SUPPORTED.getHttpCode(), ex);
+        return buildResponse(new ErrorResponse(METHOD_NOT_SUPPORTED), ex);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(BODY_INVALID);
-        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
-        errorResponse.setTimestamp(LocalDateTime.now());
-        return buildResponse(errorResponse, BODY_INVALID.getHttpCode(), ex);
+        return buildResponse(new ErrorResponse(BODY_INVALID), ex);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(MAX_UPLOAD_SIZE_EXCEEDED);
-        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
-        errorResponse.setTimestamp(LocalDateTime.now());
         errorResponse.setAdditional(ex.getCause().getCause().getMessage());
-        return buildResponse(errorResponse, MAX_UPLOAD_SIZE_EXCEEDED.getHttpCode(), ex);
+        return buildResponse(errorResponse, ex);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUndefined(Exception ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(UNKNOWN_SERVER_EXCEPTION);
         errorResponse.setMessage(ex.getMessage());
-        errorResponse.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
-        errorResponse.setTimestamp(LocalDateTime.now());
-        return buildResponse(errorResponse, UNKNOWN_SERVER_EXCEPTION.getHttpCode(), ex);
+        return buildResponse(errorResponse, ex);
     }
 
-    private ResponseEntity<ErrorResponse> buildResponse(ErrorResponse response, int statusCode, Exception ex) {
-        HttpStatus httpStatus = HttpStatus.valueOf(statusCode);
+    private ResponseEntity<ErrorResponse> buildResponse(ErrorResponse response, Exception ex) {
+        response.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
+        response.setTimestamp(LocalDateTime.now());
+        HttpStatus httpStatus = HttpStatus.valueOf(response.getHttpCode());
         if (httpStatus.is5xxServerError()) {
-            LOG.error("{} error - errorCode: {}, message: {}, path: {}", statusCode, response.getCode(), response.getMessage(), response.getPath(), ex);
+            LOG.error("{} error - errorCode: {}, message: {}, path: {}", response.getHttpCode(), response.getCode(), response.getMessage(), response.getPath(), ex);
         }
         return new ResponseEntity<>(response, httpStatus);
     }
