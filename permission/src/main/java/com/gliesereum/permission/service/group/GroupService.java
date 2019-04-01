@@ -7,6 +7,7 @@ import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import com.gliesereum.share.common.model.dto.permission.permission.PermissionMapValue;
 import com.gliesereum.share.common.service.DefaultService;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,11 +17,11 @@ import java.util.UUID;
  */
 public interface GroupService extends DefaultService<GroupDto, GroupEntity> {
 
-    GroupDto getDefaultGroup(UserDto user);
+    List<GroupDto> getDefaultGroup(UserDto user);
 
-    GroupDto getForAnonymous();
+    List<GroupDto> getForAnonymous();
 
-    GroupDto getByPurpose(GroupPurpose purpose);
+    List<GroupDto> getByPurposes(List<GroupPurpose> purposes);
 
-    Map<String, PermissionMapValue> getPermissionMap(UUID groupId);
+    Map<String, PermissionMapValue> getPermissionMap(List<UUID> groupIds);
 }

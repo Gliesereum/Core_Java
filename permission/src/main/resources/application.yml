@@ -37,4 +37,4 @@ exchange:
   endpoint:
     account:
       userIsExist: http://account-service/user/exist
-      userKYCPassed: http://account-service/user/kyc-passed
+#      userKYCPassed: http://account-service/user/kyc-passed

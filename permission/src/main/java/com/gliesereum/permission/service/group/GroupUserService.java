@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import com.gliesereum.share.common.model.dto.permission.group.GroupUserDto;
 import com.gliesereum.share.common.service.DefaultService;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -16,7 +17,7 @@ public interface GroupUserService extends DefaultService<GroupUserDto, GroupUser
 
     GroupUserDto addToGroup(GroupUserDto groupUser);
 
-    void removeFromGroup(UUID userId);
+    void removeFromGroup(UUID groupId, UUID userId);
 
-    GroupDto getGroupByUser(UserDto user);
+    List<GroupDto> getGroupByUser(UserDto user);
 }

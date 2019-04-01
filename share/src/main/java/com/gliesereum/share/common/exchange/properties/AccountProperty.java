@@ -16,7 +16,7 @@ public class AccountProperty {
 
     private String userIsExist;
 
-    private String userKYCPassed;
+//    private String userKYCPassed;
 
     private String findByIds;
 }

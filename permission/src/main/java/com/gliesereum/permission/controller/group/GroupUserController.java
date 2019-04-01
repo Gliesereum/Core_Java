@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,19 +35,19 @@ public class GroupUserController {
     }
 
     @DeleteMapping
-    public MapResponse removeFromGroup(@RequestParam("userId") UUID userId) {
-        groupUserService.removeFromGroup(userId);
+    public MapResponse removeFromGroup(@RequestParam("groupId") UUID groupId, @RequestParam("userId") UUID userId) {
+        groupUserService.removeFromGroup(groupId, userId);
         return new MapResponse("success");
     }
 
     @GetMapping("/my-group")
-    public GroupDto getGroupForCurrentUser() {
-        GroupDto result = null;
+    public List<GroupDto> getGroupForCurrentUser() {
+        List<GroupDto> result;
         UserAuthentication authentication = SecurityUtil.getUser();
         if (authentication.isAnonymous()) {
             result = groupService.getForAnonymous();
         } else {
-            groupUserService.getGroupByUser(authentication.getUser());
+            result = groupUserService.getGroupByUser(authentication.getUser());
         }
         return result;
     }
