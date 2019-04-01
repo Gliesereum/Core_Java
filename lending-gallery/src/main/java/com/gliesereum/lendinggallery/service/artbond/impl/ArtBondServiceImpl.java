@@ -162,7 +162,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         if (CollectionUtils.isNotEmpty(offers)) {
             ids = offers.stream().filter(io -> !io.getStateType().equals(OfferStateType.REFUSED)).map(m -> m.getArtBondId()).collect(Collectors.toList());
         }
-        return getByIds(ids);
+        List<ArtBondDto> result = getByIds(ids);
+        result.forEach(f -> setAdditionalField(f));
+        return result;
     }
 
     @Override
