@@ -12,5 +12,5 @@ import java.util.UUID;
  */
 public interface GroupService {
 
-    Map<String, PermissionMapValue> getPermissionMap(UUID groupId);
+    Map<String, PermissionMapValue> getPermissionMap(List<UUID> groupId);
 }

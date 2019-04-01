@@ -20,6 +20,8 @@ public class RequestInfo {
 
     private Long endTime;
 
+    private Long durationMillis;
+
     private String requestBody;
 
     private String responseBody;

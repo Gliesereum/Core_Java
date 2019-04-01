@@ -4,6 +4,7 @@ import com.gliesereum.share.common.logging.model.RequestInfo;
 import com.gliesereum.share.common.logging.service.LoggingService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -60,6 +61,9 @@ public class RestLoggingFilter extends OncePerRequestFilter {
         requestInfo.setHttpStatus(responseWrapper.getStatusCode());
         requestInfo.setParameters(new HashMap<>(requestWrapper.getParameterMap()));
         requestInfo.setRequestBody(getBody(requestWrapper.getContentAsByteArray(), requestWrapper.getCharacterEncoding()));
+        if (ObjectUtils.allNotNull(startTime, endTime)) {
+            requestInfo.setDurationMillis(endTime - startTime);
+        }
         if (isError) {
             requestInfo.setError(true);
             requestInfo.setErrorMessage(ex.getMessage());
