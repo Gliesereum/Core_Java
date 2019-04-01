@@ -160,7 +160,7 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
 
     @Override
     public CustomerPaymentInfo getPaymentInfoCommon(UUID userId) {
-        CustomerPaymentInfo result = null;
+        CustomerPaymentInfo result = new CustomerPaymentInfo(0.0, 0.0, 0.0 );
         CustomerDto customer = findByUserId(userId);
         List<OperationsStoryDto> operationStories = operationsStoryService.getAllByCustomerIdAndOperationType(customer.getId(), OperationType.PURCHASE);
         if (CollectionUtils.isNotEmpty(operationStories)) {
@@ -168,7 +168,6 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                     .map(OperationsStoryDto::getArtBondId)
                     .distinct()
                     .collect(Collectors.toList());
-            result = new CustomerPaymentInfo(0.0, 0.0, 0.0 );
             for (UUID artBondId : artBondIds) {
                 CustomerPaymentInfo paymentInfoByArtBond = getPaymentInfoByArtBond(artBondId, userId);
                 result.setNkd(result.getNkd() + paymentInfoByArtBond.getNkd());

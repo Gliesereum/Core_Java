@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,8 @@ import java.util.UUID;
 public class RecordsSearchDto {
 
     private List<StatusRecord> status;
+
+    private List<StatusProcess> processes;
 
     private ServiceType serviceType;
 

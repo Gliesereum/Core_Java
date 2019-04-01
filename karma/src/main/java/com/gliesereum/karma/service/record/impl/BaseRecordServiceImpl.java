@@ -110,8 +110,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             });
         } else return Collections.emptyList(); //todo when add new service type need to add logic
         setSearch(search);
-        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
-                search.getStatus(), search.getTargetIds(), search.getFrom(), search.getTo());
+        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndStatusProcessInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
+                search.getStatus(), search.getProcesses(), search.getTargetIds(), search.getFrom(), search.getTo());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
         return result;
@@ -130,8 +130,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             }
         });
         setSearch(search);
-        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndBusinessIdInAndBeginBetweenOrderByBegin(
-                search.getStatus(), search.getBusinessIds(), search.getFrom(), search.getTo());
+        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
+                search.getStatus(), search.getProcesses(), search.getBusinessIds(), search.getFrom(), search.getTo());
         entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
@@ -173,6 +173,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private void setSearch(RecordsSearchDto search) {
         if (search == null || CollectionUtils.isEmpty(search.getStatus())) {
             search.setStatus(Arrays.asList(StatusRecord.values()));
+        }
+        if (search == null || CollectionUtils.isEmpty(search.getProcesses())) {
+            search.setProcesses(Arrays.asList(StatusProcess.values()));
         }
         if (search == null || search.getFrom() == null) {
             search.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
@@ -386,8 +389,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (filter.getTo() == null || filter.getFrom().isAfter(filter.getTo())) {
             filter.setTo(filter.getFrom().toLocalDate().atStartOfDay().plusDays(1).minusSeconds(1));
         }
-        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndBusinessIdInAndBeginBetweenOrderByBegin(
-                Arrays.asList(StatusRecord.COMPLETED), Arrays.asList(filter.getBusinessId()), filter.getFrom(), filter.getTo());
+        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
+                Arrays.asList(StatusRecord.COMPLETED), Arrays.asList(StatusProcess.COMPLETED), Arrays.asList(filter.getBusinessId()), filter.getFrom(), filter.getTo());
         return converter.convert(entities, dtoClass);
     }
 
