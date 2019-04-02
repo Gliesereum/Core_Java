@@ -160,6 +160,11 @@ services:
     environment:
       server.port: 8220
       spring.profiles.active: docker
+      db.host: 46.101.182.178
+      db.database: glsdev
+      db.port: 26780
+      db.username: postgres
+      db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
       rabbit.user: rabbit
