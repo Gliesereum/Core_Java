@@ -1,7 +1,7 @@
 package com.gliesereum.mail.controllers;
 
 import com.gliesereum.mail.email.EmailService;
-import com.gliesereum.mail.phone.PhoneService;
+import com.gliesereum.mail.service.phone.PhoneService;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

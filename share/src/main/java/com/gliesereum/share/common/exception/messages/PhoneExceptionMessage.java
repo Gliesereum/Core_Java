@@ -13,5 +13,6 @@ public class PhoneExceptionMessage {
     public static final ExceptionMessage USER_ALREADY_HAS_PHONE = new ExceptionMessage(1125, 400, "User already has some phone");
     public static final ExceptionMessage USER_DOES_NOT_PHONE = new ExceptionMessage(1126, 400, "User doesn't any phone");
     public static final ExceptionMessage CAN_NOT_DELETE_PHONE = new ExceptionMessage(1127, 400, "You can't delete phone. You don't have email. Phone is only way to verify your account");
+    public static final ExceptionMessage NOT_SEND = new ExceptionMessage(1128, 400, "Message didn't send");
 
 }

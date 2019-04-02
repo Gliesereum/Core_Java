@@ -1,4 +1,4 @@
-package com.gliesereum.mail.phone;
+package com.gliesereum.mail.service.phone;
 
 /**
  * @author vitalij
