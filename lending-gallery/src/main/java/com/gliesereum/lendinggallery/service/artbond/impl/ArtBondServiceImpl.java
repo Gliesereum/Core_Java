@@ -168,13 +168,13 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     }
 
     @Override
-    public Map<String, Integer> currencyExchange(Long sum) {
-        Map<String, Integer> result = new HashMap<>();
+    public Map<String, Double> currencyExchange(Long sum) {
+        Map<String, Double> result = new HashMap<>();
         try {
-            FxQuote rubToUsd = YahooFinance.getFx("USDRUB=X");
-            FxQuote rubToEur = YahooFinance.getFx("EURRUB=X");
-            FxQuote usdToEur = YahooFinance.getFx("USDEUR=X");
-            FxQuote eurToUsd = YahooFinance.getFx("EURUSD=X");
+            FxQuote rub = YahooFinance.getFx("USDRUB=X");
+            FxQuote eur = YahooFinance.getFx("USDEUR=X");
+            result.put("USDRUB", rub.getPrice().doubleValue());
+            result.put("USDEUR", eur.getPrice().doubleValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
