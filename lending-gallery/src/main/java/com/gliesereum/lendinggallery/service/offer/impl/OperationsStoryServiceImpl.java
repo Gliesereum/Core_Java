@@ -53,13 +53,21 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     @Override
     public List<OperationsStoryDto> getAllByCustomerId(UUID customerId) {
         List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(customerId);
-        return converter.convert(entities, dtoClass);
+        List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
+        if(CollectionUtils.isNotEmpty(result)){
+           result.forEach(f->setArtBond(f));
+        }
+        return result;
     }
 
     @Override
     public List<OperationsStoryDto> getAllByUserId(UUID userId) {
         List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(getCustomer().getId());
-        return converter.convert(entities, dtoClass);
+        List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
+        if(CollectionUtils.isNotEmpty(result)){
+            result.forEach(f->setArtBond(f));
+        }
+        return result;
     }
 
     @Override
@@ -68,7 +76,11 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
         }
         List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdAndArtBondIdOrderByCreate(getCustomer().getId(), artBondId);
-        return converter.convert(entities, dtoClass);
+        List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
+        if(CollectionUtils.isNotEmpty(result)){
+            result.forEach(f->setArtBond(f));
+        }
+        return result;
     }
 
     @Override
@@ -101,6 +113,9 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdAndOperationType(customerId, operationType);
             result = converter.convert(entities, dtoClass);
         }
+        if(CollectionUtils.isNotEmpty(result)){
+            result.forEach(f->setArtBond(f));
+        }
         return result;
     }
 
@@ -112,6 +127,9 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = converter.convert(entities, dtoClass);
             }
+        }
+        if(CollectionUtils.isNotEmpty(result)){
+            result.forEach(f->setArtBond(f));
         }
         return result;
     }

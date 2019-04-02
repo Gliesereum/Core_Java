@@ -27,7 +27,7 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
 
     List<ArtBondDto> getAllByUser();
 
-    Map<String, Integer> currencyExchange(Long sum);
+    Map<String, Double> currencyExchange(Long sum);
 
     List<PaymentCalendarDto> getPaymentCalendar(UUID id, boolean setArtBond);
 
