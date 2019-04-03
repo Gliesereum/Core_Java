@@ -61,7 +61,7 @@ public class AbstractRecordEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "record_service",
             joinColumns = {@JoinColumn(name = "record_id", insertable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "service_id", insertable = false, updatable = false)})
