@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @version 1.0
  */
 @Configuration
-@EnableJpaRepositories("com.gliesereum.karma.model.repository.jpa")
+@EnableJpaRepositories({"com.gliesereum.karma.model.repository.jpa",
+                        "com.gliesereum.share.common.repository.refreshable"})
 public class DatabaseConfiguration {
 }

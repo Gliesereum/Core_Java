@@ -2,6 +2,8 @@ INSERT INTO permission."group" (id, title, description, purpose, is_active, inac
 
 INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('65f427c4-5088-4553-9306-e0905339b859', 'd50e646b-5a81-455d-b02d-2414b32c33c4', 'b29e2886-8559-4883-a636-8d0928b98247');
 INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('25c1314a-1abd-49d3-b8fc-700d23568cf9', 'd50e646b-5a81-455d-b02d-2414b32c33c4', 'cc59cf91-086e-400c-959b-9575952269ed');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('8879825e-c3bf-412c-a684-5a92e0b2b188', 'd50e646b-5a81-455d-b02d-2414b32c33c4', 'eaa11374-95e9-4877-ab1f-a231f36569c0');
+
 
 
 INSERT INTO permission."group" (id, title, description, purpose, is_active, inactive_message, parent_group_id) VALUES ('016aba7f-5bae-4399-8bb4-4de3dd7a24cf', 'LG kyc passed', 'LG kyc approved', 'KYC_PASSED', true, null, null);
@@ -35,4 +37,3 @@ INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('4686d
 INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('de4de296-ebd7-46b1-b846-d2c2e8d4c93b', '016aba7f-5bae-4399-8bb4-4de3dd7a24cf', '7395f214-5c5b-4fd5-971e-60b6dbd01d08');
 INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('553d3e16-7be9-4510-8f7f-ddc733faadcf', '016aba7f-5bae-4399-8bb4-4de3dd7a24cf', '52725e45-f969-431c-9fe1-0abf2b197379');
 INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('48a9d4dc-bd5e-4c39-a46b-dde14c41bea5', '016aba7f-5bae-4399-8bb4-4de3dd7a24cf', '82037048-6776-4254-b441-c776d1f3d71d');
-INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('8879825e-c3bf-412c-a684-5a92e0b2b188', '016aba7f-5bae-4399-8bb4-4de3dd7a24cf', 'eaa11374-95e9-4877-ab1f-a231f36569c0');
