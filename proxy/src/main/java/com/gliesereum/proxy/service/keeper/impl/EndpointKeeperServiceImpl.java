@@ -10,14 +10,19 @@ import com.gliesereum.share.common.model.dto.permission.permission.PermissionMap
 import com.gliesereum.share.common.model.dto.permission.uri.RequestUriDto;
 import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.share.common.util.RegexUtil;
+import com.gliesereum.share.common.util.SecurityUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.*;
 import static com.gliesereum.share.common.exception.messages.GroupExceptionMessage.GROUP_NOT_ACTIVE;
@@ -91,14 +96,17 @@ public class EndpointKeeperServiceImpl implements EndpointKeeperService {
 
 
     private Map<String, PermissionMapValue> getPermissionMap(String currentJwt) {
-        GroupDto userGroup = groupUserService.getUserGroup(currentJwt);
-        if (userGroup == null) {
+        UUID userIdToCache = SecurityUtil.getUserId() != null ? SecurityUtil.getUserId() : SecurityUtil.getAnonymousId();
+        List<GroupDto> userGroup = groupUserService.getUserGroups(userIdToCache, currentJwt);
+        if (CollectionUtils.isEmpty(userGroup)) {
             throw new ClientException(GROUP_NOT_FOUND);
         }
-        if (!userGroup.isActive()) {
+        userGroup = userGroup.stream().filter(GroupDto::isActive).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(userGroup)) {
             throw new ClientException(GROUP_NOT_ACTIVE);
         }
-        Map<String, PermissionMapValue> permissionMap = groupService.getPermissionMap(userGroup.getId());
+        List<UUID> userGroupIds = userGroup.stream().map(GroupDto::getId).collect(Collectors.toList());
+        Map<String, PermissionMapValue> permissionMap = groupService.getPermissionMap(userGroupIds);
         if (MapUtils.isEmpty(permissionMap)) {
             throw new ClientException(DONT_HAVE_ANY_PERMISSION);
         }

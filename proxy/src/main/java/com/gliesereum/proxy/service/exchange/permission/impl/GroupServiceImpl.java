@@ -4,6 +4,7 @@ import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.proxy.service.exchange.permission.GroupService;
 import com.gliesereum.share.common.exception.CustomException;
 import com.gliesereum.share.common.model.dto.permission.permission.PermissionMapValue;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,14 +36,14 @@ public class GroupServiceImpl implements GroupService {
     private RestTemplate restTemplate;
 
     @Override
-    @Cacheable(value = "group", key = "#groupId", unless = "#result == null")
-    public Map<String, PermissionMapValue> getPermissionMap(UUID groupId) {
+    @Cacheable(value = "group", key = "#groupIds", unless = "#result == null")
+    public Map<String, PermissionMapValue> getPermissionMap(List<UUID> groupIds) {
         Map<String, PermissionMapValue> result = null;
         try {
-            if (groupId != null) {
+            if (CollectionUtils.isNotEmpty(groupIds)) {
                 String uri = UriComponentsBuilder
                         .fromUriString(securityProperties.getGetPermissionMapUrl())
-                        .queryParam("groupId", groupId)
+                        .queryParam("groupIds", groupIds.toArray())
                         .build()
                         .toUriString();
                 ResponseEntity<Map<String, PermissionMapValue>> response = restTemplate.exchange(

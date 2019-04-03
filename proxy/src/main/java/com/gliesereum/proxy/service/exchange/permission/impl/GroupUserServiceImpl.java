@@ -7,12 +7,16 @@ import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_NOT_AVAILABLE;
 
@@ -31,19 +35,19 @@ public class GroupUserServiceImpl implements GroupUserService {
     private RestTemplate restTemplate;
 
     @Override
-    @Cacheable(value = "userGroup", key = "#jwt", unless = "#result == null")
-    public GroupDto getUserGroup(String jwt) {
-        GroupDto result = null;
+    @Cacheable(value = "userGroup", key = "#id", unless = "#result == null")
+    public List<GroupDto> getUserGroups(UUID id, String jwt) {
+        List<GroupDto> result = null;
         try {
             if (StringUtils.isNotEmpty(jwt)) {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.add(securityProperties.getJwtHeader(), securityProperties.getJwtPrefix() + " " + jwt);
 
-                ResponseEntity<GroupDto> response = restTemplate.exchange(
+                ResponseEntity<List<GroupDto>> response = restTemplate.exchange(
                         securityProperties.getGetUserGroupUrl(),
                         HttpMethod.GET,
                         new HttpEntity<>(httpHeaders),
-                        GroupDto.class
+                        new ParameterizedTypeReference<List<GroupDto>>() {}
                 );
                 if (response.getStatusCode().is2xxSuccessful() && response.hasBody()) {
                     result = response.getBody();

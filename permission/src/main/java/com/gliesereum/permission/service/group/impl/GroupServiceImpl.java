@@ -7,7 +7,6 @@ import com.gliesereum.permission.model.repository.jpa.group.GroupRepository;
 import com.gliesereum.permission.service.group.GroupService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.permission.endpoint.EndpointDto;
@@ -17,6 +16,7 @@ import com.gliesereum.share.common.model.dto.permission.module.ModuleDto;
 import com.gliesereum.share.common.model.dto.permission.permission.PermissionMapValue;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,54 +39,57 @@ public class GroupServiceImpl extends DefaultServiceImpl<GroupDto, GroupEntity> 
     private GroupRepository groupRepository;
 
     @Autowired
-    private UserExchangeService userExchangeService;
-
-    @Autowired
     public GroupServiceImpl(GroupRepository groupRepository, DefaultConverter defaultConverter) {
         super(groupRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.groupRepository = groupRepository;
     }
 
     @Override
-    public GroupDto getDefaultGroup(UserDto user) {
-        GroupDto result = null;
+    public List<GroupDto> getDefaultGroup(UserDto user) {
+        List<GroupPurpose> groupPurposes = new ArrayList<>();
         if (user.getBanStatus().equals(BanStatus.BAN)) {
-            result = getByPurpose(GroupPurpose.BANNED);
-        } else if (userExchangeService.userKYCPassed(user.getId())){
-            result = getByPurpose(GroupPurpose.KYC_PASSED);
+            groupPurposes.add(GroupPurpose.BANNED);
         } else {
-            result = getByPurpose(GroupPurpose.AUTH);
-        }
-        return result;
-    }
-
-    @Override
-    public GroupDto getForAnonymous() {
-        return getByPurpose(GroupPurpose.ANONYMOUS);
-    }
-
-    @Override
-    public GroupDto getByPurpose(GroupPurpose purpose) {
-        GroupDto result = null;
-        if (purpose != null) {
-            Optional<GroupEntity> entityOptional = groupRepository.findByPurpose(purpose);
-            if (entityOptional.isPresent()) {
-                result = converter.convert(entityOptional.get(), dtoClass);
+            groupPurposes.add(GroupPurpose.ANONYMOUS);
+            groupPurposes.add(GroupPurpose.AUTH);
+            if (BooleanUtils.isTrue(user.getKycApproved())) {
+                groupPurposes.add(GroupPurpose.KYC_PASSED);
+            }
+            if (CollectionUtils.isNotEmpty(user.getCorporationIds())) {
+                groupPurposes.add(GroupPurpose.CORPORATION_USER);
             }
         }
+        return getByPurposes(groupPurposes);
+    }
+
+    @Override
+    public List<GroupDto> getForAnonymous() {
+        return getByPurposes(Arrays.asList(GroupPurpose.ANONYMOUS));
+    }
+
+    @Override
+    public List<GroupDto> getByPurposes(List<GroupPurpose> purposes) {
+        List<GroupDto> result = null;
+        if (CollectionUtils.isNotEmpty(purposes)) {
+            List<GroupEntity> entities = groupRepository.findByPurposeIn(purposes);
+            result = converter.convert(entities, dtoClass);
+        }
         return result;
     }
 
     @Override
-    public Map<String, PermissionMapValue> getPermissionMap(UUID groupId) {
-        if (groupId == null) {
+    public Map<String, PermissionMapValue> getPermissionMap(List<UUID> groupIds) {
+        if (CollectionUtils.isEmpty(groupIds)) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
-        Optional<GroupEntity> groupOptional = repository.findById(groupId);
-        GroupEntity group = groupOptional.orElseThrow(() -> new ClientException(GROUP_NOT_FOUND));
-        List<GroupEntity> allParentGroups = getAllParentGroups(group, new ArrayList<>());
-
-        return convertToMap(allParentGroups);
+        List<GroupEntity> groups = repository.findAllById(groupIds);
+        if (CollectionUtils.isEmpty(groups)) {
+            throw new ClientException(GROUP_NOT_FOUND);
+        }
+        List<GroupEntity> allGroups = groups.stream()
+                .flatMap(i -> getAllParentGroups(i, new ArrayList<>()).stream())
+                .collect(Collectors.toList());
+        return convertToMap(allGroups);
     }
 
     public Map<String, PermissionMapValue> convertToMap(List<GroupEntity> groups) {
@@ -97,7 +100,7 @@ public class GroupServiceImpl extends DefaultServiceImpl<GroupDto, GroupEntity> 
                     .flatMap(i -> i.getEndpoints().stream())
                     .collect(Collectors.toSet());
 
-            for (EndpointEntity endpoint: endpointEntities) {
+            for (EndpointEntity endpoint : endpointEntities) {
                 ModuleEntity module = endpoint.getModule();
                 String moduleUrl = module.getUrl();
                 if (result.containsKey(moduleUrl)) {
@@ -116,13 +119,13 @@ public class GroupServiceImpl extends DefaultServiceImpl<GroupDto, GroupEntity> 
         return result;
     }
 
-    public List<GroupEntity> getAllParentGroups(GroupEntity group, List<GroupEntity> groupIds) {
-        groupIds.add(group);
+    public List<GroupEntity> getAllParentGroups(GroupEntity group, List<GroupEntity> groups) {
+        groups.add(group);
         GroupEntity parentGroup = group.getParentGroup();
         if (parentGroup != null) {
-            getAllParentGroups(parentGroup, groupIds);
+            getAllParentGroups(parentGroup, groups);
         }
-        return groupIds;
+        return groups;
     }
 
 }

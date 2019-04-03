@@ -1,0 +1,104 @@
+INSERT INTO permission."group" (id, title, description, purpose, is_active, inactive_message, parent_group_id) VALUES ('56050c2f-a3ef-47a9-9b61-144ff0bfd8b5', 'Karma Anonymous', 'karma anonymous', 'ANONYMOUS', true, null, null);
+
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('533a9423-c6d4-4d63-be2b-03642e480ba6', '56050c2f-a3ef-47a9-9b61-144ff0bfd8b5', 'e1d05383-8b0b-4529-ad56-1ca60150c631');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('3a2306c5-5c2d-41f4-b204-e2244aaacc4a', '56050c2f-a3ef-47a9-9b61-144ff0bfd8b5', '5e89c459-f33b-4b6d-bd26-7728e67d2cb5');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('b959adc6-3b7f-408a-845d-eb428949ea0a', '56050c2f-a3ef-47a9-9b61-144ff0bfd8b5', '30f4e6b1-4d0b-4e68-b5cd-d6cd5b01239d');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('32a2969f-619e-41a7-aa41-12c2892f0960', '56050c2f-a3ef-47a9-9b61-144ff0bfd8b5', 'bb787fce-e418-42be-84ea-d4ab11c7c2e2');
+
+INSERT INTO permission."group" (id, title, description, purpose, is_active, inactive_message, parent_group_id) VALUES ('7ae6e235-5409-41af-a467-10363b9f6a03', 'Karma Auth', 'Karma auth', 'AUTH', true, null, null);
+
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('9bfdb252-2b68-4ef6-83c9-0b600f34db7d', '7ae6e235-5409-41af-a467-10363b9f6a03', '80586312-de76-46a3-912c-d4d3d0dc8f9d');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('1138de64-970b-4a3a-8481-74214ef8e8d9', '7ae6e235-5409-41af-a467-10363b9f6a03', '2d2b654a-6f63-4dbb-91aa-a9a9f7dd25dc');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('406ff40a-5dfc-4a34-b29b-a0dd38c6e0c6', '7ae6e235-5409-41af-a467-10363b9f6a03', '4932ae71-c7ed-40ff-a9cd-7b02498ecd3d');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('310478af-d6b2-4bbe-b39f-eb66b5709a45', '7ae6e235-5409-41af-a467-10363b9f6a03', 'b7d35b76-2945-43d7-9dcb-6c49f0417679');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('68259dba-33d8-4cfa-aafa-67cd7ab5619e', '7ae6e235-5409-41af-a467-10363b9f6a03', 'cb010bfa-3427-452a-9cfd-b2a94d61bcc3');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('0fd4001f-9927-4605-a246-5372ac935e2e', '7ae6e235-5409-41af-a467-10363b9f6a03', '4a0beee7-76bb-4056-bf33-d2a9c1519afd');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('e65b01ef-2833-4ecb-8fb2-31f1c3e1d96a', '7ae6e235-5409-41af-a467-10363b9f6a03', '63320e63-f840-413d-8242-ebf759ed9aae');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('6f31036b-83d8-4ddf-9df0-f1be22b1ac7f', '7ae6e235-5409-41af-a467-10363b9f6a03', '4f6fcb68-e0f3-4863-b736-248ae9ed1fc7');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('ba2b91d0-1362-4f45-806e-f8bca1fe7176', '7ae6e235-5409-41af-a467-10363b9f6a03', 'd098fa05-5c20-4a1c-a4ec-f263aa6f4673');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('137d3b32-deb7-4f79-abfa-1ee2893386d0', '7ae6e235-5409-41af-a467-10363b9f6a03', '66c0ea4d-3cfe-41c7-aaab-44343c07834d');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('cc5012e3-4fe7-4173-b37f-0c36875e2fb7', '7ae6e235-5409-41af-a467-10363b9f6a03', 'b9a805ba-e2dc-496a-b572-21c54cec26b6');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('fddb0ccf-9e86-4597-ac32-9c4561813124', '7ae6e235-5409-41af-a467-10363b9f6a03', 'c08d555a-c2f8-47fe-bcbe-ed6bf559d10e');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('a0dc9ae9-4719-411c-8a8a-bcb2b926a54e', '7ae6e235-5409-41af-a467-10363b9f6a03', 'de08d30c-7bda-4ade-be8d-214dd13d0881');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('af2921ba-4728-4c30-b875-198b8b8f0da5', '7ae6e235-5409-41af-a467-10363b9f6a03', 'bd7c9f3a-ad81-4c34-9bcb-954d04d32a8d');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('d18dff25-e683-40f6-bf62-70c328dd991e', '7ae6e235-5409-41af-a467-10363b9f6a03', 'd499324e-6804-450d-81dd-4466657191d0');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('a6896f43-3fd1-410c-813f-40e23c89dff1', '7ae6e235-5409-41af-a467-10363b9f6a03', '84a84991-ffc5-4bc7-a3ba-5057bb5cb3e1');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('a78b9f23-c422-4c81-896b-8b7dc7d17027', '7ae6e235-5409-41af-a467-10363b9f6a03', 'c9b23cc2-6d0d-4e91-9496-46188f03c4cf');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('fddad479-6e42-40c3-899a-e7059e47ea14', '7ae6e235-5409-41af-a467-10363b9f6a03', 'f506d8bf-4fe7-46f4-a85c-5c47e69c73b8');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('1675b6b5-5a40-4ff5-89d1-ce3bf59169c5', '7ae6e235-5409-41af-a467-10363b9f6a03', '54e94f28-31c2-418d-aa71-6d90c3e66dee');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('dc700a02-d841-4f41-bd06-28f6e2185041', '7ae6e235-5409-41af-a467-10363b9f6a03', '7aaae8fe-e912-4e3c-bba4-fa499cc37403');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('afd50f25-22fb-4e98-a1d7-a8fc81b5ac2f', '7ae6e235-5409-41af-a467-10363b9f6a03', '62a2ea05-d233-435b-9365-9adee371a893');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('67ebbb6b-0e0f-4c1a-9687-f7bb16639b66', '7ae6e235-5409-41af-a467-10363b9f6a03', 'b7badd28-8e45-49f4-a298-2228c8187efc');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('7c25d2cf-90f3-4eb6-8081-b98447829ca4', '7ae6e235-5409-41af-a467-10363b9f6a03', '87d4d0b4-c72d-4eb0-a0ad-7abf3336e6d3');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('c43959d8-4845-4518-b131-a2b135f93dd8', '7ae6e235-5409-41af-a467-10363b9f6a03', '8f7f8e86-b65a-4252-82be-97b3e8324a6c');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('512cc3f4-bb03-419b-a045-7e52e3380ab2', '7ae6e235-5409-41af-a467-10363b9f6a03', '3f156156-780b-46a3-af2b-c494b3488a9f');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('ea601a57-f962-4000-89ab-6feabe54c52e', '7ae6e235-5409-41af-a467-10363b9f6a03', 'eb52b454-707d-4bc3-ab8b-674bff2cf835');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('3f80b81b-3179-47d1-9d20-088627578af9', '7ae6e235-5409-41af-a467-10363b9f6a03', '81f474c9-0e21-4576-a6d7-b19fd42c5d52');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('e2040131-088c-475d-8d21-57203b4067aa', '7ae6e235-5409-41af-a467-10363b9f6a03', '357789d8-f472-4846-8f10-12d46a318aa9');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('fc0724d7-c067-4f24-ad21-a5426b8f2c4e', '7ae6e235-5409-41af-a467-10363b9f6a03', '2d8bbdb3-4260-4d6e-82be-e2939c27e5d9');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('bd265c9b-e1e6-4e9e-b130-22c3bb4bc091', '7ae6e235-5409-41af-a467-10363b9f6a03', '74e6fd84-db09-497a-980e-8b262f3fc349');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('78811332-1dca-4e71-9a44-0fdd47febaaf', '7ae6e235-5409-41af-a467-10363b9f6a03', '109f7188-401c-4741-ba3b-c1ac63901cb7');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('d9667e8a-5e53-4b71-aa2d-c7b694adff42', '7ae6e235-5409-41af-a467-10363b9f6a03', '815f3e1f-aa94-4c4f-8675-1b192e7315a6');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('0706d453-1df2-4443-a289-fe76ff0df2f5', '7ae6e235-5409-41af-a467-10363b9f6a03', 'b7db2dc8-db17-4c76-9ff7-fda986c7849f');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('02fc0522-454c-4760-97b8-6183746725cd', '7ae6e235-5409-41af-a467-10363b9f6a03', 'd7b90862-db5f-4f00-9ca3-9725e7c7099a');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('b873b8ab-e1d7-49e4-9192-a5902a241ae0', '7ae6e235-5409-41af-a467-10363b9f6a03', '61f1ee30-0f5a-406b-93be-2f7fe9e67a7b');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('caf23060-bcf3-4f99-95fd-3b2b31eca431', '7ae6e235-5409-41af-a467-10363b9f6a03', 'ec600b82-acd7-479c-8110-18130288df09');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('c5be9fc4-7e7e-4015-b3a4-d1baf7f3cb68', '7ae6e235-5409-41af-a467-10363b9f6a03', '2706b16b-febb-48fe-b998-c948bc5bea1e');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('db974db2-35f9-4a1e-9557-c7442c792ef8', '7ae6e235-5409-41af-a467-10363b9f6a03', '85b703dc-00e1-41c7-b064-3e47ef0ced6f');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('46b2a677-0fcb-4e58-8112-b01c64f2e61d', '7ae6e235-5409-41af-a467-10363b9f6a03', '0a3df9f6-3f15-4b54-9b24-f86c751e84e1');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('71755486-7306-4654-a600-ecc20a552de1', '7ae6e235-5409-41af-a467-10363b9f6a03', '7cf5a3f6-8eba-4fac-a29c-b4879c9c8271');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('373a6d57-adec-4b12-9341-15db276b97aa', '7ae6e235-5409-41af-a467-10363b9f6a03', 'c177e68f-7ee6-40e6-a3d2-7affca8ad4c1');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('6efb6aa3-e8b3-41a8-bb59-753a15a9fb58', '7ae6e235-5409-41af-a467-10363b9f6a03', '498ddebb-3be6-432a-ae76-e4355448f855');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('508d8c9d-9907-454d-866e-960d08c222a5', '7ae6e235-5409-41af-a467-10363b9f6a03', '47f099dc-3efc-4cba-8ca0-af7849460ac4');
+
+INSERT INTO permission."group" (id, title, description, purpose, is_active, inactive_message, parent_group_id) VALUES ('e4a51ce7-234f-460a-8a8d-e5f3f99f854c', 'Karma Worker', 'Karma worker', 'KARMA_WORKER', true, null, null);
+
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('464043ef-5c33-49d6-94b4-eee078acf0f8', 'e4a51ce7-234f-460a-8a8d-e5f3f99f854c', '27b38e74-46ab-48d8-b6ab-c5d24ac89a6e');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('7178d9f0-52c1-4a05-98ee-ccbbf91b55e7', 'e4a51ce7-234f-460a-8a8d-e5f3f99f854c', '60d4242b-d70e-4277-a793-9218a19e7a3c');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('f8d853a8-1000-4d40-84bf-7300e2d74c14', 'e4a51ce7-234f-460a-8a8d-e5f3f99f854c', '32beab2d-c736-451d-99f1-f93c7229bfc3');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('7d9bdd22-854f-4f04-80ae-596f6b2ca328', 'e4a51ce7-234f-460a-8a8d-e5f3f99f854c', '78e4d946-ba6f-450c-8105-2fe3a65d968b');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('15372dfb-2a0c-4f23-8a9b-80bca659e39a', 'e4a51ce7-234f-460a-8a8d-e5f3f99f854c', 'ed274650-d9e4-4929-ad40-5f00439fccc0');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('edd42264-3412-4546-8223-4609f7f35367', 'e4a51ce7-234f-460a-8a8d-e5f3f99f854c', '22d7a97c-fd1f-44f4-8381-8b927b625172');
+
+INSERT INTO permission."group" (id, title, description, purpose, is_active, inactive_message, parent_group_id) VALUES ('fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'Karma Corporation', 'Karma Corporation', 'CORPORATION_USER', true, null, null);
+
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('ed58c643-1e31-4178-91a2-ffec41da3142', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '27b38e74-46ab-48d8-b6ab-c5d24ac89a6e');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('84d5fc48-663d-4881-870d-9cce3fb1ccc2', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '60d4242b-d70e-4277-a793-9218a19e7a3c');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('53b17702-2830-4e4c-8a9c-09f9af82ad91', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '32beab2d-c736-451d-99f1-f93c7229bfc3');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('100632ab-8ba1-46cd-b1d1-e2862fd7f6d6', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '78e4d946-ba6f-450c-8105-2fe3a65d968b');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('5a8f7d9e-449e-4182-9dfa-2d338397eebc', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'ed274650-d9e4-4929-ad40-5f00439fccc0');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('3394e2f9-18d5-422e-a3d6-9a222e7d9222', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '7d7f1025-65a8-4986-8129-f054790ee2a3');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('c85850dc-e33d-4a2a-a8f7-9c096edda56e', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '7659f617-4dfe-4439-b18d-ee0adaa3ecde');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('8af2c74d-6451-45b7-86b3-20f205798b7d', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '46dc7b2d-31af-497c-8ada-1f4f4f19c9c5');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('c146ebb1-3d7b-4333-b3f5-579e0111b487', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'fba3843b-b3df-45c4-94b4-06683321bb50');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('a5ce2518-9d61-43c1-be2b-be75dab15edd', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '71124966-21cd-41b5-bbe2-83453a099502');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('7e35df35-a7ac-429c-8670-36c9c8de20a8', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'a835a26d-d752-4ca3-8afb-d235fa7e81ee');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('e6647754-5cfa-475b-90cf-db683750a26b', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'ebaedd53-ad7d-4752-b294-0da08f9db978');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('bb09e287-b42a-4b1c-8fb2-6cd141a12f34', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '75c23f5a-68f7-4ce9-8801-da87f5e62070');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('99de0e1f-59b6-46f6-98dd-b266144bb7da', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'c58183d1-a5fe-4aba-b3d4-0a45eaae4e01');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('ae99380e-9c61-4065-95bb-df476b118fec', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '12240b72-ffe2-4b3a-b948-f5e72d53f337');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('aca1aa6d-7255-48e7-9399-a899cc9c2242', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'c6237b17-476b-4a10-af2c-8eb36483533a');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('af5c317a-5a2a-4ae8-95bc-be8d1cc21252', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '4ce99545-8030-4807-9234-b84e7912d131');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('c956a320-9a4c-4a6e-97f0-35a4aaf0b1eb', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'dde404e1-9d64-4c26-9c64-dbf29c67336a');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('13264ede-ba7d-41a2-b881-ce71b3252fdd', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '42bff416-07f6-4b13-b417-d4505fbc2698');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('6a4ebeb1-7c27-4727-aa72-5fc283fe3646', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '25375fdc-1845-42c8-b168-be8107798120');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('18a2fe51-cf6b-46a1-a8fd-45885edc206b', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '37023268-403b-49ef-92ae-d3fd4ad4f12a');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('0550bb98-92e1-418f-bdd7-36471c324ca7', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '4f7a93f1-fc76-459a-9e5c-744105b544f0');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('d692843a-7044-41ff-9b9d-a0fef57ca53f', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '499f2e94-63b8-4402-ab82-8921816760cc');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('d3badb5f-a970-4fbf-9888-ed5c5b008320', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '07d26cef-d8eb-4ef9-9e2d-b1c89b70ede1');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('fc732efb-2c87-4eb2-a14c-7b861bcf6cc1', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '835eeb27-307d-445e-991d-eac3318d90a1');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('03d4671b-7381-458d-8cf1-374607c8a06b', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '60eb0902-3778-4cee-9935-dc0fc58dcba4');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('cf77fe39-30ee-45bb-9cb6-228039cd500f', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '5188e366-0a5f-4d53-8101-29d38010d7e7');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('a5bf758d-7276-4df8-8fc2-0f05580d3053', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '9f103375-7c76-4c05-a4f3-8f9731298f1d');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('9d20704d-45fc-41b6-89ed-8958a30eb4b9', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'ba569c86-3882-4002-afa5-b141a39d14fd');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('d458582f-3326-48d7-b18b-44d7e91aba1c', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '22d7a97c-fd1f-44f4-8381-8b927b625172');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('7d6b13d0-c3cb-4d90-aa81-0342e0e0973b', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '7748b24b-c3d7-4890-b4ba-ee13c2d9af6e');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('b77793df-ca26-4885-a004-a720d4650c1b', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '0d0e6c1d-acf1-4bdd-a9e6-2163e168c698');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('b9a53bc8-7553-4f44-b9bf-07756985dfdc', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '9dda5afd-49d3-4746-a62e-23ee91727130');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('d92d5574-dea2-4ae0-88a0-e5754d66cbb8', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '50213dd2-acdd-44df-a599-f35f4e216050');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('e58cec25-c161-4be0-a1be-a42802ad00e1', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'aab633bc-4bbd-43c9-a81a-58ef1097f331');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('93e55ae6-95d1-40c1-8dcc-cedae2c91ce7', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'cef66f38-9a8b-4bd7-90ba-d6156fc29205');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('df27e37e-5cd7-48a0-ad4f-244377e611a1', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', 'd9493052-1c6d-4eb4-abe2-e332929da314');
+INSERT INTO permission.group_endpoint (id, group_id, endpoint_id) VALUES ('afd65bfd-5ea1-429d-a89a-6827de903314', 'fb7a9b38-8243-4ea5-9b6b-9ba01817c2cb', '82b6ac7f-dbab-4f1c-b2aa-34a48ea44537');
+
+

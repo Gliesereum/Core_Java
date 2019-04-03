@@ -52,22 +52,22 @@ public class UserExchangeServiceImpl implements UserExchangeService {
         return result;
     }
 
-    @Override
-    public boolean userKYCPassed(UUID userId) {
-        boolean result = false;
-        if (userId != null) {
-            String uri = UriComponentsBuilder
-                    .fromUriString(exchangeProperties.getAccount().getUserKYCPassed())
-                    .queryParam("id", userId)
-                    .build()
-                    .toUriString();
-            Map response = restTemplate.getForObject(uri, Map.class);
-            if ((response != null) && (response.containsKey("result"))) {
-                result = (Boolean) response.get("result");
-            }
-        }
-        return result;
-    }
+//    @Override
+//    public boolean userKYCPassed(UUID userId) {
+//        boolean result = false;
+//        if (userId != null) {
+//            String uri = UriComponentsBuilder
+//                    .fromUriString(exchangeProperties.getAccount().getUserKYCPassed())
+//                    .queryParam("id", userId)
+//                    .build()
+//                    .toUriString();
+//            Map response = restTemplate.getForObject(uri, Map.class);
+//            if ((response != null) && (response.containsKey("result"))) {
+//                result = (Boolean) response.get("result");
+//            }
+//        }
+//        return result;
+//    }
 
     @Override
     public List<UserDto> findByIds(List<UUID> ids) {

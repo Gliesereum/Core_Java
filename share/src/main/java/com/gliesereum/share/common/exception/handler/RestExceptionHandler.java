@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -52,6 +53,13 @@ public class RestExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(VALIDATION_ERROR);
         addBindingInfo(errorResponse, ex.getBindingResult());
+        return buildResponse(errorResponse, ex);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(VALIDATION_ERROR);
+        errorResponse.setAdditional(ex.getMessage());
         return buildResponse(errorResponse, ex);
     }
 

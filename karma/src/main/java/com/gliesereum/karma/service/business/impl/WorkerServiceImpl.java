@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.business.impl;
 
+import com.gliesereum.karma.facade.GroupUserExchangeFacade;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkerRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -11,6 +12,7 @@ import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -43,6 +45,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Autowired
     private UserExchangeService userExchangeService;
+
+    @Autowired
+    private GroupUserExchangeFacade groupUserExchangeFacade;
 
     private static final Class<WorkerDto> DTO_CLASS = WorkerDto.class;
     private static final Class<WorkerEntity> ENTITY_CLASS = WorkerEntity.class;
@@ -85,7 +90,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public WorkerDto create(WorkerDto dto){
         checkWorker(dto.getUserId());
         checkWorkingSpace(dto);
-        return super.create(dto);
+        dto = super.create(dto);
+        groupUserExchangeFacade.addUserByGroupPurposeAsync(dto.getUserId(), GroupPurpose.KARMA_WORKER);
+        return dto;
     }
 
     @Override

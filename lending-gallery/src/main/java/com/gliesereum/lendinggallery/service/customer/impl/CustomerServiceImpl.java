@@ -130,11 +130,12 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                         if (operationsStory.getOperationType().equals(OperationType.PURCHASE)) {
                             balance += operationsStory.getSum();
                             stockCount += operationsStory.getStockCount();
-                        }
-                        if (operationsStory.getOperationType().equals(OperationType.PAYMENT)) {
-                            profit += operationsStory.getSum();
-                            if (operationsStory.getCreate().isAfter(lastPaymentDate)) {
-                                lastPaymentDate = operationsStory.getCreate();
+                        } else {
+                            if (operationsStory.getOperationType().equals(OperationType.PAYMENT) || operationsStory.getOperationType().equals(OperationType.PAYMENT_REWARD)) {
+                                profit += operationsStory.getSum();
+                                if (operationsStory.getOperationType().equals(OperationType.PAYMENT) && operationsStory.getCreate().isAfter(lastPaymentDate)) {
+                                    lastPaymentDate = operationsStory.getCreate();
+                                }
                             }
                         }
                     }

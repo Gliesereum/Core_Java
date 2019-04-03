@@ -39,6 +39,7 @@ exchange:
   endpoint:
     permission:
       endpointUpdatePack: http://permission-service/endpoint/pack
+      addUserByGroupPurpose: http://permission-service/group-user/by-group-purpose
     account:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids

@@ -8,6 +8,8 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+logging.level.org.springframework.cloud.netflix.zuul.filters.post.SendErrorFilter: ERROR
+
 server:
   port: 8200
 
@@ -49,19 +51,6 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 280000
-
-
-security:
-  properties:
-    checkAccessUrl: http://account-service/auth/check
-    bearerHeader: Authorization
-    bearerPrefix: Bearer
-    jwtHeader: Service-Authorization
-    jwtPrefix: JWT
-    jwtSecret: CnfxFqbCKHLqzT9LGruE
-    endpointKeeperEnable: false
-    getUserGroupUrl: http://permission-service/group-user/my-group
-    getPermissionMapUrl: http://permission-service/group/permission-map
 
 # eureka server url
 eureka:
