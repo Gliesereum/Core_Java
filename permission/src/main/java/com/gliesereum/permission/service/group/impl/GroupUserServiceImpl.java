@@ -8,15 +8,18 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import com.gliesereum.share.common.model.dto.permission.group.GroupUserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -60,13 +63,35 @@ public class GroupUserServiceImpl extends DefaultServiceImpl<GroupUserDto, Group
         if (!userExchangeService.userIsExist(userId)) {
             throw new ClientException(USER_NOT_FOUND);
         }
-        if (groupUserRepository.existsByGroupIdAndUserId(groupId, userId)) {
-            throw new ClientException(USER_EXIST_IN_GROUP);
-        }
         if (!groupService.isExist(groupId)) {
             throw new ClientException(GROUP_NOT_FOUND);
         }
+        if (groupUserRepository.existsByGroupIdAndUserId(groupId, userId)) {
+            throw new ClientException(USER_EXIST_IN_GROUP);
+        }
         return super.create(groupUser);
+    }
+
+    @Override
+    public List<GroupUserDto> addToGroupByPurpose(GroupPurpose groupPurpose, UUID userId) {
+        List<GroupUserDto> result = null;
+        if (ObjectUtils.allNotNull(groupPurpose, userId)) {
+            if (!userExchangeService.userIsExist(userId)) {
+                throw new ClientException(USER_NOT_FOUND);
+            }
+            List<GroupDto> groups = groupService.getByPurposes(Arrays.asList(groupPurpose));
+            if (CollectionUtils.isEmpty(groups)) {
+                throw new ClientException(GROUP_NOT_FOUND);
+            }
+            List<GroupUserDto> groupsUser = groups.stream()
+                    .filter(i -> !groupUserRepository.existsByGroupIdAndUserId(i.getId(), userId))
+                    .map(i -> new GroupUserDto(i.getId(), userId))
+                    .collect(Collectors.toList());
+            if(CollectionUtils.isNotEmpty(groupsUser)) {
+                result = super.create(groupsUser);
+            }
+        }
+        return result;
     }
 
     @Override

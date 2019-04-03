@@ -11,6 +11,6 @@ public enum GroupPurpose {
     CORPORATION_USER,
     KYC_PASSED,
     BANNED,
-    WORKER,
+    KARMA_WORKER,
     CUSTOM;
 }

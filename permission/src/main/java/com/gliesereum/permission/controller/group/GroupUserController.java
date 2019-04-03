@@ -2,6 +2,7 @@ package com.gliesereum.permission.controller.group;
 
 import com.gliesereum.permission.service.group.GroupService;
 import com.gliesereum.permission.service.group.GroupUserService;
+import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import com.gliesereum.share.common.model.dto.permission.group.GroupUserDto;
 import com.gliesereum.share.common.model.response.MapResponse;
@@ -28,6 +29,12 @@ public class GroupUserController {
 
     @Autowired
     private GroupService groupService;
+
+    @PostMapping("/by-group-purpose")
+    public List<GroupUserDto> addUserByGroupPurpose(@RequestParam("groupPurpose") GroupPurpose groupPurpose,
+                                                    @RequestParam("userId") UUID userId) {
+        return groupUserService.addToGroupByPurpose(groupPurpose, userId);
+    }
 
     @PostMapping
     public GroupUserDto addUserToGroup(@Valid @RequestBody GroupUserDto groupUser) {

@@ -5,3 +5,15 @@ spring:
     password: ${rabbit.password}
     username: ${rabbit.user}
     queue-logstash: logstash
+
+security:
+  properties:
+    checkAccessUrl: http://account-service/auth/check
+    bearerHeader: Authorization
+    bearerPrefix: Bearer
+    jwtHeader: Service-Authorization
+    jwtPrefix: JWT
+    jwtSecret: CnfxFqbCKHLqzT9LGruE
+    endpointKeeperEnable: true
+    getUserGroupUrl: http://permission-service/group-user/my-group
+    getPermissionMapUrl: http://permission-service/group/permission-map/by-group
