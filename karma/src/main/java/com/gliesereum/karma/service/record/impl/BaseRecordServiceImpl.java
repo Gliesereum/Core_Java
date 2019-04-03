@@ -411,6 +411,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             });
             createOrders(result);
         }
+        setFullModelRecord(Arrays.asList(result));
         return result;
     }
 
