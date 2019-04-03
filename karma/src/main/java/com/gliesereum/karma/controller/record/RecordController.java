@@ -42,7 +42,7 @@ public class RecordController {
     public BaseRecordDto create(@Valid @RequestBody BaseRecordDto dto) {
         BaseRecordDto baseRecordDto = service.create(dto);
         if (baseRecordDto != null) {
-            service.getFullModelById(baseRecordDto.getId());
+            baseRecordDto = service.getFullModelById(baseRecordDto.getId());
         }
         return baseRecordDto;
     }
