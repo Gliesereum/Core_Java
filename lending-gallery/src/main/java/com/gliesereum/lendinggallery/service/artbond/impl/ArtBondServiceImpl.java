@@ -130,7 +130,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
                 offers.forEach(f -> {
                     OperationsStoryDto story = new OperationsStoryDto();
                     story.setName(artBond.getName());
-                    story.setSum(f.getSumInvestment());
+                    story.setSum(f.getSumInvestment().doubleValue());
                     story.setDescription(null);
                     story.setArtBondId(f.getArtBondId());
                     story.setCreate(LocalDateTime.now());
@@ -162,17 +162,19 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         if (CollectionUtils.isNotEmpty(offers)) {
             ids = offers.stream().filter(io -> !io.getStateType().equals(OfferStateType.REFUSED)).map(m -> m.getArtBondId()).collect(Collectors.toList());
         }
-        return getByIds(ids);
+        List<ArtBondDto> result = getByIds(ids);
+        result.forEach(f -> setAdditionalField(f));
+        return result;
     }
 
     @Override
-    public Map<String, Integer> currencyExchange(Long sum) {
-        Map<String, Integer> result = new HashMap<>();
+    public Map<String, Double> currencyExchange(Long sum) {
+        Map<String, Double> result = new HashMap<>();
         try {
-            FxQuote rubToUsd = YahooFinance.getFx("USDRUB=X");
-            FxQuote rubToEur = YahooFinance.getFx("EURRUB=X");
-            FxQuote usdToEur = YahooFinance.getFx("USDEUR=X");
-            FxQuote eurToUsd = YahooFinance.getFx("EURUSD=X");
+            FxQuote rub = YahooFinance.getFx("USDRUB=X");
+            FxQuote eur = YahooFinance.getFx("USDEUR=X");
+            result.put("USDRUB", rub.getPrice().doubleValue());
+            result.put("USDEUR", eur.getPrice().doubleValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -282,6 +284,11 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setNkd(getNkd(dto));
         dto.setPercentPerYear(getPercentPerYear(dto));
         dto.setAmountCollected(getAmountCollected(dto.getId()));
+        List<InvestorOfferDto> offers = investorOfferService.getAllByArtBondAndCurrentUser(dto.getId());
+        if(CollectionUtils.isEmpty(offers)){
+            offers = Collections.emptyList();
+        }
+        dto.setMyOffers(offers);
     }
 
     private void setMedia(ArtBondDto dto) {

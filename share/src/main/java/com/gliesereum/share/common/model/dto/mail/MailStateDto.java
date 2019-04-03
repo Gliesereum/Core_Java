@@ -1,17 +1,15 @@
-package com.gliesereum.share.common.model.dto.lendinggallery.offer;
+package com.gliesereum.share.common.model.dto.mail;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * @author vitalij
@@ -20,19 +18,28 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class InvestorOfferDto extends DefaultDto {
+public class MailStateDto extends DefaultDto {
 
-    private Integer sumInvestment;
+    private String phone;
 
-    private Integer stockCount;
+    private String text;
 
-    private UUID customerId;
+    private String messageId;
 
-    private UUID artBondId;
+    private String httpStatus;
 
-    private OfferStateType stateType;
+    private Integer messageStatus;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime create;
+
+    public MailStateDto(String phone, String text, String messageId, String httpStatus, Integer messageStatus, LocalDateTime create) {
+        this.phone = phone;
+        this.text = text;
+        this.messageId = messageId;
+        this.httpStatus = httpStatus;
+        this.messageStatus = messageStatus;
+        this.create = create;
+    }
 }

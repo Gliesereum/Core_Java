@@ -8,6 +8,7 @@ import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -97,4 +98,5 @@ public class ArtBondDto extends DefaultDto {
 
     private Double amountCollected;
 
+    private List<InvestorOfferDto> myOffers = new ArrayList<>();
 }

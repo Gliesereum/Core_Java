@@ -100,7 +100,7 @@ public class ArtBondController {
     }
 
     @GetMapping("/currency-exchange")
-    public Map<String, Integer> currencyExchange(@RequestParam("sum") Long sum) {
+    public Map<String, Double> currencyExchange(@RequestParam("sum") Long sum) {
         return service.currencyExchange(sum);
     }
 
