@@ -95,6 +95,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         checkModel(dto);
         dto.setCustomerId(getCustomer().getId());
         dto.setCreate(LocalDateTime.now());
+        dto.setStateType(OfferStateType.REQUEST);
         return super.create(dto);
     }
 
