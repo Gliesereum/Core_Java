@@ -72,6 +72,7 @@ public class BorrowerOfferServiceImpl extends DefaultServiceImpl<BorrowerOfferDt
             throw new ClientException(MODEL_IS_EMPTY);
         }
         dto.setCustomerId(getCustomer().getId());
+        dto.setStateType(OfferStateType.REQUEST);
         return super.create(dto);
     }
 
