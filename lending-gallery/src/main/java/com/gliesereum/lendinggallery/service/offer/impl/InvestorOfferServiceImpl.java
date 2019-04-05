@@ -77,13 +77,21 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Override
     public List<InvestorOfferDto> getAllByUser() {
-        List<InvestorOfferEntity> entities = repository.findAllByCustomerIdOrderByCreate(getCustomer().getId());
+        CustomerDto customer = getCustomer();
+        List<InvestorOfferEntity> entities = null;
+        if (customer != null) {
+            entities = repository.findAllByCustomerIdOrderByCreate(customer.getId());
+        }
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public List<InvestorOfferDto> getAllByArtBondAndCurrentUser(UUID artBondId) {
-        List<InvestorOfferEntity> entities = repository.findAllByArtBondIdAndCustomerIdOrderByCreate(artBondId, getCustomer().getId());
+        CustomerDto customer = getCustomer();
+        List<InvestorOfferEntity> entities = null;
+        if (customer != null) {
+            entities = repository.findAllByArtBondIdAndCustomerIdOrderByCreate(artBondId, customer.getId());
+        }
         return converter.convert(entities, dtoClass);
     }
 
@@ -93,7 +101,11 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         checkModel(dto);
-        dto.setCustomerId(getCustomer().getId());
+        CustomerDto customer = getCustomer();
+        if (customer == null) {
+            throw new ClientException(CUSTOMER_NOT_FOUND_BY_USER_ID);
+        }
+        dto.setCustomerId(customer.getId());
         dto.setCreate(LocalDateTime.now());
         dto.setStateType(OfferStateType.REQUEST);
         return super.create(dto);

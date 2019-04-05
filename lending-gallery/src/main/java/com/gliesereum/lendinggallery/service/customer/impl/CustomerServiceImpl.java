@@ -64,9 +64,6 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
             throw new ClientException(ID_IS_EMPTY);
         }
         CustomerEntity entity = customerRepository.findByUserId(id);
-        if (entity == null) {
-            throw new ClientException(CUSTOMER_NOT_FOUND_BY_USER_ID);
-        }
         return converter.convert(entity, dtoClass);
     }
 
@@ -90,21 +87,23 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
     public List<PaymentCalendarDto> getPaymentCalendar(UUID userId) {
         List<PaymentCalendarDto> result = null;
         CustomerDto customer = findByUserId(userId);
-        List<OperationsStoryDto> operationStories = operationsStoryService.getAllByCustomerIdAndOperationType(customer.getId(), OperationType.PURCHASE);
-        if (CollectionUtils.isNotEmpty(operationStories)) {
-            Map<UUID, Long> purchasedStocks = operationStories
-                    .stream().filter(i -> (i.getStockCount() != null) && (i.getStockCount() > 0))
-                    .collect(Collectors.groupingBy(OperationsStoryDto::getArtBondId, Collectors.summingLong(OperationsStoryDto::getStockCount)));
-            if (MapUtils.isNotEmpty(purchasedStocks)) {
-                result = new ArrayList<>();
-                for (Map.Entry<UUID, Long> purchasedStock : purchasedStocks.entrySet()) {
-                    ArtBondDto artBond = artBondService.getById(purchasedStock.getKey());
-                    List<PaymentCalendarDto> paymentCalendar = artBondService.getPaymentCalendar(artBond, artBond.getPaymentStartDate(), purchasedStock.getValue(), true);
-                    if (CollectionUtils.isNotEmpty(paymentCalendar)) {
-                        result.addAll(paymentCalendar);
+        if (customer != null) {
+            List<OperationsStoryDto> operationStories = operationsStoryService.getAllByCustomerIdAndOperationType(customer.getId(), OperationType.PURCHASE);
+            if (CollectionUtils.isNotEmpty(operationStories)) {
+                Map<UUID, Long> purchasedStocks = operationStories
+                        .stream().filter(i -> (i.getStockCount() != null) && (i.getStockCount() > 0))
+                        .collect(Collectors.groupingBy(OperationsStoryDto::getArtBondId, Collectors.summingLong(OperationsStoryDto::getStockCount)));
+                if (MapUtils.isNotEmpty(purchasedStocks)) {
+                    result = new ArrayList<>();
+                    for (Map.Entry<UUID, Long> purchasedStock : purchasedStocks.entrySet()) {
+                        ArtBondDto artBond = artBondService.getById(purchasedStock.getKey());
+                        List<PaymentCalendarDto> paymentCalendar = artBondService.getPaymentCalendar(artBond, artBond.getPaymentStartDate(), purchasedStock.getValue(), true);
+                        if (CollectionUtils.isNotEmpty(paymentCalendar)) {
+                            result.addAll(paymentCalendar);
+                        }
                     }
+                    result.sort(Comparator.comparing(PaymentCalendarDto::getDate));
                 }
-                result.sort(Comparator.comparing(PaymentCalendarDto::getDate));
             }
         }
         return result;
@@ -115,44 +114,46 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
         CustomerPaymentInfo result = null;
         if (ObjectUtils.allNotNull(artBondId, userId)) {
             CustomerDto customer = findByUserId(userId);
-            List<OperationsStoryDto> operationsStories = operationsStoryService.getAllByCustomerId(customer.getId());
-            if (CollectionUtils.isNotEmpty(operationsStories)) {
-                ArtBondDto artBond = artBondService.getArtBondById(artBondId);
-                LocalDateTime currentDate = LocalDateTime.now();
-                LocalDateTime paymentStartDate = artBond.getPaymentStartDate();
-                if (paymentStartDate.isBefore(currentDate)) {
-                    result = new CustomerPaymentInfo();
-                    double balance = 0.0;
-                    double profit = 0.0;
-                    long stockCount = 0;
-                    LocalDateTime lastPaymentDate = paymentStartDate;
-                    for (OperationsStoryDto operationsStory : operationsStories) {
-                        if (operationsStory.getOperationType().equals(OperationType.PURCHASE)) {
-                            balance += operationsStory.getSum();
-                            stockCount += operationsStory.getStockCount();
-                        } else {
-                            if (operationsStory.getOperationType().equals(OperationType.PAYMENT) || operationsStory.getOperationType().equals(OperationType.PAYMENT_REWARD)) {
-                                profit += operationsStory.getSum();
-                                if (operationsStory.getOperationType().equals(OperationType.PAYMENT) && operationsStory.getCreate().isAfter(lastPaymentDate)) {
-                                    lastPaymentDate = operationsStory.getCreate();
+            if (customer != null) {
+                List<OperationsStoryDto> operationsStories = operationsStoryService.getAllByCustomerId(customer.getId());
+                if (CollectionUtils.isNotEmpty(operationsStories)) {
+                    ArtBondDto artBond = artBondService.getArtBondById(artBondId);
+                    LocalDateTime currentDate = LocalDateTime.now();
+                    LocalDateTime paymentStartDate = artBond.getPaymentStartDate();
+                    if (paymentStartDate.isBefore(currentDate)) {
+                        result = new CustomerPaymentInfo();
+                        double balance = 0.0;
+                        double profit = 0.0;
+                        long stockCount = 0;
+                        LocalDateTime lastPaymentDate = paymentStartDate;
+                        for (OperationsStoryDto operationsStory : operationsStories) {
+                            if (operationsStory.getOperationType().equals(OperationType.PURCHASE)) {
+                                balance += operationsStory.getSum();
+                                stockCount += operationsStory.getStockCount();
+                            } else {
+                                if (operationsStory.getOperationType().equals(OperationType.PAYMENT) || operationsStory.getOperationType().equals(OperationType.PAYMENT_REWARD)) {
+                                    profit += operationsStory.getSum();
+                                    if (operationsStory.getOperationType().equals(OperationType.PAYMENT) && operationsStory.getCreate().isAfter(lastPaymentDate)) {
+                                        lastPaymentDate = operationsStory.getCreate();
+                                    }
                                 }
                             }
                         }
+
+                        long daysAfterPaymentStart = ChronoUnit.DAYS.between(paymentStartDate, currentDate);
+                        long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate, currentDate);
+                        long daysPayment = ChronoUnit.DAYS.between(paymentStartDate, artBond.getPaymentFinishDate());
+
+                        double purchaseValue = stockCount * artBond.getStockPrice();
+                        double dividendValue = purchaseValue / 100 * artBond.getDividendPercent();
+                        double rewardValue = purchaseValue / 100 * artBond.getRewardPercent();
+
+                        double nkd = artBondService.calculateNkd(dividendValue, artBond.getPaymentPeriod(), daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
+
+                        result.setBalance(balance);
+                        result.setProfit(profit);
+                        result.setNkd(nkd);
                     }
-
-                    long daysAfterPaymentStart = ChronoUnit.DAYS.between(paymentStartDate, currentDate);
-                    long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate, currentDate);
-                    long daysPayment = ChronoUnit.DAYS.between(paymentStartDate, artBond.getPaymentFinishDate());
-
-                    double purchaseValue = stockCount * artBond.getStockPrice();
-                    double dividendValue = purchaseValue / 100 * artBond.getDividendPercent();
-                    double rewardValue = purchaseValue / 100 * artBond.getRewardPercent();
-
-                    double nkd = artBondService.calculateNkd(dividendValue, artBond.getPaymentPeriod(), daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
-
-                    result.setBalance(balance);
-                    result.setProfit(profit);
-                    result.setNkd(nkd);
                 }
             }
         }
@@ -163,17 +164,19 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
     public CustomerPaymentInfo getPaymentInfoCommon(UUID userId) {
         CustomerPaymentInfo result = new CustomerPaymentInfo(0.0, 0.0, 0.0 );
         CustomerDto customer = findByUserId(userId);
-        List<OperationsStoryDto> operationStories = operationsStoryService.getAllByCustomerIdAndOperationType(customer.getId(), OperationType.PURCHASE);
-        if (CollectionUtils.isNotEmpty(operationStories)) {
-            List<UUID> artBondIds = operationStories.stream()
-                    .map(OperationsStoryDto::getArtBondId)
-                    .distinct()
-                    .collect(Collectors.toList());
-            for (UUID artBondId : artBondIds) {
-                CustomerPaymentInfo paymentInfoByArtBond = getPaymentInfoByArtBond(artBondId, userId);
-                result.setNkd(result.getNkd() + paymentInfoByArtBond.getNkd());
-                result.setProfit(result.getProfit() + paymentInfoByArtBond.getProfit());
-                result.setBalance(result.getBalance() + paymentInfoByArtBond.getBalance());
+        if (customer != null) {
+            List<OperationsStoryDto> operationStories = operationsStoryService.getAllByCustomerIdAndOperationType(customer.getId(), OperationType.PURCHASE);
+            if (CollectionUtils.isNotEmpty(operationStories)) {
+                List<UUID> artBondIds = operationStories.stream()
+                        .map(OperationsStoryDto::getArtBondId)
+                        .distinct()
+                        .collect(Collectors.toList());
+                for (UUID artBondId : artBondIds) {
+                    CustomerPaymentInfo paymentInfoByArtBond = getPaymentInfoByArtBond(artBondId, userId);
+                    result.setNkd(result.getNkd() + paymentInfoByArtBond.getNkd());
+                    result.setProfit(result.getProfit() + paymentInfoByArtBond.getProfit());
+                    result.setBalance(result.getBalance() + paymentInfoByArtBond.getBalance());
+                }
             }
         }
         return result;

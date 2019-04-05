@@ -46,7 +46,10 @@ public class MessageServiceImpl extends DefaultServiceImpl<MessageDto, MessageEn
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         CustomerDto customer = customerService.findByUserId(SecurityUtil.getUserId());
-        List<MessageEntity> entities = repository.findAllByCustomerIdOrderByCreate(customer.getId());
+        List<MessageEntity> entities = null;
+        if(customer != null) {
+            entities = repository.findAllByCustomerIdOrderByCreate(customer.getId());
+        }
         return converter.convert(entities, dtoClass);
     }
 

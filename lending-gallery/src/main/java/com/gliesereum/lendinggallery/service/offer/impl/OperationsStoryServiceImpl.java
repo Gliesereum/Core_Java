@@ -62,7 +62,11 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
 
     @Override
     public List<OperationsStoryDto> getAllByUserId(UUID userId) {
-        List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(getCustomer().getId());
+        CustomerDto customer = getCustomer();
+        List<OperationsStoryEntity> entities = null;
+        if (customer != null) {
+            entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(customer.getId());
+        }
         List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
         if(CollectionUtils.isNotEmpty(result)){
             result.forEach(f->setArtBond(f));
@@ -75,7 +79,11 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         if(artBondId == null || !artBondService.isExist(artBondId)){
             throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
         }
-        List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdAndArtBondIdOrderByCreate(getCustomer().getId(), artBondId);
+        CustomerDto customer = getCustomer();
+        List<OperationsStoryEntity> entities = null;
+        if (customer != null) {
+            entities = operationsStoryRepository.findAllByCustomerIdAndArtBondIdOrderByCreate(customer.getId(), artBondId);
+        }
         List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
         if(CollectionUtils.isNotEmpty(result)){
             result.forEach(f->setArtBond(f));
