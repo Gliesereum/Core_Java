@@ -3,6 +3,7 @@ package com.gliesereum.lendinggallery.service.offer;
 import com.gliesereum.lendinggallery.model.entity.offer.InvestorOfferEntity;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferFullModelDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface InvestorOfferService extends DefaultService<InvestorOfferDto, I
     List<InvestorOfferDto> getAllByUser();
 
     List<InvestorOfferDto> getAllByArtBondAndCurrentUser(UUID artBondId);
+
+    List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state);
 }
