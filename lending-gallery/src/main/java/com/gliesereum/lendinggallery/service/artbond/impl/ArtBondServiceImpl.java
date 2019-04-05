@@ -149,7 +149,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             return new ArrayList<>();
         }
         List<ArtBondEntity> entities = artBondRepository.findAllByTagsContains(tags);
-        return converter.convert(entities, dtoClass);
+        List<ArtBondDto> result = converter.convert(entities, dtoClass);
+        result.forEach(f -> setAdditionalField(f));
+        return result;
     }
 
     @Override
@@ -163,7 +165,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             ids = offers.stream().filter(io -> !io.getStateType().equals(OfferStateType.REFUSED)).map(m -> m.getArtBondId()).collect(Collectors.toList());
         }
         List<ArtBondDto> result = getByIds(ids);
-        if(CollectionUtils.isNotEmpty(result)) {
+        if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(this::setAdditionalField);
         }
         return result;
@@ -195,9 +197,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     public List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, boolean setArtBond) {
         List<PaymentCalendarDto> result = null;
-            if (artBond != null) {
-                result = getPaymentCalendar(artBond, artBond.getPaymentStartDate(), 1L, setArtBond);
-            }
+        if (artBond != null) {
+            result = getPaymentCalendar(artBond, artBond.getPaymentStartDate(), 1L, setArtBond);
+        }
         return result;
     }
 
@@ -237,7 +239,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             int paymentPeriod = artBond.getPaymentPeriod();
             long daysAfterLastPayment = PAYMENT_PERIOD_DAYS * paymentPeriod;
             double rewardValue = artBond.getStockPrice() / 100 * artBond.getRewardPercent();
-            long daysAfterPaymentStart =  PAYMENT_PERIOD_DAYS * paymentPeriod;
+            long daysAfterPaymentStart = PAYMENT_PERIOD_DAYS * paymentPeriod;
             long daysPayment = ChronoUnit.DAYS.between(artBond.getPaymentStartDate(), artBond.getPaymentFinishDate());
             result = calculateNkd(dividendValue, paymentPeriod, daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
         }
@@ -287,7 +289,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setPercentPerYear(getPercentPerYear(dto));
         dto.setAmountCollected(getAmountCollected(dto.getId()));
         List<InvestorOfferDto> offers = investorOfferService.getAllByArtBondAndCurrentUser(dto.getId());
-        if(CollectionUtils.isEmpty(offers)){
+        if (CollectionUtils.isEmpty(offers)) {
             offers = Collections.emptyList();
         }
         dto.setMyOffers(offers);
