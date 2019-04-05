@@ -24,7 +24,6 @@ buid/
 logs/
 */logs/
 
-*/logs/
 
 
 *.jar
@@ -54,3 +53,5 @@ config/nginx-dev/nginx-logs/**
 config/nginx-prod/nginx-logs/**
 !config/nginx-prod/nginx-logs/tmp
 
+config/elk/curator/curator-log
+!config/elk/curator/curator-log/tmp

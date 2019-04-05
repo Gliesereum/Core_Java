@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.model.dto.account.kyc;
 
+import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycRequestType;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycStatus;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class KycRequestFullModelDto {
+public class KycRequestFullModelDto extends DefaultDto {
 
     private UUID objectId;
 
