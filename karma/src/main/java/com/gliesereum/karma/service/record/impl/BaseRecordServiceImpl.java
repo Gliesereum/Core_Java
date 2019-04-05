@@ -61,8 +61,11 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Service
 public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, BaseRecordEntity> implements BaseRecordService {
 
+    private static final Class<BaseRecordDto> DTO_CLASS = BaseRecordDto.class;
+    private static final Class<BaseRecordEntity> ENTITY_CLASS = BaseRecordEntity.class;
+
     @Autowired
-    private BaseRecordRepository repository;
+    private final BaseRecordRepository baseRecordRepository;
 
     @Autowired
     private CarService carService;
@@ -85,16 +88,14 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Autowired
     private RecordServiceService recordServiceService;
 
-    private static final Class<BaseRecordDto> DTO_CLASS = BaseRecordDto.class;
-    private static final Class<BaseRecordEntity> ENTITY_CLASS = BaseRecordEntity.class;
-
-    public BaseRecordServiceImpl(BaseRecordRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    public BaseRecordServiceImpl(BaseRecordRepository baseRecordRepository, DefaultConverter defaultConverter) {
+        super(baseRecordRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.baseRecordRepository = baseRecordRepository;
     }
 
     @Override
     public List<BaseRecordDto> getByBusinessIdAndStatusRecord(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to) {
-        List<BaseRecordEntity> entities = repository.findByBusinessIdAndStatusRecordAndBeginBetween(businessId, status, from, to);
+        List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetween(businessId, status, from, to);
         return converter.convert(entities, dtoClass);
     }
 
@@ -110,7 +111,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             });
         } else return Collections.emptyList(); //todo when add new service type need to add logic
         setSearch(search);
-        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndStatusProcessInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
+        List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
                 search.getStatus(), search.getProcesses(), search.getTargetIds(), search.getFrom(), search.getTo());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
@@ -130,7 +131,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             }
         });
         setSearch(search);
-        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
+        List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
                 search.getStatus(), search.getProcesses(), search.getBusinessIds(), search.getFrom(), search.getTo());
         entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
@@ -389,12 +390,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (filter.getTo() == null || filter.getFrom().isAfter(filter.getTo())) {
             filter.setTo(filter.getFrom().toLocalDate().atStartOfDay().plusDays(1).minusSeconds(1));
         }
-        List<BaseRecordEntity> entities = repository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
+        List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
                 Arrays.asList(StatusRecord.COMPLETED), Arrays.asList(StatusProcess.COMPLETED), Arrays.asList(filter.getBusinessId()), filter.getFrom(), filter.getTo());
         return converter.convert(entities, dtoClass);
     }
 
     private BaseRecordDto createRecord(BaseRecordDto dto) {
+        BaseRecordDto result = null;
         BaseBusinessDto business = getBusinessByRecord(dto);
         checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
         dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
@@ -403,12 +405,17 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setStatusProcess(StatusProcess.WAITING);
         dto.setStatusPay(StatusPay.NOT_PAID);
         checkRecord(dto);
-        BaseRecordDto result = super.create(dto);
-        if (result != null) {
+        dto.setId(null);
+        BaseRecordEntity entity = converter.convert(dto, entityClass);
+        entity = repository.saveAndFlush(entity);
+        if (entity != null) {
+            for (UUID servicesId : dto.getServicesIds()) {
+                recordServiceService.create(new RecordServiceDto(entity.getId(), servicesId));
+            }
+            baseRecordRepository.refresh(entity);
+            result = converter.convert(entity, dtoClass);
             result.setServicesIds(dto.getServicesIds());
-            dto.getServicesIds().forEach(f -> {
-                recordServiceService.create(new RecordServiceDto(result.getId(), f));
-            });
+            setFullModelRecord(Arrays.asList(result));
             createOrders(result);
         }
         return result;
@@ -470,7 +477,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         } else {
             ids.add(SecurityUtil.getUserId()); //todo when add new service type need to add logic
         }
-        List<BaseRecordEntity> entities = repository.findAllByTargetIdInAndServiceType(ids, serviceType);
+        List<BaseRecordEntity> entities = baseRecordRepository.findAllByTargetIdInAndServiceType(ids, serviceType);
         entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
@@ -645,7 +652,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private List<RecordFreeTime> getFreeTimesByBusiness(BaseBusinessDto business, LocalDateTime startTimeWork, LocalDateTime endTimeWork) {
         List<RecordFreeTime> result = new ArrayList();
         if (business != null && CollectionUtils.isNotEmpty(business.getSpaces())) {
-            List<BaseRecordEntity> records = repository.findByBusinessIdAndStatusRecordAndBeginBetween(business.getId(), StatusRecord.CREATED, startTimeWork, endTimeWork);
+            List<BaseRecordEntity> records = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetween(business.getId(), StatusRecord.CREATED, startTimeWork, endTimeWork);
             business.getSpaces().forEach(b -> {
                 UUID currentId = b.getId();
                 if (CollectionUtils.isNotEmpty(records)) {

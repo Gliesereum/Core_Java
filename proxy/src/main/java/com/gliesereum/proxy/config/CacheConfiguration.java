@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.cache.Caching;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,7 @@ public class CacheConfiguration {
         javax.cache.Cache groupCache = jCacheManager.createCache("group",
                 ExtendedMutableConfiguration.of(new Cache2kBuilder<UUID, Map>(){}
                         .entryCapacity(1000)
-                        .expireAfterWrite(1, TimeUnit.MINUTES)));
+                        .expireAfterWrite(5, TimeUnit.MINUTES)));
         return new JCacheCache(groupCache);
 
     }
@@ -49,9 +50,9 @@ public class CacheConfiguration {
     @Bean
     public Cache userGroupCache(javax.cache.CacheManager jCacheManager) {
         javax.cache.Cache groupCache = jCacheManager.createCache("userGroup",
-                ExtendedMutableConfiguration.of(new Cache2kBuilder<String, GroupDto>(){}
+                ExtendedMutableConfiguration.of(new Cache2kBuilder<String, List<GroupDto>>(){}
                         .entryCapacity(10000)
-                        .expireAfterWrite(1, TimeUnit.MINUTES)));
+                        .expireAfterWrite(5, TimeUnit.MINUTES)));
         return new JCacheCache(groupCache);
 
     }

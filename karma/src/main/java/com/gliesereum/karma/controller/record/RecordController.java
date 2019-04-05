@@ -40,7 +40,11 @@ public class RecordController {
 
     @PostMapping
     public BaseRecordDto create(@Valid @RequestBody BaseRecordDto dto) {
-        return service.create(dto);
+        BaseRecordDto baseRecordDto = service.create(dto);
+        if (baseRecordDto != null) {
+            baseRecordDto = service.getFullModelById(baseRecordDto.getId());
+        }
+        return baseRecordDto;
     }
 
     @PostMapping("/create/from-business")

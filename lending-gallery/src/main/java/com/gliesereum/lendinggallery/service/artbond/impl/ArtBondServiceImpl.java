@@ -163,7 +163,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             ids = offers.stream().filter(io -> !io.getStateType().equals(OfferStateType.REFUSED)).map(m -> m.getArtBondId()).collect(Collectors.toList());
         }
         List<ArtBondDto> result = getByIds(ids);
-        result.forEach(f -> setAdditionalField(f));
+        if(CollectionUtils.isNotEmpty(result)) {
+            result.forEach(this::setAdditionalField);
+        }
         return result;
     }
 
@@ -258,7 +260,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         Map<String, Integer> result = null;
         if (artBond != null) {
             result = new HashMap<>();
-            int countDividendPayment = 12 % artBond.getPaymentPeriod();
+            int countDividendPayment = 12 / artBond.getPaymentPeriod();
             result.put("min", artBond.getRewardPercent());
             result.put("max", artBond.getRewardPercent() + (countDividendPayment * artBond.getDividendPercent()));
         }

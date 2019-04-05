@@ -2,10 +2,12 @@ package com.gliesereum.permission.service.group;
 
 import com.gliesereum.permission.model.entity.group.GroupUserEntity;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import com.gliesereum.share.common.model.dto.permission.group.GroupUserDto;
 import com.gliesereum.share.common.service.DefaultService;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -16,7 +18,9 @@ public interface GroupUserService extends DefaultService<GroupUserDto, GroupUser
 
     GroupUserDto addToGroup(GroupUserDto groupUser);
 
-    void removeFromGroup(UUID userId);
+    List<GroupUserDto> addToGroupByPurpose(GroupPurpose groupPurpose, UUID userId);
 
-    GroupDto getGroupByUser(UserDto user);
+    void removeFromGroup(UUID groupId, UUID userId);
+
+    List<GroupDto> getGroupByUser(UserDto user);
 }

@@ -6,3 +6,15 @@ spring:
     username: rabbit
     queue-logstash: logstash
     queue-mail: verificationQueue
+
+security:
+  properties:
+    checkAccessUrl: http://account-service/auth/check
+    bearerHeader: Authorization
+    bearerPrefix: Bearer
+    jwtHeader: Service-Authorization
+    jwtPrefix: JWT
+    jwtSecret: CnfxFqbCKHLqzT9LGruE
+    endpointKeeperEnable: true
+    getUserGroupUrl: http://permission-service/group-user/my-group
+    getPermissionMapUrl: http://permission-service/group/permission-map/by-group

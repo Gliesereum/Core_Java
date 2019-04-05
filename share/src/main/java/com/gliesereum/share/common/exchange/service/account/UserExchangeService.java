@@ -13,7 +13,7 @@ public interface UserExchangeService {
 
     boolean userIsExist(UUID userId);
 
-    boolean userKYCPassed(UUID userId);
+//    boolean userKYCPassed(UUID userId);
 
     List<UserDto> findByIds(List<UUID> ids);
 }

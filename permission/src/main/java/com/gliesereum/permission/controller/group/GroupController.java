@@ -50,8 +50,8 @@ public class GroupController {
         return new MapResponse("success");
     }
 
-    @GetMapping("/permission-map")
-    public Map<String, PermissionMapValue> getPermissionMap(@RequestParam("groupId") UUID groupId) {
-        return groupService.getPermissionMap(groupId);
+    @GetMapping("/permission-map/by-group")
+    public Map<String, PermissionMapValue> getPermissionMap(@RequestParam("groupIds") List<UUID> groupIds) {
+        return groupService.getPermissionMap(groupIds);
     }
 }

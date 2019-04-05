@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.exception.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
@@ -31,8 +32,12 @@ public class ErrorResponse {
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime timestamp;
 
+    @JsonIgnore
+    private int httpCode;
+
     public ErrorResponse(ExceptionMessage exceptionMessage) {
         this.code = exceptionMessage.getErrorCode();
         this.message = exceptionMessage.getMessage();
+        this.httpCode = exceptionMessage.getHttpCode();
     }
 }

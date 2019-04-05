@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.4'
 
 services:
 #  postgres:
@@ -301,6 +301,20 @@ services:
       restart_policy:
         condition: on-failure
     ports:
-      - 5601:5601
-      - 80:80
-      - 443:443
+      - mode: host
+        protocol: tcp
+        published: 5601
+        target: 5601
+      - mode: host
+        protocol: tcp
+        published: 80
+        target: 80
+      - mode: host
+        protocol: tcp
+        published: 443
+        target: 443
+
+networks:
+  bridge:
+    external:
+      name: bridge

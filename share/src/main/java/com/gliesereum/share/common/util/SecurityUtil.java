@@ -23,6 +23,8 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
  */
 public class SecurityUtil {
 
+    private static final UUID ANONYMOUS_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
     public static UserAuthentication getUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
@@ -74,5 +76,9 @@ public class SecurityUtil {
         if ((user.getBanStatus() != null) && user.getBanStatus().equals(BanStatus.BAN)) {
             throw new ClientException(USER_IN_BAN);
         }
+    }
+
+    public static UUID getAnonymousId() {
+        return ANONYMOUS_ID;
     }
 }
