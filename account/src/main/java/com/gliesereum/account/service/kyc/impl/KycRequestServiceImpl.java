@@ -13,10 +13,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycFieldType;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycRequestType;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycStatus;
-import com.gliesereum.share.common.model.dto.account.kyc.KycValuesRequestDto;
-import com.gliesereum.share.common.model.dto.account.kyc.KycFieldDto;
-import com.gliesereum.share.common.model.dto.account.kyc.KycRequestDto;
-import com.gliesereum.share.common.model.dto.account.kyc.KycRequestFieldDto;
+import com.gliesereum.share.common.model.dto.account.kyc.*;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -182,6 +179,25 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
             result = converter.convert(entities, dtoClass);
         }
         return result;
+    }
+
+    @Override
+    public List<KycRequestFullModelDto> getFullModelAll() {
+        List<KycRequestEntity> entities = repository.findAll();
+        List<KycRequestFullModelDto> requested = converter.convert(entities, KycRequestFullModelDto.class);
+        if (CollectionUtils.isNotEmpty(requested)) {
+            requested.forEach(i -> {
+                if (i.getKycRequestType() != null) {
+                    if (i.getKycRequestType().equals(KycRequestType.INDIVIDUAL)) {
+                        i.setUser(userService.getById(i.getObjectId()));
+                    }
+                    if (i.getKycRequestType().equals(KycRequestType.CORPORATION)) {
+                        i.setCorporation(corporationService.getById(i.getObjectId()));
+                    }
+                }
+            });
+        }
+        return requested;
     }
 
     private List<KycRequestFieldDto> validateAndCreateFields(KycValuesRequestDto createRequest, List<KycFieldDto> requiredFields, UUID requestId) {
