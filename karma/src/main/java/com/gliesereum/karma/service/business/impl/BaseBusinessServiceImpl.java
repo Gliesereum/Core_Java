@@ -135,7 +135,10 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         }
         Set<BaseBusinessDto> set = new HashSet<>();
         if (CollectionUtils.isNotEmpty(SecurityUtil.getUserCorporationIds())) {
-            set.addAll(getByCorporationIds(SecurityUtil.getUserCorporationIds()));
+            List<BaseBusinessDto> byCorporationIds = getByCorporationIds(SecurityUtil.getUserCorporationIds());
+            if (CollectionUtils.isNotEmpty(byCorporationIds)) {
+                set.addAll(byCorporationIds);
+            }
         }
         List<WorkerDto> workers = workerService.findByUserId(SecurityUtil.getUserId());
         if (CollectionUtils.isNotEmpty(workers)) {
