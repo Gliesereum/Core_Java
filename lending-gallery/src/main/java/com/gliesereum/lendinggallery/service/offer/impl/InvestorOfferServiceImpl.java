@@ -5,14 +5,17 @@ import com.gliesereum.lendinggallery.model.repository.jpa.offer.InvestorOfferRep
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
 import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
+import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +48,9 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Autowired
     private ArtBondService artBondService;
 
+    @Autowired
+    private OperationsStoryService operationsStoryService;
+
     private static final Class<InvestorOfferDto> DTO_CLASS = InvestorOfferDto.class;
     private static final Class<InvestorOfferEntity> ENTITY_CLASS = InvestorOfferEntity.class;
 
@@ -66,7 +72,21 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         }
         InvestorOfferDto result = findById(id);
         result.setStateType(state);
-        return super.update(result);
+        result = super.update(result);
+        if (result != null) {
+            if (state.equals(OfferStateType.COMPLETED)) {
+                operationsStoryService.create(
+                        new OperationsStoryDto(result.getCustomerId(),
+                                result.getArtBondId(),
+                                result.getSumInvestment().doubleValue(),
+                                result.getStockCount(),
+                                OperationType.PURCHASE.name(),
+                                OperationType.PURCHASE.name(),
+                                LocalDateTime.now(),
+                                OperationType.PURCHASE));
+            }
+        }
+        return result;
     }
 
     @Override
