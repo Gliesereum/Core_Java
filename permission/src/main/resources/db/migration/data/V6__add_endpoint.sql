@@ -1,0 +1,1 @@
+INSERT INTO permission.endpoint (id, title, description, method, url, version, is_active, inactive_message, module_id) VALUES ('b86626de-b628-4c9c-b0c1-4bd68edc952b', 'Kyc#getFullModelAllRequest', null, 'GET', '/kyc/request/full-model/all', 'v1', true, null, 'cda004ef-6df8-4c40-b9f4-b0c164ad0396');

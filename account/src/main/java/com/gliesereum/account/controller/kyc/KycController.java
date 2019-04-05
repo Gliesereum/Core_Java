@@ -5,6 +5,7 @@ import com.gliesereum.account.service.kyc.KycRequestService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycRequestType;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycStatus;
+import com.gliesereum.share.common.model.dto.account.kyc.KycRequestFullModelDto;
 import com.gliesereum.share.common.model.dto.account.kyc.KycValuesRequestDto;
 import com.gliesereum.share.common.model.dto.account.kyc.KycFieldDto;
 import com.gliesereum.share.common.model.dto.account.kyc.KycRequestDto;
@@ -88,5 +89,10 @@ public class KycController {
     @GetMapping("/request/all")
     public List<KycRequestDto> getAllRequest() {
         return kycRequestService.getAll();
+    }
+
+    @GetMapping("/request/full-model/all")
+    public List<KycRequestFullModelDto> getFullModelAllRequest() {
+        return kycRequestService.getFullModelAll();
     }
 }

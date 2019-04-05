@@ -12,5 +12,6 @@ public enum GroupPurpose {
     KYC_PASSED,
     BANNED,
     KARMA_WORKER,
+    LG_ADMIN,
     CUSTOM;
 }
