@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +48,23 @@ public class FileController {
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         return fileService.uploadFile(SecurityUtil.getUserId(), userFile, multipartFile);
+    }
+
+    @PostMapping("/upload/list")
+    public List<UserFileDto> uploadFileList(@RequestPart("file") MultipartFile[] multipartFiles,
+                                            @ModelAttribute UserFileDto userFile) {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        List<UserFileDto> result = new ArrayList<>();
+        if (multipartFiles.length > 0) {
+            for (MultipartFile multipartFile : multipartFiles) {
+                if ((multipartFile != null) && !multipartFile.isEmpty()) {
+                    result.add(fileService.uploadFile(SecurityUtil.getUserId(), new UserFileDto(userFile), multipartFile));
+                }
+            }
+        }
+        return result;
     }
 
     @GetMapping("/load/{fileId}")

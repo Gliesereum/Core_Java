@@ -14,6 +14,7 @@ import com.gliesereum.share.common.model.dto.account.enumerated.KycFieldType;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycRequestType;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycStatus;
 import com.gliesereum.share.common.model.dto.account.kyc.*;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -136,6 +137,7 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
     @Override
     public KycRequestDto updateStatus(UUID id, KycStatus newStatus, String comment) {
         KycRequestDto result = null;
+        UserDto user = null;
         if (ObjectUtils.allNotNull(id, newStatus)) {
             KycRequestDto request = super.getById(id);
             if (request == null) {
@@ -152,6 +154,7 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
             }
             if (newStatus.equals(KycStatus.KYC_PASSED)) {
                 if (requestType.equals(KycRequestType.INDIVIDUAL)) {
+                    user = userService.getById(id);
                     userService.setKycApproved(objectId);
                 }
                 if (requestType.equals(KycRequestType.CORPORATION)) {
@@ -161,6 +164,9 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
             request.setKycStatus(newStatus);
             request.setComment(comment);
             result = super.update(request);
+            if(result != null && user != null){
+                //todo sent mail
+            }
         }
         return result;
     }

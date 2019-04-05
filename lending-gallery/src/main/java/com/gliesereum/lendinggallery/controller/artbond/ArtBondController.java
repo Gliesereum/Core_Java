@@ -88,6 +88,11 @@ public class ArtBondController {
         return mediaService.create(media);
     }
 
+    @PostMapping("/list/media/{id}")
+    public ArtBondDto createList(@PathVariable("id") UUID id, @RequestBody List<MediaDto> files) {
+        return mediaService.createList(files, id);
+    }
+
     @PutMapping("/media")
     public MediaDto update(@RequestBody @Valid MediaDto media) {
         return mediaService.update(media);
