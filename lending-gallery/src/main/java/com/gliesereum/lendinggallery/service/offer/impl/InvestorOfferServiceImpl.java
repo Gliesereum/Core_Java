@@ -8,6 +8,8 @@ import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
@@ -15,18 +17,20 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.Operation
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferFullModelDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
@@ -50,6 +54,9 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Autowired
     private OperationsStoryService operationsStoryService;
+
+    @Autowired
+    private UserExchangeService userExchangeService;
 
     private static final Class<InvestorOfferDto> DTO_CLASS = InvestorOfferDto.class;
     private static final Class<InvestorOfferEntity> ENTITY_CLASS = InvestorOfferEntity.class;
@@ -138,6 +145,44 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         dto.setCustomerId(saveDto.getCustomerId());
         dto.setStateType(saveDto.getStateType());
         return super.update(dto);
+    }
+
+    @Override
+    public List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state) {
+        List<InvestorOfferEntity> entities = repository.findAllByStateType(state);
+        List<InvestorOfferFullModelDto> result = converter.convert(entities, InvestorOfferFullModelDto.class);
+        if(CollectionUtils.isNotEmpty(result)) {
+            List<UUID> userIds = new ArrayList<>();
+            result.forEach(i -> {
+                UUID customerId = i.getCustomerId();
+                if (customerId != null) {
+                    CustomerDto customer = customerService.getById(customerId);
+                    if (customer != null) {
+                        i.setCustomer(customer);
+                        UUID userId = customer.getUserId();
+                        if (userId != null) {
+                            userIds.add(userId);
+                        }
+                    }
+                }
+                UUID artBondId = i.getArtBondId();
+                if (artBondId != null) {
+                    i.setArtBond(artBondService.getById(artBondId));
+                }
+            });
+            if (CollectionUtils.isNotEmpty(userIds)) {
+                List<UserDto> users = userExchangeService.findByIds(userIds);
+                if (CollectionUtils.isNotEmpty(users)) {
+                    Map<UUID, UserDto> userMap = users.stream().collect(Collectors.toMap(UserDto::getId, i -> i));
+                    result.forEach(i -> {
+                        if ((i.getCustomer() != null) && (i.getCustomer().getUserId() != null)) {
+                            i.setUser(userMap.get(i.getCustomer().getUserId()));
+                        }
+                    });
+                }
+            }
+        }
+        return result;
     }
 
     private InvestorOfferDto findById(UUID id) {
