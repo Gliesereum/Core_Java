@@ -80,8 +80,8 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                                 result.getArtBondId(),
                                 result.getSumInvestment().doubleValue(),
                                 result.getStockCount(),
-                                OperationType.PURCHASE.name(),
-                                OperationType.PURCHASE.name(),
+                                OperationType.PURCHASE.name().toLowerCase(),
+                                OperationType.PURCHASE.name().toLowerCase(),
                                 LocalDateTime.now(),
                                 OperationType.PURCHASE));
             }

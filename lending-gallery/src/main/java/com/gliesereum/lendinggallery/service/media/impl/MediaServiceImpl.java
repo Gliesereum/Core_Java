@@ -10,6 +10,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,27 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
         result = converter.convert(entities, dtoClass);
         if(result == null){
             result = Collections.emptyList();
+        }
+        return result;
+    }
+
+    @Override
+    public ArtBondDto createList(List<MediaDto> files, UUID id) {
+        ArtBondDto result = artBondService.getById(id);
+        if(result == null){
+            throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
+        }
+        if(CollectionUtils.isNotEmpty(files)){
+         files.forEach(f->{
+             if (f == null) {
+                 throw new ClientException(MODEL_IS_EMPTY);
+             }
+             if(f.getBlockMediaType() == null){
+                 throw new ClientException(BLOCK_MEDIA_TYPE_IS_EMPTY);
+             }
+             f.setObjectId(id);
+         });
+         create(files); //todo check
         }
         return result;
     }

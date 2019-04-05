@@ -10,6 +10,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
+import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
@@ -82,7 +83,27 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public ArtBondDto create(ArtBondDto dto) {
         dto.setStatusType(StatusType.WAITING_COLLECTION);
         dto.setSpecialStatusType(SpecialStatusType.ACTIVE);
-        return super.create(dto);
+        ArtBondDto result = super.create(dto);
+        List<MediaDto> media = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(dto.getArtBondInfo())) {
+            media.addAll(dto.getArtBondInfo());
+        }
+        if (CollectionUtils.isNotEmpty(dto.getAuthorInfo())) {
+            media.addAll(dto.getAuthorInfo());
+        }
+        if (CollectionUtils.isNotEmpty(dto.getDocuments())) {
+            media.addAll(dto.getDocuments());
+        }
+        if (CollectionUtils.isNotEmpty(dto.getImages())) {
+            media.addAll(dto.getImages());
+        }
+        if (result != null && CollectionUtils.isNotEmpty(media)) {
+            media.forEach(f -> {
+                f.setObjectId(result.getId());
+            });
+            mediaService.create(media);
+        }
+        return result;
     }
 
     @Override
@@ -241,7 +262,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             double rewardValue = artBond.getStockPrice() / 100 * artBond.getRewardPercent();
             long daysAfterPaymentStart = PAYMENT_PERIOD_DAYS * paymentPeriod;
             long daysPayment = ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
-            if(daysPayment == 0) {
+            if (daysPayment == 0) {
                 daysPayment = 1;
             }
             result = calculateNkd(dividendValue, paymentPeriod, daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
