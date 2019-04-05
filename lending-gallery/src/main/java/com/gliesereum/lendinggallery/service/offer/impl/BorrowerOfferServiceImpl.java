@@ -62,7 +62,11 @@ public class BorrowerOfferServiceImpl extends DefaultServiceImpl<BorrowerOfferDt
 
     @Override
     public List<BorrowerOfferDto> getAllByUser() {
-        List<BorrowerOfferEntity> entities = repository.findAllByCustomerIdOrderByCreate(getCustomer().getUserId());
+        CustomerDto customer = getCustomer();
+        List<BorrowerOfferEntity> entities = null;
+        if(customer != null) {
+            entities = repository.findAllByCustomerIdOrderByCreate(customer.getUserId());
+        }
         return converter.convert(entities, dtoClass);
     }
 
@@ -71,7 +75,11 @@ public class BorrowerOfferServiceImpl extends DefaultServiceImpl<BorrowerOfferDt
         if (dto == null) {
             throw new ClientException(MODEL_IS_EMPTY);
         }
-        dto.setCustomerId(getCustomer().getId());
+        CustomerDto customer = getCustomer();
+        if (customer == null) {
+            throw new ClientException(CUSTOMER_NOT_FOUND_BY_USER_ID);
+        }
+        dto.setCustomerId(customer.getId());
         dto.setStateType(OfferStateType.REQUEST);
         return super.create(dto);
     }
