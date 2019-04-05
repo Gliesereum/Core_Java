@@ -2,6 +2,7 @@ package com.gliesereum.share.common.exchange.service.account;
 
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,5 +16,5 @@ public interface UserExchangeService {
 
 //    boolean userKYCPassed(UUID userId);
 
-    List<UserDto> findByIds(List<UUID> ids);
+    List<UserDto> findByIds(Collection<UUID> ids);
 }

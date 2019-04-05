@@ -38,11 +38,15 @@ public class UserFileDto extends DefaultDto {
 
     private List<UUID> readerIds;
 
-    public UserFileDto(String filename, String resultUrl, String contentType, long fileSize, UUID userId) {
-        this.filename = filename;
-        this.url = resultUrl;
-        this.mediaType = contentType;
-        this.size = fileSize;
-        this.userId = userId;
+    public UserFileDto(UserFileDto userFile) {
+        this.filename = userFile.getFilename();
+        this.url = userFile.getUrl();
+        this.mediaType = userFile.getMediaType();
+        this.size = userFile.getSize();
+        this.userId = userFile.getUserId();
+        this.open = userFile.getOpen();
+        this.crypto = userFile.getCrypto();
+        this.keys = userFile.getKeys();
+        this.readerIds = userFile.getReaderIds();
     }
 }

@@ -6,6 +6,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.BorrowerOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferFullModelDto;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,11 @@ public class OfferController {
     @GetMapping("/investor/by-state")
     public List<InvestorOfferDto> getAllInvestorOffersByState(@RequestParam("state") OfferStateType state) {
         return investorOfferService.getAllByState(state);
+    }
+
+    @GetMapping("/investor/full-model/by-state")
+    public List<InvestorOfferFullModelDto> getAllInvestorOffersFullModelByState(@RequestParam("state") OfferStateType state) {
+        return investorOfferService.getAllFullModelByState(state);
     }
 
     @GetMapping("/investor/user")

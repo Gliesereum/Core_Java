@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -70,7 +71,7 @@ public class UserExchangeServiceImpl implements UserExchangeService {
 //    }
 
     @Override
-    public List<UserDto> findByIds(List<UUID> ids) {
+    public List<UserDto> findByIds(Collection<UUID> ids) {
         List<UserDto> result = null;
         if(CollectionUtils.isNotEmpty(ids)) {
             String uri = UriComponentsBuilder
