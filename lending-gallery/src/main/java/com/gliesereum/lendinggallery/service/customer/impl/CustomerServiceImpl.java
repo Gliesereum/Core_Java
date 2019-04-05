@@ -115,7 +115,7 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
         if (ObjectUtils.allNotNull(artBondId, userId)) {
             CustomerDto customer = findByUserId(userId);
             if (customer != null) {
-                List<OperationsStoryDto> operationsStories = operationsStoryService.getAllByCustomerId(customer.getId());
+                List<OperationsStoryDto> operationsStories = operationsStoryService.getAllByCustomerIdAndArtBondId(customer.getId(), artBondId);
                 if (CollectionUtils.isNotEmpty(operationsStories)) {
                     ArtBondDto artBond = artBondService.getArtBondById(artBondId);
                     LocalDateTime currentDate = LocalDateTime.now();

@@ -61,6 +61,12 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     }
 
     @Override
+    public List<OperationsStoryDto> getAllByCustomerIdAndArtBondId(UUID customerId, UUID artBondId) {
+        List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdAndArtBondIdOrderByCreate(customerId, artBondId);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public List<OperationsStoryDto> getAllByUserId(UUID userId) {
         CustomerDto customer = getCustomer();
         List<OperationsStoryEntity> entities = null;
