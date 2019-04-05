@@ -25,13 +25,13 @@ spring:
 
   mail:
     default-encoding: UTF-8
-    host: mail.adm.tools
-    username: support@gliesereum.com
-    password: Support0013
-    from: GLIESEREUM<support@gliesereum.com>
-    subject: Gliesereum verification mail
+    host: ${mail.host}
+    username: ${mail.username}
+    password: ${mail.password}
+    from: ${mail.from}
+    subject: ${mail.subject}
     chanel-verification: verificationQueue
-    log-email: log@gliesereum.com
+    log-email: ${mail.log-email}
     port: 465
     protocol: smtp
     properties:
@@ -55,7 +55,7 @@ spring:
 
 phone:
   url: https://api.acemountmedia.com/sms/
-  alpha-name: SECURITY
-  token: Bearer shiM8uESwOEAWEurmDWGNmY6LPSy_x1m
+  alpha-name: ${phone.api.alpha}
+  token: ${phone.api.token}
 
 
