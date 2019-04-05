@@ -32,7 +32,7 @@ public class ContentController {
         return service.getAllByContentType(type);
     }
 
-    @GetMapping("/by-tags")
+    @PostMapping("/by-tags")
     public List<ContentDto> getAllByTags(@RequestBody List<String> tags) {
         return service.getAllByTags(tags);
     }

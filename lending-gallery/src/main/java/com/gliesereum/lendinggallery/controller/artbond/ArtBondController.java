@@ -56,7 +56,7 @@ public class ArtBondController {
         return new MapResponse("true");
     }
 
-    @GetMapping("/by-tags")
+    @PostMapping("/by-tags")
     public List<ArtBondDto> getAllByTags(@RequestBody List<String> tags) {
         return service.getAllByTags(tags);
     }
