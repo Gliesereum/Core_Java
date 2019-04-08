@@ -1,5 +1,6 @@
-package com.gliesereum.mail.email;
+package com.gliesereum.mail.service.email.impl;
 
+import com.gliesereum.mail.service.email.EmailService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

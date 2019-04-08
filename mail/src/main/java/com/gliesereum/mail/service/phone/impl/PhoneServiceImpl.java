@@ -1,6 +1,6 @@
 package com.gliesereum.mail.service.phone.impl;
 
-import com.gliesereum.mail.email.EmailService;
+import com.gliesereum.mail.service.email.EmailService;
 import com.gliesereum.mail.service.mail.MailStateService;
 import com.gliesereum.mail.service.phone.PhoneService;
 import com.gliesereum.share.common.exception.client.ClientException;
