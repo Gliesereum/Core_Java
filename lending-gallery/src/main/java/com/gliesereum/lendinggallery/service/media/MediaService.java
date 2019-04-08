@@ -15,9 +15,11 @@ import java.util.UUID;
  */
 public interface MediaService extends DefaultService<MediaDto, MediaEntity> {
 
-   void delete(UUID id, UUID objectId);
+    void delete(UUID id, UUID objectId);
 
     List<MediaDto> getByObjectIdAndType(UUID objectId, BlockMediaType blockMediaType);
 
     ArtBondDto createList(List<MediaDto> files, UUID id);
+
+    void deleteAllByObjectId(UUID objectId);
 }

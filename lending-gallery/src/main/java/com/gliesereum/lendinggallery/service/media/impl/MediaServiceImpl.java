@@ -13,6 +13,7 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,20 +33,20 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
     private static final Class<MediaDto> DTO_CLASS = MediaDto.class;
     private static final Class<MediaEntity> ENTITY_CLASS = MediaEntity.class;
 
-    private MediaRepository repository;
+    private final MediaRepository mediaRepository;
 
     @Autowired
     private ArtBondService artBondService;
 
     @Autowired
-    public MediaServiceImpl(MediaRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
+    public MediaServiceImpl(MediaRepository mediaRepository, DefaultConverter defaultConverter) {
+        super(mediaRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.mediaRepository = mediaRepository;
     }
 
     @Override
     public void delete(UUID id, UUID objectId) {
-        MediaEntity media = repository.findByIdAndObjectId(id, objectId);
+        MediaEntity media = mediaRepository.findByIdAndObjectId(id, objectId);
         if (media == null) {
             throw new ClientException(MEDIA_NOT_FOUND_BY_ID);
         }
@@ -55,7 +56,7 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
     @Override
     public List<MediaDto> getByObjectIdAndType(UUID id, BlockMediaType blockMediaType) {
         List<MediaDto> result = null;
-        List<MediaEntity> entities = repository.findByObjectIdAndBlockMediaType(id, blockMediaType);
+        List<MediaEntity> entities = mediaRepository.findByObjectIdAndBlockMediaType(id, blockMediaType);
         result = converter.convert(entities, dtoClass);
         if(result == null){
             result = Collections.emptyList();
@@ -94,6 +95,14 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
     public MediaDto update(MediaDto dto) {
         checkMedia(dto);
         return super.update(dto);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByObjectId(UUID objectId) {
+        if (objectId != null) {
+            mediaRepository.deleteAllByObjectId(objectId);
+        }
     }
 
     private void checkMedia(MediaDto dto) {
