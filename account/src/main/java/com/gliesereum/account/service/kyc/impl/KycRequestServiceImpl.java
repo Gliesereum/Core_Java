@@ -5,16 +5,17 @@ import com.gliesereum.account.model.repository.jpa.kyc.KycRequestRepository;
 import com.gliesereum.account.service.kyc.KycFieldService;
 import com.gliesereum.account.service.kyc.KycRequestFieldService;
 import com.gliesereum.account.service.kyc.KycRequestService;
-import com.gliesereum.account.service.user.CorporationService;
-import com.gliesereum.account.service.user.CorporationSharedOwnershipService;
-import com.gliesereum.account.service.user.UserService;
+import com.gliesereum.account.service.user.*;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exchange.service.mail.MailExchangeService;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycFieldType;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycRequestType;
 import com.gliesereum.share.common.model.dto.account.enumerated.KycStatus;
 import com.gliesereum.share.common.model.dto.account.kyc.*;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
+import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -60,6 +61,15 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MailExchangeService mailExchangeService;
+
+    @Autowired
+    private UserEmailService emailService;
+
+    @Autowired
+    private UserPhoneService phoneService;
 
     @Autowired
     public KycRequestServiceImpl(KycRequestRepository kycRequestRepository, DefaultConverter defaultConverter) {
@@ -128,7 +138,7 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
     @Override
     public boolean openKycRequestExist(UUID objectId, KycRequestType requestType) {
         boolean result = false;
-        if(ObjectUtils.allNotNull(objectId, requestType)) {
+        if (ObjectUtils.allNotNull(objectId, requestType)) {
             result = kycRequestRepository.existsByKycRequestTypeAndObjectIdAndKycStatusNot(requestType, objectId, KycStatus.KYC_REJECTED);
         }
         return result;
@@ -154,18 +164,20 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
             }
             if (newStatus.equals(KycStatus.KYC_PASSED)) {
                 if (requestType.equals(KycRequestType.INDIVIDUAL)) {
-                    user = userService.getById(id);
                     userService.setKycApproved(objectId);
                 }
                 if (requestType.equals(KycRequestType.CORPORATION)) {
                     corporationService.setKycApproved(objectId);
                 }
             }
+            if (requestType.equals(KycRequestType.INDIVIDUAL)) {
+                user = userService.getById(objectId);
+            }
             request.setKycStatus(newStatus);
             request.setComment(comment);
             result = super.update(request);
-            if(result != null && user != null){
-                //todo sent mail
+            if (result != null && user != null) {
+                sendResultKycToUser(result, user);
             }
         }
         return result;
@@ -247,6 +259,21 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
         }
         if (createRequest.getObjectId() == null) {
             throw new ClientException(KYC_OBJECT_ID_MISSED);
+        }
+    }
+
+    private void sendResultKycToUser(KycRequestDto result, UserDto user) {
+        String message = "Status KYC change to: ".concat(result.getKycStatus().value);
+        if(StringUtils.isNotEmpty(result.getComment())){
+            message.concat(". Comment: ").concat(result.getComment());
+        }
+        UserEmailDto email = emailService.getByUserId(user.getId());
+        if (email != null) {
+            String subject = "KYC status";
+            mailExchangeService.sendMessageEmail(email.getEmail(), message, subject);
+        } else {
+            UserPhoneDto phone = phoneService.getByUserId(user.getId());
+            mailExchangeService.sendMessagePhone(phone.getPhone(), message);
         }
     }
 

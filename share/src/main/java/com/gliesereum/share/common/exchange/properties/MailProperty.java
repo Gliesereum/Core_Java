@@ -15,4 +15,8 @@ public class MailProperty {
     private String emailVerification;
 
     private String phoneVerification;
+
+    private String sentEmail;
+
+    private String sendPhone;
 }

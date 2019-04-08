@@ -21,6 +21,8 @@ public class UserFileDto extends DefaultDto {
 
     private String filename;
 
+    private String originalFilename;
+
     private String url;
 
     private String mediaType;
