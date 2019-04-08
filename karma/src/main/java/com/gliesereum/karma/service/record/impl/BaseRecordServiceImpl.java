@@ -404,6 +404,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setStatusRecord(StatusRecord.CREATED);
         dto.setStatusProcess(StatusProcess.WAITING);
         dto.setStatusPay(StatusPay.NOT_PAID);
+        dto.setServiceType(business.getServiceType());
         checkRecord(dto);
         dto.setId(null);
         BaseRecordEntity entity = converter.convert(dto, entityClass);
