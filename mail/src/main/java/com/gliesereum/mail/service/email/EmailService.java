@@ -1,4 +1,4 @@
-package com.gliesereum.mail.email;
+package com.gliesereum.mail.service.email;
 
 import java.util.List;
 

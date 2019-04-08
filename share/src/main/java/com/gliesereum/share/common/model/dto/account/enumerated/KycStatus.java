@@ -5,12 +5,18 @@ package com.gliesereum.share.common.model.dto.account.enumerated;
  */
 public enum KycStatus {
 
-    KYC_REQUESTED,
-    KYC_IN_PROCESS,
-    KYC_PASSED,
-    KYC_REJECTED,
-    KYC_REWORKED,
-    KYC_SENT_TO_REWORK;
+    KYC_REQUESTED(" REQUESTED"),
+    KYC_IN_PROCESS(" IN PROCESS"),
+    KYC_PASSED(" PASSED"),
+    KYC_REJECTED(" REJECTED"),
+    KYC_REWORKED("  REWORKED"),
+    KYC_SENT_TO_REWORK(" SENT TO REWORK");
+
+    public final String value;
+
+    KycStatus(String value) {
+        this.value = value;
+    }
 
     public String toString() {
         return name().toLowerCase();

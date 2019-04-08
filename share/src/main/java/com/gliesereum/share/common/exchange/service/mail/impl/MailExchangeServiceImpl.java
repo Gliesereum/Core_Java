@@ -33,21 +33,32 @@ public class MailExchangeServiceImpl implements MailExchangeService {
 
     @Override
     public String sendEmailVerification(String to, String code) {
-        return sendVerification(to, code, exchangeProperties.getMail().getEmailVerification());
+        return send(to, code, null, exchangeProperties.getMail().getEmailVerification());
     }
 
     @Override
     public String sendPhoneVerification(String to, String code) {
-        return sendVerification(to, code, exchangeProperties.getMail().getPhoneVerification());
+        return send(to, code, null, exchangeProperties.getMail().getPhoneVerification());
     }
 
-    private String sendVerification(String to, String code, String url) {
+    @Override
+    public String sendMessageEmail(String to, String text, String subject) {
+        return send(to, text, subject, exchangeProperties.getMail().getSentEmail());
+    }
+
+    @Override
+    public String sendMessagePhone(String to, String text) {
+        return send(to, text, null, exchangeProperties.getMail().getSendPhone());
+    }
+
+    private String send(String to, String code, String subject, String url) {
         String result = null;
         if (!StringUtils.isAllEmpty(to, code)) {
             String uri = UriComponentsBuilder
                     .fromUriString(url)
                     .queryParam("to", to)
                     .queryParam("message", code)
+                    .queryParam("subject", subject)
                     .build()
                     .toUriString();
             Map response = restTemplate.postForObject(uri, new HashMap<>(), Map.class);

@@ -2,7 +2,7 @@ package com.gliesereum.mail.mq;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gliesereum.mail.email.EmailService;
+import com.gliesereum.mail.service.email.EmailService;
 import com.gliesereum.mail.service.phone.PhoneService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
