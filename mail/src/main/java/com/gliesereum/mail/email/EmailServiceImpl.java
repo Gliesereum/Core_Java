@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -48,21 +46,30 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(text);
-            message.setFrom(environment.getProperty(RECEIVER));
-
-            mailSender.send(message);
-            logger.info("\nSend email, date: [{}] to: {}", LocalDateTime.now(), to);
-        } catch (MailException exception) {
-            exception.printStackTrace();
+            Map<String, String> model = new HashMap<>();
+            model.put("text", text);
+            freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
+            Template template = freemarkerConfig.getTemplate("email.ftl");
+            sendSingleMessage(to, subject, model, template);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
     }
 
     @Override
     public void sendSingleVerificationMessage(String to, String code) {
+        try {
+            Map<String, String> model = new HashMap<>();
+            model.put("code", code);
+            freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
+            Template template = freemarkerConfig.getTemplate("email-verification.ftl");
+            sendSingleMessage(to, environment.getProperty(SUBJECT), model, template);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void sendSingleMessage(String to, String subject, Map<String, String> model, Template template) {
         try {
             MimeMessagePreparator preparatory = new MimeMessagePreparator() {
                 public void prepare(MimeMessage mimeMessage) throws MessagingException, IOException, TemplateException {
@@ -70,16 +77,9 @@ public class EmailServiceImpl implements EmailService {
                             MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                             StandardCharsets.UTF_8.name());
                     message.setTo(to);
-                    message.setSubject(environment.getProperty(SUBJECT));
+                    message.setSubject(subject);
                     message.setFrom(environment.getProperty(RECEIVER));
-
-                    Map<String, String> model = new HashMap<>();
-                    model.put("code", code);
-
-                    freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
-                    Template template = freemarkerConfig.getTemplate("email.ftl");
                     String text = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-
                     message.setText(text, true);
                 }
             };
