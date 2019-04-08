@@ -581,7 +581,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         boolean ownerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId());
         boolean workerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId());
         boolean userPermission = false;
-        if (dto.getServiceType().equals(ServiceType.CAR_WASH)) {
+        if (dto.getServiceType().equals(ServiceType.CAR_WASH) && (dto.getTargetId() != null)) {
             userPermission = carService.carExistByIdAndUserId(dto.getTargetId(), SecurityUtil.getUserId());
         }
         if (!BooleanUtils.or(new Boolean[]{ownerPermission, workerPermission, userPermission})) {
