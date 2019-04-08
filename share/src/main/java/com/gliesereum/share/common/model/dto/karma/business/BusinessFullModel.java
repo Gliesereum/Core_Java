@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
+import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
@@ -20,9 +21,11 @@ import java.util.UUID;
  */
 @Data
 @NoArgsConstructor
-public class BusinessFullModel {
+public class BusinessFullModel extends DefaultDto {
 
     private String name;
+
+    private UUID corporationId;
 
     private UUID businessId;
 

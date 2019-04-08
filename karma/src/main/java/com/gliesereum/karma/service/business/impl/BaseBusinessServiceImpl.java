@@ -12,18 +12,17 @@ import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.business.*;
-import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
+import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
-import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_TYPE_IS_EMPTY;
@@ -156,8 +156,16 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public List<BusinessFullModel> getAllFullBusinessByCurrentUser() {
         List<BusinessFullModel> result = new ArrayList<>();
         List<BaseBusinessDto> list = getAllBusinessByCurrentUser();
-        if(CollectionUtils.isNotEmpty(list)){
-            list.forEach(f->result.add(getFullModelById(f.getId())));
+        if (CollectionUtils.isNotEmpty(list)) {
+            result = getFullModelByIds(list.stream().map(BaseBusinessDto::getId).collect(Collectors.toList()));
+            if (CollectionUtils.isNotEmpty(result)) {
+                result.forEach(i -> i.setRecords(ListUtils.emptyIfNull
+                        (baseRecordService.getByBusinessIdAndStatusRecord(
+                                i.getId(),
+                                StatusRecord.CREATED,
+                                LocalDate.now().atStartOfDay(),
+                                LocalDate.now().atTime(LocalTime.MAX)))));
+            }
         }
         return result;
     }
@@ -225,79 +233,24 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public BusinessFullModel getFullModelById(UUID id) {
-        BusinessFullModel result = new BusinessFullModel();
-        if (id == null) {
+    public List<BusinessFullModel> getFullModelByIds(List<UUID> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        BaseBusinessDto baseBusinessDto = getById(id);
-        if (baseBusinessDto == null) {
+        List<BaseBusinessEntity> entities = baseBusinessRepository.findByIdInAndObjectState(ids, ObjectState.ACTIVE);
+        if (CollectionUtils.isEmpty(entities)) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        result.setBusinessId(id);
-        result.setLogoUrl(baseBusinessDto.getLogoUrl());
-        result.setName(baseBusinessDto.getName());
-        result.setDescription(baseBusinessDto.getDescription());
-        result.setAddress(baseBusinessDto.getAddress());
-        result.setPhone(baseBusinessDto.getPhone());
-        result.setAddPhone(baseBusinessDto.getAddPhone());
-        result.setLatitude(baseBusinessDto.getLatitude());
-        result.setLongitude(baseBusinessDto.getLongitude());
-        result.setTimeZone(baseBusinessDto.getTimeZone());
-        result.setObjectState(baseBusinessDto.getObjectState());
-        result.setRating(commentService.getRating(id));
-
-        if (CollectionUtils.isNotEmpty(baseBusinessDto.getWorkTimes())) {
-            result.setWorkTimes(baseBusinessDto.getWorkTimes());
-        } else {
-            List<WorkTimeDto> emptyList = Collections.emptyList();
-            result.setWorkTimes(emptyList);
-        }
-
-        if (CollectionUtils.isNotEmpty(baseBusinessDto.getSpaces())) {
-            result.setSpaces(baseBusinessDto.getSpaces());
-        } else {
-            List<WorkingSpaceDto> emptyList = Collections.emptyList();
-            result.setSpaces(emptyList);
-        }
-
-        List<ServicePriceDto> servicePrices = servicePriceService.getByBusinessId(id);
-        if (CollectionUtils.isNotEmpty(servicePrices)) {
-            result.setServicePrices(servicePrices);
-        } else {
-            List<ServicePriceDto> emptyList = Collections.emptyList();
-            result.setServicePrices(emptyList);
-        }
-        List<PackageDto> packages = packageService.getByBusinessId(id);
-        if (CollectionUtils.isNotEmpty(packages)) {
-            result.setPackages(packages);
-        } else {
-            List<PackageDto> emptyList = Collections.emptyList();
-            result.setPackages(emptyList);
-        }
-        List<MediaDto> media = mediaService.getByObjectId(id);
-        if (CollectionUtils.isNotEmpty(media)) {
-            result.setMedia(media);
-        } else {
-            List<MediaDto> emptyList = Collections.emptyList();
-            result.setMedia(emptyList);
-        }
-        List<CommentFullDto> comments = commentService.findFullByObjectId(id);
-        if (CollectionUtils.isNotEmpty(comments)) {
-            result.setComments(comments);
-        } else {
-            List<CommentFullDto> emptyList = Collections.emptyList();
-            result.setComments(emptyList);
-        }
-        List<BaseRecordDto> records = baseRecordService.getByBusinessIdAndStatusRecord(id, StatusRecord.CREATED,
-                LocalDate.now().atStartOfDay(), LocalDate.now().atTime(LocalTime.MAX));
-        if (CollectionUtils.isNotEmpty(records)) {
-            result.setRecords(records);
-        } else {
-            List<BaseRecordDto> emptyList = Collections.emptyList();
-            result.setRecords(emptyList);
-        }
-        return result;
+        return entities.stream().map(i -> {
+            BusinessFullModel result = converter.convert(i, BusinessFullModel.class);
+            result.setRating(commentService.getRating(i.getId()));
+            result.setBusinessId(i.getId());
+            result.setServicePrices(ListUtils.emptyIfNull(servicePriceService.getByBusinessId(i.getId())));
+            result.setPackages(packageService.getByBusinessId(i.getId()));
+            result.setMedia(mediaService.getByObjectId(i.getId()));
+            result.setComments(commentService.findFullByObjectId(i.getId()));
+            return result;
+        }).collect(Collectors.toList());
     }
 
     @Override

@@ -23,6 +23,8 @@ public interface BaseBusinessRepository extends JpaRepository<BaseBusinessEntity
 
     BaseBusinessEntity findByIdAndObjectState(UUID id, ObjectState objectState);
 
+    List<BaseBusinessEntity> findByIdInAndObjectState(List<UUID> ids, ObjectState objectState);
+
     List<BaseBusinessEntity> getAllByObjectState(ObjectState objectState);
 
     List<BaseBusinessEntity> getAllByIdInAndObjectState(Iterable<UUID> ids, ObjectState objectState);
