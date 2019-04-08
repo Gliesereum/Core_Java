@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,7 +67,7 @@ public class BaseBusinessController {
 
     @GetMapping("{id}/full-model")
     public BusinessFullModel getFullModelById(@PathVariable("id") UUID id) {
-        return baseBusinessService.getFullModelById(id);
+        return baseBusinessService.getFullModelByIds(Arrays.asList(id)).get(0);
     }
 
     @GetMapping("/by-user")

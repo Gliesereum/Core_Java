@@ -23,7 +23,7 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds);
 
-    BusinessFullModel getFullModelById(UUID id);
+    List<BusinessFullModel> getFullModelByIds(List<UUID> id);
 
     List<BaseBusinessDto> getByCorporationId(UUID corporationId);
 
