@@ -7,8 +7,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.Operation
 import com.gliesereum.share.common.model.query.base.OrderType;
 import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,16 +43,6 @@ public class CustomizedArtBondRepositoryImpl implements CustomizedArtBondReposit
             if (queryRequest.getSize() != null) {
                 size = queryRequest.getSize();
             }
-            createEqIfNotNull(criteriaBuilder, predicates, root.get("name"), queryRequest.getNameEq());
-            createGreaterThanIfNotNull(criteriaBuilder, predicates, root.get("price"), queryRequest.getPriceGreaterThan());
-            createLessThanIfNotNull(criteriaBuilder, predicates, root.get("price"), queryRequest.getPriceLessThan());
-            createGreaterThanIfNotNull(criteriaBuilder, predicates, root.get("stockPrice"), queryRequest.getStockPriceGreaterThan());
-            createLessThanIfNotNull(criteriaBuilder, predicates, root.get("stockPrice"), queryRequest.getStockPriceLessThan());
-            createGreaterThanIfNotNull(criteriaBuilder, predicates, root.get("dividendPercent"), queryRequest.getDividendPercentGreaterThan());
-            createLessThanIfNotNull(criteriaBuilder, predicates, root.get("dividendPercent"), queryRequest.getDividendPercentLessThan());
-            createGreaterThanIfNotNull(criteriaBuilder, predicates, root.get("rewardPercent"), queryRequest.getRewardPercentGreaterThan());
-            createLessThanIfNotNull(criteriaBuilder, predicates, root.get("rewardPercent"), queryRequest.getRewardPercentLessThan());
-
             Subquery<Double> subQuery = criteriaQuery.subquery(Double.class);
             Root<OperationsStoryEntity> subQueryFrom = subQuery.from(OperationsStoryEntity.class);
             Predicate artBondIdEq = criteriaBuilder.equal(subQueryFrom.get("artBondId"), root.get("id"));
@@ -61,15 +50,18 @@ public class CustomizedArtBondRepositoryImpl implements CustomizedArtBondReposit
             subQuery.where(artBondIdEq, operationTypeEq);
             subQuery.select(criteriaBuilder.sum(subQueryFrom.get("sum")));
 
-            if (queryRequest.getAmountCollectedGreaterThan() != null) {
-                predicates.add(criteriaBuilder.greaterThan(subQuery, queryRequest.getAmountCollectedGreaterThan()));
-            }
-            if (queryRequest.getAmountCollectedLessThan() != null) {
-                predicates.add(criteriaBuilder.lessThan(subQuery, queryRequest.getAmountCollectedLessThan()));
-            }
+
+            createLikeIfNotNull(criteriaBuilder, predicates, root.get("name"), queryRequest.getNameEq());
+            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("price"), queryRequest.getPriceGreaterThan(), queryRequest.getPriceLessThan());
+            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("stockPrice"), queryRequest.getStockPriceGreaterThan(), queryRequest.getStockPriceLessThan());
+            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("dividendPercent"), queryRequest.getDividendPercentGreaterThan(), queryRequest.getDividendPercentLessThan());
+            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("rewardPercent"), queryRequest.getRewardPercentGreaterThan(), queryRequest.getRewardPercentLessThan());
+            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, subQuery, queryRequest.getAmountCollectedGreaterThan(), queryRequest.getAmountCollectedLessThan());
+
             if (CollectionUtils.isNotEmpty(predicates)) {
                 criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
             }
+
             if (queryRequest.getOrderField() == null) {
                 queryRequest.setOrderField("paymentStartDate");
             }
@@ -87,9 +79,34 @@ public class CustomizedArtBondRepositoryImpl implements CustomizedArtBondReposit
         return query.getResultList();
     }
 
+    private void createBetweenOrGreaterOrLess(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<? extends Double> expression, Double greater, Double less) {
+        if (ObjectUtils.allNotNull(greater, less)) {
+            predicates.add(criteriaBuilder.between(expression, greater, less));
+        } else if (greater != null) {
+            createGreaterThanIfNotNull(criteriaBuilder, predicates, expression, greater);
+        } else {
+            createLessThanIfNotNull(criteriaBuilder, predicates, expression, less);
+        }
+    }
+
+    private void createBetweenOrGreaterOrLess(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<? extends Integer> expression, Integer greater, Integer less) {
+        if (ObjectUtils.allNotNull(greater, less)) {
+            predicates.add(criteriaBuilder.between(expression, greater, less));
+        } else {
+            createGreaterThanIfNotNull(criteriaBuilder, predicates, expression, greater);
+            createLessThanIfNotNull(criteriaBuilder, predicates, expression, less);
+        }
+    }
+
     private void createEqIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<?> expression, Object value) {
         if (value != null) {
             predicates.add(criteriaBuilder.equal(expression, value));
+        }
+    }
+
+    private void createLikeIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<String> expression, String value) {
+        if (value != null) {
+            predicates.add(criteriaBuilder.like(expression, value));
         }
     }
 
