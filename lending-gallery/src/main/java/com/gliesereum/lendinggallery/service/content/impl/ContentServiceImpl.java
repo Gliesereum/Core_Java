@@ -34,13 +34,13 @@ public class ContentServiceImpl extends DefaultServiceImpl<ContentDto, ContentEn
     }
 
     @Override
-    public List<ContentDto> getAllByContentType(ContentType type) {
-        List<ContentEntity> entities = repository.findAllByContentType(type);
+    public List<ContentDto> getAllByContentType(ContentType type, int page, int size) {
+        List<ContentEntity> entities = repository.findAllByContentTypeOrderByCreate(type);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
-    public List<ContentDto> getAllByTags(List<String> tags) {
+    public List<ContentDto> getAllByTags(List<String> tags, int page, int size) {
         if(CollectionUtils.isEmpty(tags)){
             return new ArrayList<>();
         }

@@ -46,4 +46,6 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
     Map<String, Integer> getPercentPerYear(ArtBondDto artBond);
 
     Double getAmountCollected(UUID id);
+
+    ArtBondDto superUpdateArtBond(ArtBondDto dto);
 }

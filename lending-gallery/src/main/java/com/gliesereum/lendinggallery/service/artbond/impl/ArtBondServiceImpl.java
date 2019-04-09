@@ -106,6 +106,13 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     }
 
     @Override
+    public ArtBondDto superUpdateArtBond(ArtBondDto dto) {
+        ArtBondDto result = super.update(dto);
+        setAdditionalField(result);
+        return result;
+    }
+
+    @Override
     public ArtBondDto getById(UUID id) {
         if (id == null) {
             throw new ClientException(ID_IS_EMPTY);
