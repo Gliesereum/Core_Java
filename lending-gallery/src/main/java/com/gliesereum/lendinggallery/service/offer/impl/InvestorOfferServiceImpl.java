@@ -168,6 +168,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                 UUID artBondId = i.getArtBondId();
                 if (artBondId != null) {
                     i.setArtBond(artBondService.getById(artBondId));
+                    i.getArtBond().setAmountCollected(artBondService.getAmountCollected(artBondId));
                 }
             });
             if (CollectionUtils.isNotEmpty(userIds)) {
