@@ -4,6 +4,7 @@ import com.gliesereum.lendinggallery.model.entity.artbond.ArtBondEntity;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
+import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.time.LocalDateTime;
@@ -48,4 +49,6 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
     Double getAmountCollected(UUID id);
 
     ArtBondDto superUpdateArtBond(ArtBondDto dto);
+
+    List<ArtBondDto> search(ArtBondQuery searchQuery);
 }

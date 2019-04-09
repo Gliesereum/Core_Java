@@ -12,7 +12,7 @@ import java.util.UUID;
  * @author vitalij
  * @version 1.0
  */
-public interface ArtBondRepository extends JpaRepository<ArtBondEntity, UUID> {
+public interface ArtBondRepository extends JpaRepository<ArtBondEntity, UUID>, CustomizedArtBondRepository {
 
     List<ArtBondEntity> findAllByStatusTypeAndSpecialStatusType(StatusType statusType, SpecialStatusType specialStatusType);
 
