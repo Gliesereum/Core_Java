@@ -24,6 +24,9 @@ public class UserFileEntity extends DefaultEntity {
     @Column(name = "filename")
     private String filename;
 
+    @Column(name = "original_filename")
+    private String originalFilename;
+
     @Column(name = "url")
     private String url;
 

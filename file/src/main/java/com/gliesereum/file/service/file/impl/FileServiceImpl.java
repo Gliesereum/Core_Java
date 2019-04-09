@@ -103,7 +103,7 @@ public class FileServiceImpl implements FileService {
                 }
             }
         }
-        return userFileService.create(insertFileInfo(userFile, filename, resultUrl, contentType, fileSize, userId));
+        return userFileService.create(insertFileInfo(userFile, filename, multipartFile.getOriginalFilename(), resultUrl, contentType, fileSize, userId));
     }
 
     @Override
@@ -129,8 +129,9 @@ public class FileServiceImpl implements FileService {
         return fileResponse;
     }
 
-    private UserFileDto insertFileInfo(UserFileDto userFile, String fileName, String fileUrl, String contentType, long fileSize, UUID userId) {
+    private UserFileDto insertFileInfo(UserFileDto userFile, String fileName, String originalFilename, String fileUrl, String contentType, long fileSize, UUID userId) {
         userFile.setFilename(fileName);
+        userFile.setOriginalFilename(originalFilename);
         userFile.setUrl(fileUrl);
         userFile.setSize(fileSize);
         userFile.setUserId(userId);

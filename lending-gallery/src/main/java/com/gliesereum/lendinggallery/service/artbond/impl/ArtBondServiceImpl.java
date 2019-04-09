@@ -18,6 +18,7 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,24 +85,8 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setStatusType(StatusType.WAITING_COLLECTION);
         dto.setSpecialStatusType(SpecialStatusType.ACTIVE);
         ArtBondDto result = super.create(dto);
-        List<MediaDto> media = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(dto.getArtBondInfo())) {
-            media.addAll(dto.getArtBondInfo());
-        }
-        if (CollectionUtils.isNotEmpty(dto.getAuthorInfo())) {
-            media.addAll(dto.getAuthorInfo());
-        }
-        if (CollectionUtils.isNotEmpty(dto.getDocuments())) {
-            media.addAll(dto.getDocuments());
-        }
-        if (CollectionUtils.isNotEmpty(dto.getImages())) {
-            media.addAll(dto.getImages());
-        }
-        if (result != null && CollectionUtils.isNotEmpty(media)) {
-            media.forEach(f -> {
-                f.setObjectId(result.getId());
-            });
-            mediaService.create(media);
+        if (result != null) {
+            createMedia(dto, result.getId());
         }
         return result;
     }
@@ -112,6 +97,10 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setStatusType(artBond.getStatusType());
         dto.setSpecialStatusType(artBond.getSpecialStatusType());
         ArtBondDto result = super.update(dto);
+        if (result != null) {
+            mediaService.deleteAllByObjectId(result.getId());
+            createMedia(dto, result.getId());
+        }
         setAdditionalField(result);
         return result;
     }
@@ -331,5 +320,18 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setArtBondInfo(mediaService.getByObjectIdAndType(dto.getId(), BlockMediaType.ART_BOND_INFO));
         dto.setAuthorInfo(mediaService.getByObjectIdAndType(dto.getId(), BlockMediaType.AUTHOR_INFO));
         dto.setDocuments(mediaService.getByObjectIdAndType(dto.getId(), BlockMediaType.DOCUMENTS));
+    }
+
+    private List<MediaDto> createMedia(ArtBondDto artBond, UUID artBondId) {
+        List<MediaDto> media = new ArrayList<>();
+        media.addAll(ListUtils.emptyIfNull(artBond.getArtBondInfo()));
+        media.addAll(ListUtils.emptyIfNull(artBond.getAuthorInfo()));
+        media.addAll(ListUtils.emptyIfNull(artBond.getDocuments()));
+        media.addAll(ListUtils.emptyIfNull(artBond.getImages()));
+        if (CollectionUtils.isNotEmpty(media)) {
+            media.forEach(f -> f.setObjectId(artBondId));
+            media = mediaService.create(media);
+        }
+        return media;
     }
 }
