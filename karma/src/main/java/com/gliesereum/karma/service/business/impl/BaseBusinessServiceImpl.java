@@ -246,9 +246,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             result.setRating(commentService.getRating(i.getId()));
             result.setBusinessId(i.getId());
             result.setServicePrices(ListUtils.emptyIfNull(servicePriceService.getByBusinessId(i.getId())));
-            result.setPackages(packageService.getByBusinessId(i.getId()));
-            result.setMedia(mediaService.getByObjectId(i.getId()));
-            result.setComments(commentService.findFullByObjectId(i.getId()));
+            result.setPackages(ListUtils.emptyIfNull(packageService.getByBusinessId(i.getId())));
+            result.setMedia(ListUtils.emptyIfNull(mediaService.getByObjectId(i.getId())));
+            result.setComments(ListUtils.emptyIfNull(commentService.findFullByObjectId(i.getId())));
             return result;
         }).collect(Collectors.toList());
     }
