@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface ContentService extends DefaultService<ContentDto, ContentEntity> {
 
-    List<ContentDto> getAllByContentType(ContentType type, int page, int size);
+    List<ContentDto> getAllByContentType(ContentType type, Integer page, Integer size);
 
-    List<ContentDto> getAllByTags(List<String> tags, int page, int size);
+    List<ContentDto> getAllByTags(List<String> tags, Integer page, Integer size);
 }
