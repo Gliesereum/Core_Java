@@ -23,13 +23,15 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
@@ -78,6 +80,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             throw new ClientException(OFFER_STATE_IS_EMPTY);
         }
         InvestorOfferDto result = findById(id);
+        checkUpdateState(result, state);
         result.setStateType(state);
         result = super.update(result);
         if (result != null) {
@@ -96,9 +99,50 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         return result;
     }
 
+    private void checkUpdateState(InvestorOfferDto offer, OfferStateType state) {
+        if (offer == null) {
+            throw new ClientException(OFFER_NOT_FOUND_BY_ID);
+        }
+        ArtBondDto artBond = artBondService.getById(offer.getArtBondId());
+        Integer commonSum = 0;
+
+        if (state.equals(OfferStateType.COMPLETED)) {
+
+            List<InvestorOfferDto> offers = getAllByArtBondAndStateType(artBond.getId(), OfferStateType.COMPLETED);
+
+            if (CollectionUtils.isNotEmpty(offers)) {
+                commonSum = offers.stream().mapToInt(InvestorOfferDto::getSumInvestment).sum();
+            }
+            if ((artBond.getPrice() - commonSum) < offer.getSumInvestment()) {
+                throw new ClientException(SUM_EXCEEDS_AMOUNT_ALLOWED_FOR_INVESTMENT);
+            }
+        }
+        if (artBond.getPrice() == (commonSum + offer.getSumInvestment())) {
+            artBond.setStatusType(StatusType.COMPLETED_COLLECTION);
+            artBondService.superUpdateArtBond(artBond);
+            List<InvestorOfferDto> offers = getAllByArtBond(artBond.getId());
+            if (CollectionUtils.isNotEmpty(offers)) {
+                List<InvestorOfferDto> refused = new ArrayList<>();
+                offers.forEach(f -> {
+                    if (!f.getStateType().equals(OfferStateType.COMPLETED)) {
+                        f.setStateType(OfferStateType.REFUSED);
+                        refused.add(f);
+                    }
+                });
+                super.update(refused);
+            }
+        }
+    }
+
     @Override
     public List<InvestorOfferDto> getAllByArtBond(UUID id) {
         List<InvestorOfferEntity> entities = repository.findAllByArtBondId(id);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<InvestorOfferDto> getAllByArtBondAndStateType(UUID id, OfferStateType stateType) {
+        List<InvestorOfferEntity> entities = repository.findAllByArtBondIdAndStateType(id, stateType);
         return converter.convert(entities, dtoClass);
     }
 
@@ -151,7 +195,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     public List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state) {
         List<InvestorOfferEntity> entities = repository.findAllByStateType(state);
         List<InvestorOfferFullModelDto> result = converter.convert(entities, InvestorOfferFullModelDto.class);
-        if(CollectionUtils.isNotEmpty(result)) {
+        if (CollectionUtils.isNotEmpty(result)) {
             List<UUID> userIds = new ArrayList<>();
             result.forEach(i -> {
                 UUID customerId = i.getCustomerId();
@@ -211,7 +255,8 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         if (dto.getStockCount() == null || dto.getStockCount() == 0) {
             throw new ClientException(SUM_OF_INVESTMENT_CAN_NOT_BE_ZERO);
         }
-        List<InvestorOfferDto> offers = getAllByArtBond(artBond.getId());
+
+        List<InvestorOfferDto> offers = getAllByArtBondAndStateType(artBond.getId(), OfferStateType.COMPLETED);
         Integer commonSum = 0;
         if (CollectionUtils.isNotEmpty(offers)) {
             commonSum = offers.stream().mapToInt(InvestorOfferDto::getSumInvestment).sum();
