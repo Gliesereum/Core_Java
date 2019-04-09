@@ -48,5 +48,7 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
 
     Double getAmountCollected(UUID id);
 
+    ArtBondDto superUpdateArtBond(ArtBondDto dto);
+
     List<ArtBondDto> search(ArtBondQuery searchQuery);
 }

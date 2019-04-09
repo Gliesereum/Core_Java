@@ -2,6 +2,7 @@ package com.gliesereum.lendinggallery.model.repository.jpa.content;
 
 import com.gliesereum.lendinggallery.model.entity.content.ContentEntity;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.ContentType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.UUID;
  */
 public interface ContentRepository extends JpaRepository<ContentEntity, UUID> {
 
-    List<ContentEntity> findAllByContentType(ContentType type);
+    List<ContentEntity> findAllByContentTypeOrderByCreate(ContentType type, Pageable pageable);
 
-    List<ContentEntity> findAllByTagsContainsOrderByCreate(List<String> tags);
+    List<ContentEntity> findAllByTagsContainsOrderByCreate(List<String> tags, Pageable pageable);
 }

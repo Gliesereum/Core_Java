@@ -28,13 +28,17 @@ public class ContentController {
     }
 
     @GetMapping("/by-type")
-    public List<ContentDto> getAllByContentType(@RequestParam(name = "type") ContentType type) {
-        return service.getAllByContentType(type);
+    public List<ContentDto> getAllByContentType(@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                                                @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
+                                                @RequestParam(name = "type") ContentType type) {
+        return service.getAllByContentType(type, page, size);
     }
 
     @PostMapping("/by-tags")
-    public List<ContentDto> getAllByTags(@RequestBody List<String> tags) {
-        return service.getAllByTags(tags);
+    public List<ContentDto> getAllByTags(@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                                         @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
+                                         @RequestBody List<String> tags) {
+        return service.getAllByTags(tags, page, size);
     }
 
     @GetMapping("/{id}")

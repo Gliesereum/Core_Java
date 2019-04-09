@@ -10,6 +10,7 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,17 +35,17 @@ public class ContentServiceImpl extends DefaultServiceImpl<ContentDto, ContentEn
     }
 
     @Override
-    public List<ContentDto> getAllByContentType(ContentType type) {
-        List<ContentEntity> entities = repository.findAllByContentType(type);
+    public List<ContentDto> getAllByContentType(ContentType type, Integer page, Integer size) {
+        List<ContentEntity> entities = repository.findAllByContentTypeOrderByCreate(type, PageRequest.of(page, size));
         return converter.convert(entities, dtoClass);
     }
 
     @Override
-    public List<ContentDto> getAllByTags(List<String> tags) {
+    public List<ContentDto> getAllByTags(List<String> tags, Integer page, Integer size) {
         if(CollectionUtils.isEmpty(tags)){
             return new ArrayList<>();
         }
-        List<ContentEntity> entities = repository.findAllByTagsContainsOrderByCreate(tags);
+        List<ContentEntity> entities = repository.findAllByTagsContainsOrderByCreate(tags, PageRequest.of(page, size));
         return converter.convert(entities, dtoClass);
     }
 }
