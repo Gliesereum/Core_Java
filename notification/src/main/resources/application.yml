@@ -14,6 +14,12 @@ module-url: /notification/v1
 server:
   port: 8270
 
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+
 db:
   schema: notification
 

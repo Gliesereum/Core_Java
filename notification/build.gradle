@@ -8,6 +8,7 @@ buildscript {
 		commonsLangVersion = '3.8.1'
 		commonsIOVersion = '2.6'
 		lombokVersion = '1.18.2'
+		swaggerVersion = '2.9.2'
 	}
 	repositories {
 		mavenCentral()
@@ -46,6 +47,7 @@ dependencies {
 	implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
 	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 	implementation "commons-io:commons-io:${commonsIOVersion}"
+	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
 	
 	runtimeOnly('org.postgresql:postgresql')
 	

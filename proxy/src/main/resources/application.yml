@@ -33,6 +33,9 @@ zuul:
     lending-gallery-service:
       path: /lending-gallery/v1/**
       service-id: lending-gallery-service
+    notification-service:
+      path: /notification/v1/**
+      service-id: notification-service
   ignored-services: '*'
   prefix: /api
   host:
