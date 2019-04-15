@@ -268,6 +268,26 @@ services:
       eureka.host: discovery
       eureka.port: 8761
 
+  notification:
+    image: gls-notification:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      server.port: 8270
+      spring.profiles.active: docker
+      db.host: 46.101.182.178
+      db.database: glsdev
+      db.port: 26780
+      db.username: postgres
+      db.password: GliesereumAdmin0013
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
+
   nginx:
     image: nginx:1.15.7-alpine
     volumes:

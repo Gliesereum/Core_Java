@@ -3,12 +3,16 @@ package com.gliesereum.lendinggallery.service.artbond.impl;
 import com.gliesereum.lendinggallery.model.entity.artbond.ArtBondEntity;
 import com.gliesereum.lendinggallery.model.repository.jpa.artbond.ArtBondRepository;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
+import com.gliesereum.lendinggallery.service.artbond.InterestedArtBondService;
+import com.gliesereum.lendinggallery.service.customer.CustomerService;
 import com.gliesereum.lendinggallery.service.media.MediaService;
 import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
@@ -59,6 +63,12 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Autowired
     private OperationsStoryService operationsStoryService;
+
+    @Autowired
+    private InterestedArtBondService interestedArtBondService;
+
+    @Autowired
+    private CustomerService customerService;
 
 
     public ArtBondServiceImpl(ArtBondRepository artBondRepository, DefaultConverter defaultConverter) {
@@ -121,6 +131,29 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         ArtBondDto result = super.update(dto);
         setAdditionalField(result);
         return result;
+    }
+
+    @Override
+    public InterestedArtBondDto interested(UUID id) {
+        InterestedArtBondDto result = null;
+        ArtBondDto artBond = getById(id);
+        CustomerDto customer = customerService.getByUser();
+        if (ObjectUtils.allNotNull(artBond, customer)) {
+            result = interestedArtBondService.create(new InterestedArtBondDto(artBond.getId(), customer.getId()));
+        }
+        return result;
+    }
+
+    @Override
+    public void notInterested(UUID id) {
+        ArtBondDto artBond = getById(id);
+        CustomerDto customer = customerService.getByUser();
+        if (ObjectUtils.allNotNull(artBond, customer)) {
+            InterestedArtBondDto interested = interestedArtBondService.getByArtBondIdAndCustomerId(artBond.getId(), customer.getId());
+            if (interested != null) {
+                interestedArtBondService.delete(interested.getId());
+            }
+        }
     }
 
     @Override
@@ -324,6 +357,11 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             offers = Collections.emptyList();
         }
         dto.setMyOffers(offers);
+        List<InterestedArtBondDto> interested = interestedArtBondService.getByArtBondId(dto.getId());
+        if (CollectionUtils.isEmpty(interested)) {
+            interested = Collections.emptyList();
+        }
+        dto.setInterested(interested);
     }
 
     private void setMedia(ArtBondDto dto) {

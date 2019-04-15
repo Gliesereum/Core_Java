@@ -10,6 +10,7 @@ buildscript {
 		lombokVersion = '1.18.2'
 		logbackVersion = '1.2.3'
 		awsVersion = '1.11.475'
+		swaggerVersion = '2.9.2'
 	}
 	repositories {
 		mavenCentral()
@@ -51,6 +52,7 @@ dependencies {
 	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 	implementation "commons-io:commons-io:${commonsIOVersion}"
 	implementation "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
+	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
 
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"

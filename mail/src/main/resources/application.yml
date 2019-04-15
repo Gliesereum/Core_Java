@@ -8,6 +8,11 @@ db:
 server:
   port: 8220
 
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
 
 module-url: /mail/v1
 

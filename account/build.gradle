@@ -10,6 +10,7 @@ buildscript {
 		jjwtVersion = '0.9.1'
 		lombokVersion = '1.18.2'
 		logbackVersion = '1.2.3'
+		swaggerVersion = '2.9.2'
 	}
 	repositories {
 		mavenCentral()
@@ -51,6 +52,7 @@ dependencies {
 	implementation "io.lettuce:lettuce-core:${lettuceVersion}"
     implementation "commons-io:commons-io:${commonsIOVersion}"
 	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
+	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
 
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"

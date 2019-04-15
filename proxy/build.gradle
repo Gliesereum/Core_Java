@@ -8,6 +8,7 @@ buildscript {
 		modelMapperVersion = '2.3.0'
 		jjwtVersion = '0.9.1'
 		lombokVersion = '1.18.2'
+		swaggerVersion = '2.9.2'
 	}
 	repositories {
 		mavenCentral()
@@ -42,11 +43,12 @@ dependencies {
 	implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
 	implementation('org.springframework.boot:spring-boot-starter-mail')
 	implementation('org.springframework.boot:spring-boot-starter-cache')
-
     implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
 	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 	implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
 	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
+	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
+	implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
 
 	implementation "org.cache2k:cache2k-api:${cache2kVersion}"
 	implementation "org.cache2k:cache2k-jcache:${cache2kVersion}"

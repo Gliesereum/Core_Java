@@ -3,6 +3,7 @@ package com.gliesereum.lendinggallery.controller.artbond;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.media.MediaService;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
@@ -148,5 +149,16 @@ public class ArtBondController {
             response = new MapResponse("amountCollected", result);
         }
         return response;
+    }
+
+    @PostMapping("/interested/{id}")
+    public InterestedArtBondDto interested(@PathVariable("id") UUID id) {
+       return service.interested(id);
+    }
+
+    @PostMapping("/not-interested/{id}")
+    public MapResponse notInterested(@PathVariable("id") UUID id) {
+        service.notInterested(id);
+        return new MapResponse("true");
     }
 }

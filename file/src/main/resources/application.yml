@@ -12,6 +12,11 @@ spring:
 
 module-url: /file/v1
 
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
 
 server:
   port: 8250

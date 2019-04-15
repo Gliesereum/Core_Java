@@ -9,6 +9,7 @@ buildscript {
 		commonsIOVersion = '2.6'
 		lombokVersion = '1.18.2'
 		logbackVersion = '1.2.3'
+		swaggerVersion = '2.9.2'
 	}
 	repositories {
 		mavenCentral()
@@ -49,6 +50,7 @@ dependencies {
 	implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
 	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 	implementation "commons-io:commons-io:${commonsIOVersion}"
+	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
 
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
