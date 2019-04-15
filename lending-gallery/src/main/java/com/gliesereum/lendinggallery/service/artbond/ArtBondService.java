@@ -2,6 +2,7 @@ package com.gliesereum.lendinggallery.service.artbond;
 
 import com.gliesereum.lendinggallery.model.entity.artbond.ArtBondEntity;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
@@ -51,4 +52,8 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
     ArtBondDto superUpdateArtBond(ArtBondDto dto);
 
     List<ArtBondDto> search(ArtBondQuery searchQuery);
+
+    InterestedArtBondDto interested(UUID id);
+
+    void notInterested(UUID id);
 }
