@@ -84,10 +84,10 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
                 throw new ClientException(USER_NOT_AUTHENTICATION);
             }
             dto.setId(SecurityUtil.getUserId());
-            if (StringUtils.isEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {
+            if (StringUtils.isNotEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {
                 throw new ClientException(UPL_AVATAR_IS_NOT_VALID);
             }
-            if (StringUtils.isEmpty(dto.getCoverUrl()) && !urlPattern.matcher(dto.getCoverUrl()).matches()) {
+            if (StringUtils.isNotEmpty(dto.getCoverUrl()) && !urlPattern.matcher(dto.getCoverUrl()).matches()) {
                 throw new ClientException(UPL_COVER_IS_NOT_VALID);
             }
             UserDto byId = super.getById(dto.getId());

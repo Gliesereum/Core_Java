@@ -51,10 +51,8 @@ public class UserDto extends DefaultDto {
     @NotEmpty
     private String addAddress;
 
-    @NotEmpty
     private String avatarUrl;
 
-    @NotEmpty
     private String coverUrl;
 
     private Gender gender;
