@@ -24,7 +24,7 @@ public class StatusController {
     @Autowired
     private DiscoveryClient discoveryClient;
 
-    @GetMapping("/api/status")
+    @GetMapping("/status")
     public Map<String, Object> status() {
         Map<String, Object> result = new HashMap<>();
         List<String> services = discoveryClient.getServices();

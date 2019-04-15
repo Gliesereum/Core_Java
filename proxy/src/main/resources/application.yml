@@ -12,6 +12,8 @@ logging.level.org.springframework.cloud.netflix.zuul.filters.post.SendErrorFilte
 
 server:
   port: 8200
+  servlet:
+    context-path: /api
 
 zuul:
   routes:
