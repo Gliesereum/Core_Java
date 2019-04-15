@@ -102,4 +102,7 @@ public class ArtBondEntity extends DefaultEntity {
     @Column(name = "payment_finish_date")
     private LocalDateTime paymentFinishDate;
 
+    @Column(name = "release_date")
+    private LocalDateTime releaseDate;
+
 }

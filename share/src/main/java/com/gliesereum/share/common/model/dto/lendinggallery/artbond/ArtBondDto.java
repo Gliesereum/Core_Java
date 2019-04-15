@@ -90,6 +90,10 @@ public class ArtBondDto extends DefaultDto {
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime paymentFinishDate;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
+    private LocalDateTime releaseDate;
+
     private List<PaymentCalendarDto> paymentCalendar = new ArrayList<>();
 
     private Double nkd;
@@ -99,4 +103,6 @@ public class ArtBondDto extends DefaultDto {
     private Double amountCollected;
 
     private List<InvestorOfferDto> myOffers = new ArrayList<>();
+
+    private List<InterestedArtBondDto> interested = new ArrayList<>();
 }
