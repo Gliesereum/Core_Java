@@ -67,4 +67,10 @@ public class WorkingSpaceController {
         workerService.delete(id);
         return new MapResponse("true");
     }
+
+    @GetMapping("/worker/exist/byPhone")
+    public MapResponse checkWorkerExistByPhone(@RequestParam("phone") String phone) {
+        Boolean exist = workerService.checkWorkerExistByPhone(phone);
+        return new MapResponse("exist", exist);
+    }
 }

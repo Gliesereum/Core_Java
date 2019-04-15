@@ -10,6 +10,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -135,5 +136,15 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         }
         user.setKycApproved(true);
         super.update(user);
+    }
+
+    @Override
+    public UserDto getByPhone(String phone) {
+        UserDto result = null;
+        UserPhoneDto byPhone = phoneService.getByPhone(phone);
+        if (byPhone != null) {
+            result = getById(byPhone.getUserId());
+        }
+        return result;
     }
 }

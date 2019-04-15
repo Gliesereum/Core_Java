@@ -81,4 +81,9 @@ public class UserController {
         return new MapResponse(userService.isExist(id));
     }
 
+    @GetMapping("/by-phone")
+    public UserDto getByPhone(@RequestParam("phone") String phone) {
+        return userService.getByPhone(phone);
+    }
+
 }

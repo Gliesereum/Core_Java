@@ -4,6 +4,7 @@ import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -84,6 +85,27 @@ public class UserExchangeServiceImpl implements UserExchangeService {
                     HttpMethod.GET,
                     HttpEntity.EMPTY,
                     new ParameterizedTypeReference<List<UserDto>>() {});
+            if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
+                result = response.getBody();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public UserDto getByPhone(String phone) {
+        UserDto result = null;
+        if(StringUtils.isNotBlank(phone)) {
+            String uri = UriComponentsBuilder
+                    .fromUriString(exchangeProperties.getAccount().getGetByPhone())
+                    .queryParam("phone", phone)
+                    .build()
+                    .toString();
+            ResponseEntity<UserDto> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    UserDto.class);
             if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
                 result = response.getBody();
             }

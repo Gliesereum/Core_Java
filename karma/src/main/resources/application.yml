@@ -43,6 +43,7 @@ exchange:
     account:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
+      getByPhone: http://account-service/user/by-phone
 
 notification:
   topicName: amq.topic

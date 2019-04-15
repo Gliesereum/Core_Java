@@ -9,6 +9,7 @@ import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
@@ -16,6 +17,7 @@ import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +102,26 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         checkWorker(dto.getUserId());
         checkWorkingSpace(dto);
         return super.update(dto);
+    }
+
+    @Override
+    public boolean checkWorkerExistByPhone(String phone) {
+        boolean result = false;
+        if (StringUtils.isNotBlank(phone)) {
+            UserDto user = userExchangeService.getByPhone(phone);
+            if (user != null) {
+                List<WorkerDto> worker = findByUserId(user.getId());
+                if (CollectionUtils.isNotEmpty(worker)) {
+                    result = true;
+                } else {
+                    List<BaseBusinessDto> business = baseBusinessService.getByCorporationIds(user.getCorporationIds());
+                    if (CollectionUtils.isNotEmpty(business)) {
+                        result = true;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     private void checkWorker(UUID userId){
