@@ -12,6 +12,7 @@ import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_WORSE;
 import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.*;
@@ -31,6 +31,9 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Slf4j
 @Service
 public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserPhoneEntity> implements UserPhoneService {
+
+    private static final Class<UserPhoneDto> DTO_CLASS = UserPhoneDto.class;
+    private static final Class<UserPhoneEntity> ENTITY_CLASS = UserPhoneEntity.class;
 
     @Autowired
     private UserPhoneRepository repository;
@@ -46,13 +49,6 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
 
     @Autowired
     private VerificationService verificationService;
-
-    public static final String PHONE_PATTERN = "\\+?[0-9]{6,14}";
-
-    public static final Pattern phonePattern = Pattern.compile(PHONE_PATTERN);
-
-    private static final Class<UserPhoneDto> DTO_CLASS = UserPhoneDto.class;
-    private static final Class<UserPhoneEntity> ENTITY_CLASS = UserPhoneEntity.class;
 
     public UserPhoneServiceImpl(UserPhoneRepository userPhoneRepository, DefaultConverter defaultConverter) {
         super(userPhoneRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -91,13 +87,12 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     }
 
     @Override
-    public UserPhoneDto getByValue(String value) {
+    public UserPhoneDto getByPhone(String value) {
         UserPhoneDto result = null;
-        if (!StringUtils.isEmpty(value)) {
-            UserPhoneEntity user = repository.getUserPhoneEntityByPhone(value);
-            if (user != null) {
-                result = converter.convert(user, UserPhoneDto.class);
-            }
+        checkIsPhone(value);
+        UserPhoneEntity user = repository.getUserPhoneEntityByPhone(value);
+        if (user != null) {
+            result = converter.convert(user, UserPhoneDto.class);
         }
         return result;
     }
@@ -168,7 +163,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
         if (StringUtils.isEmpty(phone)) {
             throw new ClientException(PHONE_EMPTY);
         }
-        if (!phonePattern.matcher(phone).matches()) {
+        if (!RegexUtil.phoneIsValid(phone)) {
             throw new ClientException(NOT_PHONE_BY_REGEX);
         }
     }

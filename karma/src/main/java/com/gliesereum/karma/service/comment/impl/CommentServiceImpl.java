@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -65,24 +66,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
         if (objectId != null) {
             List<CommentEntity> entities = commentRepository.findByObjectIdOrderByDateCreatedDesc(objectId);
             result = converter.convert(entities, CommentFullDto.class);
-            if (CollectionUtils.isNotEmpty(result)) {
-                List<UUID> ownerIds = result.stream().map(CommentFullDto::getOwnerId).collect(Collectors.toList());
-                List<UserDto> users = userExchangeService.findByIds(ownerIds);
-                if (CollectionUtils.isNotEmpty(users)) {
-                    result.forEach(i -> {
-                        for (UserDto user : users) {
-                            if (user.getId().equals(i.getOwnerId())) {
-                                i.setFirstName(user.getFirstName());
-                                i.setLastName(user.getLastName());
-                                i.setMiddleName(user.getMiddleName());
-                                break;
-                            }
-                        }
-                    });
-
-                }
-
-            }
+            setUserInfo(result);
         }
         return result;
     }
@@ -98,10 +82,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
             CommentEntity entity = commentRepository.findByObjectIdAndOwnerId(objectId, userId);
             result = converter.convert(entity, CommentFullDto.class);
             if (result != null) {
-                UserDto user = SecurityUtil.getUser().getUser();
-                result.setLastName(user.getLastName());
-                result.setMiddleName(user.getMiddleName());
-                result.setFirstName(user.getFirstName());
+                setUserInfo(Arrays.asList(result));
             }
         }
         return result;
@@ -159,5 +140,25 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
             rating.setRating(new BigDecimal(0));
         }
         return rating;
+    }
+
+    private void setUserInfo(List<CommentFullDto> comments) {
+        if(CollectionUtils.isNotEmpty(comments)) {
+            List<UUID> ownerIds = comments.stream().map(CommentFullDto::getOwnerId).collect(Collectors.toList());
+            List<UserDto> users = userExchangeService.findByIds(ownerIds);
+            if (CollectionUtils.isNotEmpty(users)) {
+                comments.forEach(i -> {
+                    for (UserDto user : users) {
+                        if (user.getId().equals(i.getOwnerId())) {
+                            i.setFirstName(user.getFirstName());
+                            i.setLastName(user.getLastName());
+                            i.setMiddleName(user.getMiddleName());
+                            break;
+                        }
+                    }
+                });
+
+            }
+        }
     }
 }

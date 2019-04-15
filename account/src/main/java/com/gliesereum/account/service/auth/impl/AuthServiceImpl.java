@@ -84,7 +84,7 @@ public class AuthServiceImpl implements AuthService {
                 user = userService.getById(email.getUserId());
             }
             if (type.equals(VerificationType.PHONE)){
-                UserPhoneDto phone = phoneService.getByValue(value);
+                UserPhoneDto phone = phoneService.getByPhone(value);
                 user = userService.getById(phone.getUserId());
             }
             if (user != null) {

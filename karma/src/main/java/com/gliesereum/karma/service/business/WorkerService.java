@@ -18,4 +18,6 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
     WorkerDto findByUserIdAndBusinessId(UUID userId, UUID businessId);
 
     List<WorkerDto> findByUserId(UUID userId);
+
+    boolean checkWorkerExistByPhone(String phone);
 }
