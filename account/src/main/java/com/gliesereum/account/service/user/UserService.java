@@ -19,4 +19,6 @@ public interface UserService extends DefaultService<UserDto, UserEntity> {
     UserDto updateMe(UserDto dto);
 
     void setKycApproved(UUID objectId);
+
+    UserDto getByPhone(String phone);
 }

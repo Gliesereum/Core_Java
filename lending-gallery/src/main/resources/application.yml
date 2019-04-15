@@ -11,6 +11,12 @@ spring:
 
 module-url: /lending-gallery/v1
 
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+
 server:
   port: 8260
 

@@ -17,4 +17,6 @@ public interface UserExchangeService {
 //    boolean userKYCPassed(UUID userId);
 
     List<UserDto> findByIds(Collection<UUID> ids);
+
+    UserDto getByPhone(String phone);
 }

@@ -18,6 +18,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
+import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +74,16 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public ArtBondServiceImpl(ArtBondRepository artBondRepository, DefaultConverter defaultConverter) {
         super(artBondRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.artBondRepository = artBondRepository;
+    }
+
+    @Override
+    public List<ArtBondDto> search(ArtBondQuery searchQuery) {
+        List<ArtBondEntity> entities = artBondRepository.search(searchQuery);
+        List<ArtBondDto> result = converter.convert(entities, dtoClass);
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(this::setAdditionalField);
+        }
+        return result;
     }
 
     @Override

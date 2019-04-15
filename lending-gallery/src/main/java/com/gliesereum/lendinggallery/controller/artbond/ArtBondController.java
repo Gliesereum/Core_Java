@@ -8,6 +8,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMedi
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
+import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,11 @@ public class ArtBondController {
     public MapResponse delete(@PathVariable("id") UUID id) {
         service.delete(id);
         return new MapResponse("true");
+    }
+
+    @PostMapping("/search")
+    public List<ArtBondDto> search(@RequestBody(required = false) ArtBondQuery searchQuery) {
+        return service.search(searchQuery);
     }
 
     @PostMapping("/by-tags")

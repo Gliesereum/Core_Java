@@ -19,4 +19,6 @@ public class AccountProperty {
 //    private String userKYCPassed;
 
     private String findByIds;
+
+    private String getByPhone;
 }

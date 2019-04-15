@@ -10,6 +10,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -83,10 +84,10 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
                 throw new ClientException(USER_NOT_AUTHENTICATION);
             }
             dto.setId(SecurityUtil.getUserId());
-            if (StringUtils.isEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {
+            if (StringUtils.isNotEmpty(dto.getAvatarUrl()) && !urlPattern.matcher(dto.getAvatarUrl()).matches()) {
                 throw new ClientException(UPL_AVATAR_IS_NOT_VALID);
             }
-            if (StringUtils.isEmpty(dto.getCoverUrl()) && !urlPattern.matcher(dto.getCoverUrl()).matches()) {
+            if (StringUtils.isNotEmpty(dto.getCoverUrl()) && !urlPattern.matcher(dto.getCoverUrl()).matches()) {
                 throw new ClientException(UPL_COVER_IS_NOT_VALID);
             }
             UserDto byId = super.getById(dto.getId());
@@ -135,5 +136,15 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         }
         user.setKycApproved(true);
         super.update(user);
+    }
+
+    @Override
+    public UserDto getByPhone(String phone) {
+        UserDto result = null;
+        UserPhoneDto byPhone = phoneService.getByPhone(phone);
+        if (byPhone != null) {
+            result = getById(byPhone.getUserId());
+        }
+        return result;
     }
 }

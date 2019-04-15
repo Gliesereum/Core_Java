@@ -11,6 +11,12 @@ spring:
 
 module-url: /karma/v1
 
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+
 server:
   port: 8240
 
@@ -43,6 +49,7 @@ exchange:
     account:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
+      getByPhone: http://account-service/user/by-phone
 
 notification:
   topicName: amq.topic

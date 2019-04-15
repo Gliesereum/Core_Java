@@ -9,6 +9,7 @@ buildscript {
         modelMapperVersion = '2.3.0'
         jjwtVersion = '0.9.1'
         lombokVersion = '1.18.2'
+        swaggerVersion = '2.9.2'
     }
     repositories {
         mavenCentral()
@@ -57,6 +58,7 @@ dependencies {
     implementation "io.lettuce:lettuce-core:${lettuceVersion}"
     implementation "commons-io:commons-io:${commonsIOVersion}"
     implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
+    implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
 
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     

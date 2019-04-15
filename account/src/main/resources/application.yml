@@ -10,6 +10,12 @@ module-url: /account/v1
 server:
   port: 8210
 
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+
 db:
   schema: account
 
