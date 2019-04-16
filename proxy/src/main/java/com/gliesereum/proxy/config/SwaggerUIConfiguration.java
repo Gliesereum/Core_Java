@@ -34,7 +34,7 @@ public class SwaggerUIConfiguration {
                 for (ZuulProperties.ZuulRoute route : routes.values()) {
                     SwaggerResource swaggerResource = new SwaggerResource();
                     swaggerResource.setName(route.getId());
-                    swaggerResource.setUrl(zuulProperties.getPrefix() + route.getPath().replace("**", SWAGGER_API_PATH));
+                    swaggerResource.setUrl(route.getPath().replace("**", SWAGGER_API_PATH));
                     swaggerResources.add(swaggerResource);
                 }
 
