@@ -20,6 +20,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStor
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.MathUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -313,7 +314,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public double calculateNkd(double dividendValue, int paymentPeriod, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart) {
         long paymentPeriodDays = PAYMENT_PERIOD_DAYS * paymentPeriod;
-        return (dividendValue / paymentPeriodDays) * daysAfterLastPayment + (rewardValue / daysPayment) * daysAfterPaymentStart;
+        return (dividendValue / MathUtil.getOneIfZero(paymentPeriodDays)) * daysAfterLastPayment + (rewardValue / MathUtil.getOneIfZero(daysPayment)) * daysAfterPaymentStart;
     }
 
     @Override

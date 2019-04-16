@@ -140,9 +140,9 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                             }
                         }
 
-                        long daysAfterPaymentStart = ChronoUnit.DAYS.between(paymentStartDate, currentDate);
-                        long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate, currentDate);
-                        long daysPayment = ChronoUnit.DAYS.between(paymentStartDate, artBond.getPaymentFinishDate());
+                        long daysAfterPaymentStart = ChronoUnit.DAYS.between(paymentStartDate.toLocalDate(), currentDate.toLocalDate());
+                        long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate.toLocalDate(), currentDate.toLocalDate());
+                        long daysPayment = ChronoUnit.DAYS.between(paymentStartDate.toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
 
                         double purchaseValue = stockCount * artBond.getStockPrice();
                         double dividendValue = purchaseValue / 100 * artBond.getDividendPercent();
