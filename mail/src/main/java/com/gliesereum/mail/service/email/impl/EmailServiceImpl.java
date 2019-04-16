@@ -65,6 +65,7 @@ public class EmailServiceImpl implements EmailService {
             freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
             Template template = freemarkerConfig.getTemplate("email-verification.ftl");
             sendSingleMessage(to, environment.getProperty(SUBJECT), model, template);
+            logger.info("Verification code: " + code + "\nSend to email: " + to);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
