@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CustomerPaymentInfo {
 
-    private Double balance;
+    private Double balance = 0.0;
 
-    private Double profit;
+    private Double profit = 0.0;
 
-    private Double nkd;
+    private Double nkd = 0.0;
 }
