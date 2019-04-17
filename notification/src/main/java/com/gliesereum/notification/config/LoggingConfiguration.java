@@ -11,4 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackageClasses = LoggingDefaultConfiguration.class)
 public class LoggingConfiguration {
+
 }

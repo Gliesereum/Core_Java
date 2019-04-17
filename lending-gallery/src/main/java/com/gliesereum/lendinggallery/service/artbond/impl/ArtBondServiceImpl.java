@@ -116,6 +116,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public ArtBondDto update(ArtBondDto dto) {
         ArtBondDto artBond = getById(dto.getId());
+        dto.setStockCount(artBond.getStockCount());
         dto.setStatusType(artBond.getStatusType());
         dto.setSpecialStatusType(artBond.getSpecialStatusType());
         ArtBondDto result = super.update(dto);
@@ -155,6 +156,11 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
                 interestedArtBondService.delete(interested.getId());
             }
         }
+    }
+
+    @Override
+    public List<InterestedArtBondDto> getInterested(UUID id) {
+        return interestedArtBondService.getByArtBondId(id);
     }
 
     @Override

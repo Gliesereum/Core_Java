@@ -56,4 +56,6 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
     InterestedArtBondDto interested(UUID id);
 
     void notInterested(UUID id);
+
+    List<InterestedArtBondDto> getInterested(UUID id);
 }
