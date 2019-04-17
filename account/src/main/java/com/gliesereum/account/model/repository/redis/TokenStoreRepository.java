@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface TokenStoreRepository extends CrudRepository<TokenStoreDomain, String> {
+
+    TokenStoreDomain findByRefreshToken(String refreshToken);
 }

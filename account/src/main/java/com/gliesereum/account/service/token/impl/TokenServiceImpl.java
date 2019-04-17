@@ -46,6 +46,11 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public TokenStoreDomain getByRefreshToken(String refreshToken) {
+        return tokenStoreRepository.findByRefreshToken(refreshToken);
+    }
+
+    @Override
     public TokenStoreDomain getAndVerify(String accessToken) {
         if (StringUtils.isBlank(accessToken)) {
             throw new ClientException(ACCESS_EMPTY);
@@ -76,23 +81,20 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public TokenInfoDto refresh(String accessToken, String refreshToken) {
-        if (StringUtils.isBlank(accessToken) || StringUtils.isBlank(refreshToken)) {
-            throw new ClientException(ACCESS_REFRESH_EMPTY);
+    public TokenStoreDomain refresh(String refreshToken) {
+        if (StringUtils.isBlank(refreshToken)) {
+            throw new ClientException(REFRESH_EMPTY);
         }
-        TokenStoreDomain tokenStore = getByAccessToken(accessToken);
+        TokenStoreDomain tokenStore = getByRefreshToken(refreshToken);
         if (tokenStore == null) {
-            throw new ClientException(ACCESS_TOKEN_NOT_FOUND);
-        }
-        if (!tokenStore.getRefreshToken().equals(refreshToken)) {
-            throw new ClientException(PAIR_NOT_VALID);
+            throw new ClientException(REFRESH_TOKEN_NOT_FOUND);
         }
         if (tokenStore.getRefreshExpirationDate().isBefore(LocalDateTime.now())) {
             throw new ClientException(REFRESH_TOKEN_EXPIRED);
         }
         String userId = tokenStore.getUserId();
         tokenStoreRepository.delete(tokenStore);
-        return defaultConverter.convert(generate(userId), TokenInfoDto.class);
+        return generate(userId);
     }
 
     @Override
