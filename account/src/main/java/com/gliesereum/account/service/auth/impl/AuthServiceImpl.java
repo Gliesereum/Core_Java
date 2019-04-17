@@ -205,6 +205,18 @@ public class AuthServiceImpl implements AuthService {
     public AuthDto check(String accessToken) {
         TokenStoreDomain token = tokenService.getAndVerify(accessToken);
         UUID userId = UUID.fromString(token.getUserId());
+        return createAuthModel(token, userId);
+    }
+
+    @Override
+    public AuthDto refresh(String refreshToken) {
+        TokenStoreDomain token = tokenService.refresh(refreshToken);
+        UUID userId = UUID.fromString(token.getUserId());
+        return createAuthModel(token, userId);
+    }
+
+    @Override
+    public AuthDto createAuthModel(TokenStoreDomain token, UUID userId) {
         UserDto user = userService.getById(userId);
         if(user == null) {
             throw new ClientException(USER_NOT_FOUND);

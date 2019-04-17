@@ -13,11 +13,13 @@ public interface TokenService {
 
     TokenStoreDomain getByAccessToken(String accessToken);
 
+    TokenStoreDomain getByRefreshToken(String refreshToken);
+
     TokenStoreDomain getAndVerify(String accessToken);
 
-    TokenStoreDomain generate(String useId);
+    TokenStoreDomain generate(String userId);
 
-    TokenInfoDto refresh(String accessToken, String refreshToken);
+    TokenStoreDomain refresh(String refreshToken);
 
     void revoke(String accessToken);
 }

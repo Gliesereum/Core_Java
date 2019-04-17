@@ -117,11 +117,11 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
             if (customer != null) {
                 List<OperationsStoryDto> operationsStories = operationsStoryService.getAllByCustomerIdAndArtBondId(customer.getId(), artBondId);
                 if (CollectionUtils.isNotEmpty(operationsStories)) {
+                    result = new CustomerPaymentInfo();
                     ArtBondDto artBond = artBondService.getArtBondById(artBondId);
                     LocalDateTime currentDate = LocalDateTime.now();
                     LocalDateTime paymentStartDate = artBond.getPaymentStartDate();
                     if (paymentStartDate.isBefore(currentDate)) {
-                        result = new CustomerPaymentInfo();
                         double balance = 0.0;
                         double profit = 0.0;
                         long stockCount = 0;
@@ -140,9 +140,9 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                             }
                         }
 
-                        long daysAfterPaymentStart = ChronoUnit.DAYS.between(paymentStartDate, currentDate);
-                        long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate, currentDate);
-                        long daysPayment = ChronoUnit.DAYS.between(paymentStartDate, artBond.getPaymentFinishDate());
+                        long daysAfterPaymentStart = ChronoUnit.DAYS.between(paymentStartDate.toLocalDate(), currentDate.toLocalDate());
+                        long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate.toLocalDate(), currentDate.toLocalDate());
+                        long daysPayment = ChronoUnit.DAYS.between(paymentStartDate.toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
 
                         double purchaseValue = stockCount * artBond.getStockPrice();
                         double dividendValue = purchaseValue / 100 * artBond.getDividendPercent();

@@ -3,6 +3,7 @@ package com.gliesereum.share.common.model.dto.file;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class UserFileDto extends DefaultDto {
 
     private String filename;
