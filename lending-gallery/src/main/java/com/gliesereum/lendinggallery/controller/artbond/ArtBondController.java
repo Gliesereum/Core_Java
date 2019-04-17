@@ -153,12 +153,17 @@ public class ArtBondController {
 
     @PostMapping("/interested/{id}")
     public InterestedArtBondDto interested(@PathVariable("id") UUID id) {
-       return service.interested(id);
+        return service.interested(id);
     }
 
     @PostMapping("/not-interested/{id}")
     public MapResponse notInterested(@PathVariable("id") UUID id) {
         service.notInterested(id);
         return new MapResponse("true");
+    }
+
+    @GetMapping("/get-interested/{id}")
+    public List<InterestedArtBondDto> getInterested(@PathVariable("id") UUID id) {
+        return service.getInterested(id);
     }
 }
