@@ -218,7 +218,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         }
         List<ArtBondEntity> entities = artBondRepository.findAllByTagsContains(tags);
         List<ArtBondDto> result = converter.convert(entities, dtoClass);
-        result.forEach(f -> setAdditionalField(f));
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(this::setAdditionalField);
+        }
         return result;
     }
 
