@@ -303,7 +303,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             double rewardValue = artBond.getStockPrice() / 100 * artBond.getRewardPercent();
             long daysAfterPaymentStart = PAYMENT_PERIOD_DAYS * paymentPeriod;
             long daysPayment = ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
-            if (daysPayment == 0) {
+            if (daysPayment < 1) {
                 daysPayment = 1;
             }
             result = calculateNkd(dividendValue, paymentPeriod, daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);

@@ -46,9 +46,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public TokenInfoDto refresh(@RequestParam("accessToken") String accessToken,
-                                @RequestParam("refreshToken") String refreshToken) {
-        return tokenService.refresh(accessToken, refreshToken);
+    public AuthDto refresh(@RequestParam("refreshToken") String refreshToken) {
+        return authService.refresh(refreshToken);
     }
 
     @PostMapping("/revoke")

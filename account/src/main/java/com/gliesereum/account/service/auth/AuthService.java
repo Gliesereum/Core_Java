@@ -1,7 +1,10 @@
 package com.gliesereum.account.service.auth;
 
+import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.model.dto.account.auth.SignInDto;
+
+import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -15,4 +18,8 @@ public interface AuthService {
     //AuthDto signUp(Map<String, String> params);
 
     AuthDto check(String accessToken);
+
+    AuthDto refresh(String refreshToken);
+
+    AuthDto createAuthModel(TokenStoreDomain token, UUID userId);
 }
