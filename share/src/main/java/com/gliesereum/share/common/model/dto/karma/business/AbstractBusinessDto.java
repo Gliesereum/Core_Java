@@ -4,6 +4,7 @@ import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
@@ -15,6 +16,7 @@ import java.util.UUID;
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class AbstractBusinessDto extends DefaultDto {
 
     private UUID corporationId;
