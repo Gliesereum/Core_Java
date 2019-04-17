@@ -98,7 +98,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public List<ArtBondDto> getAll() {
         List<ArtBondDto> result = super.getAll();
-        result.forEach(f -> setAdditionalField(f));
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(this::setAdditionalField);
+        }
         return result;
     }
 
