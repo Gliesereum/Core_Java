@@ -10,4 +10,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories("com.gliesereum.notification.model.repository.jpa")
 public class DatabaseConfiguration {
+
 }

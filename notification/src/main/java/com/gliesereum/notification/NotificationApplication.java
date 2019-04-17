@@ -10,11 +10,11 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication(
-		scanBasePackages = {
-				"com.gliesereum.notification",
+		scanBasePackages = { "com.gliesereum.notification",
 				"com.gliesereum.share.common.exception.handler",
-				"com.gliesereum.share.common.security.jwt"},
-		exclude = {ElasticsearchAutoConfiguration.class, ElasticsearchDataAutoConfiguration.class})
+				"com.gliesereum.share.common.security.jwt" },
+		exclude = { ElasticsearchAutoConfiguration.class,
+				ElasticsearchDataAutoConfiguration.class })
 @EnableAsync
 @EnableEurekaClient
 @EnableConfigurationProperties(JwtSecurityProperties.class)
@@ -23,4 +23,5 @@ public class NotificationApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NotificationApplication.class, args);
 	}
+
 }

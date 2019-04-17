@@ -27,30 +27,34 @@ import java.util.List;
 @ComponentScan(basePackageClasses = ExchangeProperties.class)
 public class ExchangeConfiguration {
 
-    @Bean
-    @LoadBalanced
-    @ConditionalOnMissingBean
-    public RestTemplate restTemplate(RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor) {
-        RestTemplate restTemplate = new RestTemplate();
-        List<ClientHttpRequestInterceptor> existed = restTemplate.getInterceptors();
-        List<ClientHttpRequestInterceptor> clientHttpRequestInterceptors = new ArrayList<>();
-        clientHttpRequestInterceptors.add(restTemplateAuthorizationInterceptor);
-        if (CollectionUtils.isNotEmpty(existed)) {
-            clientHttpRequestInterceptors.addAll(existed);
-        }
-        restTemplate.setInterceptors(clientHttpRequestInterceptors);
-        restTemplate.setErrorHandler(new RestTemplateErrorHandler());
-        return restTemplate;
-    }
+	@Bean
+	@LoadBalanced
+	@ConditionalOnMissingBean
+	public RestTemplate restTemplate(
+			RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor) {
+		RestTemplate restTemplate = new RestTemplate();
+		List<ClientHttpRequestInterceptor> existed = restTemplate.getInterceptors();
+		List<ClientHttpRequestInterceptor> clientHttpRequestInterceptors = new ArrayList<>();
+		clientHttpRequestInterceptors.add(restTemplateAuthorizationInterceptor);
+		if (CollectionUtils.isNotEmpty(existed)) {
+			clientHttpRequestInterceptors.addAll(existed);
+		}
+		restTemplate.setInterceptors(clientHttpRequestInterceptors);
+		restTemplate.setErrorHandler(new RestTemplateErrorHandler());
+		return restTemplate;
+	}
 
-    @Bean
-    @ConditionalOnMissingBean
-    public RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor(JwtSecurityProperties jwtSecurityProperties) {
-        return new RestTemplateAuthorizationInterceptor(jwtSecurityProperties);
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor(
+			JwtSecurityProperties jwtSecurityProperties) {
+		return new RestTemplateAuthorizationInterceptor(jwtSecurityProperties);
+	}
 
-    @Bean
-    public UserExchangeService userExchangeService(RestTemplate restTemplate, ExchangeProperties exchangeProperties) {
-        return new UserExchangeServiceImpl(restTemplate, exchangeProperties);
-    }
+	@Bean
+	public UserExchangeService userExchangeService(RestTemplate restTemplate,
+			ExchangeProperties exchangeProperties) {
+		return new UserExchangeServiceImpl(restTemplate, exchangeProperties);
+	}
+
 }
