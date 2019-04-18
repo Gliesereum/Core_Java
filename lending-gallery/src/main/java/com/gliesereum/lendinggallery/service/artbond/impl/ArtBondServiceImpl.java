@@ -110,7 +110,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setSpecialStatusType(SpecialStatusType.ACTIVE);
         ArtBondDto result = super.create(dto);
         if (result != null) {
-            createMedia(dto, result.getId());
+            createMedia(dto, result);
         }
         return result;
     }
@@ -124,7 +124,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         ArtBondDto result = super.update(dto);
         if (result != null) {
             mediaService.deleteAllByObjectId(result.getId());
-            createMedia(dto, result.getId());
+            createMedia(dto, result);
         }
         setAdditionalField(result);
         return result;
@@ -382,16 +382,39 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setDocuments(mediaService.getByObjectIdAndType(dto.getId(), BlockMediaType.DOCUMENTS));
     }
 
-    private List<MediaDto> createMedia(ArtBondDto artBond, UUID artBondId) {
+    private void createMedia(ArtBondDto artBond, ArtBondDto result) {
         List<MediaDto> media = new ArrayList<>();
         media.addAll(ListUtils.emptyIfNull(artBond.getArtBondInfo()));
         media.addAll(ListUtils.emptyIfNull(artBond.getAuthorInfo()));
         media.addAll(ListUtils.emptyIfNull(artBond.getDocuments()));
         media.addAll(ListUtils.emptyIfNull(artBond.getImages()));
         if (CollectionUtils.isNotEmpty(media)) {
-            media.forEach(f -> f.setObjectId(artBondId));
+            media.forEach(f -> f.setObjectId(result.getId()));
             media = mediaService.create(media);
         }
-        return media;
+        if (CollectionUtils.isNotEmpty(media)) {
+            media.forEach(f -> {
+                if (f.getBlockMediaType() != null) {
+                    switch (f.getBlockMediaType()) {
+                        case IMAGES: {
+                            result.getImages().add(f);
+                            break;
+                        }
+                        case ART_BOND_INFO: {
+                            result.getArtBondInfo().add(f);
+                            break;
+                        }
+                        case AUTHOR_INFO: {
+                            result.getAuthorInfo().add(f);
+                            break;
+                        }
+                        case DOCUMENTS: {
+                            result.getDocuments().add(f);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
     }
 }

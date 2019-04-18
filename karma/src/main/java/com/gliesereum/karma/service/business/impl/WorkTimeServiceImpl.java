@@ -11,15 +11,16 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.WORKING_TIME_EXIST_IN_THIS_BUSINESS;
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.WORKING_TIME_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -60,6 +61,22 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             checkDayExist(dto);
             serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getObjectId());
             result = super.create(dto);
+        }
+        return result;
+    }
+
+    @Override
+    @UpdateCarWashIndex
+    public List<WorkTimeDto> create(List<WorkTimeDto> list) {
+        List<WorkTimeDto> result = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            WorkTimeDto workTime = list.get(0);
+            if(list.stream().anyMatch(i -> !i.getObjectId().equals(workTime.getObjectId()))){
+                throw new ClientException(ALL_OBJECT_ID_NOT_EQUALS);
+            }
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(workTime.getServiceType(), workTime.getObjectId());
+            list.forEach(f-> checkDayExist(f));
+            result = super.create(list);
         }
         return result;
     }
