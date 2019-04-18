@@ -70,5 +70,6 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage PAR_CAR_ID_AND_FILTER_ATTRIBUTE_ID_EXIST = new ExceptionMessage(1469, 400, "Par car id and attribute id exist");
     public static final ExceptionMessage FILTER_ATTRIBUTE_ID_IS_EMPTY = new ExceptionMessage(1470, 400, "Filter attribute id is empty");
     public static final ExceptionMessage CAN_NOT_CHANGE_STATUS_CANCELED_OR_COMPLETED_RECORD = new ExceptionMessage(1471, 400, "You can't change status in canceled or completed record");
+    public static final ExceptionMessage ALL_OBJECT_ID_NOT_EQUALS = new ExceptionMessage(1472, 400, "All object id must be equals");
 
 }
