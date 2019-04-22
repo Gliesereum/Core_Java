@@ -47,8 +47,6 @@ public class UserDto extends DefaultDto {
     @NotEmpty
     private String address;
 
-    @Size(min = 3)
-    @NotEmpty
     private String addAddress;
 
     private String avatarUrl;

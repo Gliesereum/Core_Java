@@ -33,6 +33,11 @@ public class WorkTimeController {
         return workTimeService.create(workTime);
     }
 
+    @PostMapping("/list")
+    public List<WorkTimeDto> createList(@RequestBody @Valid List<WorkTimeDto> workTimes) {
+        return workTimeService.create(workTimes);
+    }
+
     @PutMapping
     public WorkTimeDto update(@RequestBody @Valid WorkTimeDto workTime) {
         return workTimeService.update(workTime);
