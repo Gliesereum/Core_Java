@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(scanBasePackages = {
         "com.gliesereum.account",
         "com.gliesereum.share.common.exception.handler",
+        "com.gliesereum.share.common.exception.controller.error",
         "com.gliesereum.share.common.security.jwt"})
 @EnableAsync
 @EnableScheduling

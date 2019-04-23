@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(scanBasePackages = {
         "com.gliesereum.mail",
         "com.gliesereum.share.common.exception.handler",
+        "com.gliesereum.share.common.exception.controller.error",
         "com.gliesereum.share.common.security.jwt"})
 @EnableEurekaClient
 @EnableScheduling

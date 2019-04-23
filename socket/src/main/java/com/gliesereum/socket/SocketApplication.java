@@ -10,7 +10,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication(
         scanBasePackages = {
                 "com.gliesereum.socket",
-                "com.gliesereum.share.common.exception.handler"})
+                "com.gliesereum.share.common.exception.handler",
+                "com.gliesereum.share.common.exception.controller.error"})
 @EnableAsync
 @EnableEurekaClient
 @EnableConfigurationProperties(SecurityProperties.class)

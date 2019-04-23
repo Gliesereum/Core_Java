@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication(
 		scanBasePackages = { "com.gliesereum.notification",
 				"com.gliesereum.share.common.exception.handler",
+				"com.gliesereum.share.common.exception.controller.error",
 				"com.gliesereum.share.common.security.jwt" },
 		exclude = { ElasticsearchAutoConfiguration.class,
 				ElasticsearchDataAutoConfiguration.class })
