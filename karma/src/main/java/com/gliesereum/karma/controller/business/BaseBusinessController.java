@@ -75,6 +75,11 @@ public class BaseBusinessController {
         return baseBusinessService.getByCorporationIds(SecurityUtil.getUserCorporationIds());
     }
 
+    @GetMapping("/business-type")
+    public List<ServiceType> getBusinessType() {
+        return Arrays.asList(ServiceType.values());
+    }
+
     @GetMapping("/by-corporation-id")
     public List<BaseBusinessDto> getByCorporationId(@RequestParam("corporationId") UUID corporationId) {
         return baseBusinessService.getByCorporationId(corporationId);
