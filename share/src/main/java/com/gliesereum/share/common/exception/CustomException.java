@@ -19,6 +19,16 @@ public class CustomException extends RuntimeException {
 
     private String message;
 
+    private String originalPath;
+
+    public CustomException(ExceptionMessage exceptionMessage, String originalPath) {
+        super(exceptionMessage.getMessage());
+        this.errorCode = exceptionMessage.getErrorCode();
+        this.httpCode = exceptionMessage.getHttpCode();
+        this.message = exceptionMessage.getMessage();
+        this.originalPath = originalPath;
+    }
+
     public CustomException(ExceptionMessage exceptionMessage) {
         super(exceptionMessage.getMessage());
         this.errorCode = exceptionMessage.getErrorCode();

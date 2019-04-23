@@ -4,6 +4,7 @@ import com.gliesereum.share.common.exception.CustomException;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.exception.response.ErrorResponse;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,7 @@ public class RestExceptionHandler {
         errorResponse.setCode(ex.getErrorCode());
         errorResponse.setMessage(ex.getMessage());
         errorResponse.setHttpCode(ex.getHttpCode());
+        errorResponse.setPath(ex.getOriginalPath());
         return buildResponse(errorResponse,ex);
     }
 
@@ -93,7 +95,9 @@ public class RestExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(ErrorResponse response, Exception ex) {
-        response.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
+        if(StringUtils.isBlank(response.getPath())) {
+            response.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
+        }
         response.setTimestamp(LocalDateTime.now());
         HttpStatus httpStatus = HttpStatus.valueOf(response.getHttpCode());
         if (httpStatus.is5xxServerError()) {
