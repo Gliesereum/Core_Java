@@ -6,7 +6,7 @@ package com.gliesereum.share.common.model.dto.karma.enumerated;
  */
 public enum ServiceType {
 
-    CAR_WASH;
+    CAR_WASH, CAR_SERVICE, TIRE_FITTING;
 
     public String toString() {
         return name().toLowerCase();
