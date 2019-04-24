@@ -35,3 +35,6 @@ spring:
       uri: http://localhost:9200
       max-connection-idle-time: 5000
       read-timeout: 5000
+
+remoteLogging:
+  enable: false
