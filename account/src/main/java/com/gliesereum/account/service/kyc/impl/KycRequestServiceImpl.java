@@ -25,6 +25,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -216,6 +217,18 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
             });
         }
         return requested;
+    }
+
+    @Override
+    @Transactional
+    public void delete(KycRequestType requestType, UUID objectId) {
+        if ((requestType != null) && (objectId != null)) {
+            List<KycRequestEntity> requests = kycRequestRepository.findAllByKycRequestTypeAndObjectId(requestType, objectId);
+            if (CollectionUtils.isNotEmpty(requests)) {
+                requests.forEach(i -> kycRequestFieldService.deleteAllByKycRequestId(i.getId()));
+                kycRequestRepository.deleteAll(requests);
+            }
+        }
     }
 
     private List<KycRequestFieldDto> validateAndCreateFields(KycValuesRequestDto createRequest, List<KycFieldDto> requiredFields, UUID requestId) {
