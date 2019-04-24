@@ -27,11 +27,6 @@ public class FilterEntity extends DefaultEntity {
     @Column(name = "title")
     private String title;
 
-    //TODO: remove
-    //@Column(name = "service_type")
-    //@Enumerated(EnumType.STRING)
-    //private ServiceType serviceType;
-
     @Column(name = "business_category_id")
     private UUID businessCategoryId;
 

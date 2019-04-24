@@ -1,3 +1,3 @@
-INSERT INTO karma.business_category (code, name, description, business_type) VALUES ('CAR_WASH', 'Мойка', 'Мойка автомобилей', 'CAR');
-INSERT INTO karma.business_category (code, name, description, business_type) VALUES ('TIRE_FITTING', 'Шиномонтаж', 'Шиномонтаж для автомобилей', 'CAR');
-INSERT INTO karma.business_category (code, name, description, business_type) VALUES ('CAR_SERVICE', 'СТО', 'Станция технического обслуживания', 'CAR');
+INSERT INTO karma.business_category (id, code, name, description, business_type) VALUES ('0c1ca141-fb7d-414c-999f-ed8a8af69b1c', 'CAR_WASH', 'Мойка', 'Мойка автомобилей', 'CAR');
+INSERT INTO karma.business_category (id, code, name, description, business_type) VALUES ('607b10e5-fc65-463d-a116-5fae6019c782', 'TIRE_FITTING', 'Шиномонтаж', 'Шиномонтаж для автомобилей', 'CAR');
+INSERT INTO karma.business_category (id, code, name, description, business_type) VALUES ('6a7d64fd-1538-430d-be52-c92ef28d2d3a', 'CAR_SERVICE', 'СТО', 'Станция технического обслуживания', 'CAR');

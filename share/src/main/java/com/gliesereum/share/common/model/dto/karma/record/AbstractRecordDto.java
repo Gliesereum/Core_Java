@@ -57,9 +57,6 @@ public class AbstractRecordDto extends DefaultDto {
 
     private StatusRecord statusRecord;
 
-    //TODO: remove
-    //private ServiceType serviceType;
-
     private UUID businessCategoryId;
 
     private List<ServicePriceDto> services = new ArrayList<>();

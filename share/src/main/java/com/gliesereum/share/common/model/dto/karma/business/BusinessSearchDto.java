@@ -18,8 +18,5 @@ public class BusinessSearchDto {
 
     private List<UUID> serviceIds;
 
-    //TODO: remove
-    //private ServiceType serviceType;
-
     private UUID businessCategoryId;
 }

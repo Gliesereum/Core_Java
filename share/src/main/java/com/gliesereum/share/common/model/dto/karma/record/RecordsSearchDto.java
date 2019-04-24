@@ -25,9 +25,6 @@ public class RecordsSearchDto {
 
     private List<StatusProcess> processes;
 
-    //TODO: remove
-    //private ServiceType serviceType;
-
     private UUID businessCategoryId;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)

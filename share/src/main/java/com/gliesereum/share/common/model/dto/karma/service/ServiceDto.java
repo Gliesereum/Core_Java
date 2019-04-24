@@ -24,9 +24,6 @@ public class ServiceDto extends DefaultDto {
     @NotEmpty
     private String description;
 
-    //TODO: remove
-    //private ServiceType serviceType;
-
     private UUID businessCategoryId;
 
     private ObjectState objectState;

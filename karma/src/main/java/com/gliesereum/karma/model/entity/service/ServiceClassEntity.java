@@ -31,11 +31,6 @@ public class ServiceClassEntity extends DefaultEntity {
     @Column(name = "order_index")
     private Integer orderIndex;
 
-    //TODO: remove
-//    @Column(name = "service_type")
-//    @Enumerated(EnumType.STRING)
-//    private ServiceType serviceType;
-
     @Column(name = "business_category_id")
     private UUID businessCategoryId;
 

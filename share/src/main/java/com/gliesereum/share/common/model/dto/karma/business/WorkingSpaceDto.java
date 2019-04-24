@@ -25,9 +25,6 @@ public class WorkingSpaceDto extends DefaultDto {
 
     private StatusSpace statusSpace;
 
-    //TODO: remove
-    //private ServiceType serviceType;
-
     private UUID businessCategoryId;
 
     private List<WorkerDto> workers = new ArrayList<>();

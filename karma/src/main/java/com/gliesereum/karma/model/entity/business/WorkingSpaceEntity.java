@@ -32,11 +32,6 @@ public class WorkingSpaceEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private StatusSpace statusSpace;
 
-    //TODO: remove
-//    @Column(name = "service_type")
-//    @Enumerated(EnumType.STRING)
-//    private ServiceType serviceType;
-
     @Column(name = "business_category_id")
     private UUID businessCategoryId;
 

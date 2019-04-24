@@ -56,11 +56,6 @@ public class AbstractRecordEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private StatusRecord statusRecord;
 
-    //TODO: remove
-//    @Column(name = "service_type")
-//    @Enumerated(EnumType.STRING)
-//    private ServiceType serviceType;
-
     @Column(name = "business_category_id")
     private UUID businessCategoryId;
 

@@ -53,9 +53,6 @@ public class AbstractBusinessDto extends DefaultDto {
     @Min(-720)
     private Integer timeZone;
 
-    //TODO: remove
-    //private ServiceType serviceType;
-
     private UUID businessCategoryId;
 
     private ObjectState objectState;

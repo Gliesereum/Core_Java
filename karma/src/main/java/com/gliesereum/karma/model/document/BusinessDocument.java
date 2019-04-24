@@ -42,10 +42,6 @@ public class BusinessDocument {
     @GeoPointField
     private GeoPoint geoPoint;
 
-    //TODO: remove
-    //@Field(type = FieldType.Keyword)
-    //private ServiceType serviceType;
-
     @Field(type = FieldType.Keyword)
     private UUID businessCategoryId;
 

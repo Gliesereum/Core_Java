@@ -37,9 +37,6 @@ public class WorkTimeDto extends DefaultDto {
 
     private Boolean isWork;
 
-    //TODO: remove
-    //private ServiceType serviceType;
-
     private UUID businessCategoryId;
 
     private DayOfWeek dayOfWeek;

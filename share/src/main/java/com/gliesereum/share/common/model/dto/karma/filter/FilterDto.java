@@ -25,9 +25,6 @@ public class FilterDto extends DefaultDto {
     @NotEmpty
     private String title;
 
-    //TODO: remove
-    //private ServiceType serviceType;
-
     private UUID businessCategoryId;
 
     private List<FilterAttributeDto> attributes = new ArrayList<>();

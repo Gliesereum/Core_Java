@@ -26,11 +26,6 @@ public class ServiceEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
-    //TODO: remove
-//    @Column(name = "service_type")
-//    @Enumerated(EnumType.STRING)
-//    private ServiceType serviceType;
-
     @Column(name = "business_category_id")
     private UUID businessCategoryId;
 

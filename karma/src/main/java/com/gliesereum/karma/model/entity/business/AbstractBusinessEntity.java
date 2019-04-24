@@ -50,11 +50,6 @@ public class AbstractBusinessEntity extends DefaultEntity {
     @Column(name = "time_zone")
     private Integer timeZone;
 
-    //TODO: remove
-//    @Column(name = "service_type")
-//    @Enumerated(EnumType.STRING)
-//    private ServiceType serviceType;
-
     @Column(name = "business_category_id")
     private UUID businessCategoryId;
 
