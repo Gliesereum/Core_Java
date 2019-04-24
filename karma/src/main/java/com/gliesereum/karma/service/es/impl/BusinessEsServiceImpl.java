@@ -73,7 +73,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
         if ((businessSearch != null) && (businessSearch.getBusinessCategoryId() != null)) {
             UUID businessCategoryId = businessSearch.getBusinessCategoryId();
-            addQueryByServiceType(boolQueryBuilder, businessCategoryId);
+            addQueryByBusinessCategoryId(boolQueryBuilder, businessCategoryId);
             BusinessCategoryDto businessCategory = businessCategoryService.getById(businessCategoryId);
             switch (businessCategory.getBusinessType()) {
                 case CAR: {
@@ -191,10 +191,10 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         }
     }
 
-    private void addQueryByServiceType(BoolQueryBuilder boolQueryBuilder, UUID businessCategoryId) {
+    private void addQueryByBusinessCategoryId(BoolQueryBuilder boolQueryBuilder, UUID businessCategoryId) {
         if (businessCategoryId != null) {
-            TermQueryBuilder serviceTypeTerm = new TermQueryBuilder(FIELD_BUSINESS_CATEGORY_ID, businessCategoryId.toString());
-            boolQueryBuilder.must(serviceTypeTerm);
+            TermQueryBuilder businessCategoryTerm = new TermQueryBuilder(FIELD_BUSINESS_CATEGORY_ID, businessCategoryId.toString());
+            boolQueryBuilder.must(businessCategoryTerm);
         }
     }
 

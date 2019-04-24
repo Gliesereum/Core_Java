@@ -1,4 +1,4 @@
-package com.gliesereum.karma.service.servicetype;
+package com.gliesereum.karma.service.business;
 
 import java.util.UUID;
 
@@ -6,7 +6,7 @@ import java.util.UUID;
  * @author yvlasiuk
  * @version 1.0
  */
-public interface ServiceTypeFacade {
+public interface BusinessCategoryFacade {
 
     boolean currentUserHavePermissionToAction(UUID businessId);
 

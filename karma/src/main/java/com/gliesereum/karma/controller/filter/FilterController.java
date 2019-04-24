@@ -53,7 +53,7 @@ public class FilterController {
     }
 
     @GetMapping("/by-business-category")
-    public List<FilterDto> getByServiceType(@RequestParam("businessCategoryId") UUID businessCategoryId) {
+    public List<FilterDto> getByBusinessCategory(@RequestParam("businessCategoryId") UUID businessCategoryId) {
         return filterService.getAllByBusinessCategoryId(businessCategoryId);
     }
 

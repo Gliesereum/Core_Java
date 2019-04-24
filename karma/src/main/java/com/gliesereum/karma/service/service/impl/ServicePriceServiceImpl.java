@@ -9,7 +9,7 @@ import com.gliesereum.karma.service.filter.PriceFilterAttributeService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.ServiceService;
-import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
@@ -52,7 +52,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     private ServiceService serviceService;
 
     @Autowired
-    private ServiceTypeFacade serviceTypeFacade;
+    private BusinessCategoryFacade businessCategoryFacade;
 
     @Autowired
     private PriceFilterAttributeService priceFilterAttributeService;
@@ -169,7 +169,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             throw new ClientException(ID_NOT_SPECIFIED);
         }
         ServiceDto serviceDto = getServiceById(dto.getServiceId());
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(serviceDto.getBusinessCategoryId(), dto.getBusinessId());
+        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(serviceDto.getBusinessCategoryId(), dto.getBusinessId());
     }
 
     private ServiceDto getServiceById(UUID serviceId) {

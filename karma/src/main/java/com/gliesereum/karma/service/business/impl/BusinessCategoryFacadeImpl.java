@@ -1,8 +1,8 @@
-package com.gliesereum.karma.service.servicetype.impl;
+package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
-import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.exception.client.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
  */
 
 @Service
-public class ServiceTypeFacadeImpl implements ServiceTypeFacade {
+public class BusinessCategoryFacadeImpl implements BusinessCategoryFacade {
 
     @Autowired
     private BaseBusinessService baseBusinessService;

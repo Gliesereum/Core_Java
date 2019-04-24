@@ -6,7 +6,7 @@ import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.PackageServiceService;
 import com.gliesereum.karma.service.service.ServicePriceService;
-import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
@@ -47,7 +47,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     private PackageServiceService packageServiceService;
 
     @Autowired
-    private ServiceTypeFacade serviceTypeFacade;
+    private BusinessCategoryFacade businessCategoryFacade;
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -189,6 +189,6 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         if (business == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessId());
+        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessId());
     }
 }
