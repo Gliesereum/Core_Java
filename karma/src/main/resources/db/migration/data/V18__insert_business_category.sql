@@ -1,0 +1,3 @@
+INSERT INTO karma.business_category (code, name, description, business_type) VALUES ('CAR_WASH', 'Мойка', 'Мойка автомобилей', 'CAR');
+INSERT INTO karma.business_category (code, name, description, business_type) VALUES ('TIRE_FITTING', 'Шиномонтаж', 'Шиномонтаж для автомобилей', 'CAR');
+INSERT INTO karma.business_category (code, name, description, business_type) VALUES ('CAR_SERVICE', 'СТО', 'Станция технического обслуживания', 'CAR');

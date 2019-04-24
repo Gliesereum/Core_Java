@@ -4,7 +4,6 @@ import com.gliesereum.karma.service.filter.FilterAttributeService;
 import com.gliesereum.karma.service.filter.FilterService;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -53,9 +52,9 @@ public class FilterController {
         return new MapResponse("true");
     }
 
-    @GetMapping("/by-service-type")
-    public List<FilterDto> getByServiceType(@RequestParam("serviceType") ServiceType serviceType) {
-        return filterService.getAllByServiceType(serviceType);
+    @GetMapping("/by-business-category")
+    public List<FilterDto> getByServiceType(@RequestParam("businessCategoryId") UUID businessCategoryId) {
+        return filterService.getAllByBusinessCategoryId(businessCategoryId);
     }
 
     @GetMapping("/attribute")

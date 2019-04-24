@@ -10,7 +10,6 @@ import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -39,8 +38,10 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEntity> implements PackageService {
 
-    @Autowired
-    private PackageRepository repository;
+    private static final Class<PackageDto> DTO_CLASS = PackageDto.class;
+    private static final Class<PackageEntity> ENTITY_CLASS = PackageEntity.class;
+
+    private final PackageRepository packageRepository;
 
     @Autowired
     private PackageServiceService packageServiceService;
@@ -49,21 +50,19 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     private ServiceTypeFacade serviceTypeFacade;
 
     @Autowired
-    private BaseBusinessService washService;
+    private BaseBusinessService baseBusinessService;
 
     @Autowired
     private ServicePriceService servicePriceService;
 
-    private static final Class<PackageDto> DTO_CLASS = PackageDto.class;
-    private static final Class<PackageEntity> ENTITY_CLASS = PackageEntity.class;
-
-    public PackageServiceImpl(PackageRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    public PackageServiceImpl(PackageRepository packageRepository, DefaultConverter defaultConverter) {
+        super(packageRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.packageRepository = packageRepository;
     }
 
     @Override
     public List<PackageDto> getByBusinessId(UUID id) {
-        List<PackageEntity> entities = repository.getByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
+        List<PackageEntity> entities = packageRepository.getByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
     }
 
@@ -81,13 +80,13 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
 
     @Override
     public List<PackageDto> getAll() {
-        List<PackageEntity> entities = repository.getAllByObjectState(ObjectState.ACTIVE);
+        List<PackageEntity> entities = packageRepository.getAllByObjectState(ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public PackageDto getById(UUID id) {
-        PackageEntity entity = repository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        PackageEntity entity = packageRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entity, dtoClass);
     }
 
@@ -95,7 +94,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     public List<PackageDto> getByIds(Iterable<UUID> ids) {
         List<PackageDto> result = null;
         if (ids != null) {
-            List<PackageEntity> entities = repository.getAllByIdInAndObjectState(ids, ObjectState.ACTIVE);
+            List<PackageEntity> entities = packageRepository.getAllByIdInAndObjectState(ids, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -161,7 +160,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         if (dto.getServicesIds().isEmpty()) {
             throw new ClientException(SERVICE_NOT_CHOOSE);
         }
-        BaseBusinessDto business = washService.getById(dto.getBusinessId());
+        BaseBusinessDto business = baseBusinessService.getById(dto.getBusinessId());
         if (business == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
@@ -185,6 +184,11 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         if (dto.getBusinessId() == null) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, dto.getBusinessId());
+
+        BaseBusinessDto business = baseBusinessService.getById(dto.getBusinessId());
+        if (business == null) {
+            throw new ClientException(BUSINESS_NOT_FOUND);
+        }
+        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessId());
     }
 }

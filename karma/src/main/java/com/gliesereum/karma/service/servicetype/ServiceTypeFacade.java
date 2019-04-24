@@ -1,7 +1,5 @@
 package com.gliesereum.karma.service.servicetype;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
-
 import java.util.UUID;
 
 /**
@@ -10,7 +8,11 @@ import java.util.UUID;
  */
 public interface ServiceTypeFacade {
 
-    boolean currentUserHavePermissionToAction(ServiceType serviceType, UUID corporationServiceId);
+    boolean currentUserHavePermissionToAction(UUID businessId);
 
-    void throwExceptionIfUserDontHavePermissionToAction(ServiceType serviceType, UUID corporationServiceId);
+    void throwExceptionIfUserDontHavePermissionToAction(UUID businessId);
+
+    boolean currentUserHavePermissionToAction(UUID businessCategoryId, UUID businessId);
+
+    void throwExceptionIfUserDontHavePermissionToAction(UUID businessCategoryId, UUID businessId);
 }

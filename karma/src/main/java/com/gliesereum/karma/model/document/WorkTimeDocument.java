@@ -1,7 +1,6 @@
 package com.gliesereum.karma.model.document;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -10,6 +9,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -35,7 +35,7 @@ public class WorkTimeDocument {
     private Boolean isWork;
 
     @Field(type = FieldType.Keyword)
-    private ServiceType carServiceType;
+    private UUID businessCategoryId;
 
     @Field(type = FieldType.Keyword)
     private DayOfWeek dayOfWeek;

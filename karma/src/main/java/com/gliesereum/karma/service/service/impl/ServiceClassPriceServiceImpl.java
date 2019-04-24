@@ -11,7 +11,6 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceClassPriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -110,7 +109,7 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
             if (price == null) {
                 throw new ClientException(SERVICE_PRICE_NOT_FOUND);
             }
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, price.getBusinessId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(price.getBusinessId());
             if (!serviceClassService.isExist(serviceClassId)) {
                 throw new ClientException(SERVICE_CLASS_NOT_FOUND);
             }

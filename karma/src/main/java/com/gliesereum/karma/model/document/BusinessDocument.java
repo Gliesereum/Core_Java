@@ -1,6 +1,5 @@
 package com.gliesereum.karma.model.document;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -11,6 +10,7 @@ import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -42,8 +42,12 @@ public class BusinessDocument {
     @GeoPointField
     private GeoPoint geoPoint;
 
+    //TODO: remove
+    //@Field(type = FieldType.Keyword)
+    //private ServiceType serviceType;
+
     @Field(type = FieldType.Keyword)
-    private ServiceType serviceType;
+    private UUID businessCategoryId;
 
     @Field(type = FieldType.Nested)
     private List<BusinessServiceDocument> services;

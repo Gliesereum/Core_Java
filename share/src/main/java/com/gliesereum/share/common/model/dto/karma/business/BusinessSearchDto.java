@@ -1,6 +1,5 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,5 +18,8 @@ public class BusinessSearchDto {
 
     private List<UUID> serviceIds;
 
-    private ServiceType serviceType;
+    //TODO: remove
+    //private ServiceType serviceType;
+
+    private UUID businessCategoryId;
 }

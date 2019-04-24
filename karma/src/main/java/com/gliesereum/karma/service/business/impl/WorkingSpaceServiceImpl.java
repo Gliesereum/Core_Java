@@ -50,7 +50,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public WorkingSpaceDto create(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             result = super.create(dto);
         }
         return result;
@@ -60,7 +60,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public WorkingSpaceDto update(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
+            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             result = super.update(dto);
         }
         return result;
@@ -71,7 +71,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
         if (id != null) {
             Optional<WorkingSpaceEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(i.getServiceType(), i.getBusinessId());
+                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(i.getBusinessCategoryId(), i.getBusinessId());
                 repository.delete(i);
             });
 

@@ -2,7 +2,6 @@ package com.gliesereum.karma.service.business;
 
 import com.gliesereum.karma.model.entity.business.WorkTimeEntity;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -16,5 +15,5 @@ public interface WorkTimeService extends DefaultService<WorkTimeDto, WorkTimeEnt
 
     List<WorkTimeDto> getByObjectId(UUID businessId);
 
-    void delete(UUID id, ServiceType serviceType);
+    void delete(UUID id, UUID businessCategoryId);
 }

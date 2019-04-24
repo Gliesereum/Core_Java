@@ -1,12 +1,12 @@
 package com.gliesereum.share.common.model.dto.karma.service;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -24,5 +24,8 @@ public class ServiceClassDto extends DefaultDto {
 
     private Integer orderIndex;
 
-    private ServiceType serviceType;
+    //TODO: remove
+    //private ServiceType serviceType;
+
+    private UUID businessCategoryId;
 }
