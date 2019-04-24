@@ -51,6 +51,8 @@ public class BusinessFullModel extends DefaultDto {
 
     private ObjectState objectState;
 
+    private UUID businessCategoryId;
+
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 
     private List<WorkingSpaceDto> spaces = new ArrayList<>();
