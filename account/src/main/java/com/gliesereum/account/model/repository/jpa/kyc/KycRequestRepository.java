@@ -19,4 +19,6 @@ public interface KycRequestRepository extends JpaRepository<KycRequestEntity, UU
     boolean existsByKycRequestTypeAndObjectIdAndKycStatusNot(KycRequestType requestType, UUID objectId, KycStatus kycStatus);
 
     List<KycRequestEntity> findAllByObjectIdIn(List<UUID> objectIds);
+
+    List<KycRequestEntity> findAllByKycRequestTypeAndObjectId(KycRequestType kycRequestType, UUID objectId);
 }

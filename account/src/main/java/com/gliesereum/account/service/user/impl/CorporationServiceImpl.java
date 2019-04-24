@@ -2,6 +2,7 @@ package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.CorporationEntity;
 import com.gliesereum.account.model.repository.jpa.user.CorporationRepository;
+import com.gliesereum.account.service.kyc.KycRequestService;
 import com.gliesereum.account.service.user.CorporationService;
 import com.gliesereum.account.service.user.CorporationSharedOwnershipService;
 import com.gliesereum.account.service.user.UserCorporationService;
@@ -10,6 +11,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
+import com.gliesereum.share.common.model.dto.account.enumerated.KycRequestType;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.dto.account.user.UserCorporationDto;
@@ -51,6 +53,9 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private KycRequestService kycRequestService;
 
     public CorporationServiceImpl(CorporationRepository repository, DefaultConverter converter) {
         super(repository, converter, DTO_CLASS, ENTITY_CLASS);
@@ -110,6 +115,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         CorporationDto dto = getById(id);
         dto.setObjectState(ObjectState.DELETED);
         super.update(dto);
+        kycRequestService.delete(KycRequestType.CORPORATION, id);
     }
 
     @Override
@@ -206,4 +212,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         corporation.setKycApproved(true);
         super.update(corporation);
     }
+
+
 }
