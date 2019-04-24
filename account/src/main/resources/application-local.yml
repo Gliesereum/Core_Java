@@ -45,3 +45,6 @@ token:
     # 100 days
     refresh: 8640000000
 
+remoteLogging:
+  enable: false
+
