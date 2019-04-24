@@ -18,6 +18,7 @@ import java.util.UUID;
  */
 
 @RestController
+@RequestMapping("/business-category")
 public class BusinessCategoryController {
 
     @Autowired
