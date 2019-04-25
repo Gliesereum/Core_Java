@@ -1,0 +1,1 @@
+ALTER TABLE karma.service_class DROP COLUMN business_category_id;

@@ -33,11 +33,6 @@ public class ServiceClassController {
         return serviceClassService.getAll();
     }
 
-    @GetMapping("/get-by-business-category")
-    public List<ServiceClassDto> getAllByTypeServices(@RequestParam("businessCategoryId") UUID businessCategoryId) {
-        return serviceClassService.getAllByBusinessCategoryId(businessCategoryId);
-    }
-
     @PostMapping
     public ServiceClassDto createService(@Valid @RequestBody ServiceClassDto service) {
         return serviceClassService.create(service);

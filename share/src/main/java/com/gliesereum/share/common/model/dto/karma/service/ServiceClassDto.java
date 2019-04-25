@@ -23,6 +23,4 @@ public class ServiceClassDto extends DefaultDto {
     private String description;
 
     private Integer orderIndex;
-
-    private UUID businessCategoryId;
 }

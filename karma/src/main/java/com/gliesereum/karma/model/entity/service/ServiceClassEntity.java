@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.util.UUID;
 
 /**
  * @author vitalij
@@ -30,8 +29,5 @@ public class ServiceClassEntity extends DefaultEntity {
 
     @Column(name = "order_index")
     private Integer orderIndex;
-
-    @Column(name = "business_category_id")
-    private UUID businessCategoryId;
 
 }
