@@ -55,6 +55,8 @@ public class AbstractBusinessDto extends DefaultDto {
 
     private UUID businessCategoryId;
 
+    private BusinessCategoryDto businessCategory;
+
     private ObjectState objectState;
 
 }

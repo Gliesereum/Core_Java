@@ -1,0 +1,9 @@
+INSERT INTO karma.service_class (id, name, description, order_index, business_category_id) VALUES ('94f8e143-15e8-45c0-9ddd-7c73d719241c', 'Эконом', 'авто эконом класса', 1, '607b10e5-fc65-463d-a116-5fae6019c782');
+INSERT INTO karma.service_class (id, name, description, order_index, business_category_id) VALUES ('559cf0cb-db2d-4df3-9fbe-55ac39c93d9c', 'Стандарт', 'авто стандарт класса',2, '607b10e5-fc65-463d-a116-5fae6019c782');
+INSERT INTO karma.service_class (id, name, description, order_index, business_category_id) VALUES ('21855a57-c447-4c27-bcb4-d8572aa39c1b', 'Бизнес', 'авто бизнес класса',3, '607b10e5-fc65-463d-a116-5fae6019c782');
+INSERT INTO karma.service_class (id, name, description, order_index, business_category_id) VALUES ('1d73ec45-9943-4e44-b416-ccb0b6c76239', 'Премиум', 'авто премиум класса',4, '607b10e5-fc65-463d-a116-5fae6019c782');
+
+INSERT INTO karma.service_class (id, name, description, order_index, business_category_id) VALUES ('f9dca69c-f872-4450-8034-137322c2f5df', 'Эконом', 'авто эконом класса', 1, '6a7d64fd-1538-430d-be52-c92ef28d2d3a');
+INSERT INTO karma.service_class (id, name, description, order_index, business_category_id) VALUES ('6e744429-8975-4a6e-82a3-b6bbac337acf', 'Стандарт', 'авто стандарт класса',2, '6a7d64fd-1538-430d-be52-c92ef28d2d3a');
+INSERT INTO karma.service_class (id, name, description, order_index, business_category_id) VALUES ('8e25e79b-9539-4906-ace1-07c1eae12258', 'Бизнес', 'авто бизнес класса',3, '6a7d64fd-1538-430d-be52-c92ef28d2d3a');
+INSERT INTO karma.service_class (id, name, description, order_index, business_category_id) VALUES ('681e3446-fe40-494d-8fe6-bcd2954c7b8a', 'Премиум', 'авто премиум класса',4, '6a7d64fd-1538-430d-be52-c92ef28d2d3a');
