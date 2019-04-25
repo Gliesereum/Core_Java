@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.EnumSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,8 +40,8 @@ public class BusinessCategoryController {
     }
 
     @GetMapping("/business-type")
-    public MapResponse getBusinessTypes() {
-        return new MapResponse("types", EnumSet.allOf(BusinessType.class));
+    public List<BusinessType> getBusinessTypes() {
+        return Arrays.asList(BusinessType.CAR);
     }
 
     @GetMapping("/by-code")
