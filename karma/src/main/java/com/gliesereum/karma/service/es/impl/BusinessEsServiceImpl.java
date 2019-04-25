@@ -4,14 +4,15 @@ import com.gliesereum.karma.model.document.BusinessDocument;
 import com.gliesereum.karma.model.document.BusinessServiceDocument;
 import com.gliesereum.karma.model.repository.es.CarWashEsRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private final static String FIELD_CLASS_IDS = "services.serviceClassIds";
     private final static String FIELD_FILTER_IDS = "services.filterIds";
     private final static String FIELD_FILTER_ATTRIBUTE_IDS = "services.filterAttributeIds";
-    private final static String FIELD_SERVICE_TYPE = "serviceType";
+    private final static String FIELD_BUSINESS_CATEGORY_ID = "businessCategoryId";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -63,15 +64,19 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Autowired
     private CarWashEsRepository carWashEsRepository;
 
+    @Autowired
+    private BusinessCategoryService businessCategoryService;
+
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
         List<BaseBusinessDto> result;
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        if ((businessSearch != null) && (businessSearch.getServiceType() != null)) {
-
-            addQueryByServiceType(boolQueryBuilder, businessSearch.getServiceType());
-            switch (businessSearch.getServiceType()) {
-                case CAR_WASH: {
+        if ((businessSearch != null) && (businessSearch.getBusinessCategoryId() != null)) {
+            UUID businessCategoryId = businessSearch.getBusinessCategoryId();
+            addQueryByBusinessCategoryId(boolQueryBuilder, businessCategoryId);
+            BusinessCategoryDto businessCategory = businessCategoryService.getById(businessCategoryId);
+            switch (businessCategory.getBusinessType()) {
+                case CAR: {
                     CarInfoDto carInfo = carService.getCarInfo(businessSearch.getTargetId());
                     addQueryByService(boolQueryBuilder, businessSearch.getServiceIds(), carInfo);
                 }
@@ -186,10 +191,10 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         }
     }
 
-    private void addQueryByServiceType(BoolQueryBuilder boolQueryBuilder, ServiceType serviceType) {
-        if (serviceType != null) {
-            TermQueryBuilder serviceTypeTerm = new TermQueryBuilder(FIELD_SERVICE_TYPE, serviceType.name());
-            boolQueryBuilder.must(serviceTypeTerm);
+    private void addQueryByBusinessCategoryId(BoolQueryBuilder boolQueryBuilder, UUID businessCategoryId) {
+        if (businessCategoryId != null) {
+            TermQueryBuilder businessCategoryTerm = new TermQueryBuilder(FIELD_BUSINESS_CATEGORY_ID, businessCategoryId.toString());
+            boolQueryBuilder.must(businessCategoryTerm);
         }
     }
 

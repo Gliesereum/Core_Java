@@ -37,3 +37,22 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+    environment:
+      http.host: 0.0.0.0
+      transport.host: 127.0.0.1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - ../volumes/elasticsearch:/usr/share/elasticsearch/data

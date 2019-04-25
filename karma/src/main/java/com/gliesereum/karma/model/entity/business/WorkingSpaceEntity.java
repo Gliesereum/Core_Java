@@ -1,6 +1,5 @@
 package com.gliesereum.karma.model.entity.business;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
@@ -33,9 +32,8 @@ public class WorkingSpaceEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private StatusSpace statusSpace;
 
-    @Column(name = "service_type")
-    @Enumerated(EnumType.STRING)
-    private ServiceType serviceType;
+    @Column(name = "business_category_id")
+    private UUID businessCategoryId;
 
     @OneToMany
     @JoinColumn(name = "work_space_id", insertable = false, updatable = false)

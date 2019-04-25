@@ -2,7 +2,6 @@ package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.service.business.WorkTimeService;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +43,8 @@ public class WorkTimeController {
     }
 
     @DeleteMapping("/{id}")
-    public MapResponse delete(@PathVariable("id") UUID id, @RequestParam("serviceType") ServiceType serviceType) {
-        workTimeService.delete(id, serviceType);
+    public MapResponse delete(@PathVariable("id") UUID id, @RequestParam("businessCategoryId") UUID businessCategoryId) {
+        workTimeService.delete(id, businessCategoryId);
         return new MapResponse("true");
     }
 }

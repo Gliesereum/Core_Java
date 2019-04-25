@@ -8,7 +8,6 @@ import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
@@ -58,7 +57,7 @@ public class AbstractRecordDto extends DefaultDto {
 
     private StatusRecord statusRecord;
 
-    private ServiceType serviceType;
+    private UUID businessCategoryId;
 
     private List<ServicePriceDto> services = new ArrayList<>();
 

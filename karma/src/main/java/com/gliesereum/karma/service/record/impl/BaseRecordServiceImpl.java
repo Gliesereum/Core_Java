@@ -5,6 +5,7 @@ import com.gliesereum.karma.aspect.annotation.RecordUpdate;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.record.BaseRecordService;
@@ -18,10 +19,7 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -48,7 +46,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_TYPE_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_DONT_HAVE_ANY_CORPORATION;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
@@ -64,7 +61,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private static final Class<BaseRecordDto> DTO_CLASS = BaseRecordDto.class;
     private static final Class<BaseRecordEntity> ENTITY_CLASS = BaseRecordEntity.class;
 
-    @Autowired
     private final BaseRecordRepository baseRecordRepository;
 
     @Autowired
@@ -88,6 +84,10 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Autowired
     private RecordServiceService recordServiceService;
 
+    @Autowired
+    private BusinessCategoryService businessCategoryService;
+
+    @Autowired
     public BaseRecordServiceImpl(BaseRecordRepository baseRecordRepository, DefaultConverter defaultConverter) {
         super(baseRecordRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.baseRecordRepository = baseRecordRepository;
@@ -105,7 +105,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
             throw new ClientException(TARGET_ID_IS_EMPTY);
         }
-        if (search.getServiceType().equals(ServiceType.CAR_WASH)) {
+        if (businessCategoryService.checkAndGetType(search.getBusinessCategoryId()).equals(BusinessType.CAR)) {
             search.getTargetIds().forEach(f -> {
                 carService.checkCarExistInCurrentUser(f);
             });
@@ -259,7 +259,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public BaseRecordDto create(BaseRecordDto dto) {
         if (dto != null) {
             setType(dto);
-            if (dto.getServiceType().equals(ServiceType.CAR_WASH)) {
+            if (businessCategoryService.checkAndGetType(dto.getBusinessCategoryId()).equals(BusinessType.CAR)) {
                 if (dto.getTargetId() == null) {
                     throw new ClientException(TARGET_ID_IS_EMPTY);
                 }
@@ -404,7 +404,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setStatusRecord(StatusRecord.CREATED);
         dto.setStatusProcess(StatusProcess.WAITING);
         dto.setStatusPay(StatusPay.NOT_PAID);
-        dto.setServiceType(business.getServiceType());
+        dto.setBusinessCategoryId(business.getBusinessCategoryId());
         checkRecord(dto);
         dto.setId(null);
         BaseRecordEntity entity = converter.convert(dto, entityClass);
@@ -462,13 +462,10 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<BaseRecordDto> getAllByUser(ServiceType serviceType) {
+    public List<BaseRecordDto> getAllByUser(UUID businessCategoryId) {
         List<BaseRecordDto> result = null;
-        if (serviceType == null) {
-            throw new ClientException(SERVICE_TYPE_IS_EMPTY);
-        }
         List<UUID> ids = new ArrayList<>();
-        if (serviceType.equals(ServiceType.CAR_WASH)) {
+        if (businessCategoryService.checkAndGetType(businessCategoryId).equals(BusinessType.CAR)) {
             List<CarDto> carsUsers = carService.getAllByUserId(SecurityUtil.getUserId());
             if (CollectionUtils.isNotEmpty(carsUsers)) {
                 ids = carsUsers.stream().map(CarDto::getId).collect(Collectors.toList());
@@ -478,7 +475,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         } else {
             ids.add(SecurityUtil.getUserId()); //todo when add new service type need to add logic
         }
-        List<BaseRecordEntity> entities = baseRecordRepository.findAllByTargetIdInAndServiceType(ids, serviceType);
+        List<BaseRecordEntity> entities = baseRecordRepository.findAllByTargetIdInAndBusinessCategoryId(ids, businessCategoryId);
         entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
@@ -581,7 +578,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         boolean ownerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId());
         boolean workerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId());
         boolean userPermission = false;
-        if (dto.getServiceType().equals(ServiceType.CAR_WASH) && (dto.getTargetId() != null)) {
+        if (businessCategoryService.checkAndGetType(dto.getBusinessCategoryId()).equals(BusinessType.CAR)
+                && (dto.getTargetId() != null)) {
             userPermission = carService.carExistByIdAndUserId(dto.getTargetId(), SecurityUtil.getUserId());
         }
         if (!BooleanUtils.or(new Boolean[]{ownerPermission, workerPermission, userPermission})) {
@@ -641,7 +639,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     private void setType(BaseRecordDto dto) {
         BaseBusinessDto business = getBusinessByRecord(dto);
-        dto.setServiceType(business.getServiceType());
+        dto.setBusinessCategoryId(business.getBusinessCategoryId());
     }
 
     private List<RecordFreeTime> getFreeTimesByBusinessAndCheckWorkingTime(LocalDateTime begin, LocalDateTime finish, BaseBusinessDto business) {

@@ -32,7 +32,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
-import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_TYPE_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
@@ -77,7 +76,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public BaseBusinessDto create(BaseBusinessDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
-            checkType(dto);
+            checkBusinessCategory(dto);
             checkCorporationId(dto);
             dto.setObjectState(ObjectState.ACTIVE);
             dto = super.create(dto);
@@ -90,7 +89,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public BaseBusinessDto update(BaseBusinessDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
-            checkType(dto);
+            checkBusinessCategory(dto);
             if (dto.getId() == null) {
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
@@ -286,9 +285,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         }
     }
 
-    private void checkType(BaseBusinessDto dto) {
-        if (dto.getServiceType() == null) {
-            throw new ClientException(SERVICE_TYPE_IS_EMPTY);
+    private void checkBusinessCategory(BaseBusinessDto dto) {
+        if (dto.getBusinessCategoryId() == null) {
+            throw new ClientException(BUSINESS_CATEGORY_ID_EMPTY);
         }
     }
 }

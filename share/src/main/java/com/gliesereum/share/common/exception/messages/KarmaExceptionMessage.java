@@ -72,4 +72,9 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage CAN_NOT_CHANGE_STATUS_CANCELED_OR_COMPLETED_RECORD = new ExceptionMessage(1471, 400, "You can't change status in canceled or completed record");
     public static final ExceptionMessage ALL_OBJECT_ID_NOT_EQUALS = new ExceptionMessage(1472, 400, "All object id must be equals");
 
+    public static final ExceptionMessage BUSINESS_CATEGORY_BY_CODE_EXIST = new ExceptionMessage(1473, 400, "Business category with this code exist");
+    public static final ExceptionMessage BUSINESS_CATEGORY_ID_EMPTY = new ExceptionMessage(1474, 400, "Business category id empty");
+    public static final ExceptionMessage BUSINESS_CATEGORY_NOT_FOUND = new ExceptionMessage(1475, 400, "Business category not found");
+
+
 }

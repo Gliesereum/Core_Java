@@ -3,7 +3,7 @@ package com.gliesereum.karma.service.business.impl;
 import com.gliesereum.karma.model.entity.business.WorkingSpaceEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkingSpaceRepository;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
-import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -29,7 +29,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     private final WorkingSpaceRepository workTimeRepository;
 
     @Autowired
-    private ServiceTypeFacade serviceTypeFacade;
+    private BusinessCategoryFacade businessCategoryFacade;
 
     public WorkingSpaceServiceImpl(WorkingSpaceRepository workTimeRepository, DefaultConverter defaultConverter) {
         super(workTimeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -50,7 +50,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public WorkingSpaceDto create(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
+            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             result = super.create(dto);
         }
         return result;
@@ -60,7 +60,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public WorkingSpaceDto update(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
-            serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getServiceType(), dto.getBusinessId());
+            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             result = super.update(dto);
         }
         return result;
@@ -71,7 +71,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
         if (id != null) {
             Optional<WorkingSpaceEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(i.getServiceType(), i.getBusinessId());
+                businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(i.getBusinessCategoryId(), i.getBusinessId());
                 repository.delete(i);
             });
 
