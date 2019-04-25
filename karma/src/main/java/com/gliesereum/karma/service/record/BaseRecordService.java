@@ -1,7 +1,6 @@
 package com.gliesereum.karma.service.record;
 
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
@@ -41,7 +40,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto);
 
-    List<BaseRecordDto> getAllByUser(ServiceType serviceType);
+    List<BaseRecordDto> getAllByUser(UUID businessCategoryId);
 
     BaseRecordDto createFromBusiness(BaseRecordDto dto);
 

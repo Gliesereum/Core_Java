@@ -1,7 +1,6 @@
 package com.gliesereum.karma.model.entity.record;
 
 import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
@@ -57,9 +56,8 @@ public class AbstractRecordEntity extends DefaultEntity {
     @Enumerated(EnumType.STRING)
     private StatusRecord statusRecord;
 
-    @Column(name = "service_type")
-    @Enumerated(EnumType.STRING)
-    private ServiceType serviceType;
+    @Column(name = "business_category_id")
+    private UUID businessCategoryId;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "record_service",

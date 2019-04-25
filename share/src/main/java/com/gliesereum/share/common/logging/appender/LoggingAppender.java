@@ -9,6 +9,7 @@ import com.gliesereum.share.common.logging.service.LoggingService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -34,38 +35,54 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
 
     private static boolean queueIsNotEmpty = false;
 
+    private static volatile boolean remoteLoggingEnable = true;
+
+    private static volatile LoggingAppender activeAppender;
+
     @Autowired
-    public void setPublisher(LoggingService loggingService) {
-        this.loggingService = loggingService;
-        publisherEnable = true;
+    public void setPublisher(LoggingService loggingService,
+                             @Value("${remoteLogging.enable:true}") Boolean remoteLoggingEnable) {
+        if (remoteLoggingEnable) {
+            this.loggingService = loggingService;
+            publisherEnable = true;
+        } else {
+            if(activeAppender != null) {
+                activeAppender.stop();
+            }
+            this.remoteLoggingEnable = false;
+            eventQueue.clear();
+        }
     }
 
     @Override
     protected void append(ILoggingEvent event) {
-        Map<String,Object> eventMap =new HashMap<>();
-        eventMap.put("timestamp", event.getTimeStamp());
-        eventMap.put("level", event.getLevel());
-        eventMap.put("thread", event.getThreadName());
-        eventMap.put("logger", event.getLoggerName());
-        eventMap.put("massage", event.getFormattedMessage());
-        eventMap.put("mdc", event.getMDCPropertyMap());
-        putError(eventMap, event);
-        if (publisherEnable) {
-            if (queueIsNotEmpty) {
-                eventQueue.forEach(loggingService::publishingObject);
-                eventQueue.clear();
-                queueIsNotEmpty = false;
+        if (remoteLoggingEnable) {
+            Map<String, Object> eventMap = new HashMap<>();
+            eventMap.put("timestamp", event.getTimeStamp());
+            eventMap.put("level", event.getLevel());
+            eventMap.put("thread", event.getThreadName());
+            eventMap.put("logger", event.getLoggerName());
+            eventMap.put("massage", event.getFormattedMessage());
+            eventMap.put("mdc", event.getMDCPropertyMap());
+            putError(eventMap, event);
+            if (publisherEnable) {
+                if (queueIsNotEmpty) {
+                    eventQueue.forEach(loggingService::publishingObject);
+                    eventQueue.clear();
+                    queueIsNotEmpty = false;
+                }
+                loggingService.publishingObject(eventMap);
+            } else {
+                eventQueue.add(eventMap);
+                queueIsNotEmpty = true;
             }
-            loggingService.publishingObject(eventMap);
-        } else {
-            eventQueue.add(eventMap);
-            queueIsNotEmpty = true;
         }
     }
 
     @Override
     public void start() {
         super.start();
+        activeAppender = this;
     }
 
     private void putError(Map<String, Object> eventMap, ILoggingEvent event) {

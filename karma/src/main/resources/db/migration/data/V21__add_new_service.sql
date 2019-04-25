@@ -1,0 +1,9 @@
+INSERT INTO karma.service (id, name, description, business_category_id) VALUES ('25bd99d5-d9e8-4c50-a28d-dfde4f513186', 'Ремонт резины', 'Ремонт покрышки от дефектов', '607b10e5-fc65-463d-a116-5fae6019c782');
+INSERT INTO karma.service (id, name, description, business_category_id) VALUES ('3fa92655-f1cf-479e-ae62-c154859932d6', 'Замена резины', 'Замена резины на дисках', '607b10e5-fc65-463d-a116-5fae6019c782');
+INSERT INTO karma.service (id, name, description, business_category_id) VALUES ('e995dd02-ec88-4991-8da8-ec3312fcd712', 'Замена колес', 'Замена колес на машине', '607b10e5-fc65-463d-a116-5fae6019c782');
+INSERT INTO karma.service (id, name, description, business_category_id) VALUES ('7b24c8b2-3e09-40a4-b856-a46901e52263', 'Рихтовка диска', 'Рихтовка диска', '607b10e5-fc65-463d-a116-5fae6019c782');
+
+INSERT INTO karma.service (id, name, description, business_category_id) VALUES ('2fe9d2da-9af4-4245-a279-62d88f81d4f9', 'Диагностика двигателя', 'Диагностика двигателя автомобиля', '6a7d64fd-1538-430d-be52-c92ef28d2d3a');
+INSERT INTO karma.service (id, name, description, business_category_id) VALUES ('1f16c5bf-596f-42ae-95a2-ce60d8aaa4ee', 'Диагностика кондиционера', 'Диагностика кондиционера автомобиля', '6a7d64fd-1538-430d-be52-c92ef28d2d3a');
+INSERT INTO karma.service (id, name, description, business_category_id) VALUES ('ac5c863b-31d0-471d-86a7-d0ab2f6a4da4', 'Диагностика ходовой', 'Диагностика ходовой автомобиля', '6a7d64fd-1538-430d-be52-c92ef28d2d3a');
+INSERT INTO karma.service (id, name, description, business_category_id) VALUES ('b7f72229-d101-4433-9196-04bd94de3555', 'Замена масла', 'Замена моторного масла', '6a7d64fd-1538-430d-be52-c92ef28d2d3a');

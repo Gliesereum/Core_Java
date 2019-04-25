@@ -1,7 +1,6 @@
 package com.gliesereum.karma.model.repository.jpa.record;
 
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.repository.refreshable.RefreshableRepository;
@@ -26,5 +25,5 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
 
     List<BaseRecordEntity> findByBusinessIdAndStatusRecordAndBeginBetween(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to);
 
-    List<BaseRecordEntity> findAllByTargetIdInAndServiceType(List<UUID> ids, ServiceType serviceType);
+    List<BaseRecordEntity> findAllByTargetIdInAndBusinessCategoryId(List<UUID> ids, UUID businessCategoryId);
 }

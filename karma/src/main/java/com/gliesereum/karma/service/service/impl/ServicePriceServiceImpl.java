@@ -9,10 +9,9 @@ import com.gliesereum.karma.service.filter.PriceFilterAttributeService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.ServiceService;
-import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
 import com.gliesereum.share.common.model.dto.karma.filter.PriceFilterAttributeDto;
@@ -53,7 +52,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     private ServiceService serviceService;
 
     @Autowired
-    private ServiceTypeFacade serviceTypeFacade;
+    private BusinessCategoryFacade businessCategoryFacade;
 
     @Autowired
     private PriceFilterAttributeService priceFilterAttributeService;
@@ -146,7 +145,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     @Transactional
     public void addFilterAttribute(UUID idPrice, UUID idAttribute) {
         ServicePriceDto price = getPrice(idPrice);
-        checkFilterAttribute(idAttribute, price.getService().getServiceType());
+        checkFilterAttribute(idAttribute, price.getService().getBusinessCategoryId());
         priceFilterAttributeService.create(new PriceFilterAttributeDto(idPrice, idAttribute));
     }
 
@@ -170,7 +169,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             throw new ClientException(ID_NOT_SPECIFIED);
         }
         ServiceDto serviceDto = getServiceById(dto.getServiceId());
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(serviceDto.getServiceType(), dto.getBusinessId());
+        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(serviceDto.getBusinessCategoryId(), dto.getBusinessId());
     }
 
     private ServiceDto getServiceById(UUID serviceId) {
@@ -194,13 +193,13 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         return dto;
     }
 
-    private void checkFilterAttribute(UUID idAttribute, ServiceType serviceType) {
+    private void checkFilterAttribute(UUID idAttribute, UUID businessCategoryId) {
         FilterAttributeDto attribute = filterAttributeService.getById(idAttribute);
         if (attribute == null) {
             throw new ClientException(FILTER_ATTRIBUTE_NOT_FOUND);
         }
         FilterDto filter = filterService.getById(attribute.getFilterId());
-        if (!filter.getServiceType().equals(serviceType)) {
+        if (!filter.getBusinessCategoryId().equals(businessCategoryId)) {
             throw new ClientException(FILTER_ATTRIBUTE_NOT_FOUND_BY_SERVICE_TYPE);
         }
     }

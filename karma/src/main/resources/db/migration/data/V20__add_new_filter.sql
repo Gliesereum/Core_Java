@@ -1,0 +1,21 @@
+INSERT INTO karma.filter (id, value, title, business_category_id) VALUES ('ad2d57da-b0a1-4cc8-a6be-4786589df53c', 'CAR_WHEEL_RADIUS', 'Радиус дисков', '607b10e5-fc65-463d-a116-5fae6019c782');
+
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('30613935-0504-42e5-bba3-d39006778f38', 'R12', 'R12', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('15141e16-07b0-4082-915d-718591c24aa8', 'R13', 'R13', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('af5c4c36-9e7d-449a-ac9d-8410d50dbe66', 'R14', 'R14', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('43025891-8067-434a-8797-4531823165fc', 'R15', 'R15', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('1670d45f-beaa-48ef-9111-e146bf02adce', 'R16', 'R16', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('b22c1502-2911-42db-85c2-56bba9372636', 'R17', 'R17', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('4c984475-bfba-4e11-bb11-af6564518412', 'R18', 'R18', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('815ae06b-5a27-4c12-b5f8-38489dfe2ee6', 'R19', 'R19', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('39e0a6cd-ee71-484f-91b0-fae76517d435', 'R20', 'R20', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('2e33010d-790b-4ed3-bbdd-e8ac9f9476cd', 'R21', 'R21', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('cdc24f89-1fa4-45a3-a4e5-f93272b0fae0', 'R22', 'R22', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('86e0abb2-ab34-456a-99db-f2929e997642', 'R23', 'R23', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('92ba7dfe-95f5-443b-bcc4-14ec0eeea6a5', 'R24', 'R24', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('be101c88-a48d-4b0d-bc9e-f1f0cdee6e8b', 'R25', 'R25', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('23971695-d210-41c4-aa45-2d336ed23457', 'R26', 'R26', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('c026470e-e8cd-4706-bdb8-1eb37d99b449', 'R27', 'R27', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('2d168806-4538-456c-9403-465ca3bac5d9', 'R28', 'R28', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('93295734-c6a8-4521-b70e-36d61aaa5c9b', 'R29', 'R29', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
+INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('ffdf5b23-c397-4060-8380-71950582567a', 'R30', 'R30', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
