@@ -5,10 +5,7 @@ import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.util.UUID;
 
 /**
@@ -52,6 +49,10 @@ public class AbstractBusinessEntity extends DefaultEntity {
 
     @Column(name = "business_category_id")
     private UUID businessCategoryId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "business_category_id", insertable = false, updatable = false)
+    private BusinessCategoryEntity businessCategory;
 
     @Column(name = "object_state")
     @Enumerated(EnumType.STRING)

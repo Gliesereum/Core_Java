@@ -1,4 +1,4 @@
-INSERT INTO karma.filter (id, value, title, business_category_id) VALUES ('ad2d57da-b0a1-4cc8-a6be-4786589df53c', 'CAR_WHEEL_RADIUS', 'Радиус дисков', '0c1ca141-fb7d-414c-999f-ed8a8af69b1c');
+INSERT INTO karma.filter (id, value, title, business_category_id) VALUES ('ad2d57da-b0a1-4cc8-a6be-4786589df53c', 'CAR_WHEEL_RADIUS', 'Радиус дисков', '607b10e5-fc65-463d-a116-5fae6019c782');
 
 INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('30613935-0504-42e5-bba3-d39006778f38', 'R12', 'R12', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
 INSERT INTO karma.filter_attribute (id, value, title, filter_id) VALUES ('15141e16-07b0-4082-915d-718591c24aa8', 'R13', 'R13', 'ad2d57da-b0a1-4cc8-a6be-4786589df53c');
