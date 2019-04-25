@@ -89,6 +89,12 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     }
 
     @Override
+    public List<CorporationDto> getAll() {
+        List<CorporationEntity> entities = repository.findAllByObjectStateOrderByName(ObjectState.ACTIVE);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public CorporationDto update(CorporationDto dto) {
         if (dto != null) {
             if (dto.getId() == null) {

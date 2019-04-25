@@ -101,6 +101,12 @@ public class BaseBusinessController {
         return new MapResponse("true");
     }
 
+    @DeleteMapping("/by-corporation-id/{id}")
+    public MapResponse deleteByCorporationId(@PathVariable("id") UUID id){
+        baseBusinessService.deleteByCorporationId(id);
+        return new MapResponse("true");
+    }
+
     @GetMapping("/by-current-user")
     public List<BaseBusinessDto> getAllBusinessByUser() {
         return baseBusinessService.getAllBusinessByCurrentUser();

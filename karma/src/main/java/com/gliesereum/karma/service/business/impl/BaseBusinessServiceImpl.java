@@ -16,7 +16,6 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -168,6 +167,15 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             }
         }
         return result;
+    }
+
+    @Override
+    public void deleteByCorporationId(UUID id) {
+        List<BaseBusinessDto> list = getByCorporationId(id);
+        if(CollectionUtils.isNotEmpty(list)){
+            list.stream().forEach(m -> m.setObjectState(ObjectState.DELETED));
+            super.update(list);
+        }
     }
 
     @Override
