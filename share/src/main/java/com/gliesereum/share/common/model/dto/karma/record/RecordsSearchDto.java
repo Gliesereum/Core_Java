@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import lombok.Data;
@@ -26,7 +25,7 @@ public class RecordsSearchDto {
 
     private List<StatusProcess> processes;
 
-    private ServiceType serviceType;
+    private UUID businessCategoryId;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)

@@ -1,6 +1,5 @@
 package com.gliesereum.karma.model.entity.business;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
@@ -51,9 +50,8 @@ public class AbstractBusinessEntity extends DefaultEntity {
     @Column(name = "time_zone")
     private Integer timeZone;
 
-    @Column(name = "service_type")
-    @Enumerated(EnumType.STRING)
-    private ServiceType serviceType;
+    @Column(name = "business_category_id")
+    private UUID businessCategoryId;
 
     @Column(name = "object_state")
     @Enumerated(EnumType.STRING)

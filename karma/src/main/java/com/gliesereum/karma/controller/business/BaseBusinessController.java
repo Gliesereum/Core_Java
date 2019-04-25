@@ -4,7 +4,7 @@ import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
-import com.gliesereum.karma.service.servicetype.ServiceTypeFacade;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
@@ -12,7 +12,6 @@ import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -42,7 +41,7 @@ public class BaseBusinessController {
     private MediaService mediaService;
 
     @Autowired
-    private ServiceTypeFacade serviceTypeFacade;
+    private BusinessCategoryFacade businessCategoryFacade;
 
     @Autowired
     private CommentService commentService;
@@ -75,11 +74,6 @@ public class BaseBusinessController {
         return baseBusinessService.getByCorporationIds(SecurityUtil.getUserCorporationIds());
     }
 
-    @GetMapping("/business-type")
-    public List<ServiceType> getBusinessType() {
-        return Arrays.asList(ServiceType.values());
-    }
-
     @GetMapping("/by-corporation-id")
     public List<BaseBusinessDto> getByCorporationId(@RequestParam("corporationId") UUID corporationId) {
         return baseBusinessService.getByCorporationId(corporationId);
@@ -101,6 +95,12 @@ public class BaseBusinessController {
         return new MapResponse("true");
     }
 
+    @DeleteMapping("/by-corporation-id/{id}")
+    public MapResponse deleteByCorporationId(@PathVariable("id") UUID id){
+        baseBusinessService.deleteByCorporationId(id);
+        return new MapResponse("true");
+    }
+
     @GetMapping("/by-current-user")
     public List<BaseBusinessDto> getAllBusinessByUser() {
         return baseBusinessService.getAllBusinessByCurrentUser();
@@ -118,19 +118,19 @@ public class BaseBusinessController {
 
     @PostMapping("/media")
     public MediaDto create(@RequestBody @Valid MediaDto media) {
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, media.getObjectId());
+        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(media.getObjectId());
         return mediaService.create(media);
     }
 
     @PutMapping("/media")
     public MediaDto update(@RequestBody @Valid MediaDto media) {
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, media.getObjectId());
+        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(media.getObjectId());
         return mediaService.update(media);
     }
 
     @DeleteMapping("/{id}/media/{mediaId}")
     public MapResponse delete(@PathVariable("id") UUID businessId, @PathVariable("mediaId") UUID mediaId) {
-        serviceTypeFacade.throwExceptionIfUserDontHavePermissionToAction(ServiceType.CAR_WASH, businessId);
+        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(businessId);
         mediaService.delete(mediaId, businessId);
         return new MapResponse("true");
     }

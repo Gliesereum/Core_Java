@@ -18,4 +18,6 @@ public interface CorporationRepository extends JpaRepository<CorporationEntity, 
 
     List<CorporationEntity> findAllByIdInAndObjectState(List<UUID> ids, ObjectState state);
 
+    List<CorporationEntity> findAllByObjectStateOrderByName(ObjectState state);
+
 }

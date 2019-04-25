@@ -2,7 +2,6 @@ package com.gliesereum.karma.service.service;
 
 import com.gliesereum.karma.model.entity.service.ServiceClassEntity;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceClassDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -17,5 +16,5 @@ public interface ServiceClassService extends DefaultService<ServiceClassDto, Ser
 
     boolean existsService(UUID id);
 
-    List<ServiceClassDto> getAllByServiceType(ServiceType serviceType);
+    List<ServiceClassDto> getAllByBusinessCategoryId(UUID businessCategoryId);
 }

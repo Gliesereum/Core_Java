@@ -1,7 +1,6 @@
 package com.gliesereum.karma.controller.record;
 
 import com.gliesereum.karma.service.record.BaseRecordService;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
@@ -92,8 +91,8 @@ public class RecordController {
     }
 
     @GetMapping("/client/all")
-    public List<BaseRecordDto> getAllByUser(@RequestParam("serviceType") ServiceType serviceType) {
-        return service.getAllByUser(serviceType);
+    public List<BaseRecordDto> getAllByUser(@RequestParam("businessCategoryId") UUID businessCategoryId) {
+        return service.getAllByUser(businessCategoryId);
     }
 
     @PostMapping("/client/params")

@@ -1,6 +1,5 @@
 package com.gliesereum.karma.model.entity.business;
 
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,9 +33,8 @@ public class WorkTimeEntity extends DefaultEntity {
     @Column(name = "is_work")
     private Boolean isWork;
 
-    @Column(name = "service_type")
-    @Enumerated(EnumType.STRING)
-    private ServiceType serviceType;
+    @Column(name = "business_category_id")
+    private UUID businessCategoryId;
 
     @Column(name = "day_of_week")
     @Enumerated(EnumType.STRING)

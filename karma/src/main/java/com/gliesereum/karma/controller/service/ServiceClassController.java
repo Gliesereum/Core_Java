@@ -2,7 +2,6 @@ package com.gliesereum.karma.controller.service;
 
 import com.gliesereum.karma.service.service.ServiceClassService;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceClassDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +33,9 @@ public class ServiceClassController {
         return serviceClassService.getAll();
     }
 
-    @GetMapping("/get-by-type")
-    public List<ServiceClassDto> getAllByTypeServices(@RequestParam("type") ServiceType type) {
-        return serviceClassService.getAllByServiceType(type);
+    @GetMapping("/get-by-business-category")
+    public List<ServiceClassDto> getAllByTypeServices(@RequestParam("businessCategoryId") UUID businessCategoryId) {
+        return serviceClassService.getAllByBusinessCategoryId(businessCategoryId);
     }
 
     @PostMapping
