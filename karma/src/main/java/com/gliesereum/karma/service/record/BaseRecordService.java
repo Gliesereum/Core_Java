@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.record.AnalyticFilterDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.dto.karma.record.ReportFilterDto;
@@ -27,6 +28,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     List<BaseRecordDto> getByBusinessIdAndStatusRecord(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to);
 
     List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
+
+    List<BaseRecordDto> getByAnalyticFilter(AnalyticFilterDto analyticFilter);
 
     BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId);
 

@@ -4,6 +4,7 @@ import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.karma.enumerated.ServiceType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
+import com.gliesereum.share.common.model.dto.karma.record.AnalyticFilterDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.dto.karma.record.ReportFilterDto;
@@ -114,5 +115,10 @@ public class RecordController {
     @GetMapping("/report")
     public void getReport(@Valid @RequestBody ReportFilterDto filter, HttpServletResponse response) {
         service.getReport(response, filter);
+    }
+
+    @PostMapping("/analytic")
+    public List<BaseRecordDto> getByAnalyticFilter(@RequestBody AnalyticFilterDto analyticFilter) {
+        return service.getByAnalyticFilter(analyticFilter);
     }
 }

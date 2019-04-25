@@ -462,6 +462,12 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
+    public List<BaseRecordDto> getByAnalyticFilter(AnalyticFilterDto analyticFilter) {
+        List<BaseRecordDto> result = new ArrayList<>();
+        return result;
+    }
+
+    @Override
     public List<BaseRecordDto> getAllByUser(ServiceType serviceType) {
         List<BaseRecordDto> result = null;
         if (serviceType == null) {
