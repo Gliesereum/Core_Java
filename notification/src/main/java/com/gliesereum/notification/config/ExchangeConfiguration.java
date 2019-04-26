@@ -5,6 +5,8 @@ import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizatio
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.exchange.service.account.impl.UserExchangeServiceImpl;
+import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
+import com.gliesereum.share.common.exchange.service.karma.impl.KarmaExchangeServiceImpl;
 import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -55,6 +57,11 @@ public class ExchangeConfiguration {
 	public UserExchangeService userExchangeService(RestTemplate restTemplate,
 			ExchangeProperties exchangeProperties) {
 		return new UserExchangeServiceImpl(restTemplate, exchangeProperties);
+	}
+
+	@Bean
+	public KarmaExchangeService karmaExchangeService(RestTemplate restTemplate, ExchangeProperties exchangeProperties) {
+		return new KarmaExchangeServiceImpl(restTemplate, exchangeProperties);
 	}
 
 }

@@ -48,3 +48,13 @@ exchange:
     account:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
+    karma:
+      businessForCurrentUser: http://karma-service/business/by-current-user
+
+firebase:
+  properties:
+    credentialPath: classpath:google-services.json
+    appName: karma-c9d57
+
+notification:
+  queueName: notification

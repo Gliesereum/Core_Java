@@ -12,4 +12,6 @@ import java.util.UUID;
 
 public interface UserDeviceRepository extends JpaRepository<UserDeviceEntity, UUID> {
 
+    boolean existsByFirebaseRegistrationToken(String registrationToken);
+
 }
