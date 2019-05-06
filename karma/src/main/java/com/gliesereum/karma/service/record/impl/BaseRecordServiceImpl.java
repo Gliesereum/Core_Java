@@ -19,7 +19,10 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.*;
+import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -100,6 +103,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
+    public List<BaseRecordDto> convertListEntityToDto(List<BaseRecordEntity> entities) {
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public List<BaseRecordDto> getByParamsForClient(RecordsSearchDto search) {
         List<BaseRecordDto> result = null;
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
@@ -139,7 +147,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return result;
     }
 
-    private void setFullModelRecord(List<BaseRecordDto> list) {
+    @Override
+    public void setFullModelRecord(List<BaseRecordDto> list) {
         if (CollectionUtils.isNotEmpty(list)) {
             Map<UUID, PackageDto> packageMap = new HashMap<>();
             Map<UUID, BaseBusinessDto> businessMap = new HashMap<>();
@@ -257,6 +266,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Transactional
     @RecordCreate
     public BaseRecordDto create(BaseRecordDto dto) {
+        SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
             setType(dto);
             if (businessCategoryService.checkAndGetType(dto.getBusinessCategoryId()).equals(BusinessType.CAR)) {
@@ -274,6 +284,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Transactional
     @RecordCreate
     public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
+        SecurityUtil.checkUserByBanStatus();
         if (dto.getBusinessId() != null &&
                 !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
@@ -404,6 +415,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setStatusRecord(StatusRecord.CREATED);
         dto.setStatusProcess(StatusProcess.WAITING);
         dto.setStatusPay(StatusPay.NOT_PAID);
+        dto.setClientId(SecurityUtil.getUserId());
         dto.setBusinessCategoryId(business.getBusinessCategoryId());
         checkRecord(dto);
         dto.setId(null);

@@ -23,6 +23,9 @@ import java.util.UUID;
 @MappedSuperclass
 public class AbstractRecordEntity extends DefaultEntity {
 
+    @Column(name = "client_id")
+    private UUID clientId;
+
     @Column(name = "target_id")
     private UUID targetId;
 

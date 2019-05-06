@@ -46,4 +46,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     BaseRecordDto updateStatusPay(UUID idRecord, StatusPay status);
 
     void getReport(HttpServletResponse response, ReportFilterDto filter);
+
+    List<BaseRecordDto> convertListEntityToDto(List<BaseRecordEntity> entities);
+
+    void setFullModelRecord(List<BaseRecordDto> list);
 }

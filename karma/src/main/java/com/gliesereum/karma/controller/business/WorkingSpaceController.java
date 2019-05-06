@@ -36,6 +36,11 @@ public class WorkingSpaceController {
         return workingSpaceService.create(space);
     }
 
+    @PostMapping("/list")
+    public List<WorkingSpaceDto> createList(@RequestBody List<WorkingSpaceDto> spaces) {
+        return workingSpaceService.create(spaces);
+    }
+
     @PutMapping
     public WorkingSpaceDto update(@RequestBody @Valid WorkingSpaceDto space) {
         return workingSpaceService.update(space);
