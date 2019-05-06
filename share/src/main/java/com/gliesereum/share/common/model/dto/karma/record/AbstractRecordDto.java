@@ -29,6 +29,8 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class AbstractRecordDto extends DefaultDto {
 
+    private UUID clientId;
+
     private UUID targetId;
 
     private UUID packageId;

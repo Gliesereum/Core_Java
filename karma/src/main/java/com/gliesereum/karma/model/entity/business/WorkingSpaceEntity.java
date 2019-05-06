@@ -22,6 +22,12 @@ import java.util.UUID;
 @Table(name = "work_space")
 public class WorkingSpaceEntity extends DefaultEntity {
 
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "index_number")
     private Integer indexNumber;
 

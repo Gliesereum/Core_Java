@@ -5,15 +5,17 @@ import com.gliesereum.karma.model.repository.jpa.business.WorkingSpaceRepository
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.DIFFERENT_BUSINESS_OR_CATEGORY_OF_BUSINESS;
 
 /**
  * @author vitalij
@@ -52,6 +54,21 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
         if (dto != null) {
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             result = super.create(dto);
+        }
+        return result;
+    }
+
+    @Override
+    public List<WorkingSpaceDto> create(List<WorkingSpaceDto> dtos) {
+        List<WorkingSpaceDto> result = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(dtos)) {
+            WorkingSpaceDto dto = dtos.get(0);
+            if(!dtos.stream().allMatch(w->w.getBusinessId().equals(dto.getBusinessId())) ||
+                    !dtos.stream().allMatch(w->w.getBusinessCategoryId().equals(dto.getBusinessCategoryId()))){
+                throw new ClientException(DIFFERENT_BUSINESS_OR_CATEGORY_OF_BUSINESS);
+            }
+            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
+            result = super.create(dtos);
         }
         return result;
     }

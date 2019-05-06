@@ -1,9 +1,10 @@
-package com.gliesereum.share.common.model.dto.karma.record;
+package com.gliesereum.share.common.model.dto.karma.analytics;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,10 +20,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class AnalyticFilterDto {
 
-    private UUID businessId;
-
-    private UUID corporationId;
-
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime from;
@@ -31,17 +28,17 @@ public class AnalyticFilterDto {
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime to;
 
-    private List<UUID> clientIds;
+    private List<UUID> businessIds;
 
-    private List<UUID> carBrandIds;
+    private UUID workerId;
 
-    private List<UUID> carModelIds;
+    private UUID clientId;
 
-    private List<UUID> serviceIds;
+    private UUID targetId;
+
+    private List<UUID> servicePriceIds;
 
     private List<UUID> packageIds;
 
-    private List<UUID> workerIds;
-
-    private List<UUID> serviceClassIds;
+    private List<StatusRecord> status;
 }

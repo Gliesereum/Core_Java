@@ -4,7 +4,6 @@ import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.record.AnalyticFilterDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.dto.karma.record.ReportFilterDto;
@@ -28,8 +27,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
 
-    List<BaseRecordDto> getByAnalyticFilter(AnalyticFilterDto analyticFilter);
-
     BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId);
 
     BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status);
@@ -49,4 +46,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     BaseRecordDto updateStatusPay(UUID idRecord, StatusPay status);
 
     void getReport(HttpServletResponse response, ReportFilterDto filter);
+
+    List<BaseRecordDto> convertListEntityToDto(List<BaseRecordEntity> entities);
+
+    void setFullModelRecord(List<BaseRecordDto> list);
 }

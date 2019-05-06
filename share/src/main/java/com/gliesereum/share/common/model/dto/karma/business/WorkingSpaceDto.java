@@ -19,6 +19,10 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class WorkingSpaceDto extends DefaultDto {
 
+    private String name;
+
+    private String description;
+
     private Integer indexNumber;
 
     private UUID businessId;
