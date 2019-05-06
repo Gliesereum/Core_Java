@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
@@ -20,9 +21,11 @@ public class UserSubscribeDto extends DefaultDto {
 
     private UUID userDeviceId;
 
+    @NotNull
     private SubscribeDestination subscribeDestination;
 
     private UUID objectId;
 
+    @NotNull
     private Boolean notificationEnable;
 }

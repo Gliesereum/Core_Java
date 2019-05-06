@@ -37,14 +37,4 @@ public class ServiceClassServiceImpl extends DefaultServiceImpl<ServiceClassDto,
     public boolean existsService(UUID id) {
         return repository.existsById(id);
     }
-
-    @Override
-    public List<ServiceClassDto> getAllByBusinessCategoryId(UUID businessCategoryId) {
-        List<ServiceClassDto> result = null;
-        if (businessCategoryId != null) {
-            List<ServiceClassEntity> entities = serviceClassRepository.findAllByBusinessCategoryId(businessCategoryId);
-            result = converter.convert(entities, dtoClass);
-        }
-        return result;
-    }
 }

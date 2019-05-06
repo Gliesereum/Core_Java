@@ -15,6 +15,4 @@ public interface ServiceClassRepository extends JpaRepository<ServiceClassEntity
 
     boolean existsById(UUID id);
 
-    List<ServiceClassEntity> findAllByBusinessCategoryId(UUID businessCategoryId);
-
 }

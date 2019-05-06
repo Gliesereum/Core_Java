@@ -55,3 +55,4 @@ notification:
   topicName: amq.topic
   businessRecordRouting: karma.businessRecord
   userRecordRouting: karma.userRecord
+  notificationQueue: notification

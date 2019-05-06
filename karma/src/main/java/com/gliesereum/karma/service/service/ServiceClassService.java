@@ -15,6 +15,4 @@ import java.util.UUID;
 public interface ServiceClassService extends DefaultService<ServiceClassDto, ServiceClassEntity> {
 
     boolean existsService(UUID id);
-
-    List<ServiceClassDto> getAllByBusinessCategoryId(UUID businessCategoryId);
 }

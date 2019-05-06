@@ -9,6 +9,9 @@ import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.model.dto.karma.record.AbstractRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
+import com.gliesereum.share.common.model.dto.notification.notification.NotificationDto;
+import com.gliesereum.share.common.util.NotificationUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,14 +31,8 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Value("${notification.topicName}")
-    private String notificationTopic;
-
-    @Value("${notification.businessRecordRouting}")
-    private String businessRecordRouting;
-
-    @Value("${notification.userRecordRouting}")
-    private String userRecordRouting;
+    @Value("${notification.notificationQueue}")
+    private String notificationQueue;
 
     @Autowired
     private CarService carService;
@@ -52,7 +49,12 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
         if (record != null) {
             BaseRecordDto fullModel = baseRecordService.getFullModelById(record.getId());
             if (fullModel != null) {
-                rabbitTemplate.convertAndSend(notificationTopic, routingKey(businessRecordRouting, record.getBusinessId()), fullModel);
+                NotificationDto<BaseRecordDto> notification = new NotificationDto<>();
+                notification.setData(fullModel);
+                notification.setSubscribeDestination(SubscribeDestination.KARMA_BUSINESS_RECORD);
+                notification.setObjectId(record.getBusinessId());
+                rabbitTemplate.convertAndSend(notificationQueue, notification);
+
             }
         }
     }
@@ -70,13 +72,14 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
                     id = car.getUserId();
                 }
                 if (id != null) {
-                    rabbitTemplate.convertAndSend(notificationTopic, routingKey(userRecordRouting, id), fullModel);
+                    NotificationDto<BaseRecordDto> notification = new NotificationDto<>();
+                    notification.setData(fullModel);
+                    notification.setSubscribeDestination(SubscribeDestination.KARMA_USER_RECORD);
+                    notification.setObjectId(id);
+                    rabbitTemplate.convertAndSend(notificationQueue, notification);
+
                 }
             }
         }
-    }
-
-    private String routingKey(String routing, UUID id) {
-        return routing + '.' + id.toString();
     }
 }
