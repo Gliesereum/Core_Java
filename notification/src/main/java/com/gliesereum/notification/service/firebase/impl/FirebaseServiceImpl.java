@@ -1,6 +1,7 @@
 package com.gliesereum.notification.service.firebase.impl;
 
 import com.gliesereum.notification.service.firebase.FirebaseService;
+import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.NotificationUtil;
 import com.google.firebase.messaging.*;
@@ -47,15 +48,18 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void sendNotificationToTopic(String topic, String title, String body, UUID recordId) {
+    public void sendNotificationToTopic(String topic, String title, String body, UUID objectId, SubscribeDestination subscribeDestination) {
         Message message = Message.builder()
-                .putData("recordId", recordId.toString())
-                .setNotification(new Notification(title, body))
-                .setAndroidConfig(AndroidConfig.builder()
-                        .setPriority(AndroidConfig.Priority.HIGH).setNotification(AndroidNotification
-                                .builder()
-                                .setTitle(title)
-                                .setBody(body)
+                .putData("objectId", objectId.toString())
+                .putData("title", title)
+                .putData("body", body)
+                .putData("event", subscribeDestination.toString())
+                .setApnsConfig(ApnsConfig.builder()
+                        .setAps(Aps.builder()
+                                .setAlert(ApsAlert.builder()
+                                        .setTitle(title)
+                                        .setBody(body)
+                                        .build())
                                 .build())
                         .build())
                 .setTopic(topic)
