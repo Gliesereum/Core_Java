@@ -89,6 +89,11 @@ public class ServicePriceController {
         return new MapResponse("true");
     }
 
+    @PostMapping("/filter-attributes/{idPrice}")
+    public ServicePriceDto addFilterAttributes(@PathVariable("idPrice") UUID idPrice, @RequestBody List<UUID> idAttributes) {
+      return  servicePriceService.addFilterAttributes(idPrice, idAttributes);
+    }
+
     @DeleteMapping("/remove/filter-attribute/{idPrice}/{idAttribute}")
     public MapResponse removeFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
         servicePriceService.removeFilterAttribute(idPrice, idAttribute);

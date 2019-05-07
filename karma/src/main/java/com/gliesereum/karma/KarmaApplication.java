@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDa
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(
 		scanBasePackages = {
@@ -18,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 		exclude = {ElasticsearchAutoConfiguration.class, ElasticsearchDataAutoConfiguration.class})
 @EnableAsync
 @EnableEurekaClient
+@EnableScheduling
 @EnableConfigurationProperties(JwtSecurityProperties.class)
 public class KarmaApplication {
 
