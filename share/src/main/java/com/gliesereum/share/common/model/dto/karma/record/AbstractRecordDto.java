@@ -6,11 +6,11 @@ import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
-import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -60,6 +60,8 @@ public class AbstractRecordDto extends DefaultDto {
     private StatusRecord statusRecord;
 
     private UUID businessCategoryId;
+
+    private boolean notificationSend;
 
     private List<ServicePriceDto> services = new ArrayList<>();
 

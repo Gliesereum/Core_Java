@@ -97,9 +97,27 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
+    @Transactional
     public List<BaseRecordDto> getByBusinessIdAndStatusRecord(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to) {
         List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetween(businessId, status, from, to);
         return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    @Transactional
+    public List<BaseRecordDto> getByBusinessIdAndStatusRecordNotificationSend(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to, boolean notificationSend) {
+        List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetweenAndNotificationSend(businessId, status, from, to, notificationSend);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public void setNotificationSend(UUID recordId) {
+        Optional<BaseRecordEntity> byId = baseRecordRepository.findById(recordId);
+        if (byId.isPresent()) {
+            BaseRecordEntity entity = byId.get();
+            entity.setNotificationSend(true);
+            baseRecordRepository.saveAndFlush(entity);
+        }
     }
 
     @Override

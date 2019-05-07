@@ -2,8 +2,8 @@ package com.gliesereum.karma.model.entity.record;
 
 import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -61,6 +61,9 @@ public class AbstractRecordEntity extends DefaultEntity {
 
     @Column(name = "business_category_id")
     private UUID businessCategoryId;
+
+    @Column(name = "notification_send")
+    private boolean notificationSend;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "record_service",
