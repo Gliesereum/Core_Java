@@ -31,4 +31,8 @@ public class BusinessCategoryDto extends DefaultDto {
 
     @NotNull
     private BusinessType businessType;
+
+    private boolean active;
+
+    private Integer orderIndex;
 }
