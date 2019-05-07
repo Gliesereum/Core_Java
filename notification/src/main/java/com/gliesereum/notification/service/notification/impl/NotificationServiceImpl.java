@@ -37,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
             String routingKey = NotificationUtil.routingKey(recordNotification.getSubscribeDestination().toString(), recordNotification.getObjectId());
             BaseRecordDto data = recordNotification.getData();
             SubscribeDestination subscribeDestination = recordNotification.getSubscribeDestination();
-            firebaseService.sendNotificationToTopic(routingKey, getTitle(subscribeDestination), getBody(subscribeDestination), data.getId());
+            firebaseService.sendNotificationToTopic(routingKey, getTitle(subscribeDestination), getBody(subscribeDestination), data.getId(), subscribeDestination);
 
         }
     }

@@ -31,7 +31,7 @@ public class ServiceController {
         return service.getById(id);
     }
 
-    @GetMapping("/get-by-business-category")
+    @GetMapping("/by-business-category")
     public List<ServiceDto> getAllByTypeServices(@RequestParam("businessCategoryId") UUID businessCategoryId) {
         return service.getAllByBusinessCategoryId(businessCategoryId);
     }

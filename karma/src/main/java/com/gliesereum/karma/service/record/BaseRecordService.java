@@ -25,6 +25,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByBusinessIdAndStatusRecord(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to);
 
+    List<BaseRecordDto> getByBusinessIdAndStatusRecordNotificationSend(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to, boolean notificationSend);
+
     List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
 
     BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId);
@@ -50,4 +52,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     List<BaseRecordDto> convertListEntityToDto(List<BaseRecordEntity> entities);
 
     void setFullModelRecord(List<BaseRecordDto> list);
+
+    void setNotificationSend(UUID recordId);
 }

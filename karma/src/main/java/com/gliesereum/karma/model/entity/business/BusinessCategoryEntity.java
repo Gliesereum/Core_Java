@@ -35,4 +35,10 @@ public class BusinessCategoryEntity extends DefaultEntity {
     @Column(name = "business_type")
     @Enumerated(EnumType.STRING)
     private BusinessType businessType;
+
+    @Column(name = "active")
+    private boolean active;
+
+    @Column(name = "order_index")
+    private Integer orderIndex;
 }

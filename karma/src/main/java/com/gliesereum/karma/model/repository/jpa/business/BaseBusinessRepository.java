@@ -14,7 +14,6 @@ import java.util.UUID;
  */
 public interface BaseBusinessRepository extends JpaRepository<BaseBusinessEntity, UUID> {
 
-
     boolean existsByIdAndCorporationIdInAndObjectState(UUID id, List<UUID> corporationIds, ObjectState objectState);
 
     List<BaseBusinessEntity> findByCorporationIdInAndObjectState(List<UUID> corporationIds, ObjectState objectState);
