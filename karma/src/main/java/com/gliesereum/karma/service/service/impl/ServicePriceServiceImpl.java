@@ -3,13 +3,13 @@ package com.gliesereum.karma.service.service.impl;
 import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
 import com.gliesereum.karma.model.repository.jpa.service.ServicePriceRepository;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.filter.FilterAttributeService;
 import com.gliesereum.karma.service.filter.FilterService;
 import com.gliesereum.karma.service.filter.PriceFilterAttributeService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.ServiceService;
-import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -147,6 +148,22 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         ServicePriceDto price = getPrice(idPrice);
         checkFilterAttribute(idAttribute, price.getService().getBusinessCategoryId());
         priceFilterAttributeService.create(new PriceFilterAttributeDto(idPrice, idAttribute));
+    }
+
+    @Override
+    @Transactional
+    public ServicePriceDto addFilterAttributes(UUID idPrice, List<UUID> idsAttribute) {
+        ServicePriceDto price = getPrice(idPrice);
+        List<PriceFilterAttributeDto> list = new ArrayList<>();
+        idsAttribute.forEach(f -> {
+            checkFilterAttribute(f, price.getService().getBusinessCategoryId());
+            if (price.getAttributes().stream().noneMatch(n -> n.getId().equals(f))) {
+                list.add(new PriceFilterAttributeDto(idPrice, f));
+                price.getAttributes().add(filterAttributeService.getById(f));
+            }
+        });
+        priceFilterAttributeService.create(list);
+        return price;
     }
 
     @Override
