@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
+import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,4 +20,6 @@ public class BusinessSearchDto {
     private List<UUID> serviceIds;
 
     private UUID businessCategoryId;
+
+    private GeoDistanceDto geoDistance;
 }

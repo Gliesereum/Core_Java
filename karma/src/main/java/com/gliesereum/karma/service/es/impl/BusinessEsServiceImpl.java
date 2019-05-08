@@ -9,6 +9,7 @@ import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
@@ -20,6 +21,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.lucene.search.join.ScoreMode;
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.script.Script;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private final static String FIELD_FILTER_IDS = "services.filterIds";
     private final static String FIELD_FILTER_ATTRIBUTE_IDS = "services.filterAttributeIds";
     private final static String FIELD_BUSINESS_CATEGORY_ID = "businessCategoryId";
+    private final static String FIELD_GEO_POINT = "geoPoint";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -74,6 +77,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         if ((businessSearch != null) && (businessSearch.getBusinessCategoryId() != null)) {
             UUID businessCategoryId = businessSearch.getBusinessCategoryId();
             addQueryByBusinessCategoryId(boolQueryBuilder, businessCategoryId);
+            addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
             BusinessCategoryDto businessCategory = businessCategoryService.getById(businessCategoryId);
             switch (businessCategory.getBusinessType()) {
                 case CAR: {
@@ -217,6 +221,17 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             query.should(notQuery);
         }
         return query;
+    }
+
+    private void addGeoDistanceQuery(BoolQueryBuilder boolQueryBuilder, GeoDistanceDto geoDistance) {
+        if (geoDistance != null) {
+            if (ObjectUtils.allNotNull(geoDistance.getLatitude(), geoDistance.getLongitude(), geoDistance.getDistanceMeters())) {
+                GeoDistanceQueryBuilder geoDistanceQueryBuilder = new GeoDistanceQueryBuilder(FIELD_GEO_POINT)
+                        .point(geoDistance.getLatitude(), geoDistance.getLongitude())
+                        .distance(geoDistance.getDistanceMeters(), DistanceUnit.METERS);
+                boolQueryBuilder.filter(geoDistanceQueryBuilder);
+            }
+        }
     }
 
 }
