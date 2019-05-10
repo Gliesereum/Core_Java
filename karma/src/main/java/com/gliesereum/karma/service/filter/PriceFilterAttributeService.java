@@ -14,6 +14,8 @@ public interface PriceFilterAttributeService extends DefaultService<PriceFilterA
 
     void deleteByPriceIdAndFilterId(UUID idPrice, UUID filterAttributeId);
 
+    void deleteByPriceId(UUID idPrice);
+
     boolean existByPriceIdAndAttributeId(UUID idPrice, UUID filterAttributeId);
 
 }
