@@ -38,6 +38,11 @@ public class PriceFilterAttributeServiceImpl extends DefaultServiceImpl<PriceFil
     }
 
     @Override
+    public void deleteByPriceId(UUID idPrice) {
+        repository.deleteByPriceId(idPrice);
+    }
+
+    @Override
     public boolean existByPriceIdAndAttributeId(UUID idPrice, UUID filterAttributeId) {
         return repository.existsByPriceIdAndFilterAttributeId(idPrice, filterAttributeId);
     }
