@@ -57,7 +57,7 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
         if (record != null) {
             BaseRecordDto fullModel = baseRecordService.getFullModelById(record.getId());
             if (fullModel != null) {
-                UUID id = fullModel.getId();
+                UUID id = fullModel.getClientId();
                 if (id != null) {
                     NotificationDto<BaseRecordDto> notification = new NotificationDto<>();
                     notification.setData(fullModel);
