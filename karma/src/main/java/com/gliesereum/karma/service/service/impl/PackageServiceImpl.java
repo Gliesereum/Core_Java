@@ -150,6 +150,10 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     private void setServices(PackageDto dto, PackageDto result) {
         if (result != null) {
             result.setServicesIds(dto.getServicesIds());
+            if(CollectionUtils.isNotEmpty(result.getServicesIds())) {
+                List<ServicePriceDto> services = servicePriceService.getByIds(result.getServicesIds());
+                result.setServices(services);
+            }
             dto.getServicesIds().forEach(f -> {
                 packageServiceService.create(new PackageServiceDto(result.getId(), f));
             });
