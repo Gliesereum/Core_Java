@@ -10,6 +10,7 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,19 +25,27 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class PackageServiceServiceImpl extends DefaultServiceImpl<PackageServiceDto, PackageServiceEntity> implements PackageServiceService {
 
-    @Autowired
-    private PackageServiceRepository repository;
-
     private static final Class<PackageServiceDto> DTO_CLASS = PackageServiceDto.class;
     private static final Class<PackageServiceEntity> ENTITY_CLASS = PackageServiceEntity.class;
 
-    public PackageServiceServiceImpl(PackageServiceRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    private final PackageServiceRepository packageServiceRepository;
+
+    @Autowired
+    public PackageServiceServiceImpl(PackageServiceRepository packageServiceRepository, DefaultConverter defaultConverter) {
+        super(packageServiceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.packageServiceRepository = packageServiceRepository;
     }
 
     @Override
+    @Transactional
     public void deleteByPackageIdAndServicePriceIDs(UUID packageId, List<UUID> servicePricesIds) {
-        repository.deleteAllByPackageIdAndServiceIdIn(packageId, servicePricesIds);
+        packageServiceRepository.deleteAllByPackageIdAndServiceIdIn(packageId, servicePricesIds);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByPackageId(UUID packageId) {
+        packageServiceRepository.deleteAllByPackageId(packageId);
     }
 
     @Override
@@ -60,7 +69,7 @@ public class PackageServiceServiceImpl extends DefaultServiceImpl<PackageService
         if (serviceId == null){
             throw new ClientException(SERVICE_CLASS_ID_IS_EMPTY);
         }
-        if(repository.existsByPackageIdAndServiceId(packageId, serviceId)){
+        if(packageServiceRepository.existsByPackageIdAndServiceId(packageId, serviceId)){
             throw new ClientException(PAR_SERVICE_CLASS_ID_AND_PACKAGE_ID_EXIST);
         }
     }

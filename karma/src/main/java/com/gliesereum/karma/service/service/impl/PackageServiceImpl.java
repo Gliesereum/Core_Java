@@ -143,8 +143,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     }
 
     private void deletePackageServicePrice(PackageDto dto) {
-        List<UUID> servicesIds = dto.getServices().stream().map(ServicePriceDto::getId).collect(Collectors.toList());
-        packageServiceService.deleteByPackageIdAndServicePriceIDs(dto.getId(), servicesIds);
+        packageServiceService.deleteByPackageId(dto.getId());
     }
 
     private void setServices(PackageDto dto, PackageDto result) {
