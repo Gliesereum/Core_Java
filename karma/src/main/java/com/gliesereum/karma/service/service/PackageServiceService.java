@@ -14,4 +14,6 @@ import java.util.UUID;
 public interface PackageServiceService extends DefaultService<PackageServiceDto, PackageServiceEntity> {
 
     void deleteByPackageIdAndServicePriceIDs(UUID packageId, List<UUID> servicePricesIds);
+
+    void deleteByPackageId(UUID packageId);
 }
