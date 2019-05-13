@@ -23,6 +23,7 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -216,9 +217,8 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                 }
             });
             if (CollectionUtils.isNotEmpty(userIds)) {
-                List<UserDto> users = userExchangeService.findByIds(userIds);
-                if (CollectionUtils.isNotEmpty(users)) {
-                    Map<UUID, UserDto> userMap = users.stream().collect(Collectors.toMap(UserDto::getId, i -> i));
+                Map<UUID, UserDto> userMap = userExchangeService.findUserMapByIds(userIds);
+                if (MapUtils.isNotEmpty(userMap)) {
                     result.forEach(i -> {
                         if ((i.getCustomer() != null) && (i.getCustomer().getUserId() != null)) {
                             i.setUser(userMap.get(i.getCustomer().getUserId()));

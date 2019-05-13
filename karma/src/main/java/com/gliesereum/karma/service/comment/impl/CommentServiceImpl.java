@@ -13,15 +13,13 @@ import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -145,19 +143,16 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
     private void setUserInfo(List<CommentFullDto> comments) {
         if(CollectionUtils.isNotEmpty(comments)) {
             List<UUID> ownerIds = comments.stream().map(CommentFullDto::getOwnerId).collect(Collectors.toList());
-            List<UserDto> users = userExchangeService.findByIds(ownerIds);
-            if (CollectionUtils.isNotEmpty(users)) {
+            Map<UUID, UserDto> userMap = userExchangeService.findUserMapByIds(ownerIds);
+            if (MapUtils.isNotEmpty(userMap))  {
                 comments.forEach(i -> {
-                    for (UserDto user : users) {
-                        if (user.getId().equals(i.getOwnerId())) {
-                            i.setFirstName(user.getFirstName());
-                            i.setLastName(user.getLastName());
-                            i.setMiddleName(user.getMiddleName());
-                            break;
-                        }
+                    UserDto user = userMap.get(i.getOwnerId());
+                    if (user != null) {
+                        i.setFirstName(user.getFirstName());
+                        i.setLastName(user.getLastName());
+                        i.setMiddleName(user.getMiddleName());
                     }
                 });
-
             }
         }
     }
