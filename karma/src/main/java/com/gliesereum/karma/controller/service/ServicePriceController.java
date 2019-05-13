@@ -63,13 +63,13 @@ public class ServicePriceController {
     }
 
     @PostMapping("/class")
-    public ServiceClassPriceDto createClass(@Valid @RequestBody ServiceClassPriceDto dto) {
-        return serviceClassPriceService.create(dto);
+    public ServicePriceDto createClass(@Valid @RequestBody ServiceClassPriceDto dto) {
+        return serviceClassPriceService.createAndGetPrice(dto);
     }
 
     @PutMapping("/class")
-    public ServiceClassPriceDto updateClass(@Valid @RequestBody ServiceClassPriceDto dto) {
-        return serviceClassPriceService.update(dto);
+    public ServicePriceDto updateClass(@Valid @RequestBody ServiceClassPriceDto dto) {
+        return serviceClassPriceService.updateAndGetPrice(dto);
     }
 
     @DeleteMapping("/class/{priceId}/{classId}")

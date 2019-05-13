@@ -54,19 +54,43 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     @Override
     @UpdateCarWashIndex
     public ServiceClassPriceDto create(ServiceClassPriceDto dto) {
-        if (dto != null)
+        if (dto != null) {
             checkPriceServiceExist(dto.getPriceId(), dto.getServiceClassId());
             checkPermission(dto.getPriceId(), dto.getServiceClassId());
+        }
         return super.create(dto);
     }
 
     @Override
     @UpdateCarWashIndex
     public ServiceClassPriceDto update(ServiceClassPriceDto dto) {
-        if (dto != null)
+        if (dto != null) {
             checkPriceServiceExist(dto.getPriceId(), dto.getServiceClassId());
             checkPermission(dto.getPriceId(), dto.getServiceClassId());
+        }
         return super.update(dto);
+    }
+
+    @Override
+    @UpdateCarWashIndex
+    public ServicePriceDto createAndGetPrice(ServiceClassPriceDto dto) {
+        ServicePriceDto servicePrice = null;
+        dto = this.create(dto);
+        if (dto != null) {
+            servicePrice = servicePriceService.getByIdAndRefresh(dto.getPriceId());
+        }
+        return servicePrice;
+    }
+
+    @Override
+    @UpdateCarWashIndex
+    public ServicePriceDto updateAndGetPrice(ServiceClassPriceDto dto) {
+        ServicePriceDto servicePrice = null;
+        dto = this.update(dto);
+        if (dto != null) {
+            servicePrice = servicePriceService.getByIdAndRefresh(dto.getPriceId());
+        }
+        return servicePrice;
     }
 
     @Override
