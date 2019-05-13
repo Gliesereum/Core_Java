@@ -13,5 +13,7 @@ public interface PriceFilterAttributeRepository extends JpaRepository<PriceFilte
 
     void deleteByPriceIdAndFilterAttributeId(UUID idPrice, UUID filterAttributeId);
 
+    void deleteByPriceId(UUID idPrice);
+
     boolean existsByPriceIdAndFilterAttributeId(UUID idPrice, UUID filterAttributeId);
 }
