@@ -117,6 +117,15 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     }
 
     @Override
+    public ServicePriceDto getByIdAndRefresh(UUID id) {
+        ServicePriceEntity entity = servicePriceRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        if (entity != null) {
+            servicePriceRepository.refresh(entity);
+        }
+        return converter.convert(entity, dtoClass);
+    }
+
+    @Override
     public List<ServicePriceDto> getByIds(Iterable<UUID> ids) {
         List<ServicePriceDto> result = null;
         if (ids != null) {
