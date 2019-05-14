@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface WorkingSpaceRepository extends JpaRepository<WorkingSpaceEntity, UUID> {
 
     List<WorkingSpaceEntity> findByBusinessId(UUID businessId);
+
+    List<WorkingSpaceEntity> findByBusinessIdOrderByIndexNumberAsc(UUID businessId);
 }
