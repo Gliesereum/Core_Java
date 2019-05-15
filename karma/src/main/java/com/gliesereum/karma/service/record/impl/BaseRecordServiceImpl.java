@@ -97,14 +97,14 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Transactional
     public List<BaseRecordDto> getByBusinessIdAndStatusRecord(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to) {
         List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetween(businessId, status, from, to);
-        return converter.convert(entities, dtoClass);
+        return setServicePrice(converter.convert(entities, dtoClass));
     }
 
     @Override
     @Transactional
     public List<BaseRecordDto> getByBusinessIdAndStatusRecordNotificationSend(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to, boolean notificationSend) {
         List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetweenAndNotificationSend(businessId, status, from, to, notificationSend);
-        return converter.convert(entities, dtoClass);
+        return setServicePrice(converter.convert(entities, dtoClass));
     }
 
     @Override
@@ -119,7 +119,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public List<BaseRecordDto> convertListEntityToDto(List<BaseRecordEntity> entities) {
-        return converter.convert(entities, dtoClass);
+        return setServicePrice(converter.convert(entities, dtoClass));
     }
 
     @Override
@@ -138,7 +138,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 search.getStatus(), search.getProcesses(), search.getTargetIds(), search.getFrom(), search.getTo());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
-        return result;
+        return setServicePrice(result);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
-        return result;
+        return setServicePrice(result);
     }
 
     @Override
@@ -224,7 +224,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         LocalDateTime finish = begin.plusMinutes(getDurationByRecord(dto));
         dto.setFinish(finish);
         checkRecord(dto);
-        return super.update(dto);
+        BaseRecordDto result = super.update(dto);
+        setServicePrice(Arrays.asList(result));
+        return result;
     }
 
     @Override
@@ -243,7 +245,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
         checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), workingSpaceId, business);
         dto.setWorkingSpaceId(workingSpaceId);
-        return super.update(dto);
+        BaseRecordDto result = super.update(dto);
+        setServicePrice(Arrays.asList(result));
+        return result;
     }
 
     @Override
@@ -268,7 +272,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (status.equals(StatusProcess.CANCELED)) {
             dto.setStatusRecord(StatusRecord.CANCELED);
         }
-        return super.update(dto);
+        BaseRecordDto result = super.update(dto);
+        setServicePrice(Arrays.asList(result));
+        return result;
     }
 
     @Override
@@ -279,7 +285,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         checkPermissionToUpdate(dto);
         dto.setStatusRecord(StatusRecord.CANCELED);
         dto.setStatusProcess(StatusProcess.CANCELED);
-        return super.update(dto);
+        BaseRecordDto result = super.update(dto);
+        setServicePrice(Arrays.asList(result));
+        return result;
     }
 
     @Override
@@ -295,7 +303,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
-            return createRecord(dto);
+            BaseRecordDto result = createRecord(dto);
+            setServicePrice(Arrays.asList(result));
+            return result;
         }
         return null;
     }
@@ -309,7 +319,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
-        return createRecord(dto);
+        BaseRecordDto result = createRecord(dto);
+        setServicePrice(Arrays.asList(result));
+        return result;
     }
 
     @Override
@@ -322,6 +334,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             setFullModelRecord(list);
             result = list.get(0);
         }
+        setServicePrice(Arrays.asList(result));
         return result;
     }
 
@@ -330,7 +343,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
         dto.setStatusPay(status);
-        return super.update(dto);
+        BaseRecordDto result = super.update(dto);
+        setServicePrice(Arrays.asList(result));
+        return result;
     }
 
 
@@ -398,6 +413,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
             }
         }
+        setServicePrice(Arrays.asList(dto));
         return dto;
     }
 
@@ -419,6 +435,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
+        setServicePrice(result);
         return result;
     }
 
@@ -627,4 +644,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return result;
     }
 
+    private List<BaseRecordDto> setServicePrice(List<BaseRecordDto> records) {
+        if (CollectionUtils.isNotEmpty(records)) {
+            List<UUID> recordIds = records.stream().map(BaseRecordDto::getId).collect(Collectors.toList());
+            Map<UUID, List<ServicePriceDto>> recordServices = recordServiceService.getServicePriceMap(recordIds);
+            records.forEach(record -> {
+                record.setServices(recordServices.get(record.getId()));
+
+            });
+        }
+        return records;
+    }
 }

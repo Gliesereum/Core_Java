@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.record;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,8 @@ public class RecordServiceDto extends DefaultDto {
     private UUID recordId;
 
     private UUID serviceId;
+
+    private ServicePriceDto service;
 
     public RecordServiceDto(UUID recordId, UUID serviceId) {
         this.recordId = recordId;
