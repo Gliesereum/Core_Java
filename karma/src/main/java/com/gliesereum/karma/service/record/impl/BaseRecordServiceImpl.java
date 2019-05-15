@@ -32,6 +32,7 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,7 +105,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Transactional
     public List<BaseRecordDto> getByBusinessIdAndStatusRecordNotificationSend(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to, boolean notificationSend) {
         List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetweenAndNotificationSend(businessId, status, from, to, notificationSend);
-        return setServicePrice(converter.convert(entities, dtoClass));
+        return converter.convert(entities, dtoClass);
     }
 
     @Override
@@ -304,7 +305,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
             BaseRecordDto result = createRecord(dto);
-            setServicePrice(Arrays.asList(result));
             return result;
         }
         return null;
@@ -320,7 +320,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
         BaseRecordDto result = createRecord(dto);
-        setServicePrice(Arrays.asList(result));
         return result;
     }
 
@@ -372,6 +371,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             result = converter.convert(entity, dtoClass);
             result.setServicesIds(dto.getServicesIds());
             setFullModelRecord(Arrays.asList(result));
+            if (CollectionUtils.isNotEmpty(dto.getServicesIds())) {
+                result.setServices(servicePriceService.getByIds(dto.getServicesIds()));
+            }
             createOrders(result);
         }
         return result;
@@ -413,7 +415,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
             }
         }
-        setServicePrice(Arrays.asList(dto));
         return dto;
     }
 
@@ -646,12 +647,22 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     private List<BaseRecordDto> setServicePrice(List<BaseRecordDto> records) {
         if (CollectionUtils.isNotEmpty(records)) {
-            List<UUID> recordIds = records.stream().map(BaseRecordDto::getId).collect(Collectors.toList());
-            Map<UUID, List<ServicePriceDto>> recordServices = recordServiceService.getServicePriceMap(recordIds);
-            records.forEach(record -> {
-                record.setServices(recordServices.get(record.getId()));
+            List<UUID> recordIds = records.stream()
+                    .filter(i -> i.getId() != null)
+                    .map(BaseRecordDto::getId)
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(recordIds)) {
+                Map<UUID, List<ServicePriceDto>> recordServices = recordServiceService.getServicePriceMap(recordIds);
+                if (MapUtils.isNotEmpty(recordServices)) {
+                    records.forEach(record -> {
+                        if (record.getServices() == null) {
+                            record.setServices(new ArrayList<>());
+                        }
+                        record.setServices(recordServices.get(record.getId()));
 
-            });
+                    });
+                }
+            }
         }
         return records;
     }
