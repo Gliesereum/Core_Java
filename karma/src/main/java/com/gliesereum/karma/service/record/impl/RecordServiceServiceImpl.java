@@ -40,6 +40,8 @@ public class RecordServiceServiceImpl extends DefaultServiceImpl<RecordServiceDt
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = new HashMap<>();
                 for (RecordServiceEntity entity : entities) {
+                    //TODO: remove
+                    recordServiceRepository.refresh(entity);
                     if (!result.containsKey(entity.getRecordId())) {
                         result.put(entity.getRecordId(), new ArrayList<>());
                     }
