@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.service;
 
 import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
+import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -24,4 +25,6 @@ public interface ServicePriceService extends DefaultService<ServicePriceDto, Ser
     void removeFilterAttribute(UUID idPrice, UUID idAttribute);
 
     ServicePriceDto getByIdAndRefresh(UUID id);
+
+    List<LiteServicePriceDto> getLiteServicePriceByBusinessId(UUID id);
 }

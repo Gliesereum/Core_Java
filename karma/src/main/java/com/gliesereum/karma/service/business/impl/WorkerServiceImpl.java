@@ -11,6 +11,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
@@ -79,6 +80,21 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         List<WorkerDto> result = converter.convert(entities, dtoClass);
         if (CollectionUtils.isNotEmpty(result)) {
             setUsers(result);
+        }
+        return result;
+    }
+
+    @Override
+    public List<LiteWorkerDto> getLiteWorkerByBusinessId(UUID id) {
+        List<WorkerEntity> entities = repository.findAllByBusinessId(id);
+        List<LiteWorkerDto> result = converter.convert(entities, LiteWorkerDto.class);
+        if (CollectionUtils.isNotEmpty(result)) {
+            Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(result.stream().map(m -> m.getUserId()).collect(Collectors.toList()));
+            if (MapUtils.isNotEmpty(users)) {
+                result.forEach(f -> {
+                    f.setUser(users.get(f.getUserId()));
+                });
+            }
         }
         return result;
     }

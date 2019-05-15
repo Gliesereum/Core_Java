@@ -6,6 +6,7 @@ import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,12 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             result = converter.convert(entities, dtoClass);
         }
         return result;
+    }
+
+    @Override
+    public List<LiteWorkingSpaceDto> getLiteWorkingSpaceByBusinessId(UUID id) {
+        List<WorkingSpaceEntity> entities = workingSpaceRepository.findByBusinessId(id);
+        return converter.convert(entities, LiteWorkingSpaceDto.class);
     }
 
     @Override

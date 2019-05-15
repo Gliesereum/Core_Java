@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.service;
 
 import com.gliesereum.karma.model.entity.service.PackageEntity;
+import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -16,4 +17,6 @@ public interface PackageService extends DefaultService<PackageDto, PackageEntity
     List<PackageDto> getByBusinessId(UUID id);
 
     PackageDto getByIdIgnoreState(UUID id);
+
+    List<LitePackageDto> getLitePackageByBusinessId(UUID id);
 }

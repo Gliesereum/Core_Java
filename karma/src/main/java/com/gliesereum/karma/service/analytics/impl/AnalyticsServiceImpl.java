@@ -12,17 +12,19 @@ import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticDto;
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
-import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,6 +62,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public AnalyticDto getAnalyticByFilter(AnalyticFilterDto filter) {
+        LocalDateTime start = LocalDateTime.now();
         checkFilter(filter);
         AnalyticDto result = new AnalyticDto();
 
@@ -120,7 +123,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             });
         }
 
-        List<PackageDto> businessPackages = packageService.getByBusinessId(filter.getBusinessId());
+        List<LitePackageDto> businessPackages = packageService.getLitePackageByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessPackages)) {
             businessPackages.forEach(f -> {
                 Set<BaseRecordDto> record;
@@ -129,7 +132,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             result.setPackages(sortMap(result.getPackages()));
         }
 
-        List<ServicePriceDto> businessServices = servicePriceService.getByBusinessId(filter.getBusinessId());
+        List<LiteServicePriceDto> businessServices = servicePriceService.getLiteServicePriceByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessServices)) {
             businessServices.forEach(f -> {
                 Set<BaseRecordDto> record;
@@ -138,7 +141,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             result.setServices(sortMap(result.getServices()));
         }
 
-        List<WorkingSpaceDto> businessWorkingSpace = workingSpaceService.getByBusinessId(filter.getBusinessId());
+        List<LiteWorkingSpaceDto> businessWorkingSpace = workingSpaceService.getLiteWorkingSpaceByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessWorkingSpace)) {
             businessWorkingSpace.forEach(f -> {
                 Set<BaseRecordDto> record;
@@ -147,7 +150,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             result.setWorkingSpaces(sortMap(result.getWorkingSpaces()));
         }
 
-        List<WorkerDto> businessWorkers = workerService.getByBusinessId(filter.getBusinessId());
+        List<LiteWorkerDto> businessWorkers = workerService.getLiteWorkerByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessWorkers)) {
             businessWorkers.forEach(f -> {
                 if (f.getUser() != null) {
@@ -157,7 +160,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             });
             result.setWorkers(sortMap(result.getWorkers()));
         }
-
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " + Duration.between(start, LocalDateTime.now()));
+        System.out.println("+++++++++++++++ ");
         return result;
     }
 

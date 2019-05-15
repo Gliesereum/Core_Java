@@ -3,13 +3,14 @@ package com.gliesereum.karma.service.service.impl;
 import com.gliesereum.karma.model.entity.service.PackageEntity;
 import com.gliesereum.karma.model.repository.jpa.service.PackageRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.PackageServiceService;
 import com.gliesereum.karma.service.service.ServicePriceService;
-import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -24,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.BODY_INVALID;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -76,6 +76,12 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
             }
         }
         return result;
+    }
+
+    @Override
+    public List<LitePackageDto> getLitePackageByBusinessId(UUID id) {
+        List<PackageEntity> entities = packageRepository.getByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
+        return converter.convert(entities, LitePackageDto.class);
     }
 
     @Override
