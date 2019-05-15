@@ -6,10 +6,8 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
-import com.gliesereum.share.common.model.dto.karma.record.ReportFilterDto;
 import com.gliesereum.share.common.service.DefaultService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -46,8 +44,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     BaseRecordDto getFullModelById(UUID id);
 
     BaseRecordDto updateStatusPay(UUID idRecord, StatusPay status);
-
-    void getReport(HttpServletResponse response, ReportFilterDto filter);
 
     List<BaseRecordDto> convertListEntityToDto(List<BaseRecordEntity> entities);
 

@@ -15,7 +15,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/7/18x
  */
-public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UUID>, RefreshableRepository {
+public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UUID>, RefreshableRepository, BaseRecordAnalyticRepository  {
 
     List<BaseRecordEntity> findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
             List<StatusRecord> status, List<StatusProcess> processes, List<UUID> businessIds, LocalDateTime from, LocalDateTime to);
@@ -29,6 +29,4 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
 
     List<BaseRecordEntity> findAllByTargetIdInAndBusinessCategoryId(List<UUID> ids, UUID businessCategoryId);
 
-    List<BaseRecordEntity> findByStatusRecordInAndBusinessIdInAndBeginBetweenOrderByBegin(
-            List<StatusRecord> status, List<UUID> businessIds, LocalDateTime from, LocalDateTime to);
 }

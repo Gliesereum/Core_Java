@@ -18,4 +18,6 @@ public class BaseRecordDto extends AbstractRecordDto {
 
     private UUID workingSpaceId;
 
+    private UUID workerId;
+
 }
