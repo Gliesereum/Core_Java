@@ -23,8 +23,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,7 +60,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public AnalyticDto getAnalyticByFilter(AnalyticFilterDto filter) {
-        LocalDateTime start = LocalDateTime.now();
         checkFilter(filter);
         AnalyticDto result = new AnalyticDto();
 
@@ -160,8 +157,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             });
             result.setWorkers(sortMap(result.getWorkers()));
         }
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " + Duration.between(start, LocalDateTime.now()));
-        System.out.println("+++++++++++++++ ");
         return result;
     }
 
