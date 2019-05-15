@@ -1,13 +1,11 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -17,18 +15,18 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class WorkerDto extends DefaultDto {
+public class LiteWorkingSpaceDto extends DefaultDto {
 
-    private UUID userId;
+    private String name;
 
-    private String position;
+    private String description;
 
-    private UUID workingSpaceId;
+    private Integer indexNumber;
 
     private UUID businessId;
 
-    private UserDto user;
+    private StatusSpace statusSpace;
 
-    private List<WorkTimeDto> workTimes = new ArrayList<>();
+    private UUID businessCategoryId;
 
 }

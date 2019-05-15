@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.business;
 
 import com.gliesereum.karma.model.entity.business.WorkingSpaceEntity;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -14,4 +15,6 @@ import java.util.UUID;
 public interface WorkingSpaceService extends DefaultService<WorkingSpaceDto, WorkingSpaceEntity> {
 
     List<WorkingSpaceDto> getByBusinessId(UUID businessId);
+
+    List<LiteWorkingSpaceDto> getLiteWorkingSpaceByBusinessId(UUID id);
 }

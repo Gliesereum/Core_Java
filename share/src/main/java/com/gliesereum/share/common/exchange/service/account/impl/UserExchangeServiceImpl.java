@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author yvlasiuk
@@ -88,6 +89,16 @@ public class UserExchangeServiceImpl implements UserExchangeService {
             if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
                 result = response.getBody();
             }
+        }
+        return result;
+    }
+
+    @Override
+    public Map<UUID, UserDto> findUserMapByIds(Collection<UUID> ids) {
+        Map<UUID, UserDto> result = null;
+        List<UserDto> users = findByIds(ids);
+        if (CollectionUtils.isNotEmpty(users)) {
+            result = users.stream().collect(Collectors.toMap(UserDto::getId, i -> i));
         }
         return result;
     }

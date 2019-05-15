@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -17,7 +15,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class WorkerDto extends DefaultDto {
+public class LiteWorkerDto extends DefaultDto {
 
     private UUID userId;
 
@@ -28,7 +26,5 @@ public class WorkerDto extends DefaultDto {
     private UUID businessId;
 
     private UserDto user;
-
-    private List<WorkTimeDto> workTimes = new ArrayList<>();
 
 }

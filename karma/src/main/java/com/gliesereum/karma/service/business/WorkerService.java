@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.business;
 
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -20,4 +21,8 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
     List<WorkerDto> findByUserId(UUID userId);
 
     boolean checkWorkerExistByPhone(String phone);
+
+    List<WorkerDto> getByBusinessId(UUID businessId);
+
+    List<LiteWorkerDto> getLiteWorkerByBusinessId(UUID id);
 }

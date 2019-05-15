@@ -1,13 +1,13 @@
 package com.gliesereum.karma.controller.analytics;
 
 import com.gliesereum.karma.service.analytics.AnalyticsService;
+import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticDto;
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
-import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticRatingDto;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author vitalij
@@ -20,14 +20,8 @@ public class AnalyticsController {
     @Autowired
     private AnalyticsService service;
 
-    @PostMapping("/records/by-filter")
-    public List<BaseRecordDto> getByAnalyticFilter(@RequestBody AnalyticFilterDto analyticFilter) {
-        return service.getByAnalyticFilter(analyticFilter);
+    @PostMapping("/by-filter")
+    public AnalyticDto getAnalyticByFilter(@RequestBody AnalyticFilterDto filter) {
+        return service.getAnalyticByFilter(filter);
     }
-
-    @GetMapping("/service/rating")
-    public AnalyticRatingDto getPackageAndServiceRating(@RequestBody AnalyticFilterDto analyticFilter) {
-        return service.getPackageAndServiceRating(analyticFilter);
-    }
-
-}    
+}

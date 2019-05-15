@@ -3,6 +3,7 @@ package com.gliesereum.notification.model.repository.jpa.device;
 import com.gliesereum.notification.model.entity.device.UserDeviceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,5 +14,7 @@ import java.util.UUID;
 public interface UserDeviceRepository extends JpaRepository<UserDeviceEntity, UUID> {
 
     boolean existsByFirebaseRegistrationToken(String registrationToken);
+
+    List<UserDeviceEntity> findAllByUserId(UUID userId);
 
 }

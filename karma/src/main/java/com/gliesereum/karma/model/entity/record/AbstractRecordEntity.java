@@ -1,6 +1,5 @@
 package com.gliesereum.karma.model.entity.record;
 
-import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
@@ -8,10 +7,11 @@ import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -64,10 +64,4 @@ public class AbstractRecordEntity extends DefaultEntity {
 
     @Column(name = "notification_send")
     private boolean notificationSend;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinTable(name = "record_service",
-            joinColumns = {@JoinColumn(name = "record_id", insertable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "service_id", insertable = false, updatable = false)})
-    private Set<ServicePriceEntity> services = new HashSet<>();
 }

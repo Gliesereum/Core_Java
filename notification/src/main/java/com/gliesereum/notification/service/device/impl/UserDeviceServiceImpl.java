@@ -75,4 +75,14 @@ public class UserDeviceServiceImpl extends DefaultServiceImpl<UserDeviceDto, Use
         }
         return result;
     }
+
+    @Override
+    public List<UserDeviceDto> getByUserId(UUID userId) {
+        List<UserDeviceDto> userDevices = null;
+        if (userId != null) {
+            List<UserDeviceEntity> entities = userDeviceRepository.findAllByUserId(userId);
+            userDevices = converter.convert(entities, dtoClass);
+        }
+        return userDevices;
+    }
 }

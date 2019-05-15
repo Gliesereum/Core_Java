@@ -15,6 +15,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
 import com.gliesereum.share.common.model.dto.karma.filter.PriceFilterAttributeDto;
+import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -126,6 +127,12 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     }
 
     @Override
+    public List<LiteServicePriceDto> getLiteServicePriceByBusinessId(UUID id) {
+        List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
+        return converter.convert(entities, LiteServicePriceDto.class);
+    }
+
+    @Override
     public List<ServicePriceDto> getByIds(Iterable<UUID> ids) {
         List<ServicePriceDto> result = null;
         if (ids != null) {
@@ -165,6 +172,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         ServicePriceDto price = getPrice(idPrice);
         List<PriceFilterAttributeDto> list = new ArrayList<>();
         priceFilterAttributeService.deleteByPriceId(idPrice);
+        price.setAttributes(new ArrayList<>());
         idsAttribute.forEach(f -> {
             checkFilterAttribute(f, price.getService().getBusinessCategoryId());
             list.add(new PriceFilterAttributeDto(idPrice, f));

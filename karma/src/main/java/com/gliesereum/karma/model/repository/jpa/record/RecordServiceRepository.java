@@ -3,6 +3,7 @@ package com.gliesereum.karma.model.repository.jpa.record;
 import com.gliesereum.karma.model.entity.record.RecordServiceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -11,4 +12,6 @@ import java.util.UUID;
  * @since 12/7/18
  */
 public interface RecordServiceRepository extends JpaRepository<RecordServiceEntity, UUID> {
+
+    List<RecordServiceEntity> findAllByRecordIdIn(List<UUID> recordId);
 }
