@@ -70,4 +70,27 @@ public class FirebaseServiceImpl implements FirebaseService {
             log.warn("Error while send message", e);
         }
     }
+
+    @Override
+    public void sendNotificationToDevice(String registrationToken, String title, String body) {
+        Message message = Message.builder()
+                .putData("title", title)
+                .putData("body", body)
+                .setNotification(new Notification(title, body))
+                .setApnsConfig(ApnsConfig.builder()
+                        .setAps(Aps.builder()
+                                .setAlert(ApsAlert.builder()
+                                        .setTitle(title)
+                                        .setBody(body)
+                                        .build())
+                                .build())
+                        .build())
+                .setToken(registrationToken)
+                .build();
+        try {
+            firebaseMessagingKarma.send(message);
+        } catch (FirebaseMessagingException e) {
+            log.warn("Error while send message for device", e);
+        }
+    }
 }
