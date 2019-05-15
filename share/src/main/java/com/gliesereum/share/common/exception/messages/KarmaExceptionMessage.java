@@ -76,6 +76,7 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage BUSINESS_CATEGORY_ID_EMPTY = new ExceptionMessage(1474, 400, "Business category id empty");
     public static final ExceptionMessage BUSINESS_CATEGORY_NOT_FOUND = new ExceptionMessage(1475, 400, "Business category not found");
     public static final ExceptionMessage DIFFERENT_BUSINESS_OR_CATEGORY_OF_BUSINESS = new ExceptionMessage(1476, 400, "You can't create working stace for different business or category of business");
+    public static final ExceptionMessage TIME_IS_NOT_CORRECT = new ExceptionMessage(1477, 400, "Time is not correct");
 
     public static final ExceptionMessage WORKING_SPACE_INDEX_NUMBER_EXIST = new ExceptionMessage(1477, 400, "Working space index number exist");
 

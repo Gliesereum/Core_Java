@@ -6,6 +6,7 @@ import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
+import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.record.BaseRecordService;
@@ -17,6 +18,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
@@ -30,27 +32,19 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_DONT_HAVE_ANY_CORPORATION;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
@@ -89,6 +83,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Autowired
     private BusinessCategoryService businessCategoryService;
+
+    @Autowired
+    private WorkerService workerService;
 
     @Autowired
     public BaseRecordServiceImpl(BaseRecordRepository baseRecordRepository, DefaultConverter defaultConverter) {
@@ -262,6 +259,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setStatusProcess(status);
         if (status.equals(StatusProcess.COMPLETED)) {
             dto.setStatusRecord(StatusRecord.COMPLETED);
+            WorkerDto worker = workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), dto.getBusinessId());
+            if (worker == null) {
+                throw new ClientException(WORKER_NOT_FOUND);
+            }
+            dto.setWorkerId(worker.getId());
         }
         if (status.equals(StatusProcess.CANCELED)) {
             dto.setStatusRecord(StatusRecord.CANCELED);
@@ -331,98 +333,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return super.update(dto);
     }
 
-    @Override
-    public void getReport(HttpServletResponse response, ReportFilterDto filter) {
-        BaseBusinessDto business = baseBusinessService.getByIdIgnoreState(filter.getBusinessId());
-        if (business == null) {
-            throw new ClientException(BUSINESS_NOT_FOUND);
-        }
-        List<BaseRecordDto> records = getRecordsByReportFilter(filter);
-        if (CollectionUtils.isNotEmpty(records)) {
-            records.sort(Comparator.comparing(BaseRecordDto::getBegin));
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        String name = business.getName().concat(" (")
-                .concat(filter.getFrom().format(formatter)).concat(" - ")
-                .concat(filter.getTo().format(formatter)).concat(" ).csv");
-        String[] CSV_HEADER = {"Begin process", "Finish process", "Price", "Pay"};
-        CSVPrinter printer = null;
-        PrintWriter writer = null;
-        if (filter.getFrom().toLocalDate().equals(filter.getTo().toLocalDate())) {
-            formatter = DateTimeFormatter.ofPattern("HH:mm");
-        }
-        try {
-            response.setContentType("text/csv");
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; file=" + name);
-            writer = response.getWriter();
-            printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(CSV_HEADER));
-            Integer total = records.stream().mapToInt(s -> s.getPrice()).sum();
-            Integer totalPaid = records.stream().filter(f -> f.getStatusPay().equals(StatusPay.PAID)).mapToInt(s -> s.getPrice()).sum();
-            Integer totalNotPaid = records.stream().filter(f -> f.getStatusPay().equals(StatusPay.NOT_PAID)).mapToInt(s -> s.getPrice()).sum();
-
-            for (BaseRecordDto record : records) {
-                List<String> data = Arrays.asList(
-                        record.getBegin().format(formatter),
-                        record.getFinish().format(formatter),
-                        record.getPrice().toString(),
-                        getPayStatus(record.getStatusPay()));
-                printer.printRecord(data);
-            }
-            List<String> totalNotPaidDate = Arrays.asList("Not paid", "", totalNotPaid.toString(), "");
-            printer.printRecord(totalNotPaidDate);
-            List<String> totalPaidDate = Arrays.asList("Paid", "", totalPaid.toString(), "");
-            printer.printRecord(totalPaidDate);
-            List<String> totalDate = Arrays.asList("Total", "", total.toString(), "");
-            printer.printRecord(totalDate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                writer.flush();
-                writer.close();
-                printer.flush();
-                printer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private String getPayStatus(StatusPay status) {
-        String result = null;
-        switch (status) {
-            case PAID:
-                result = "yes";
-                break;
-            case NOT_PAID:
-                result = "no";
-                break;
-        }
-        return result;
-    }
-
-
-    private List<BaseRecordDto> getRecordsByReportFilter(ReportFilterDto filter) {
-        SecurityUtil.checkUserByBanStatus();
-        if (SecurityUtil.isAnonymous()) {
-            throw new ClientException(USER_NOT_AUTHENTICATION);
-        }
-        if (CollectionUtils.isEmpty(SecurityUtil.getUserCorporationIds())) {
-            throw new ClientException(USER_DONT_HAVE_ANY_CORPORATION);
-        }
-        if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(filter.getBusinessId())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-        }
-        if (filter.getFrom() == null) {
-            filter.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
-        }
-        if (filter.getTo() == null || filter.getFrom().isAfter(filter.getTo())) {
-            filter.setTo(filter.getFrom().toLocalDate().atStartOfDay().plusDays(1).minusSeconds(1));
-        }
-        List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
-                Arrays.asList(StatusRecord.COMPLETED), Arrays.asList(StatusProcess.COMPLETED), Arrays.asList(filter.getBusinessId()), filter.getFrom(), filter.getTo());
-        return converter.convert(entities, dtoClass);
-    }
 
     private BaseRecordDto createRecord(BaseRecordDto dto) {
         BaseRecordDto result = null;
