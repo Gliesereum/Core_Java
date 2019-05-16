@@ -136,12 +136,12 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (from != null) {
             fromDate = Instant.ofEpochMilli(from).atZone(ZoneId.of("UTC")).toLocalDateTime();
         } else {
-            fromDate = LocalDateTime.MIN;
+            fromDate = LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay();
         }
         if (to != null) {
             toDate = Instant.ofEpochMilli(to).atZone(ZoneId.of("UTC")).toLocalDateTime();
         } else {
-            toDate = LocalDateTime.MAX;
+            toDate = fromDate.plusDays(1L);
         }
         if (fromDate.isAfter(toDate)) {
             throw new ClientException(TIME_IS_NOT_CORRECT);
