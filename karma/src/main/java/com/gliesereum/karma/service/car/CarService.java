@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.car;
 import com.gliesereum.karma.model.entity.car.CarEntity;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
+import com.gliesereum.share.common.model.dto.karma.car.LiteCarDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface CarService extends DefaultService<CarDto, CarEntity> {
     void removeFilterAttribute(UUID idCar, UUID idAttribute);
 
     CarDto setFavorite(UUID idCar);
+
+    List<LiteCarDto> getCarByBrandIds(List<UUID> brandsIds);
 }

@@ -38,10 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -122,6 +119,35 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public List<LiteRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities) {
         List<LiteRecordDto> result = converter.convert(entities, LiteRecordDto.class);
         return setServicePriceIds(result);
+    }
+
+    @Override
+    public List<LiteRecordDto> getLiteRecordDtoByBusiness(UUID businessId, List<StatusRecord> statuses, Long from, Long to) {
+        if (businessId == null) {
+            throw new ClientException(BUSINESS_ID_EMPTY);
+        }
+        if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(businessId)) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+        }
+        LocalDateTime fromDate, toDate;
+        if (CollectionUtils.isEmpty(statuses)) {
+            statuses = Arrays.asList(StatusRecord.values());
+        }
+        if (from != null) {
+            fromDate = Instant.ofEpochMilli(from).atZone(ZoneId.of("UTC")).toLocalDateTime();
+        } else {
+            fromDate = LocalDateTime.MIN;
+        }
+        if (to != null) {
+            toDate = Instant.ofEpochMilli(to).atZone(ZoneId.of("UTC")).toLocalDateTime();
+        } else {
+            toDate = LocalDateTime.MAX;
+        }
+        if (fromDate.isAfter(toDate)) {
+            throw new ClientException(TIME_IS_NOT_CORRECT);
+        }
+        List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordInAndBeginBetween(businessId, statuses, fromDate, toDate);
+        return converter.convert(entities, LiteRecordDto.class);
     }
 
     @Override
