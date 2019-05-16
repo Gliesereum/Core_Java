@@ -119,8 +119,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<BaseRecordDto> convertListEntityToDto(List<BaseRecordEntity> entities) {
-        return setServicePrice(converter.convert(entities, dtoClass));
+    public List<LiteRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities) {
+        List<LiteRecordDto> result = converter.convert(entities, LiteRecordDto.class);
+        return setServicePriceIds(result);
     }
 
     @Override
@@ -663,6 +664,14 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                     });
                 }
             }
+        }
+        return records;
+    }
+
+    private List<LiteRecordDto> setServicePriceIds(List<LiteRecordDto> records) {
+        if (CollectionUtils.isNotEmpty(records)) {
+            Map<UUID, List<UUID>> mapIds = recordServiceService.getServicePriceIds(records.stream().map(LiteRecordDto::getId).collect(Collectors.toList()));
+            records.forEach(r -> r.setServicesIds(mapIds.get(r.getId())));
         }
         return records;
     }
