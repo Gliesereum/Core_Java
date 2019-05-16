@@ -57,4 +57,7 @@ firebase:
     appName: karma-c9d57
 
 notification:
-  queueName: notification
+  record:
+    queueName: notification-record
+  business:
+    queueName: notification-business

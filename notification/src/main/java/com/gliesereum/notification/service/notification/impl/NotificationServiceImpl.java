@@ -3,6 +3,8 @@ package com.gliesereum.notification.service.notification.impl;
 import com.gliesereum.notification.service.device.UserDeviceService;
 import com.gliesereum.notification.service.firebase.FirebaseService;
 import com.gliesereum.notification.service.notification.NotificationService;
+import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
@@ -39,10 +41,20 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void processRecordNotification(NotificationDto<BaseRecordDto> recordNotification) {
-        if (recordNotification != null) {
-            String routingKey = NotificationUtil.routingKey(recordNotification.getSubscribeDestination().toString(), recordNotification.getObjectId());
-            BaseRecordDto data = recordNotification.getData();
-            SubscribeDestination subscribeDestination = recordNotification.getSubscribeDestination();
+        processNotification(recordNotification);
+    }
+
+    @Override
+    public void processBusinessNotification(NotificationDto<AbstractBusinessDto> businessNotification) {
+        processNotification(businessNotification);
+    }
+
+    @Override
+    public <T extends DefaultDto> void processNotification(NotificationDto<T> notification) {
+        if (notification != null) {
+            SubscribeDestination subscribeDestination = notification.getSubscribeDestination();
+            String routingKey = NotificationUtil.routingKey(subscribeDestination.toString(), notification.getObjectId());
+            T data = notification.getData();
             firebaseService.sendNotificationToTopic(routingKey, getTitle(subscribeDestination), getBody(subscribeDestination), data.getId(), subscribeDestination);
 
         }

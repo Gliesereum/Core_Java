@@ -1,7 +1,6 @@
-package com.gliesereum.karma.facade.impl;
+package com.gliesereum.karma.facade.notification.impl;
 
-import com.gliesereum.karma.facade.RecordNotificationFacade;
-import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.facade.notification.RecordNotificationFacade;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.karma.record.AbstractRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
@@ -23,8 +22,8 @@ import java.util.UUID;
 @Service
 public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
 
-    @Value("${notification.notificationQueue}")
-    private String notificationQueue;
+    @Value("${notification.record.queueName}")
+    private String notificationRecordQueue;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -32,28 +31,21 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
     @Autowired
     private BaseRecordService baseRecordService;
 
-    @Autowired
-    private BaseBusinessService baseBusinessService;
-
     @Override
     @Async
-    public void recordCreateNotification(AbstractRecordDto record) {
+    public void recordCreateNotification(BaseRecordDto record) {
         if (record != null) {
-            BaseRecordDto fullModel = baseRecordService.getFullModelById(record.getId());
-            if (fullModel != null) {
-                NotificationDto<BaseRecordDto> notification = new NotificationDto<>();
-                notification.setData(fullModel);
-                notification.setSubscribeDestination(SubscribeDestination.KARMA_BUSINESS_RECORD);
-                notification.setObjectId(record.getBusinessId());
-                rabbitTemplate.convertAndSend(notificationQueue, notification);
-
-            }
+            NotificationDto<AbstractRecordDto> notification = new NotificationDto<>();
+            notification.setData(record);
+            notification.setSubscribeDestination(SubscribeDestination.KARMA_BUSINESS_RECORD);
+            notification.setObjectId(record.getBusinessId());
+            rabbitTemplate.convertAndSend(notificationRecordQueue, notification);
         }
     }
 
     @Override
     @Async
-    public void recordUpdateNotification(AbstractRecordDto record) {
+    public void recordUpdateNotification(BaseRecordDto record) {
         if (record != null) {
             BaseRecordDto fullModel = baseRecordService.getFullModelById(record.getId());
             if (fullModel != null) {
@@ -63,8 +55,7 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
                     notification.setData(fullModel);
                     notification.setSubscribeDestination(SubscribeDestination.KARMA_USER_RECORD);
                     notification.setObjectId(id);
-                    rabbitTemplate.convertAndSend(notificationQueue, notification);
-
+                    rabbitTemplate.convertAndSend(notificationRecordQueue, notification);
                 }
             }
         }
@@ -77,9 +68,7 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
         notification.setData(record);
         notification.setSubscribeDestination(SubscribeDestination.KARMA_USER_REMIND_RECORD);
         notification.setObjectId(record.getClientId());
-        rabbitTemplate.convertAndSend(notificationQueue, notification);
+        rabbitTemplate.convertAndSend(notificationRecordQueue, notification);
         baseRecordService.setNotificationSend(record.getId());
-
     }
-
 }

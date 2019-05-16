@@ -52,7 +52,7 @@ exchange:
       getByPhone: http://account-service/user/by-phone
 
 notification:
-  topicName: amq.topic
-  businessRecordRouting: karma.businessRecord
-  userRecordRouting: karma.userRecord
-  notificationQueue: notification
+  record:
+    queueName: notification-record
+  business:
+    queueName: notification-business
