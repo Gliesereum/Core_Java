@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -45,7 +46,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     BaseRecordDto updateStatusPay(UUID idRecord, StatusPay status);
 
-    List<BaseRecordDto> convertListEntityToDto(List<BaseRecordEntity> entities);
+    List<LiteRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities);
 
     void setFullModelRecord(List<BaseRecordDto> list);
 

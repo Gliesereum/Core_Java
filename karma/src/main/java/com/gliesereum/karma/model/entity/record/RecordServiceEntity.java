@@ -1,6 +1,5 @@
 package com.gliesereum.karma.model.entity.record;
 
-import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,9 +24,5 @@ public class RecordServiceEntity extends DefaultEntity {
 
     @Column(name = "service_id")
     private UUID serviceId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", insertable = false, updatable = false)
-    private ServicePriceEntity service;
 
 }

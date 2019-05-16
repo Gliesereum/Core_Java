@@ -21,8 +21,6 @@ public class RecordServiceDto extends DefaultDto {
 
     private UUID serviceId;
 
-    private ServicePriceDto service;
-
     public RecordServiceDto(UUID recordId, UUID serviceId) {
         this.recordId = recordId;
         this.serviceId = serviceId;

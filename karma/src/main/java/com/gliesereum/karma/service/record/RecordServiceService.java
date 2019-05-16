@@ -16,5 +16,7 @@ import java.util.UUID;
  */
 public interface RecordServiceService extends DefaultService<RecordServiceDto, RecordServiceEntity> {
 
+    Map<UUID, List<UUID>> getServicePriceIds(List<UUID> recordIds);
+
     Map<UUID, List<ServicePriceDto>> getServicePriceMap(List<UUID> recordIds);
 }
