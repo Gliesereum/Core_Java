@@ -67,6 +67,13 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
         return result;
     }
 
+    @Override
+    public void deleteByDeviceId(UUID deviceId) {
+        if (deviceId != null) {
+            userSubscribeRepository.deleteAllByUserDeviceId(deviceId);
+        }
+    }
+
     private List<UserSubscribeDto> validateDestinations(List<UserSubscribeDto> subscribes, UUID userId) {
         List<UserSubscribeDto> validSubscribes = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(subscribes) && (userId != null)) {
@@ -87,11 +94,8 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                         }
                         break;
                     }
-
-
                 }
             }
-
         }
         return validSubscribes;
     }

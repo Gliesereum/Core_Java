@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,6 +49,16 @@ public class UserDeviceServiceImpl extends DefaultServiceImpl<UserDeviceDto, Use
                                  DefaultConverter defaultConverter) {
         super(userDeviceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.userDeviceRepository = userDeviceRepository;
+    }
+
+    @Override
+    @Transactional
+    public void removeDevice(String registrationToken) {
+        UserDeviceEntity userDevice = userDeviceRepository.findByFirebaseRegistrationToken(registrationToken);
+        if (userDevice != null) {
+            userSubscribeService.deleteByDeviceId(userDevice.getId());
+            userDeviceRepository.delete(userDevice);
+        }
     }
 
     @Override

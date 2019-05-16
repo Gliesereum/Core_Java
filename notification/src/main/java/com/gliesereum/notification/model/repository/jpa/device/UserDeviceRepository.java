@@ -15,6 +15,8 @@ public interface UserDeviceRepository extends JpaRepository<UserDeviceEntity, UU
 
     boolean existsByFirebaseRegistrationToken(String registrationToken);
 
+    UserDeviceEntity findByFirebaseRegistrationToken(String registrationToken);
+
     List<UserDeviceEntity> findAllByUserId(UUID userId);
 
 }

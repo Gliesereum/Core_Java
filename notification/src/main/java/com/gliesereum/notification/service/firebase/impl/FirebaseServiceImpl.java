@@ -1,12 +1,12 @@
 package com.gliesereum.notification.service.firebase.impl;
 
+import com.gliesereum.notification.service.device.UserDeviceService;
+import com.gliesereum.notification.service.firebase.FirebaseMessageCode;
 import com.gliesereum.notification.service.firebase.FirebaseService;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
-import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.NotificationUtil;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,9 @@ public class FirebaseServiceImpl implements FirebaseService {
 
     @Autowired
     private FirebaseMessaging firebaseMessagingKarma;
+
+    @Autowired
+    private UserDeviceService userDeviceService;
 
     @Override
     public TopicManagementResponse subscribeToTopic(String registrationToken, String topicDestination) {
@@ -91,6 +94,10 @@ public class FirebaseServiceImpl implements FirebaseService {
             firebaseMessagingKarma.send(message);
         } catch (FirebaseMessagingException e) {
             log.warn("Error while send message for device", e);
+            if (e.getErrorCode().equals(FirebaseMessageCode.REGISTRATION_TOKEN_NOT_FOUND)) {
+                log.warn("Try remove device by registration token");
+                userDeviceService.removeDevice(registrationToken);
+            }
         }
     }
 }

@@ -18,4 +18,6 @@ public interface UserSubscribeService extends DefaultService<UserSubscribeDto, U
     List<UserSubscribeDto> subscribe(List<UserSubscribeDto> subscribes, UUID userId);
 
     List<UserSubscribeDto> getSubscribes(SubscribeDestination subscribeDestination, UUID objectId);
+
+    void deleteByDeviceId(UUID deviceId);
 }
