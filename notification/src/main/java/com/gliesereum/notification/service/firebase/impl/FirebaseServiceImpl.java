@@ -43,7 +43,7 @@ public class FirebaseServiceImpl implements FirebaseService {
     @Override
     public TopicManagementResponse subscribeToTopic(String registrationToken, String subscribeDestination, UUID subscribeId) {
         TopicManagementResponse response = null;
-        if (StringUtils.isNotBlank(registrationToken) && StringUtils.isNotBlank(subscribeDestination) && (subscribeId != null)) {
+        if (StringUtils.isNotBlank(registrationToken) && StringUtils.isNotBlank(subscribeDestination)) {
             String topicDestination = NotificationUtil.routingKey(subscribeDestination, subscribeId);
             response = subscribeToTopic(registrationToken, topicDestination);
         }

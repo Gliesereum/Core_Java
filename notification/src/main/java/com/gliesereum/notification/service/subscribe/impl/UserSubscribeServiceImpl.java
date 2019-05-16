@@ -2,10 +2,12 @@ package com.gliesereum.notification.service.subscribe.impl;
 
 import com.gliesereum.notification.model.entity.subscribe.UserSubscribeEntity;
 import com.gliesereum.notification.model.repository.jpa.subscribe.UserSubscribeRepository;
+import com.gliesereum.notification.service.device.UserDeviceService;
 import com.gliesereum.notification.service.subscribe.UserSubscribeService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.gliesereum.share.common.model.dto.notification.subscribe.UserSubscribeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -38,6 +40,9 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
     private KarmaExchangeService karmaExchangeService;
 
     @Autowired
+    private UserDeviceService userDeviceService;
+
+    @Autowired
     public UserSubscribeServiceImpl(UserSubscribeRepository userSubscribeRepository,
                                     DefaultConverter defaultConverter) {
         super(userSubscribeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -50,9 +55,6 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
         List<UserSubscribeDto> validSubscribes = validateDestinations(subscribes, userId);
         if (CollectionUtils.isNotEmpty(validSubscribes)) {
             result = super.create(validSubscribes);
-            if (result != null) {
-
-            }
         }
         return result;
     }
@@ -63,6 +65,26 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
         if (ObjectUtils.allNotNull(subscribeDestination, objectId)) {
             List<UserSubscribeEntity> entities = userSubscribeRepository.findAllBySubscribeDestinationAndObjectId(subscribeDestination, objectId);
             result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public List<UserSubscribeDto> getByUserDeviceId(UUID userDeviceId) {
+        List<UserSubscribeDto> result = null;
+        if (userDeviceId != null) {
+            List<UserSubscribeEntity> entities = userSubscribeRepository.findAllByUserDeviceId(userDeviceId);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public List<UserSubscribeDto> getByRegistrationToken(String registrationToken) {
+        List<UserSubscribeDto> result = null;
+        UserDeviceDto userDevice = userDeviceService.getByRegistrationToken(registrationToken);
+        if (userDevice != null) {
+            result = getByUserDeviceId(userDevice.getId());
         }
         return result;
     }
@@ -92,6 +114,10 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                                 validSubscribes.add(subscribe);
                             }
                         }
+                        break;
+                    }
+                    case KARMA_USER_NEW_BUSINESS: {
+                        validSubscribes.add(subscribe);
                         break;
                     }
                 }

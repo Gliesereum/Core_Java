@@ -19,5 +19,7 @@ public interface UserDeviceService extends DefaultService<UserDeviceDto, UserDev
 
     List<UserDeviceDto> getByUserId(UUID userId);
 
+    UserDeviceDto getByRegistrationToken(String registrationToken);
+
     void removeDevice(String registrationToken);
 }

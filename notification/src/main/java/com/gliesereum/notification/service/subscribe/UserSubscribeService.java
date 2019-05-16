@@ -19,5 +19,9 @@ public interface UserSubscribeService extends DefaultService<UserSubscribeDto, U
 
     List<UserSubscribeDto> getSubscribes(SubscribeDestination subscribeDestination, UUID objectId);
 
+    List<UserSubscribeDto> getByUserDeviceId(UUID userDeviceId);
+
+    List<UserSubscribeDto> getByRegistrationToken(String registrationToken);
+
     void deleteByDeviceId(UUID deviceId);
 }

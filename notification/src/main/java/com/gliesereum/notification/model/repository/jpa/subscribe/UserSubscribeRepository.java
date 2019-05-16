@@ -18,4 +18,6 @@ public interface UserSubscribeRepository extends JpaRepository<UserSubscribeEnti
 
     void deleteAllByUserDeviceId(UUID userDeviceId);
 
+    List<UserSubscribeEntity> findAllByUserDeviceId(UUID userDeviceId);
+
 }
