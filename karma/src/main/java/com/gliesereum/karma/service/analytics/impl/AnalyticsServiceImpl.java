@@ -14,7 +14,7 @@ import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticDto;
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -65,25 +65,25 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
         List<BaseRecordEntity> entities = baseRecordRepository.getRecordsByFilter(filter);
 
-        Map<UUID, Set<BaseRecordDto>> services = new HashMap<>();
-        Map<UUID, Set<BaseRecordDto>> packages = new HashMap<>();
-        Map<UUID, Set<BaseRecordDto>> workers = new HashMap<>();
-        Map<UUID, Set<BaseRecordDto>> spaces = new HashMap<>();
+        Map<UUID, Set<LiteRecordDto>> services = new HashMap<>();
+        Map<UUID, Set<LiteRecordDto>> packages = new HashMap<>();
+        Map<UUID, Set<LiteRecordDto>> workers = new HashMap<>();
+        Map<UUID, Set<LiteRecordDto>> spaces = new HashMap<>();
 
         if (CollectionUtils.isNotEmpty(entities)) {
 
-            List<BaseRecordDto> dtos = baseRecordService.convertListEntityToDto(entities);
+            List<LiteRecordDto> dtos = baseRecordService.convertToLiteRecordDto(entities);
 
             dtos.forEach(record -> {
 
-                if (CollectionUtils.isNotEmpty(record.getServices())) {
-                    record.getServices().forEach(s -> {
-                        if (services.containsKey(s.getId())) {
-                            services.get(s.getId()).add(record);
+                if (CollectionUtils.isNotEmpty(record.getServicesIds())) {
+                    record.getServicesIds().forEach(s -> {
+                        if (services.containsKey(s)) {
+                            services.get(s).add(record);
                         } else {
-                            Set<BaseRecordDto> records = getNewRecordTreeSet();
+                            Set<LiteRecordDto> records = getNewRecordTreeSet();
                             records.add(record);
-                            services.put(s.getId(), records);
+                            services.put(s, records);
                         }
                     });
                 }
@@ -92,7 +92,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                     if (packages.containsKey(record.getPackageId())) {
                         packages.get(record.getPackageId()).add(record);
                     } else {
-                        Set<BaseRecordDto> records = getNewRecordTreeSet();
+                        Set<LiteRecordDto> records = getNewRecordTreeSet();
                         records.add(record);
                         packages.put(record.getPackageId(), records);
                     }
@@ -102,7 +102,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                     if (workers.containsKey(record.getWorkerId())) {
                         workers.get(record.getWorkerId()).add(record);
                     } else {
-                        Set<BaseRecordDto> records = getNewRecordTreeSet();
+                        Set<LiteRecordDto> records = getNewRecordTreeSet();
                         records.add(record);
                         workers.put(record.getWorkerId(), records);
                     }
@@ -112,7 +112,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                     if (spaces.containsKey(record.getWorkingSpaceId())) {
                         spaces.get(record.getWorkingSpaceId()).add(record);
                     } else {
-                        Set<BaseRecordDto> records = getNewRecordTreeSet();
+                        Set<LiteRecordDto> records = getNewRecordTreeSet();
                         records.add(record);
                         spaces.put(record.getWorkingSpaceId(), records);
                     }
@@ -123,7 +123,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         List<LitePackageDto> businessPackages = packageService.getLitePackageByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessPackages)) {
             businessPackages.forEach(f -> {
-                Set<BaseRecordDto> record;
+                Set<LiteRecordDto> record;
                 result.getPackages().put(f.getName(), (record = packages.get(f.getId())) != null ? record : new HashSet<>());
             });
             result.setPackages(sortMap(result.getPackages()));
@@ -132,7 +132,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         List<LiteServicePriceDto> businessServices = servicePriceService.getLiteServicePriceByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessServices)) {
             businessServices.forEach(f -> {
-                Set<BaseRecordDto> record;
+                Set<LiteRecordDto> record;
                 result.getServices().put(f.getName(), (record = services.get(f.getId())) != null ? record : new HashSet<>());
             });
             result.setServices(sortMap(result.getServices()));
@@ -141,7 +141,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         List<LiteWorkingSpaceDto> businessWorkingSpace = workingSpaceService.getLiteWorkingSpaceByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessWorkingSpace)) {
             businessWorkingSpace.forEach(f -> {
-                Set<BaseRecordDto> record;
+                Set<LiteRecordDto> record;
                 result.getWorkingSpaces().put(f.getIndexNumber().toString(), (record = spaces.get(f.getId())) != null ? record : new HashSet<>());
             });
             result.setWorkingSpaces(sortMap(result.getWorkingSpaces()));
@@ -151,7 +151,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         if (CollectionUtils.isNotEmpty(businessWorkers)) {
             businessWorkers.forEach(f -> {
                 if (f.getUser() != null) {
-                    Set<BaseRecordDto> record;
+                    Set<LiteRecordDto> record;
                     result.getWorkers().put(f.getUser().getFirstName().concat(" ").concat(f.getUser().getLastName()), (record = workers.get(f.getId())) != null ? record : new HashSet<>());
                 }
             });
@@ -176,7 +176,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         }
     }
 
-    private Map<String, Set<BaseRecordDto>> sortMap(Map<String, Set<BaseRecordDto>> map) {
+    private Map<String, Set<LiteRecordDto>> sortMap(Map<String, Set<LiteRecordDto>> map) {
         if (!map.isEmpty()) {
             return map.entrySet().stream()
                     .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Set::size)))
@@ -185,10 +185,10 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         return map;
     }
 
-    private Set<BaseRecordDto> getNewRecordTreeSet() {
-        return new TreeSet<>(new Comparator<BaseRecordDto>() {
+    private Set<LiteRecordDto> getNewRecordTreeSet() {
+        return new TreeSet<>(new Comparator<LiteRecordDto>() {
             @Override
-            public int compare(BaseRecordDto r1, BaseRecordDto r2) {
+            public int compare(LiteRecordDto r1, LiteRecordDto r2) {
                 return r1.getBegin().compareTo(r2.getBegin());
             }
         });
