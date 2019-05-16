@@ -14,6 +14,7 @@ import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticDto;
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
@@ -173,6 +174,9 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         }
         if (filter.getFrom() != null && filter.getTo() != null && filter.getFrom().isAfter(filter.getTo())) {
             throw new ClientException(TIME_IS_NOT_CORRECT);
+        }
+        if (CollectionUtils.isEmpty(filter.getStatuses())){
+            filter.setStatuses(Arrays.asList(StatusRecord.COMPLETED));
         }
     }
 

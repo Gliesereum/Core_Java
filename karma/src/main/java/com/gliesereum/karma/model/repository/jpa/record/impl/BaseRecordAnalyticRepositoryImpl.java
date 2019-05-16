@@ -3,7 +3,6 @@ package com.gliesereum.karma.model.repository.jpa.record.impl;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordAnalyticRepository;
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -13,7 +12,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,7 +36,7 @@ public class BaseRecordAnalyticRepositoryImpl implements BaseRecordAnalyticRepos
         createBetweenDate(builder, predicates, root.get("begin"), filter.getFrom(), filter.getTo());
         createEqIfNotNull(builder, predicates, root.get("businessId"), filter.getBusinessId());
         createEqIfNotNull(builder, predicates, root.get("clientId"), filter.getClientId());
-        createInIfNotEmpty(predicates, root.get("statusRecord"), Arrays.asList(StatusRecord.COMPLETED));
+        createInIfNotEmpty(predicates, root.get("statusRecord"), filter.getStatuses());
 
         if (CollectionUtils.isNotEmpty(predicates)) {
             query.where(predicates.toArray(new Predicate[predicates.size()]));

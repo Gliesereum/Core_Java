@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -33,4 +35,6 @@ public class AnalyticFilterDto {
     private Integer priceMin;
 
     private Integer priceMax;
+
+    private List<StatusRecord> statuses;
 }

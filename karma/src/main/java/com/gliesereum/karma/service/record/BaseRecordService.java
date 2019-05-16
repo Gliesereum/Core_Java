@@ -48,6 +48,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<LiteRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities);
 
+    List<LiteRecordDto> getLiteRecordDtoByBusiness(UUID businessId, List<StatusRecord> statuses, Long from, Long to);
+
     void setFullModelRecord(List<BaseRecordDto> list);
 
     void setNotificationSend(UUID recordId);
