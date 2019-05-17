@@ -16,6 +16,7 @@ import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 public class BusinessEsServiceImpl implements BusinessEsService {
 
     private final static String EMPTY_FIELD_SCRIPT = "doc[''{0}''].values.length < 1";
+
     private final static String FIELD_SERVICES = "services";
     private final static String FIELD_SERVICE_ID = "services.serviceId";
     private final static String FIELD_CLASS_IDS = "services.serviceClassIds";
@@ -51,6 +53,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private final static String FIELD_FILTER_ATTRIBUTE_IDS = "services.filterAttributeIds";
     private final static String FIELD_BUSINESS_CATEGORY_ID = "businessCategoryId";
     private final static String FIELD_GEO_POINT = "geoPoint";
+    private final static String FIELD_OBJECT_STATE = "objectState";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -72,7 +75,14 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
-        List<BaseBusinessDto> result;
+        List<BusinessDocument> businessDocuments = searchDocuments(businessSearch);
+        List<UUID> ids = businessDocuments.stream().map(BusinessDocument::getId).map(UUID::fromString).collect(Collectors.toList());
+        return baseBusinessService.getByIds(ids);
+    }
+
+    @Override
+    public List<BusinessDocument> searchDocuments(BusinessSearchDto businessSearch) {
+        List<BusinessDocument> result;
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
         if ((businessSearch != null) && (businessSearch.getBusinessCategoryId() != null)) {
             UUID businessCategoryId = businessSearch.getBusinessCategoryId();
@@ -86,15 +96,11 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                 }
                 break;
             }
+        }
+        addObjectStateQuery(boolQueryBuilder, ObjectState.ACTIVE);
 
-        }
-        if (boolQueryBuilder.hasClauses()) {
-            Iterable<BusinessDocument> searchResult = carWashEsRepository.search(boolQueryBuilder);
-            List<UUID> ids = IterableUtils.toList(searchResult).stream().map(BusinessDocument::getId).map(UUID::fromString).collect(Collectors.toList());
-            result = baseBusinessService.getByIds(ids);
-        } else {
-            result = baseBusinessService.getAll();
-        }
+        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(boolQueryBuilder);
+        result = IterableUtils.toList(searchResult);
         return result;
     }
 
@@ -189,7 +195,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                         }
                     }
                 }
-                boolQueryBuilder.must(new NestedQueryBuilder(FIELD_SERVICES, serviceRootQuery, ScoreMode.None));
+                boolQueryBuilder.should(new NestedQueryBuilder(FIELD_SERVICES, serviceRootQuery, ScoreMode.Total));
             }
 
         }
@@ -215,7 +221,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private BoolQueryBuilder createQueryValueExistOrNotExitInSecond(String firstField, String secondField, String firstValue, String secondValue) {
         BoolQueryBuilder query = new BoolQueryBuilder();
         if (ObjectUtils.allNotNull(firstValue, secondValue)) {
-            query.should(new TermsQueryBuilder(firstField, firstValue));
+            query.should(new TermsQueryBuilder(firstField, firstValue).boost(10f));
             BoolQueryBuilder notQuery = new BoolQueryBuilder();
             notQuery.mustNot(new TermsQueryBuilder(secondField, secondValue));
             query.should(notQuery);
@@ -231,6 +237,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                         .distance(geoDistance.getDistanceMeters(), DistanceUnit.METERS);
                 boolQueryBuilder.filter(geoDistanceQueryBuilder);
             }
+        }
+    }
+
+    private void addObjectStateQuery(BoolQueryBuilder boolQueryBuilder, ObjectState objectState) {
+        if (objectState != null) {
+            boolQueryBuilder.must(new TermQueryBuilder(FIELD_OBJECT_STATE, objectState.toString()));
         }
     }
 

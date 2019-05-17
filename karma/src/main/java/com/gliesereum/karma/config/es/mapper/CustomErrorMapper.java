@@ -1,4 +1,4 @@
-package com.gliesereum.karma.config.es;
+package com.gliesereum.karma.config.es.mapper;
 
 import com.github.vanroy.springdata.jest.exception.JestElasticsearchException;
 import com.github.vanroy.springdata.jest.mapper.ErrorMapper;

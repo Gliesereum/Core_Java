@@ -1,4 +1,4 @@
-package com.gliesereum.karma.config.es;
+package com.gliesereum.karma.config.es.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.elasticsearch.core.EntityMapper;
