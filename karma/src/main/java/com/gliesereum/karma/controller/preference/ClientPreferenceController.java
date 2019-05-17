@@ -21,28 +21,28 @@ public class ClientPreferenceController {
     @Autowired
     private ClientPreferenceService service;
 
-    @GetMapping("/all_by_user")
+    @GetMapping("/by-user")
     public List<ClientPreferenceDto> getAllByUser() {
         return service.getAllByUser();
     }
 
-    @PostMapping("/by_service_id/{id}")
+    @PostMapping("/by-service-id/{id}")
     public ClientPreferenceDto addPreferenceByServiceId(@PathVariable("id") UUID id) {
         return service.addPreferenceByServiceId(id);
     }
 
-    @PostMapping("/add_list")
+    @PostMapping("/list")
     public List<ClientPreferenceDto> createListByServiceIds(@Valid @RequestBody List<UUID> serviceIds) {
         return service.addListByServiceIds(serviceIds);
     }
 
-    @DeleteMapping("/all_by_user")
+    @DeleteMapping("/by-user")
     public MapResponse deleteAllByUser() {
         service.deleteAllByUser();
         return new MapResponse("true");
     }
 
-    @DeleteMapping("/by_service_id/{id}")
+    @DeleteMapping("/by-service-id/{id}")
     public MapResponse delete(@PathVariable("id") UUID id) {
         service.deleteByServiceId(id);
         return new MapResponse("true");
