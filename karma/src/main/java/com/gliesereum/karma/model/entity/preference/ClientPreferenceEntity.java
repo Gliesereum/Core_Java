@@ -24,4 +24,7 @@ public class ClientPreferenceEntity extends DefaultEntity {
 
     @Column(name = "service_id")
     private UUID serviceId;
+
+    @Column(name = "business_category_id")
+    private UUID businessCategoryId;
 }

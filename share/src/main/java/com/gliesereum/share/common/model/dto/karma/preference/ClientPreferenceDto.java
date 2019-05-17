@@ -20,8 +20,11 @@ public class ClientPreferenceDto extends DefaultDto {
 
     private UUID serviceId;
 
-    public ClientPreferenceDto(UUID clientId, UUID serviceId) {
+    private UUID businessCategoryId;
+
+    public ClientPreferenceDto(UUID clientId, UUID serviceId, UUID businessCategoryId) {
         this.clientId = clientId;
         this.serviceId = serviceId;
+        this.businessCategoryId = businessCategoryId;
     }
 }

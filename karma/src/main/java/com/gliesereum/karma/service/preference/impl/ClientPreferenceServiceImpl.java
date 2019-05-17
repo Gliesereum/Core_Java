@@ -55,7 +55,7 @@ public class ClientPreferenceServiceImpl extends DefaultServiceImpl<ClientPrefer
             if (CollectionUtils.isNotEmpty(services)) {
                 List<ClientPreferenceDto> dtos = new ArrayList<>();
                 services.forEach(f -> {
-                    dtos.add(new ClientPreferenceDto(clientId, f.getId()));
+                    dtos.add(new ClientPreferenceDto(clientId, f.getId(), f.getBusinessCategoryId()));
                 });
                 result = super.create(dtos);
             }
@@ -70,7 +70,10 @@ public class ClientPreferenceServiceImpl extends DefaultServiceImpl<ClientPrefer
         UUID clientId = SecurityUtil.getUserId();
         ClientPreferenceDto result = null;
         if (!repository.existsByClientIdAndServiceId(clientId, id)) {
-            result = create(new ClientPreferenceDto(clientId, id));
+            ServiceDto service = serviceService.getById(id);
+            if (service != null) {
+                result = create(new ClientPreferenceDto(clientId, service.getId(), service.getBusinessCategoryId()));
+            }
         }
         return result;
     }
@@ -84,6 +87,12 @@ public class ClientPreferenceServiceImpl extends DefaultServiceImpl<ClientPrefer
     @Override
     public List<ClientPreferenceDto> getAllByUserId(UUID id) {
         List<ClientPreferenceEntity> entities = repository.getAllByClientId(id);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<ClientPreferenceDto> getAllByUserIdAndBusinessCategoryIds(UUID userId, List<UUID> businessCategoryIds) {
+        List<ClientPreferenceEntity> entities = repository.getAllByClientIdAndBusinessCategoryIdIn(userId, businessCategoryIds);
         return converter.convert(entities, dtoClass);
     }
 

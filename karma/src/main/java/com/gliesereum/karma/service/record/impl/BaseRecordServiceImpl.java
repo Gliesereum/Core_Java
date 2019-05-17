@@ -21,10 +21,7 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
-import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -384,6 +381,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setStatusRecord(StatusRecord.CREATED);
         dto.setStatusProcess(StatusProcess.WAITING);
         dto.setStatusPay(StatusPay.NOT_PAID);
+        if (dto.getPayType() == null) {
+            dto.setPayType(PayType.CASH);
+        }
         dto.setClientId(SecurityUtil.getUserId());
         dto.setBusinessCategoryId(business.getBusinessCategoryId());
         checkRecord(dto);

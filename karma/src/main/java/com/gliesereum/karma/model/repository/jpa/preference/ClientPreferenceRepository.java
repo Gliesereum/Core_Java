@@ -16,6 +16,8 @@ public interface ClientPreferenceRepository extends JpaRepository<ClientPreferen
 
     List<ClientPreferenceEntity> getAllByClientId(UUID clientId);
 
+    List<ClientPreferenceEntity> getAllByClientIdAndBusinessCategoryIdIn(UUID clientId, List<UUID> businessCategoryIds);
+
     void deleteAllByClientId(UUID clientId);
 
     void deleteByClientIdAndServiceId(UUID clientId, UUID serviceId);

@@ -21,6 +21,8 @@ public interface ClientPreferenceService extends DefaultService<ClientPreference
 
     List<ClientPreferenceDto> getAllByUserId(UUID id);
 
+    List<ClientPreferenceDto> getAllByUserIdAndBusinessCategoryIds(UUID userId, List<UUID> businessCategoryId);
+
     void deleteByServiceId(UUID id);
 
     void deleteAllByUser();
