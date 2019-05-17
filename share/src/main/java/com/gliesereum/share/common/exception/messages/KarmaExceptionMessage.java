@@ -8,12 +8,12 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage CAR_NOT_FOUND = new ExceptionMessage(1400, 400, "Car not found");
     public static final ExceptionMessage SERVICE_CLASS_NOT_FOUND = new ExceptionMessage(1410, 400, "Service class not found");
     public static final ExceptionMessage SERVICE_PRICE_NOT_FOUND = new ExceptionMessage(1411, 400, "Service price not found");
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS = new ExceptionMessage(1420, 401, "Current user don't have permission to action this business");
+    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS = new ExceptionMessage(1420, 401, "You don't have permission to action this business");
     public static final ExceptionMessage BUSINESS_NOT_FOUND = new ExceptionMessage(1421, 404, "Business not found");
     public static final ExceptionMessage BUSINESS_ID_EMPTY = new ExceptionMessage(1422, 404, "Business id is empty");
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_CREATE_BUSINESS = new ExceptionMessage(1423, 401, "Current user don't have permission to create business");
+    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_CREATE_BUSINESS = new ExceptionMessage(1423, 401, "You don't have permission to create business");
 
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_SERVICE = new ExceptionMessage(1424, 401, "Current user don't have permission to action this service");
+    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_SERVICE = new ExceptionMessage(1424, 401, "You don't have permission to action this service");
 
     public static final ExceptionMessage SERVICE_NOT_FOUND = new ExceptionMessage(1425, 400, "Service not found");
     public static final ExceptionMessage SERVICE_NOT_CHOOSE = new ExceptionMessage(1426, 400, "Service not choose");
@@ -32,7 +32,7 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage WORKING_TIME_EXIST_IN_THIS_BUSINESS = new ExceptionMessage(1436, 400, "Time working already exist in this business");
     public static final ExceptionMessage WORKING_TIME_NOT_FOUND = new ExceptionMessage(1437, 401, "Time working not found");
 
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_RECORD = new ExceptionMessage(1438, 404, "Current user don't have permission to action this record");
+    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_RECORD = new ExceptionMessage(1438, 404, "You don't have permission to action this record");
 
     public static final ExceptionMessage TIME_BEGIN_PAST = new ExceptionMessage(1439, 400, "Try to choose past time");
 
