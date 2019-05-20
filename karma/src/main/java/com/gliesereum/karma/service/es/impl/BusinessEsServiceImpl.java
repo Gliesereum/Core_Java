@@ -7,16 +7,18 @@ import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.es.BusinessEsService;
+import com.gliesereum.karma.service.preference.ClientPreferenceService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
+import com.gliesereum.share.common.model.dto.karma.preference.ClientPreferenceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
+import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -73,6 +75,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Autowired
     private BusinessCategoryService businessCategoryService;
 
+    @Autowired
+    private ClientPreferenceService clientPreferenceService;
+
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
         List<BusinessDocument> businessDocuments = searchDocuments(businessSearch);
@@ -84,18 +89,16 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     public List<BusinessDocument> searchDocuments(BusinessSearchDto businessSearch) {
         List<BusinessDocument> result;
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        if ((businessSearch != null) && (businessSearch.getBusinessCategoryId() != null)) {
-            UUID businessCategoryId = businessSearch.getBusinessCategoryId();
-            addQueryByBusinessCategoryId(boolQueryBuilder, businessCategoryId);
+        if (businessSearch != null) {
+            setBusinessCategoryId(businessSearch);
+            setServices(businessSearch);
+
+            addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
-            BusinessCategoryDto businessCategory = businessCategoryService.getById(businessCategoryId);
-            switch (businessCategory.getBusinessType()) {
-                case CAR: {
-                    CarInfoDto carInfo = carService.getCarInfo(businessSearch.getTargetId());
-                    addQueryByService(boolQueryBuilder, businessSearch.getServiceIds(), carInfo);
-                }
-                break;
-            }
+
+            CarInfoDto carInfo = carService.getCarInfo(businessSearch.getTargetId());
+            addQueryByService(boolQueryBuilder, businessSearch.getServiceIds(), carInfo);
+
         }
         addObjectStateQuery(boolQueryBuilder, ObjectState.ACTIVE);
 
@@ -201,10 +204,11 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         }
     }
 
-    private void addQueryByBusinessCategoryId(BoolQueryBuilder boolQueryBuilder, UUID businessCategoryId) {
-        if (businessCategoryId != null) {
-            TermQueryBuilder businessCategoryTerm = new TermQueryBuilder(FIELD_BUSINESS_CATEGORY_ID, businessCategoryId.toString());
-            boolQueryBuilder.must(businessCategoryTerm);
+    private void addQueryByBusinessCategoryId(BoolQueryBuilder boolQueryBuilder, List<UUID> businessCategoryIds) {
+        if (CollectionUtils.isNotEmpty(businessCategoryIds)) {
+            List<String> businessCategoryIdString = businessCategoryIds.stream().map(UUID::toString).collect(Collectors.toList());
+            TermsQueryBuilder businessCategoryTerms = new TermsQueryBuilder(FIELD_BUSINESS_CATEGORY_ID, businessCategoryIdString);
+            boolQueryBuilder.must(businessCategoryTerms);
         }
     }
 
@@ -246,4 +250,35 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         }
     }
 
+    private void setBusinessCategoryId(BusinessSearchDto businessSearch) {
+        if (businessSearch != null) {
+            if (CollectionUtils.isEmpty(businessSearch.getBusinessCategoryIds())) {
+                businessSearch.setBusinessCategoryIds(new ArrayList<>());
+            }
+            UUID businessCategoryId = businessSearch.getBusinessCategoryId();
+            if (businessCategoryId != null) {
+                businessSearch.getBusinessCategoryIds().add(businessCategoryId);
+            }
+        }
+    }
+
+    private void setServices(BusinessSearchDto businessSearch) {
+        if (businessSearch != null) {
+            if (CollectionUtils.isEmpty(businessSearch.getServiceIds())) {
+                if (!SecurityUtil.isAnonymous()) {
+                    List<ClientPreferenceDto> clientPreference = null;
+                    UUID userId = SecurityUtil.getUserId();
+                    List<UUID> businessCategoryIds = businessSearch.getBusinessCategoryIds();
+                    if (CollectionUtils.isEmpty(businessCategoryIds)) {
+                        clientPreference = clientPreferenceService.getAllByUserId(userId);
+                    } else {
+                        clientPreference = clientPreferenceService.getAllByUserIdAndBusinessCategoryIds(userId, businessCategoryIds);
+                    }
+                    if (CollectionUtils.isNotEmpty(clientPreference)) {
+                        businessSearch.setServiceIds(clientPreference.stream().map(ClientPreferenceDto::getServiceId).collect(Collectors.toList()));
+                    }
+                }
+            }
+        }
+    }
 }
