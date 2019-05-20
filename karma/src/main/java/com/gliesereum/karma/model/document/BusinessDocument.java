@@ -37,6 +37,24 @@ public class BusinessDocument {
     @Field(type = FieldType.Keyword)
     private String address;
 
+    @Field(type = FieldType.Keyword)
+    private String logoUrl;
+
+    @Field(type = FieldType.Keyword)
+    private String phone;
+
+    @Field(type = FieldType.Keyword)
+    private String addPhone;
+
+    @Field(type = FieldType.Keyword)
+    private Double latitude;
+
+    @Field(type = FieldType.Keyword)
+    private Double longitude;
+
+    @Field(type = FieldType.Keyword)
+    private Integer timeZone;
+
     @GeoPointField
     private GeoPoint geoPoint;
 
