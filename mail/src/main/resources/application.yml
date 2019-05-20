@@ -35,3 +35,8 @@ eureka:
     enabled: true
   instance:
     prefer-ip-address: true
+
+exchange:
+  endpoint:
+    account:
+      findUserPhonesByUserIds: http://account-service/phone/by-user-ids

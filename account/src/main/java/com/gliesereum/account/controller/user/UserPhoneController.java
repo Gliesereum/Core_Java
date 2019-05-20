@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -66,5 +67,10 @@ public class UserPhoneController {
     public MapResponse sendCode(@RequestParam(value = "phone") String phone) {
         phoneService.sendCode(phone);
         return new MapResponse("sent", "true");
+    }
+
+    @GetMapping("/by-user-ids")
+    public List<UserPhoneDto> getByUserIds(@RequestParam("ids") List<UUID> ids) {
+        return phoneService.getByUserIds(ids);
     }
 }
