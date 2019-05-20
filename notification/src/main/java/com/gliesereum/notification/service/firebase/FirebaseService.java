@@ -15,6 +15,8 @@ public interface FirebaseService {
 
     TopicManagementResponse subscribeToTopic(String registrationToken, String subscribeDestination, UUID subscribeId);
 
+    TopicManagementResponse unsubscribeFromTopic(String registrationToken, String subscribeDestination, UUID subscribeId);
+
     void sendNotificationToTopic(String topic, String title, String body, UUID objectId, SubscribeDestination subscribeDestination);
 
     void sendNotificationToDevice(String registrationToken, String title, String body);

@@ -3,6 +3,7 @@ package com.gliesereum.notification.service.subscribe.impl;
 import com.gliesereum.notification.model.entity.subscribe.UserSubscribeEntity;
 import com.gliesereum.notification.model.repository.jpa.subscribe.UserSubscribeRepository;
 import com.gliesereum.notification.service.device.UserDeviceService;
+import com.gliesereum.notification.service.firebase.FirebaseService;
 import com.gliesereum.notification.service.subscribe.UserSubscribeService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
@@ -16,6 +17,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,9 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
     private UserDeviceService userDeviceService;
 
     @Autowired
+    private FirebaseService firebaseService;
+
+    @Autowired
     public UserSubscribeServiceImpl(UserSubscribeRepository userSubscribeRepository,
                                     DefaultConverter defaultConverter) {
         super(userSubscribeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -50,11 +55,16 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
     }
 
     @Override
-    public List<UserSubscribeDto> subscribe(List<UserSubscribeDto> subscribes, UUID userId) {
+    public List<UserSubscribeDto> subscribe(List<UserSubscribeDto> subscribes, UUID userId, String registrationToken) {
         List<UserSubscribeDto> result = null;
         List<UserSubscribeDto> validSubscribes = validateDestinations(subscribes, userId);
         if (CollectionUtils.isNotEmpty(validSubscribes)) {
             result = super.create(validSubscribes);
+            if (CollectionUtils.isNotEmpty(result)) {
+                result.forEach(i -> {
+                    firebaseService.subscribeToTopic(registrationToken, i.getSubscribeDestination().toString(), i.getObjectId());
+                });
+            }
         }
         return result;
     }
@@ -90,9 +100,28 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
     }
 
     @Override
-    public void deleteByDeviceId(UUID deviceId) {
+    @Transactional
+    public void unsubscribeAll(UUID deviceId, String registrationToken) {
         if (deviceId != null) {
-            userSubscribeRepository.deleteAllByUserDeviceId(deviceId);
+            List<UserSubscribeEntity> subscribes = userSubscribeRepository.findAllByUserDeviceId(deviceId);
+            if (CollectionUtils.isNotEmpty(subscribes)) {
+                subscribes.forEach(subscribe -> {
+                    firebaseService.unsubscribeFromTopic(registrationToken, subscribe.getSubscribeDestination().toString(), subscribe.getObjectId());
+                });
+                userSubscribeRepository.deleteAll(subscribes);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void unsubscribe(UUID deviceId, String registrationToken, SubscribeDestination subscribeDestination, UUID objectId) {
+        if (deviceId != null) {
+            UserSubscribeEntity subscribe = userSubscribeRepository.findByUserDeviceIdAndSubscribeDestinationAndObjectId(deviceId, subscribeDestination, objectId);
+            if (subscribe != null) {
+                firebaseService.unsubscribeFromTopic(registrationToken, subscribe.getSubscribeDestination().toString(), subscribe.getObjectId());
+                userSubscribeRepository.delete(subscribe);
+            }
         }
     }
 
@@ -117,6 +146,7 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                         break;
                     }
                     case KARMA_USER_NEW_BUSINESS: {
+                        subscribe.setObjectId(null);
                         validSubscribes.add(subscribe);
                         break;
                     }

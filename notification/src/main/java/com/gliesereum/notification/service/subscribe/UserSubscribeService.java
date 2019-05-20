@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public interface UserSubscribeService extends DefaultService<UserSubscribeDto, UserSubscribeEntity> {
 
-    List<UserSubscribeDto> subscribe(List<UserSubscribeDto> subscribes, UUID userId);
+    List<UserSubscribeDto> subscribe(List<UserSubscribeDto> subscribes, UUID userId, String registrationToken);
 
     List<UserSubscribeDto> getSubscribes(SubscribeDestination subscribeDestination, UUID objectId);
 
@@ -23,5 +23,7 @@ public interface UserSubscribeService extends DefaultService<UserSubscribeDto, U
 
     List<UserSubscribeDto> getByRegistrationToken(String registrationToken);
 
-    void deleteByDeviceId(UUID deviceId);
+    void unsubscribeAll(UUID deviceId, String registrationToke);
+
+    void unsubscribe(UUID deviceId, String registrationToken, SubscribeDestination subscribeDestination, UUID objectId);
 }

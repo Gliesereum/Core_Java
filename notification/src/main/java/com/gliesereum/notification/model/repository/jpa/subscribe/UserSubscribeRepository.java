@@ -20,4 +20,6 @@ public interface UserSubscribeRepository extends JpaRepository<UserSubscribeEnti
 
     List<UserSubscribeEntity> findAllByUserDeviceId(UUID userDeviceId);
 
+    UserSubscribeEntity findByUserDeviceIdAndSubscribeDestinationAndObjectId(UUID userDeviceId, SubscribeDestination subscribeDestination, UUID objectId);
+
 }

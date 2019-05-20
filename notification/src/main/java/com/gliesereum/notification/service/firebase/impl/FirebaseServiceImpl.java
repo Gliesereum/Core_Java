@@ -51,6 +51,17 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
+    public TopicManagementResponse unsubscribeFromTopic(String registrationToken, String subscribeDestination, UUID subscribeId) {
+        TopicManagementResponse response = null;
+        try {
+            response = firebaseMessagingKarma.unsubscribeFromTopic(Arrays.asList(registrationToken), NotificationUtil.routingKey(subscribeDestination, subscribeId));
+        } catch (FirebaseMessagingException e) {
+            log.warn("Error while unsubscribe" ,e);
+        }
+        return response;
+    }
+
+    @Override
     public void sendNotificationToTopic(String topic, String title, String body, UUID objectId, SubscribeDestination subscribeDestination) {
         Message message = Message.builder()
                 .putData("objectId", objectId.toString())
