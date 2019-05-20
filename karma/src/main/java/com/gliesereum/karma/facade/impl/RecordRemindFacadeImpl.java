@@ -1,6 +1,6 @@
 package com.gliesereum.karma.facade.impl;
 
-import com.gliesereum.karma.facade.RecordNotificationFacade;
+import com.gliesereum.karma.facade.notification.RecordNotificationFacade;
 import com.gliesereum.karma.facade.RecordRemindFacade;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.record.BaseRecordService;

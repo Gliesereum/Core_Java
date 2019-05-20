@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.record;
 
+import com.gliesereum.share.common.model.dto.karma.enumerated.PayType;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
@@ -50,6 +51,10 @@ public class AbstractRecordEntity extends DefaultEntity {
     @Column(name = "status_pay")
     @Enumerated(EnumType.STRING)
     private StatusPay statusPay;
+
+    @Column(name = "pay_type")
+    @Enumerated(EnumType.STRING)
+    private PayType payType;
 
     @Column(name = "status_process")
     @Enumerated(EnumType.STRING)

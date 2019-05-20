@@ -2,7 +2,7 @@ buildscript {
 	ext {
 		springBootVersion = '2.1.1.RELEASE'
 		springCloudVersion = 'Finchley.SR2'
-		springDataJestVersion = '3.2.0.RELEASE'
+		springDataJestVersion = '3.2.1.RELEASE'
 		elasticsearchVersion = '6.2.2'
 		jaksonJsr310Version = '2.9.7'
 		modelMapperVersion = '2.3.0'
@@ -47,8 +47,6 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-amqp')
 	implementation('org.flywaydb:flyway-core')
 	implementation "com.github.vanroy:spring-boot-starter-data-jest:${springDataJestVersion}"
-	implementation "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
-	implementation "org.elasticsearch.client:transport:${elasticsearchVersion}"
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jaksonJsr310Version}"
 	implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
 	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"

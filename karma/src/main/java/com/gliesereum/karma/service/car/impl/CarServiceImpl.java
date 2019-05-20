@@ -11,10 +11,7 @@ import com.gliesereum.karma.service.filter.FilterAttributeService;
 import com.gliesereum.karma.service.service.ServiceClassService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.car.CarDto;
-import com.gliesereum.share.common.model.dto.karma.car.CarFilterAttributeDto;
-import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
-import com.gliesereum.share.common.model.dto.karma.car.CarServiceClassDto;
+import com.gliesereum.share.common.model.dto.karma.car.*;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -223,6 +220,12 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
             super.update(other);
         }
         return result;
+    }
+
+    @Override
+    public List<LiteCarDto> getCarByBrandIds(List<UUID> brandsIds) {
+        List<CarEntity> entities = carRepository.getAllByBrandIdIn(brandsIds);
+        return converter.convert(entities, LiteCarDto.class);
     }
 
     private void checkServiceExist(UUID id) {

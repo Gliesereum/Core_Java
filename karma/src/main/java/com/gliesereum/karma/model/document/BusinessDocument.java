@@ -1,12 +1,10 @@
 package com.gliesereum.karma.model.document;
 
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.elasticsearch.annotations.GeoPointField;
+import org.springframework.data.elasticsearch.annotations.*;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import java.util.List;
@@ -45,10 +43,16 @@ public class BusinessDocument {
     @Field(type = FieldType.Keyword)
     private UUID businessCategoryId;
 
+    @Field(type = FieldType.Keyword)
+    private ObjectState objectState;
+
     @Field(type = FieldType.Nested)
     private List<BusinessServiceDocument> services;
 
     @Field(type = FieldType.Nested)
     private List<WorkTimeDocument> workTimes;
+
+    @Score
+    private Float score;
 
 }

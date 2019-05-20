@@ -1,5 +1,7 @@
 package com.gliesereum.notification.service.notification;
 
+import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.notification.notification.NotificationDto;
 
@@ -12,6 +14,10 @@ import java.util.UUID;
 public interface NotificationService {
 
     void processRecordNotification(NotificationDto<BaseRecordDto> recordNotification);
+
+    void processBusinessNotification(NotificationDto<AbstractBusinessDto> businessNotification);
+
+    <T extends DefaultDto> void processNotification(NotificationDto<T> notification);
 
     void sendNotificationToUser(UUID userId, String title, String body);
 }

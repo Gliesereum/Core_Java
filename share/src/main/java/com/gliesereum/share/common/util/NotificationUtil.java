@@ -9,6 +9,6 @@ import java.util.UUID;
 public class NotificationUtil {
 
     public static String routingKey(String routing, UUID id) {
-        return routing + '.' + id.toString();
+        return (id == null) ? routing : routing + '.' + id.toString();
     }
 }

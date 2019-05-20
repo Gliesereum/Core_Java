@@ -3,7 +3,9 @@ package com.gliesereum.karma.controller.record;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +93,14 @@ public class RecordController {
     @GetMapping("/client/all")
     public List<BaseRecordDto> getAllByUser(@RequestParam("businessCategoryId") UUID businessCategoryId) {
         return service.getAllByUser(businessCategoryId);
+    }
+
+    @GetMapping("/lite/by-business")
+    public List<LiteRecordDto> getAllByBusinessId(@RequestParam("businessId") UUID businessId,
+                                                  @RequestParam("statuses") List<StatusRecord> statuses,
+                                                  @RequestParam("from") Long from,
+                                                  @RequestParam("to") Long to) {
+        return service.getLiteRecordDtoByBusiness(businessId, statuses, from, to);
     }
 
     @PostMapping("/client/params")

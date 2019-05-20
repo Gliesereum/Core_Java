@@ -13,8 +13,10 @@ import com.gliesereum.share.common.model.dto.notification.subscribe.UserSubscrib
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -51,6 +53,16 @@ public class UserDeviceServiceImpl extends DefaultServiceImpl<UserDeviceDto, Use
     }
 
     @Override
+    @Transactional
+    public void removeDevice(String registrationToken) {
+        UserDeviceEntity userDevice = userDeviceRepository.findByFirebaseRegistrationToken(registrationToken);
+        if (userDevice != null) {
+            userSubscribeService.deleteByDeviceId(userDevice.getId());
+            userDeviceRepository.delete(userDevice);
+        }
+    }
+
+    @Override
     public UserDeviceDto registerDevice(UserDeviceRegistrationDto userDeviceRegistration) {
         UserDeviceDto result = null;
         if (userDeviceRegistration != null) {
@@ -84,5 +96,15 @@ public class UserDeviceServiceImpl extends DefaultServiceImpl<UserDeviceDto, Use
             userDevices = converter.convert(entities, dtoClass);
         }
         return userDevices;
+    }
+
+    @Override
+    public UserDeviceDto getByRegistrationToken(String registrationToken) {
+        UserDeviceDto result = null;
+        if (StringUtils.isNotEmpty(registrationToken)) {
+            UserDeviceEntity entity = userDeviceRepository.findByFirebaseRegistrationToken(registrationToken);
+            result = converter.convert(entity, dtoClass);
+        }
+        return result;
     }
 }

@@ -32,6 +32,7 @@ public class TestContoller {
         notificationDto.setData(baseRecordDto);
         notificationDto.setSubscribeDestination(SubscribeDestination.KARMA_USER_RECORD);
         notificationDto.setObjectId(id);
+        notificationService.processRecordNotification(notificationDto);
     }
 
     @GetMapping("/test-remind")
@@ -43,6 +44,7 @@ public class TestContoller {
         notificationDto.setData(baseRecordDto);
         notificationDto.setSubscribeDestination(SubscribeDestination.KARMA_USER_REMIND_RECORD);
         notificationDto.setObjectId(id);
+        notificationService.processRecordNotification(notificationDto);
     }
 
     @GetMapping("/test-user")

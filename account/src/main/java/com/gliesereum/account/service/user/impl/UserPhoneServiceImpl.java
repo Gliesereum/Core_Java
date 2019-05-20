@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_WORSE;
@@ -157,6 +158,12 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     public boolean checkPhoneByExist(String phone) {
         checkIsPhone(phone);
         return repository.existsUserPhoneEntityByPhone(phone);
+    }
+
+    @Override
+    public List<UserPhoneDto> getByUserIds(List<UUID> ids) {
+        List<UserPhoneEntity> entities = repository.getByUserIdIn(ids);
+        return converter.convert(entities,dtoClass);
     }
 
     public void checkIsPhone(String phone) {

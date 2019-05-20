@@ -78,7 +78,7 @@ public class EndpointsListener implements ApplicationListener<ApplicationReadyEv
                         }
                     }
                 });
-                Integer newEndpointCount = 0;
+                int newEndpointCount = 0;
                 if (CollectionUtils.isNotEmpty(endpoints)) {
                     String moduleUrl = environment.getRequiredProperty(MODULE_URL);
                     String moduleName = environment.getRequiredProperty(APPLICATION_NAME);
