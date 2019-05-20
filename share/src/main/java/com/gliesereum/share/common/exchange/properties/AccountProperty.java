@@ -1,9 +1,7 @@
 package com.gliesereum.share.common.exchange.properties;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * @author yvlasiuk
@@ -21,4 +19,6 @@ public class AccountProperty {
     private String findByIds;
 
     private String getByPhone;
+
+    private String findUserPhonesByUserIds;
 }

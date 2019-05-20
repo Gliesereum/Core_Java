@@ -4,6 +4,7 @@ import com.gliesereum.account.model.entity.UserPhoneEntity;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultService;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,4 +25,6 @@ public interface UserPhoneService extends DefaultService<UserPhoneDto, UserPhone
     UserPhoneDto create(String phone, String code);
 
     boolean checkPhoneByExist(String phone);
+
+    List<UserPhoneDto> getByUserIds(List<UUID> ids);
 }
