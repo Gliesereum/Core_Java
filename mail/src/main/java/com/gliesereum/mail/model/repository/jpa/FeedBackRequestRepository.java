@@ -10,4 +10,6 @@ import java.util.UUID;
  * @version 1.0
  */
 public interface FeedBackRequestRepository extends JpaRepository<FeedBackRequestEntity, UUID> {
+
+    boolean existsByPhone(String phone);
 }

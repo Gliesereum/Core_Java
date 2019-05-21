@@ -2,6 +2,7 @@ package com.gliesereum.mail.service.feedback.impl;
 
 import com.gliesereum.mail.model.entity.FeedBackRequestEntity;
 import com.gliesereum.mail.model.repository.jpa.FeedBackRequestRepository;
+import com.gliesereum.mail.service.email.EmailService;
 import com.gliesereum.mail.service.feedback.FeedBackRequestService;
 import com.gliesereum.mail.service.feedback.FeedBackUserService;
 import com.gliesereum.mail.service.phone.PhoneService;
@@ -16,6 +17,7 @@ import com.gliesereum.share.common.util.RegexUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,11 @@ public class FeedBackRequestServiceImpl extends DefaultServiceImpl<FeedBackReque
 
     private final FeedBackRequestRepository repository;
 
+    private final String LOG_EMAIL = "spring.mail.log-email";
+
+    @Autowired
+    private Environment environment;
+
     @Autowired
     private FeedBackUserService userService;
 
@@ -52,24 +59,32 @@ public class FeedBackRequestServiceImpl extends DefaultServiceImpl<FeedBackReque
     @Autowired
     private PhoneService phoneService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     @Transactional
     public FeedBackRequestDto create(FeedBackRequestDto dto) {
         if (!RegexUtil.phoneIsValid(dto.getPhone())) {
             throw new ClientException(NOT_PHONE_BY_REGEX);
         }
+        boolean exist = repository.existsByPhone(dto.getPhone());
         dto.setCreateDate(LocalDateTime.now());
         FeedBackRequestDto result = super.create(dto);
         if (result != null) {
-            //todo add get User by app id
-            List<FeedBackUserDto> feedBackUsers = userService.getAll();
-            if (CollectionUtils.isNotEmpty(feedBackUsers)) {
-                List<UserPhoneDto> phones = exchangeService.findUserPhoneByUserIds(feedBackUsers.stream().map(m -> m.getUserId()).collect(Collectors.toList()));
-                if (CollectionUtils.isNotEmpty(phones)) {
-                    phones.forEach(userPhone -> {
-                       phoneService.sendSingleMessage(userPhone.getPhone(), "New feed back request: ".concat(dto.getPhone()));
-                    });
+            if (!exist) {
+                //todo add get User by app id
+                List<FeedBackUserDto> feedBackUsers = userService.getAll();
+                if (CollectionUtils.isNotEmpty(feedBackUsers)) {
+                    List<UserPhoneDto> phones = exchangeService.findUserPhoneByUserIds(feedBackUsers.stream().map(m -> m.getUserId()).collect(Collectors.toList()));
+                    if (CollectionUtils.isNotEmpty(phones)) {
+                        phones.forEach(userPhone -> {
+                            phoneService.sendSingleMessage(userPhone.getPhone(), "New feedback request: ".concat(dto.getPhone()));
+                        });
+                    }
                 }
+            } else {
+                emailService.sendSimpleMessage(environment.getProperty(LOG_EMAIL), "Feedback", "New feedback request: ".concat(dto.getPhone()));
             }
         }
         return result;
