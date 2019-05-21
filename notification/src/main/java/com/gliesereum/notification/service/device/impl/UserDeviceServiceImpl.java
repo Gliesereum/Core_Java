@@ -9,6 +9,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceRegistrationDto;
+import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.gliesereum.share.common.model.dto.notification.subscribe.UserSubscribeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -89,6 +92,36 @@ public class UserDeviceServiceImpl extends DefaultServiceImpl<UserDeviceDto, Use
         if (userId != null) {
             List<UserDeviceEntity> entities = userDeviceRepository.findAllByUserId(userId);
             userDevices = converter.convert(entities, dtoClass);
+        }
+        return userDevices;
+    }
+
+    @Override
+    public List<UserDeviceDto> getByUserIds(List<UUID> userIds) {
+        List<UserDeviceDto> userDevices = null;
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            List<UserDeviceEntity> entities = userDeviceRepository.findAllByUserIdInAndNotificationEnableTrue(userIds);
+            userDevices = converter.convert(entities, dtoClass);
+        }
+        return userDevices;
+    }
+
+    @Override
+    public List<UserDeviceDto> getByUserIdsAndSubscribeExist(List<UUID> userIds, SubscribeDestination subscribeDestination) {
+        List<UserDeviceDto> userDevices = null;
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            List<UserDeviceEntity> entities = userDeviceRepository.findAllByUserIdInAndNotificationEnableTrue(userIds);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                Map<UUID, UserDeviceEntity> entityMap = entities.stream().collect(Collectors.toMap(UserDeviceEntity::getId, i -> i));
+                List<UserSubscribeDto> subscribes = userSubscribeService.getAllByUserDeviceIdAndSubscribeDestination(new ArrayList<>(entityMap.keySet()), subscribeDestination);
+                if (CollectionUtils.isNotEmpty(subscribes)) {
+                    userDevices = new ArrayList<>();
+                    for (UserSubscribeDto subscribe : subscribes) {
+                        UserDeviceEntity entity = entityMap.get(subscribe.getUserDeviceId());
+                        userDevices.add(converter.convert(entity, dtoClass));
+                    }
+                }
+            }
         }
         return userDevices;
     }

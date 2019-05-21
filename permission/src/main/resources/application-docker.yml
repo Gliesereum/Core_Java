@@ -30,6 +30,7 @@ spring:
     port: ${rabbit.port}
     password: ${rabbit.password}
     username: ${rabbit.user}
+    connection-timeout: 5s
     queue-logstash: logstash
 
 

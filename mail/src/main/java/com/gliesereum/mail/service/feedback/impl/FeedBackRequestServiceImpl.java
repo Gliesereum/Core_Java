@@ -72,6 +72,8 @@ public class FeedBackRequestServiceImpl extends DefaultServiceImpl<FeedBackReque
         dto.setCreateDate(LocalDateTime.now());
         FeedBackRequestDto result = super.create(dto);
         if (result != null) {
+            String massage = "New feedback request: ".concat(dto.getPhone());
+            String logMessage = "Message: " + massage + " vas send to: ";
             if (!exist) {
                 //todo add get User by app id
                 List<FeedBackUserDto> feedBackUsers = userService.getAll();
@@ -79,12 +81,15 @@ public class FeedBackRequestServiceImpl extends DefaultServiceImpl<FeedBackReque
                     List<UserPhoneDto> phones = exchangeService.findUserPhoneByUserIds(feedBackUsers.stream().map(m -> m.getUserId()).collect(Collectors.toList()));
                     if (CollectionUtils.isNotEmpty(phones)) {
                         phones.forEach(userPhone -> {
-                            phoneService.sendSingleMessage(userPhone.getPhone(), "New feedback request: ".concat(dto.getPhone()));
+                            phoneService.sendSingleMessage(userPhone.getPhone(), massage);
+                            log.info(logMessage.concat(userPhone.getPhone()));
                         });
                     }
                 }
             } else {
-                emailService.sendSimpleMessage(environment.getProperty(LOG_EMAIL), "Feedback", "New feedback request: ".concat(dto.getPhone()));
+                String email = environment.getProperty(LOG_EMAIL);
+                emailService.sendSimpleMessage(email, "Feedback", massage);
+                log.info(logMessage.concat(email));
             }
         }
         return result;
