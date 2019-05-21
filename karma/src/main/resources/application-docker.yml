@@ -29,6 +29,7 @@ spring:
     password: ${rabbit.password}
     username: ${rabbit.user}
     queue-logstash: logstash
+    connection-timeout: 5s
 
   data:
     jest:

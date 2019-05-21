@@ -30,6 +30,7 @@ spring:
     username: rabbit
     queue-logstash: logstash
     queue-mail: verificationQueue
+    connection-timeout: 5s
 
   data:
     jest:

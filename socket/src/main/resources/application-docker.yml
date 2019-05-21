@@ -5,4 +5,5 @@ spring:
     stompPort: ${rabbit.stompPort}
     password: ${rabbit.password}
     username: ${rabbit.user}
+    connection-timeout: 5s
     queue-logstash: logstash
