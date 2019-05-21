@@ -90,6 +90,16 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
     }
 
     @Override
+    public List<UserSubscribeDto> getAllByUserDeviceIdAndSubscribeDestination(List<UUID> userDeviceIds, SubscribeDestination subscribeDestination) {
+        List<UserSubscribeDto> result = null;
+        if (CollectionUtils.isNotEmpty(userDeviceIds) && (subscribeDestination != null)) {
+            List<UserSubscribeEntity> entities = userSubscribeRepository.findAllByUserDeviceIdInAndSubscribeDestinationAndNotificationEnableTrue(userDeviceIds, subscribeDestination);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
     public List<UserSubscribeDto> getByRegistrationToken(String registrationToken) {
         List<UserSubscribeDto> result = null;
         UserDeviceDto userDevice = userDeviceService.getByRegistrationToken(registrationToken);

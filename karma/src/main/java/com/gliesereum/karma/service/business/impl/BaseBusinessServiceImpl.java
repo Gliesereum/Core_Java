@@ -17,6 +17,8 @@ import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -281,6 +283,22 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         }
         dto.setObjectState(ObjectState.DELETED);
         super.update(dto);
+    }
+
+    @Override
+    public List<UUID> searchClient(RecordsSearchDto search) {
+        List<UUID> result = null;
+        if (search != null) {
+            List<BaseRecordDto> records = baseRecordService.getByParamsForBusiness(search);
+            if (CollectionUtils.isNotEmpty(records)) {
+                result = records.stream()
+                        .filter(i -> i.getClientId() != null)
+                        .map(BaseRecordDto::getClientId)
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
+        }
+        return result;
     }
 
     private void checkCorporationId(BaseBusinessDto business) {

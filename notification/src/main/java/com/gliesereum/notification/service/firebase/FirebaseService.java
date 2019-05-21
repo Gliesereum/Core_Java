@@ -3,6 +3,8 @@ package com.gliesereum.notification.service.firebase;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.google.firebase.messaging.TopicManagementResponse;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -19,5 +21,7 @@ public interface FirebaseService {
 
     void sendNotificationToTopic(String topic, String title, String body, UUID objectId, SubscribeDestination subscribeDestination);
 
-    void sendNotificationToDevice(String registrationToken, String title, String body);
+    void sendNotificationToDevice(String registrationToken, String title, String body, Map<String, String> data);
+
+    void sendNotificationToDevices(List<String> registrationTokens, String title, String body, Map<String, String> data);
 }

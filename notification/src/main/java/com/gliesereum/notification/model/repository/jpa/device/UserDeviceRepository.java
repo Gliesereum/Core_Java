@@ -19,4 +19,6 @@ public interface UserDeviceRepository extends JpaRepository<UserDeviceEntity, UU
 
     List<UserDeviceEntity> findAllByUserId(UUID userId);
 
+    List<UserDeviceEntity> findAllByUserIdInAndNotificationEnableTrue(List<UUID> userIds);
+
 }

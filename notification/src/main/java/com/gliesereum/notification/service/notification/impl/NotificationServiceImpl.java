@@ -3,12 +3,15 @@ package com.gliesereum.notification.service.notification.impl;
 import com.gliesereum.notification.service.device.UserDeviceService;
 import com.gliesereum.notification.service.firebase.FirebaseService;
 import com.gliesereum.notification.service.notification.NotificationService;
+import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.gliesereum.share.common.model.dto.notification.notification.NotificationDto;
+import com.gliesereum.share.common.model.dto.notification.notification.SendNotificationDto;
 import com.gliesereum.share.common.util.NotificationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,9 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author yvlasiuk
@@ -38,6 +41,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     private UserDeviceService userDeviceService;
+
+    @Autowired
+    private KarmaExchangeService karmaExchangeService;
 
     @Override
     public void processRecordNotification(NotificationDto<BaseRecordDto> recordNotification) {
@@ -65,7 +71,34 @@ public class NotificationServiceImpl implements NotificationService {
         if (ObjectUtils.allNotNull(userId, title, body)) {
             List<UserDeviceDto> byUserId = userDeviceService.getByUserId(userId);
             if (CollectionUtils.isNotEmpty(byUserId)) {
-                byUserId.forEach(userDevice -> firebaseService.sendNotificationToDevice(userDevice.getFirebaseRegistrationToken(), title, body));
+                List<String> tokens = byUserId.stream().map(UserDeviceDto::getFirebaseRegistrationToken).collect(Collectors.toList());
+                firebaseService.sendNotificationToDevices(tokens, title, body, new HashMap<>());
+            }
+        }
+    }
+
+    @Override
+    public void sendBusinessNotification(SendNotificationDto sendNotification) {
+        if (sendNotification != null) {
+            SubscribeDestination destination = sendNotification.getDestination();
+            if (destination != null) {
+                switch (destination) {
+                    case KARMA_BUSINESS_NOTIFICATION: {
+                        UUID businessId = sendNotification.getBusinessId();
+                        List<BaseBusinessDto> business = karmaExchangeService.getBusinessForCurrentUser();
+                        if (CollectionUtils.isNotEmpty(business) && business.stream().anyMatch(i -> i.getId().equals(businessId))) {
+                            List<UserDeviceDto> devices = userDeviceService.getByUserIdsAndSubscribeExist(sendNotification.getUserIds(), destination);
+                            if (CollectionUtils.isNotEmpty(devices)) {
+                                List<String> tokens = devices.stream().map(UserDeviceDto::getFirebaseRegistrationToken).collect(Collectors.toList());
+                                Map<String, String> data = new HashMap<>();
+                                data.put("businessId", businessId.toString());
+                                data.put("destination", destination.toString());
+                                firebaseService.sendNotificationToDevices(tokens, sendNotification.getTitle(), sendNotification.getBody(), data);
+                            }
+                        }
+                        break;
+                    }
+                }
             }
         }
     }

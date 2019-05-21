@@ -14,6 +14,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
+import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,6 +187,12 @@ public class BaseBusinessController {
         }
         commentService.deleteComment(commentId, userId);
         return new MapResponse("true");
+    }
+
+    @PostMapping("/client/search")
+    public MapResponse clientSearch(@RequestBody RecordsSearchDto search) {
+        List<UUID> clientIds = baseBusinessService.searchClient(search);
+        return new MapResponse("clientIds", clientIds);
     }
 
 }

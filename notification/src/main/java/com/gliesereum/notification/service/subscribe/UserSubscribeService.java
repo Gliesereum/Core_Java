@@ -21,6 +21,8 @@ public interface UserSubscribeService extends DefaultService<UserSubscribeDto, U
 
     List<UserSubscribeDto> getByUserDeviceId(UUID userDeviceId);
 
+    List<UserSubscribeDto> getAllByUserDeviceIdAndSubscribeDestination(List<UUID> userDeviceId, SubscribeDestination subscribeDestination);
+
     List<UserSubscribeDto> getByRegistrationToken(String registrationToken);
 
     void unsubscribeAll(UUID deviceId, String registrationToke);
