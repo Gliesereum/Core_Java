@@ -57,7 +57,7 @@ public class UserDeviceServiceImpl extends DefaultServiceImpl<UserDeviceDto, Use
     public void removeDevice(String registrationToken) {
         UserDeviceEntity userDevice = userDeviceRepository.findByFirebaseRegistrationToken(registrationToken);
         if (userDevice != null) {
-            userSubscribeService.deleteByDeviceId(userDevice.getId());
+            userSubscribeService.unsubscribeAll(userDevice.getId(), userDevice.getFirebaseRegistrationToken());
             userDeviceRepository.delete(userDevice);
         }
     }
@@ -76,12 +76,7 @@ public class UserDeviceServiceImpl extends DefaultServiceImpl<UserDeviceDto, Use
                 List<UserSubscribeDto> subscribes = userDeviceRegistration.getSubscribes().stream()
                         .peek(i -> i.setUserDeviceId(userDeviceId))
                         .collect(Collectors.toList());
-                List<UserSubscribeDto> subscribe = userSubscribeService.subscribe(subscribes, entity.getUserId());
-                if (CollectionUtils.isNotEmpty(subscribe)) {
-                    subscribe.forEach(i -> {
-                        firebaseService.subscribeToTopic(userDeviceRegistration.getFirebaseRegistrationToken(), i.getSubscribeDestination().toString(), i.getObjectId());
-                    });
-                }
+                List<UserSubscribeDto> subscribe = userSubscribeService.subscribe(subscribes, entity.getUserId(), entity.getFirebaseRegistrationToken());
             }
             result = converter.convert(entity, dtoClass);
         }

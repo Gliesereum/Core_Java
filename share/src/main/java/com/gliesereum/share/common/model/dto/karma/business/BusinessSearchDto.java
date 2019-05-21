@@ -21,5 +21,7 @@ public class BusinessSearchDto {
 
     private UUID businessCategoryId;
 
+    private List<UUID> businessCategoryIds;
+
     private GeoDistanceDto geoDistance;
 }

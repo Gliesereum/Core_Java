@@ -1,5 +1,6 @@
 package com.gliesereum.karma.controller.business;
 
+import com.gliesereum.karma.model.document.BusinessDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
@@ -57,6 +58,11 @@ public class BaseBusinessController {
     @PostMapping("/search")
     public List<BaseBusinessDto> search(@Valid @RequestBody(required = false) BusinessSearchDto businessSearch) {
         return businessEsService.search(businessSearch);
+    }
+
+    @PostMapping("/search/document")
+    public List<BusinessDocument> searchDocument(@Valid @RequestBody(required = false) BusinessSearchDto businessSearch) {
+        return businessEsService.searchDocuments(businessSearch);
     }
 
     @GetMapping("/{id}")

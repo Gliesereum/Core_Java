@@ -25,5 +25,5 @@ ARG EUREKA_HOST
 ARG EUREKA_PORT
 
 
-CMD java -jar -d64 -server -XX:+UseG1GC -Xms500M -Xmx1536M -XX:MaxMetaspaceSize=1536M -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
+CMD sleep 4m && java -jar -d64 -server -XX:+UseG1GC -Xms500M -Xmx1536M -XX:MaxMetaspaceSize=1536M -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
 ./permission-0.0.1.jar
