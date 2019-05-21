@@ -8,16 +8,16 @@ echo 'Git pull'
 sudo git pull
 
 echo 'Gradle build'                               
-sudo gradle clean build -b=account/build.gradle    
-sudo gradle clean build -b=discovery/build.gradle  
-sudo gradle clean build -b=proxy/build.gradle      
-sudo gradle clean build -b=mail/build.gradle       
-sudo gradle clean build -b=permission/build.gradle 
-sudo gradle clean build -b=karma/build.gradle      
-sudo gradle clean build -b=file/build.gradle
-sudo gradle clean build -b=lending-gallery/build.gradle
-sudo gradle clean build -b=socket/build.gradle
-sudo gradle clean build -b=notification/build.gradle
+sudo gradle clean build -b=account/build.gradle --no-daemon
+sudo gradle clean build -b=discovery/build.gradle --no-daemon
+sudo gradle clean build -b=proxy/build.gradle --no-daemon
+sudo gradle clean build -b=mail/build.gradle --no-daemon
+sudo gradle clean build -b=permission/build.gradle --no-daemon
+sudo gradle clean build -b=karma/build.gradle --no-daemon
+sudo gradle clean build -b=file/build.gradle --no-daemon
+sudo gradle clean build -b=lending-gallery/build.gradle --no-daemon
+sudo gradle clean build -b=socket/build.gradle --no-daemon
+sudo gradle clean build -b=notification/build.gradle --no-daemon
 
 echo 'Docker stop containers'       
 docker stack rm gls                 
