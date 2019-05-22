@@ -14,7 +14,6 @@ public class CustomEntityMapper implements EntityMapper {
 
     public CustomEntityMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-
     }
 
     @Override

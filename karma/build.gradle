@@ -2,7 +2,7 @@ buildscript {
 	ext {
 		springBootVersion = '2.1.1.RELEASE'
 		springCloudVersion = 'Finchley.SR2'
-		springDataJestVersion = '3.2.1.RELEASE'
+		springDataJestVersion = '3.2.2.RELEASE'
 		elasticsearchVersion = '6.2.2'
 		jaksonJsr310Version = '2.9.7'
 		modelMapperVersion = '2.3.0'
