@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.chat.impl;
 
+import com.gliesereum.karma.facade.notification.ChatNotificationFacade;
 import com.gliesereum.karma.model.entity.chat.ChatMessageEntity;
 import com.gliesereum.karma.model.repository.jpa.chat.ChatMessageRepository;
 import com.gliesereum.karma.service.chat.ChatMessageService;
@@ -33,11 +34,15 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class ChatMessageServiceImpl extends DefaultServiceImpl<ChatMessageDto, ChatMessageEntity> implements ChatMessageService {
 
-    private final ChatMessageRepository repository;
-
     private static final Class<ChatMessageDto> DTO_CLASS = ChatMessageDto.class;
     private static final Class<ChatMessageEntity> ENTITY_CLASS = ChatMessageEntity.class;
 
+    private final ChatMessageRepository repository;
+
+    @Autowired
+    private ChatNotificationFacade chatNotificationFacade;
+
+    @Autowired
     public ChatMessageServiceImpl(ChatMessageRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.repository = repository;
@@ -67,17 +72,20 @@ public class ChatMessageServiceImpl extends DefaultServiceImpl<ChatMessageDto, C
     @Transactional
     public ChatMessageDto createByBusinessId(UUID id, String message) {
         SecurityUtil.checkUserByBanStatus();
-        ChatDto chat = chatService.getByUserIdAndBusinessId(SecurityUtil.getUserId(), id);
+        UUID userId = SecurityUtil.getUserId();
+        ChatDto chat = chatService.getByUserIdAndBusinessId(userId, id);
         ChatMessageDto result = new ChatMessageDto();
         result.setCreateDate(LocalDateTime.now());
         result.setMessage(message);
         if (chat != null) {
             result.setChatId(chat.getId());
         } else {
-            ChatDto newChat = chatService.create(new ChatDto(SecurityUtil.getUserId(), id));
+            ChatDto newChat = chatService.create(new ChatDto(userId, id));
             result.setChatId(newChat.getId());
         }
-        return create(result);
+        result = create(result);
+        chatNotificationFacade.userMessageNotification(result, userId);
+        return result;
     }
 
     @Override
@@ -88,10 +96,13 @@ public class ChatMessageServiceImpl extends DefaultServiceImpl<ChatMessageDto, C
         if (chat == null) {
             throw new ClientException(CHAT_NOT_FOUND);
         }
-        if (!currentUserHavePermissionLikeBusinessUser(chat.getBusinessId())) {
+        UUID businessId = chat.getBusinessId();
+        if (!currentUserHavePermissionLikeBusinessUser(businessId)) {
             throw new ClientException(NOT_PERMISSION_TO_CHAT);
         }
-        return create(new ChatMessageDto(id, message, LocalDateTime.now()));
+        ChatMessageDto result = create(new ChatMessageDto(id, message, LocalDateTime.now()));
+        chatNotificationFacade.businessMessageNotification(result, businessId);
+        return result;
     }
 
     private boolean currentUserHavePermissionLikeBusinessUser(UUID businessId) {

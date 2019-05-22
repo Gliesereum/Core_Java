@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class KarmaProperties {
 
     private String businessForCurrentUser;
+
+    private String existChatSupport;
 }

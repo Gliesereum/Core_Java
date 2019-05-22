@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.ws.rs.QueryParam;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,8 +32,9 @@ public class ChatSupportController {
     }
 
     @GetMapping("/exist-chat-support")
-    public boolean existChatSupport(@QueryParam("userId")UUID userId, @QueryParam("businessId")UUID businessId) {
-        return service.existChatSupport(userId, businessId);
+    public MapResponse existChatSupport(@RequestParam("userId") UUID userId, @RequestParam("businessId") UUID businessId) {
+        boolean result = service.existChatSupport(userId, businessId);
+        return new MapResponse(result);
     }
 
     @PostMapping

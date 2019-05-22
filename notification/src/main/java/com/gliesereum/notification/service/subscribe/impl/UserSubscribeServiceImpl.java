@@ -141,6 +141,7 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
             for (UserSubscribeDto subscribe : subscribes) {
                 switch (subscribe.getSubscribeDestination()) {
                     case KARMA_USER_RECORD:
+                    case KARMA_CHAT_USER:
                     case KARMA_USER_REMIND_RECORD: {
                         subscribe.setObjectId(userId);
                         validSubscribes.add(subscribe);
@@ -155,9 +156,18 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                         }
                         break;
                     }
+                    case KARMA_BUSINESS_NOTIFICATION:
                     case KARMA_USER_NEW_BUSINESS: {
                         subscribe.setObjectId(null);
                         validSubscribes.add(subscribe);
+                        break;
+                    }
+                    case KARMA_CHAT_BUSINESS: {
+                       if (subscribe.getObjectId() != null) {
+                           if (karmaExchangeService.existChatSupport(subscribe.getObjectId(), userId)) {
+                               validSubscribes.add(subscribe);
+                           }
+                       }
                         break;
                     }
                 }

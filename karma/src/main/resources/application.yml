@@ -56,3 +56,5 @@ notification:
     queueName: notification-record
   business:
     queueName: notification-business
+  chat-message:
+    queueName: notification-chat-message
