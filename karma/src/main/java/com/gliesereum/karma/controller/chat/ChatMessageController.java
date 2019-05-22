@@ -24,13 +24,13 @@ public class ChatMessageController {
         return service.getAllByChatId(id);
     }
 
-    @PostMapping("/by-business")
-    public ChatMessageDto createByBusinessId(@RequestBody UUID id, @RequestBody String message) {
+    @PostMapping("/by-business/{id}")
+    public ChatMessageDto createByBusinessId(@PathVariable("id") UUID id, @RequestBody String message) {
         return service.createByBusinessId(id, message);
     }
 
-    @PostMapping("/by-chat")
-    public ChatMessageDto createByChatId(@RequestBody UUID id, @RequestBody String message) {
+    @PostMapping("/by-chat/{id}")
+    public ChatMessageDto createByChatId(@PathVariable("id") UUID id, @RequestBody String message) {
         return service.createByChatId(id, message);
     }
 
