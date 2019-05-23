@@ -37,6 +37,8 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     List<BusinessFullModel> getAllFullBusinessByCurrentUser();
 
+    void deleteByCorporationIdCheckPermission(UUID id);
+
     void deleteByCorporationId(UUID id);
 
     List<UUID> searchClient(RecordsSearchDto search);

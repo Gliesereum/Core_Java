@@ -1,5 +1,6 @@
 package com.gliesereum.account.service.user.impl;
 
+import com.gliesereum.account.facade.notification.SystemNotificationFacade;
 import com.gliesereum.account.model.entity.CorporationEntity;
 import com.gliesereum.account.model.repository.jpa.user.CorporationRepository;
 import com.gliesereum.account.service.kyc.KycRequestService;
@@ -56,6 +57,9 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
 
     @Autowired
     private KycRequestService kycRequestService;
+
+    @Autowired
+    private SystemNotificationFacade systemNotificationFacade;
 
     public CorporationServiceImpl(CorporationRepository repository, DefaultConverter converter) {
         super(repository, converter, DTO_CLASS, ENTITY_CLASS);
@@ -120,8 +124,9 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         checkCurrentUserForPermissionActionThisCorporation(id);
         CorporationDto dto = getById(id);
         dto.setObjectState(ObjectState.DELETED);
-        super.update(dto);
+        dto = super.update(dto);
         kycRequestService.delete(KycRequestType.CORPORATION, id);
+        systemNotificationFacade.sendCorporationDelete(dto);
     }
 
     @Override

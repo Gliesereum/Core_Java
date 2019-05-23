@@ -104,7 +104,7 @@ public class BaseBusinessController {
 
     @DeleteMapping("/by-corporation-id/{id}")
     public MapResponse deleteByCorporationId(@PathVariable("id") UUID id){
-        baseBusinessService.deleteByCorporationId(id);
+        baseBusinessService.deleteByCorporationIdCheckPermission(id);
         return new MapResponse("true");
     }
 

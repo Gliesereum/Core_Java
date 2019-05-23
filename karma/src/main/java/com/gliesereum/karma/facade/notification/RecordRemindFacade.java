@@ -1,4 +1,4 @@
-package com.gliesereum.karma.facade;
+package com.gliesereum.karma.facade.notification;
 
 /**
  * @author yvlasiuk
