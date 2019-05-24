@@ -7,6 +7,7 @@ import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.chat.ChatMessageDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
@@ -63,6 +64,16 @@ public class NotificationServiceImpl implements NotificationService {
             T data = notification.getData();
             firebaseService.sendNotificationToTopic(routingKey, getTitle(subscribeDestination), getBody(subscribeDestination), data.getId(), subscribeDestination);
 
+        }
+    }
+
+    @Override
+    public void processChatMessageNotification(NotificationDto<ChatMessageDto> notification) {
+        if (notification != null) {
+            SubscribeDestination subscribeDestination = notification.getSubscribeDestination();
+            String routingKey = NotificationUtil.routingKey(subscribeDestination.toString(), notification.getObjectId());
+            ChatMessageDto message = notification.getData();
+            firebaseService.sendNotificationToTopic(routingKey, getTitle(subscribeDestination), message.getMessage(), message.getChatId(), subscribeDestination);
         }
     }
 

@@ -179,11 +179,23 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public void deleteByCorporationId(UUID id) {
+    @UpdateCarWashIndex
+    public void deleteByCorporationIdCheckPermission(UUID id) {
         List<BaseBusinessDto> list = getByCorporationId(id);
         if(CollectionUtils.isNotEmpty(list)){
-            list.stream().forEach(m -> m.setObjectState(ObjectState.DELETED));
+            list.forEach(m -> m.setObjectState(ObjectState.DELETED));
             super.update(list);
+        }
+    }
+
+    @Override
+    @UpdateCarWashIndex
+    public void deleteByCorporationId(UUID id) {
+        List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationIdAndObjectState(id, ObjectState.ACTIVE);
+        if (CollectionUtils.isNotEmpty(entities)) {
+            entities.forEach(i -> i.setObjectState(ObjectState.DELETED));
+            baseBusinessRepository.saveAll(entities);
+            baseBusinessRepository.flush();
         }
     }
 

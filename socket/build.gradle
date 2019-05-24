@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springBootVersion = '2.1.1.RELEASE'
-		springCloudVersion = 'Finchley.SR2'
+		springBootVersion = '2.1.5.RELEASE'
+		springCloudVersion = 'Greenwich.SR1'
 		modelMapperVersion = '2.3.0'
 		jjwtVersion = '0.9.1'
 		commonsCollectionsVersion = '4.2'
@@ -26,7 +26,7 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'com.gliesereum'
 version = '0.0.1'
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
 	mavenCentral()

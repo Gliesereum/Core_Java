@@ -111,7 +111,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     private List<WorkingSpaceDto> checkIndex(List<WorkingSpaceDto> workingSpaces, UUID businessId) {
         if (CollectionUtils.isNotEmpty(workingSpaces)) {
             List<WorkingSpaceEntity> existed = workingSpaceRepository.findByBusinessIdOrderByIndexNumberAsc(businessId);
-            int lastIndex = 1;
+            int lastIndex = 0;
             if (CollectionUtils.isNotEmpty(existed)) {
                 lastIndex = existed.get(existed.size() - 1).getIndexNumber();
             }

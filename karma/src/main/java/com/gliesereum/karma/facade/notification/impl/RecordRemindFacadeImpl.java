@@ -1,7 +1,7 @@
-package com.gliesereum.karma.facade.impl;
+package com.gliesereum.karma.facade.notification.impl;
 
 import com.gliesereum.karma.facade.notification.RecordNotificationFacade;
-import com.gliesereum.karma.facade.RecordRemindFacade;
+import com.gliesereum.karma.facade.notification.RecordRemindFacade;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
@@ -52,7 +52,6 @@ public class RecordRemindFacadeImpl implements RecordRemindFacade {
                     });
                 }
             }
-
         }
     }
 }

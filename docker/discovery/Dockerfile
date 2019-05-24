@@ -1,4 +1,4 @@
-FROM openjdk:8-alpine
+FROM adoptopenjdk/openjdk11:alpine-jre
 
 MAINTAINER yvlasiuk
 
@@ -14,6 +14,6 @@ ARG PROFILE
 ARG PROFILE="docker"
 ARG HOST="localhost"
 
-CMD java -jar -d64 -server -XX:+UseG1GC -Xms300M -Xmx1G -XX:MaxMetaspaceSize=1G -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
+CMD java -jar -server -XX:+UseG1GC -Xms300M -Xmx1G -XX:MaxMetaspaceSize=1G -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
 ./discovery-0.0.1.jar
 

@@ -7,6 +7,7 @@ import com.gliesereum.share.common.model.dto.notification.notification.Notificat
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +24,7 @@ public class BusinessNotificationFacadeImpl implements BusinessNotificationFacad
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Async
     @Override
     public void newBusinessNotification(AbstractBusinessDto business) {
         if (business != null) {

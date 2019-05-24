@@ -50,6 +50,7 @@ exchange:
       findByIds: http://account-service/user/by-ids
     karma:
       businessForCurrentUser: http://karma-service/business/by-current-user
+      existChatSupport: http://karma-service/chat-support/exist-chat-support
 
 firebase:
   properties:
@@ -61,3 +62,5 @@ notification:
     queueName: notification-record
   business:
     queueName: notification-business
+  chat-message:
+    queueName: notification-chat-message

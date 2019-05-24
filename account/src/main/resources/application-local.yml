@@ -36,7 +36,7 @@ spring:
     password: guest
     username: guest
     queue-logstash: logstash
-    queue-mail: verificationQueue
+    #queue-mail: verificationQueue
 
 token:
   expirationTime:

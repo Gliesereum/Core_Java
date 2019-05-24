@@ -37,7 +37,7 @@ spring:
     username: ${rabbit.user}
     connection-timeout: 5s
     queue-logstash: logstash
-    queue-mail: verificationQueue
+    #queue-mail: verificationQueue
 
 token:
   expirationTime:

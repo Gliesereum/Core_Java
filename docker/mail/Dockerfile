@@ -1,4 +1,4 @@
-FROM openjdk:8-alpine
+FROM adoptopenjdk/openjdk11:alpine-jre
 
 MAINTAINER yvlasiuk
 
@@ -20,5 +20,5 @@ ARG RABBIT_PASSWORD
 ARG EUREKA_HOST
 ARG EUREKA_PORT
 
-CMD sleep 3m && java -jar -d64 -server -XX:+UseG1GC -Xms300M -Xmx1G -XX:MaxMetaspaceSize=1G -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
+CMD sleep 3m && java -jar -server -XX:+UseG1GC -Xms300M -Xmx1G -XX:MaxMetaspaceSize=1G -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
 ./mail-0.0.1.jar

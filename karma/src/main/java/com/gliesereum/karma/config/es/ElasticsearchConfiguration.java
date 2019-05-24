@@ -6,7 +6,6 @@ import com.github.vanroy.springdata.jest.mapper.DefaultJestResultsMapper;
 import com.github.vanroy.springdata.jest.mapper.JestResultsMapper;
 import com.gliesereum.karma.config.es.mapper.CustomEntityMapper;
 import com.gliesereum.karma.config.es.mapper.CustomErrorMapper;
-import com.gliesereum.karma.config.es.mapper.CustomJestResultMapper;
 import io.searchbox.client.JestClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +41,7 @@ public class ElasticsearchConfiguration {
 
     @Bean
     public JestResultsMapper jestResultsMapper(SimpleElasticsearchMappingContext mappingContext, ObjectMapper objectMapper) {
-        return new CustomJestResultMapper(mappingContext, new CustomEntityMapper(objectMapper));
+        return new DefaultJestResultsMapper(mappingContext, new CustomEntityMapper(objectMapper));
     }
 
 }

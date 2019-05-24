@@ -48,3 +48,7 @@ exchange:
       sentEmail: http://mail-service/email/single
       phoneVerification: http://mail-service/phone/single
       sendPhone: http://mail-service/phone/single
+
+system-notification:
+  corporation-delete:
+    exchange-name: system-notification

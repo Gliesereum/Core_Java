@@ -56,3 +56,9 @@ notification:
     queueName: notification-record
   business:
     queueName: notification-business
+  chat-message:
+    queueName: notification-chat-message
+
+system-notification:
+  corporation-delete:
+    exchange-name: system-notification

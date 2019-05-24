@@ -81,4 +81,6 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage WORKING_SPACE_INDEX_NUMBER_EXIST = new ExceptionMessage(1477, 400, "Working space index number exist");
 
 
+    public static final ExceptionMessage CHAT_NOT_FOUND = new ExceptionMessage(1478, 404, "Chat not found");
+    public static final ExceptionMessage NOT_PERMISSION_TO_CHAT = new ExceptionMessage(1479, 400, "You don't have permission to this chat");
 }

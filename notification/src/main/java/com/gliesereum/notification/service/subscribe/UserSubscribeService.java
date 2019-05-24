@@ -1,6 +1,7 @@
 package com.gliesereum.notification.service.subscribe;
 
 import com.gliesereum.notification.model.entity.subscribe.UserSubscribeEntity;
+import com.gliesereum.share.common.model.dto.notification.device.UserDeviceRegistrationDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.gliesereum.share.common.model.dto.notification.subscribe.UserSubscribeDto;
 import com.gliesereum.share.common.service.DefaultService;
@@ -28,4 +29,6 @@ public interface UserSubscribeService extends DefaultService<UserSubscribeDto, U
     void unsubscribeAll(UUID deviceId, String registrationToke);
 
     void unsubscribe(UUID deviceId, String registrationToken, SubscribeDestination subscribeDestination, UUID objectId);
+
+    List<UserSubscribeDto> addSubscribes(UserDeviceRegistrationDto userDeviceRegistration, Boolean overrideExistedDestination);
 }

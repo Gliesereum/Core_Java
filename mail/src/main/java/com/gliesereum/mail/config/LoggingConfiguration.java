@@ -1,14 +1,23 @@
 package com.gliesereum.mail.config;
 
-import com.gliesereum.share.common.config.logging.LoggingDefaultConfiguration;
+import org.springframework.amqp.core.Queue;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 /**
  * @author yvlasiuk
  * @version 1.0
  */
 @Configuration
-@ComponentScan(basePackageClasses = LoggingDefaultConfiguration.class)
+@ComponentScan(value = "com.gliesereum.share.common.logging")
 public class LoggingConfiguration {
+
+    private static final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
+
+    @Bean
+    public Queue queue(Environment environment) {
+        return new Queue(environment.getRequiredProperty(QUEUE_LOGSTASH));
+    }
 }
