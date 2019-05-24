@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springBootVersion = '2.0.6.RELEASE'
-		springCloudVersion = 'Finchley.SR2'
+		springBootVersion = '2.1.5.RELEASE'
+		springCloudVersion = 'Greenwich.SR1'
 		cache2kVersion = '1.2.0.Final'
 		commonsCollectionsVersion = '4.2'
 		commonsLangVersion = '3.8.1'
@@ -9,6 +9,11 @@ buildscript {
 		jjwtVersion = '0.9.1'
 		lombokVersion = '1.18.2'
 		swaggerVersion = '2.9.2'
+
+		jaxbApiVersion = '2.3.1'
+		jaxbCoreVersion = '2.3.0.1'
+		jaxbImplVersion = '2.3.2'
+		javaxActivationVersion = '1.1.1'
 	}
 	repositories {
 		mavenCentral()
@@ -27,7 +32,7 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'com.gliesereum'
 version = '0.0.1'
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
 	mavenCentral()
@@ -49,6 +54,11 @@ dependencies {
 	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
 	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
 	implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+
+	implementation "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
+	implementation "com.sun.xml.bind:jaxb-core:${jaxbCoreVersion}"
+	implementation "com.sun.xml.bind:jaxb-impl:${jaxbImplVersion}"
+	implementation "javax.activation:activation:${javaxActivationVersion}"
 
 	implementation "org.cache2k:cache2k-api:${cache2kVersion}"
 	implementation "org.cache2k:cache2k-jcache:${cache2kVersion}"
