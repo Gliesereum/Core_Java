@@ -18,6 +18,5 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class UserDeviceRegistrationDto extends UserDeviceDto {
 
-    @Valid
     private List<UserSubscribeDto> subscribes;
 }

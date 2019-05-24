@@ -29,9 +29,7 @@ public class UserDeviceController {
 
     @PostMapping
     public UserDeviceDto addUserDevice(@Valid @RequestBody UserDeviceRegistrationDto userDeviceRegistration) {
-        if (SecurityUtil.isAnonymous()) {
-            throw new ClientException(CommonExceptionMessage.USER_IS_ANONYMOUS);
-        }
+        SecurityUtil.checkUserByBanStatus();
         userDeviceRegistration.setUserId(SecurityUtil.getUserId());
         return userDeviceService.registerDevice(userDeviceRegistration);
     }

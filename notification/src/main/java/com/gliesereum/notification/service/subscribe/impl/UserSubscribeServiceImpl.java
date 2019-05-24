@@ -6,9 +6,11 @@ import com.gliesereum.notification.service.device.UserDeviceService;
 import com.gliesereum.notification.service.firebase.FirebaseService;
 import com.gliesereum.notification.service.subscribe.UserSubscribeService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
+import com.gliesereum.share.common.model.dto.notification.device.UserDeviceRegistrationDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.gliesereum.share.common.model.dto.notification.subscribe.UserSubscribeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -19,9 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.gliesereum.share.common.exception.messages.NotificationExceptionMessage.REGISTRATION_TOKEN_NOT_EXIST;
 
 /**
  * @author yvlasiuk
@@ -133,6 +139,54 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                 userSubscribeRepository.delete(subscribe);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public List<UserSubscribeDto> addSubscribes(UserDeviceRegistrationDto userDeviceRegistration,
+                                                Boolean overrideExistedDestination) {
+        List<UserSubscribeDto> result = null;
+        if ((userDeviceRegistration != null) && CollectionUtils.isNotEmpty(userDeviceRegistration.getSubscribes())) {
+            UserDeviceDto userDevice = userDeviceService.getByRegistrationToken(userDeviceRegistration.getFirebaseRegistrationToken());
+            if (userDevice == null) {
+                throw new ClientException(REGISTRATION_TOKEN_NOT_EXIST);
+            }
+            UUID userDeviceId = userDevice.getId();
+            List<UserSubscribeDto> subscribes = userDeviceRegistration.getSubscribes();
+            List<UserSubscribeEntity> entities = userSubscribeRepository.findAllByUserDeviceId(userDeviceId);
+
+            if (CollectionUtils.isNotEmpty(entities)) {
+                subscribes = subscribes.stream()
+                        .filter(i -> entities.stream()
+                                .noneMatch(e ->
+                                e.getSubscribeDestination().equals(i.getSubscribeDestination()) &&
+                                        (((e.getObjectId() == null) && (i.getObjectId() == null)) || (e.getObjectId().equals(i.getObjectId())))))
+                        .peek(i -> i.setUserDeviceId(userDeviceId))
+                        .collect(Collectors.toList());
+            }
+            subscribes = validateDestinations(subscribes, userDevice.getUserId());
+            if (CollectionUtils.isNotEmpty(subscribes)) {
+                if (overrideExistedDestination) {
+                    List<SubscribeDestination> destinations = subscribes.stream()
+                            .map(UserSubscribeDto::getSubscribeDestination)
+                            .collect(Collectors.toList());
+                    List<UserSubscribeEntity> toDelete = userSubscribeRepository.findAllByUserDeviceIdAndSubscribeDestinationIn(userDeviceId, destinations);
+                    if (CollectionUtils.isNotEmpty(toDelete)) {
+                        for (UserSubscribeEntity delete : toDelete) {
+                            firebaseService.unsubscribeFromTopic(userDevice.getFirebaseRegistrationToken(), delete.getSubscribeDestination().toString(), delete.getObjectId());
+                        }
+                        userSubscribeRepository.deleteAll(toDelete);
+                    }
+                }
+                result = super.create(subscribes);
+                if (CollectionUtils.isNotEmpty(result)) {
+                    result.forEach(i -> {
+                        firebaseService.subscribeToTopic(userDevice.getFirebaseRegistrationToken(), i.getSubscribeDestination().toString(), i.getObjectId());
+                    });
+                }
+            }
+        }
+        return result;
     }
 
     private List<UserSubscribeDto> validateDestinations(List<UserSubscribeDto> subscribes, UUID userId) {
