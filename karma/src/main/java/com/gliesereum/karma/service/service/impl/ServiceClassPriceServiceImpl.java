@@ -1,12 +1,12 @@
 package com.gliesereum.karma.service.service.impl;
 
-import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.service.ServiceClassPriceEntity;
 import com.gliesereum.karma.model.repository.jpa.service.ServiceClassPriceRepository;
-import com.gliesereum.karma.service.service.ServiceClassService;
-import com.gliesereum.karma.service.service.ServiceClassPriceService;
-import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
+import com.gliesereum.karma.service.es.BusinessEsService;
+import com.gliesereum.karma.service.service.ServiceClassPriceService;
+import com.gliesereum.karma.service.service.ServiceClassService;
+import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceClassPriceDto;
@@ -46,49 +46,56 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     private ServiceClassService serviceClassService;
 
     @Autowired
+    private BusinessEsService businessEsService;
+
+    @Autowired
     public ServiceClassPriceServiceImpl(ServiceClassPriceRepository serviceClassPriceRepository, DefaultConverter defaultConverter) {
         super(serviceClassPriceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.serviceClassPriceRepository = serviceClassPriceRepository;
     }
 
     @Override
-    @UpdateCarWashIndex
     public ServiceClassPriceDto create(ServiceClassPriceDto dto) {
+        ServiceClassPriceDto result = null;
         if (dto != null) {
             checkPriceServiceExist(dto.getPriceId(), dto.getServiceClassId());
-            checkPermission(dto.getPriceId(), dto.getServiceClassId());
+            ServicePriceDto price = servicePriceService.getById(dto.getPriceId());
+            checkPermission(price, dto.getServiceClassId());
+            result = super.create(dto);
         }
-        return super.create(dto);
+        return result;
     }
 
     @Override
-    @UpdateCarWashIndex
     public ServiceClassPriceDto update(ServiceClassPriceDto dto) {
+        ServiceClassPriceDto result = null;
         if (dto != null) {
             checkPriceServiceExist(dto.getPriceId(), dto.getServiceClassId());
-            checkPermission(dto.getPriceId(), dto.getServiceClassId());
+            ServicePriceDto price = servicePriceService.getById(dto.getPriceId());
+            checkPermission(price, dto.getServiceClassId());
+            result = super.update(dto);
         }
-        return super.update(dto);
+        return result;
     }
 
     @Override
-    @UpdateCarWashIndex
     public ServicePriceDto createAndGetPrice(ServiceClassPriceDto dto) {
         ServicePriceDto servicePrice = null;
         dto = this.create(dto);
         if (dto != null) {
             servicePrice = servicePriceService.getByIdAndRefresh(dto.getPriceId());
+            businessEsService.indexAsync(servicePrice.getBusinessId());
         }
         return servicePrice;
     }
 
     @Override
-    @UpdateCarWashIndex
     public ServicePriceDto updateAndGetPrice(ServiceClassPriceDto dto) {
         ServicePriceDto servicePrice = null;
         dto = this.update(dto);
         if (dto != null) {
             servicePrice = servicePriceService.getByIdAndRefresh(dto.getPriceId());
+            businessEsService.indexAsync(servicePrice.getBusinessId());
         }
         return servicePrice;
     }
@@ -98,8 +105,10 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
         if (id != null) {
             Optional<ServiceClassPriceEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                checkPermission(i.getPriceId(), i.getServiceClassId());
+                ServicePriceDto price = servicePriceService.getById(i.getPriceId());
+                checkPermission(price, i.getServiceClassId());
                 repository.delete(i);
+                businessEsService.indexAsync(price.getBusinessId());
             });
 
         }
@@ -110,8 +119,10 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
         if (ObjectUtils.allNotNull(priceId, classId)) {
             Optional<ServiceClassPriceEntity> entity = serviceClassPriceRepository.findByPriceIdAndServiceClassId(priceId, classId);
             entity.ifPresent(i -> {
-                checkPermission(i.getPriceId(), i.getServiceClassId());
+                ServicePriceDto price = servicePriceService.getById(i.getPriceId());
+                checkPermission(price, i.getServiceClassId());
                 repository.delete(i);
+                businessEsService.indexAsync(price.getBusinessId());
             });
 
         }
@@ -130,6 +141,12 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     private void checkPermission(UUID servicePriceId, UUID serviceClassId) {
         if (ObjectUtils.allNotNull(servicePriceId, serviceClassId)) {
             ServicePriceDto price = servicePriceService.getById(servicePriceId);
+            checkPermission(price, serviceClassId);
+        }
+    }
+
+    private void checkPermission(ServicePriceDto price, UUID serviceClassId) {
+        if (serviceClassId != null) {
             if (price == null) {
                 throw new ClientException(SERVICE_PRICE_NOT_FOUND);
             }
@@ -141,13 +158,13 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     }
 
     private void checkPriceServiceExist(UUID priceId, UUID serviceClassId) {
-        if (priceId == null){
+        if (priceId == null) {
             throw new ClientException(PRICE_ID_IS_EMPTY);
         }
-        if (serviceClassId == null){
+        if (serviceClassId == null) {
             throw new ClientException(SERVICE_CLASS_ID_IS_EMPTY);
         }
-        if(serviceClassPriceRepository.existsByPriceIdAndServiceClassId(priceId, serviceClassId)){
+        if (serviceClassPriceRepository.existsByPriceIdAndServiceClassId(priceId, serviceClassId)) {
             throw new ClientException(PAR_SERVICE_CLASS_ID_AND_PRICE_ID_EXIST);
         }
     }

@@ -1,10 +1,10 @@
 package com.gliesereum.karma.service.business.impl;
 
-import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.business.WorkTimeEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkTimeRepository;
-import com.gliesereum.karma.service.business.WorkTimeService;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
+import com.gliesereum.karma.service.business.WorkTimeService;
+import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
@@ -37,6 +37,9 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     @Autowired
     private BusinessCategoryFacade businessCategoryFacade;
 
+    @Autowired
+    private BusinessEsService businessEsService;
+
     public WorkTimeServiceImpl(WorkTimeRepository workTimeRepository, DefaultConverter defaultConverter) {
         super(workTimeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.workTimeRepository = workTimeRepository;
@@ -53,35 +56,34 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     @Override
-    @UpdateCarWashIndex
     public WorkTimeDto create(WorkTimeDto dto) {
         WorkTimeDto result = null;
         if (dto != null) {
             checkDayExist(dto);
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getObjectId());
             result = super.create(dto);
+            businessEsService.indexAsync(result.getObjectId());
         }
         return result;
     }
 
     @Override
-    @UpdateCarWashIndex
     public List<WorkTimeDto> create(List<WorkTimeDto> list) {
         List<WorkTimeDto> result = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(list)) {
             WorkTimeDto workTime = list.get(0);
-            if(list.stream().anyMatch(i -> !i.getObjectId().equals(workTime.getObjectId()))){
+            if (list.stream().anyMatch(i -> !i.getObjectId().equals(workTime.getObjectId()))) {
                 throw new ClientException(ALL_OBJECT_ID_NOT_EQUALS);
             }
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(workTime.getBusinessCategoryId(), workTime.getObjectId());
-            list.forEach(f-> checkDayExist(f));
+            list.forEach(f -> checkDayExist(f));
             result = super.create(list);
+            businessEsService.indexAsync(workTime.getObjectId());
         }
         return result;
     }
 
     @Override
-    @UpdateCarWashIndex
     public WorkTimeDto update(WorkTimeDto dto) {
         WorkTimeDto result = null;
         if (dto != null) {
@@ -94,6 +96,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             }
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getObjectId());
             result = super.update(dto);
+            businessEsService.indexAsync(result.getObjectId());
         }
         return result;
     }
@@ -105,6 +108,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             entity.ifPresent(i -> {
                 businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(businessCategoryId, i.getObjectId());
                 repository.delete(i);
+                businessEsService.indexAsync(i.getObjectId());
             });
         }
     }

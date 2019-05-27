@@ -116,8 +116,32 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     @Override
     @Transactional
+    @Async
+    public void indexAsync(UUID businessId) {
+        BaseBusinessDto business = baseBusinessService.getByIdIgnoreState(businessId);
+        List<BusinessDocument> businessDocuments = collectData(Arrays.asList(business));
+        index(businessDocuments);
+    }
+
+
+    @Override
+    @Transactional
+    @Async
+    public void indexAsync(List<UUID> businessIds) {
+        List<BaseBusinessDto> business = baseBusinessService.getByIds(businessIds);
+        List<BusinessDocument> businessDocuments = collectData(business);
+        index(businessDocuments);
+    }
+
+    @Override
+    @Transactional
     public void indexAll() {
-        List<BusinessDocument> businessDocuments = collectData();
+        List<BaseBusinessDto> businessList = baseBusinessService.getAllIgnoreState();
+        List<BusinessDocument> businessDocuments = collectData(businessList);
+        index(businessDocuments);
+    }
+
+    private void index(List<BusinessDocument> businessDocuments) {
         if (CollectionUtils.isNotEmpty(businessDocuments)) {
             log.info("Run index Business to ElasticSearch");
             carWashEsRepository.saveAll(businessDocuments);
@@ -125,9 +149,8 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         }
     }
 
-    private List<BusinessDocument> collectData() {
+    private List<BusinessDocument> collectData(List<BaseBusinessDto> businessList) {
         List<BusinessDocument> result = null;
-        List<BaseBusinessDto> businessList = baseBusinessService.getAll();
         if (CollectionUtils.isNotEmpty(businessList)) {
             result = new ArrayList<>();
             for (BaseBusinessDto business : businessList) {

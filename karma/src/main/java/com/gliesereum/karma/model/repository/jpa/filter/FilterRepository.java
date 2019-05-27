@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface FilterRepository extends JpaRepository<FilterEntity, UUID> {
 
     List<FilterEntity> findAllByBusinessCategoryId(UUID businessCategoryId);
+
+    List<FilterEntity> findAllByBusinessCategoryIdIn(List<UUID> businessCategoryIds);
 }

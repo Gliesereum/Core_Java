@@ -1,11 +1,11 @@
 package com.gliesereum.karma.service.business.impl;
 
-import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.comment.CommentService;
+import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
@@ -69,13 +69,15 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     @Autowired
     private WorkerService workerService;
 
+    @Autowired
+    private BusinessEsService businessEsService;
+
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.baseBusinessRepository = repository;
     }
 
     @Override
-    @UpdateCarWashIndex
     public BaseBusinessDto create(BaseBusinessDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
@@ -83,12 +85,12 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             checkCorporationId(dto);
             dto.setObjectState(ObjectState.ACTIVE);
             dto = super.create(dto);
+            businessEsService.indexAsync(dto.getId());
         }
         return dto;
     }
 
     @Override
-    @UpdateCarWashIndex
     public BaseBusinessDto update(BaseBusinessDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
@@ -101,6 +103,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
             dto = converter.convert(entity, dtoClass);
+            businessEsService.indexAsync(dto.getId());
         }
         return dto;
     }
@@ -125,15 +128,13 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    public List<BaseBusinessDto> getAllIgnoreState() {
+        return super.getAll();
+    }
+
+    @Override
     public BaseBusinessDto getByIdIgnoreState(UUID id) {
-        BaseBusinessDto result = null;
-        if (id != null) {
-            Optional<BaseBusinessEntity> entity = baseBusinessRepository.findById(id);
-            if (entity.isPresent()) {
-                result = converter.convert(entity.get(), dtoClass);
-            }
-        }
-        return result;
+        return super.getById(id);
     }
 
     @Override
@@ -179,23 +180,23 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    @UpdateCarWashIndex
     public void deleteByCorporationIdCheckPermission(UUID id) {
         List<BaseBusinessDto> list = getByCorporationId(id);
-        if(CollectionUtils.isNotEmpty(list)){
+        if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(m -> m.setObjectState(ObjectState.DELETED));
             super.update(list);
+            businessEsService.indexAsync(list.stream().map(BaseBusinessDto::getId).collect(Collectors.toList()));
         }
     }
 
     @Override
-    @UpdateCarWashIndex
     public void deleteByCorporationId(UUID id) {
         List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationIdAndObjectState(id, ObjectState.ACTIVE);
         if (CollectionUtils.isNotEmpty(entities)) {
             entities.forEach(i -> i.setObjectState(ObjectState.DELETED));
             baseBusinessRepository.saveAll(entities);
             baseBusinessRepository.flush();
+            businessEsService.indexAsync(entities.stream().map(BaseBusinessEntity::getId).collect(Collectors.toList()));
         }
     }
 

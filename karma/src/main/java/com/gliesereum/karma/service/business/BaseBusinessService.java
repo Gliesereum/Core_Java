@@ -17,6 +17,8 @@ import java.util.UUID;
  */
 public interface BaseBusinessService extends DefaultService<BaseBusinessDto, BaseBusinessEntity> {
 
+    List<BaseBusinessDto> getAllIgnoreState();
+
     List<LiteBusinessDto> getAllLite();
 
     boolean existByIdAndCorporationIds(UUID id, List<UUID> corporationIds);
