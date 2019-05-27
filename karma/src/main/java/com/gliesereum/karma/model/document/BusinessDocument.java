@@ -28,9 +28,6 @@ public class BusinessDocument {
     @Field(type = FieldType.Keyword)
     private String name;
 
-    @Field(type = FieldType.Integer)
-    private Integer countBox;
-
     @Field(type = FieldType.Keyword)
     private String description;
 
