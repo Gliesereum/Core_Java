@@ -195,4 +195,10 @@ public class BaseBusinessController {
         return new MapResponse("clientIds", clientIds);
     }
 
+    @GetMapping("/indexing")
+    public MapResponse indexing() {
+        businessEsService.indexAll();
+        return MapResponse.resultTrue();
+    }
+
 }

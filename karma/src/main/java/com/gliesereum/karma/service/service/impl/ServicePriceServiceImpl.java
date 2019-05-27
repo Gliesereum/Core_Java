@@ -28,10 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -154,6 +151,24 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     public List<ServicePriceDto> getByBusinessId(UUID id) {
         List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public List<ServicePriceDto> getByBusinessIds(List<UUID> ids) {
+        List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessIdInAndObjectState(ids, ObjectState.ACTIVE);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public Map<UUID, List<ServicePriceDto>> getMapByBusinessIds(List<UUID> ids) {
+        Map<UUID, List<ServicePriceDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<ServicePriceDto> prices = getByBusinessIds(ids);
+            if (CollectionUtils.isNotEmpty(prices)) {
+                result = prices.stream().collect(Collectors.groupingBy(ServicePriceDto::getBusinessId, Collectors.toList()));
+            }
+        }
+        return result;
     }
 
     @Override

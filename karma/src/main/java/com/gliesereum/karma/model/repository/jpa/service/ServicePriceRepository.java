@@ -16,6 +16,8 @@ public interface ServicePriceRepository extends JpaRepository<ServicePriceEntity
 
     List<ServicePriceEntity> findAllByBusinessIdAndObjectState(UUID id, ObjectState objectState);
 
+    List<ServicePriceEntity> findAllByBusinessIdInAndObjectState(List<UUID> ids, ObjectState objectState);
+
     List<ServicePriceEntity> getAllByObjectState(ObjectState objectState);
 
     List<ServicePriceEntity> getAllByIdInAndObjectState(Iterable<UUID> ids, ObjectState objectState);
