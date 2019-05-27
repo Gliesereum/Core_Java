@@ -1,9 +1,9 @@
 package com.gliesereum.karma.service.service.impl;
 
-import com.gliesereum.karma.aspect.annotation.UpdateCarWashIndex;
 import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
 import com.gliesereum.karma.model.repository.jpa.service.ServicePriceRepository;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
+import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.filter.FilterAttributeService;
 import com.gliesereum.karma.service.filter.FilterService;
 import com.gliesereum.karma.service.filter.PriceFilterAttributeService;
@@ -45,28 +45,23 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto, ServicePriceEntity> implements ServicePriceService {
 
-    private final ServicePriceRepository servicePriceRepository;
-
-    @Autowired
-    private PackageService packageService;
-
-    @Autowired
-    private ServiceService serviceService;
-
-    @Autowired
-    private BusinessCategoryFacade businessCategoryFacade;
-
-    @Autowired
-    private PriceFilterAttributeService priceFilterAttributeService;
-
-    @Autowired
-    private FilterAttributeService filterAttributeService;
-
-    @Autowired
-    private FilterService filterService;
-
     private static final Class<ServicePriceDto> DTO_CLASS = ServicePriceDto.class;
     private static final Class<ServicePriceEntity> ENTITY_CLASS = ServicePriceEntity.class;
+    private final ServicePriceRepository servicePriceRepository;
+    @Autowired
+    private PackageService packageService;
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private BusinessCategoryFacade businessCategoryFacade;
+    @Autowired
+    private PriceFilterAttributeService priceFilterAttributeService;
+    @Autowired
+    private FilterAttributeService filterAttributeService;
+    @Autowired
+    private FilterService filterService;
+    @Autowired
+    private BusinessEsService businessEsService;
 
     public ServicePriceServiceImpl(ServicePriceRepository servicePriceRepository, DefaultConverter defaultConverter) {
         super(servicePriceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -74,16 +69,16 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     }
 
     @Override
-    @UpdateCarWashIndex
     public ServicePriceDto create(ServicePriceDto dto) {
         checkPermission(dto);
         dto.setObjectState(ObjectState.ACTIVE);
-        return super.create(setCustomName(dto));
+        ServicePriceDto result = super.create(setCustomName(dto));
+        businessEsService.indexAsync(result.getBusinessId());
+        return result;
     }
 
     @Override
     @Transactional
-    @UpdateCarWashIndex
     public ServicePriceDto update(ServicePriceDto dto) {
         checkPermission(dto);
         ServicePriceDto oldDto = getById(dto.getId());
@@ -91,7 +86,9 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             throw new ClientException(SERVICE_NOT_FOUND);
         }
         dto.setObjectState(oldDto.getObjectState());
-        return super.update(setCustomName(dto));
+        ServicePriceDto result = super.update(setCustomName(dto));
+        businessEsService.indexAsync(result.getBusinessId());
+        return result;
     }
 
     @Override
@@ -102,7 +99,8 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         }
         ServicePriceDto dto = getPrice(id);
         dto.setObjectState(ObjectState.DELETED);
-        super.update(dto);
+        ServicePriceDto result = super.update(dto);
+        businessEsService.indexAsync(result.getBusinessId());
     }
 
     @Override
@@ -164,6 +162,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         ServicePriceDto price = getPrice(idPrice);
         checkFilterAttribute(idAttribute, price.getService().getBusinessCategoryId());
         priceFilterAttributeService.create(new PriceFilterAttributeDto(idPrice, idAttribute));
+        businessEsService.indexAsync(price.getBusinessId());
     }
 
     @Override
@@ -179,16 +178,18 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             price.getAttributes().add(filterAttributeService.getById(f));
         });
         priceFilterAttributeService.create(list);
+        businessEsService.indexAsync(price.getBusinessId());
         return price;
     }
 
     @Override
     @Transactional
     public void removeFilterAttribute(UUID idPrice, UUID idAttribute) {
-        getPrice(idPrice);
+        ServicePriceDto price = getPrice(idPrice);
         checkFilterAttribute(idAttribute);
         checkFilterAttributeExist(idPrice, idAttribute);
         priceFilterAttributeService.deleteByPriceIdAndFilterId(idPrice, idAttribute);
+        businessEsService.indexAsync(price.getBusinessId());
     }
 
     private void checkFilterAttributeExist(UUID idPrice, UUID idAttribute) {

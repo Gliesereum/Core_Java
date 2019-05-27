@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -19,4 +20,8 @@ public interface BusinessEsService {
     void indexAll();
 
     void indexAllAsync();
+
+    void indexAsync(UUID businessId);
+
+    void indexAsync(List<UUID> businessIds);
 }
