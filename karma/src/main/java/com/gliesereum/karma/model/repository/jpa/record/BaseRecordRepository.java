@@ -29,6 +29,6 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
 
     List<BaseRecordEntity> findByBusinessIdAndStatusRecordAndBeginBetweenAndNotificationSend(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to, boolean notificationSend);
 
-    List<BaseRecordEntity> findAllByTargetIdInAndBusinessCategoryId(List<UUID> ids, UUID businessCategoryId);
+    List<BaseRecordEntity> findAllByClientId(UUID id);
 
 }
