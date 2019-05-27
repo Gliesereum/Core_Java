@@ -2,6 +2,7 @@ package com.gliesereum.karma.controller.filter;
 
 import com.gliesereum.karma.service.filter.FilterAttributeService;
 import com.gliesereum.karma.service.filter.FilterService;
+import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
 import com.gliesereum.share.common.model.response.MapResponse;
@@ -55,6 +56,11 @@ public class FilterController {
     @GetMapping("/by-business-category")
     public List<FilterDto> getByBusinessCategory(@RequestParam("businessCategoryId") UUID businessCategoryId) {
         return filterService.getAllByBusinessCategoryId(businessCategoryId);
+    }
+
+    @GetMapping("/by-business-type")
+    public List<FilterDto> getByBusinessType(@RequestParam("businessType") BusinessType businessType) {
+        return filterService.getAllByBusinessType(businessType);
     }
 
     @GetMapping("/attribute")

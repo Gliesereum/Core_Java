@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.filter;
 
 import com.gliesereum.karma.model.entity.filter.FilterEntity;
+import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -14,4 +15,6 @@ import java.util.UUID;
 public interface FilterService extends DefaultService<FilterDto, FilterEntity> {
 
     List<FilterDto> getAllByBusinessCategoryId(UUID businessCategoryId);
+
+    List<FilterDto> getAllByBusinessType(BusinessType businessType);
 }
