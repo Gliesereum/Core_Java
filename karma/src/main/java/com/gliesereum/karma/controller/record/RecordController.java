@@ -91,8 +91,8 @@ public class RecordController {
     }
 
     @GetMapping("/client/all")
-    public List<BaseRecordDto> getAllByUser(@RequestParam("businessCategoryId") UUID businessCategoryId) {
-        return service.getAllByUser(businessCategoryId);
+    public List<BaseRecordDto> getAllByUser() {
+        return service.getAllByUser();
     }
 
     @GetMapping("/lite/by-business")

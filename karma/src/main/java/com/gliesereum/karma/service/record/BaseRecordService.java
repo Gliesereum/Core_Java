@@ -38,7 +38,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto);
 
-    List<BaseRecordDto> getAllByUser(UUID businessCategoryId);
+    List<BaseRecordDto> getAllByUser();
 
     BaseRecordDto createFromBusiness(BaseRecordDto dto);
 

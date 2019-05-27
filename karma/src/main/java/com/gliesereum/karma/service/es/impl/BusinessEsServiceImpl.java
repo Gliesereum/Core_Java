@@ -153,11 +153,15 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         List<BusinessDocument> result = null;
         if (CollectionUtils.isNotEmpty(businessList)) {
             result = new ArrayList<>();
+            Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessList);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
                 if (ObjectUtils.allNotNull(document)) {
                     document = insertGeoPoint(document, business);
-                    document = insertServices(document, business);
+                    document = insertServices(document, serviceMap.get(business.getId()));
+                    if (CollectionUtils.isNotEmpty(business.getSpaces())) {
+                        document.setCountBox(business.getSpaces().size());
+                    }
                     result.add(document);
                 }
             }
@@ -165,23 +169,29 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         return result;
     }
 
-    private BusinessDocument insertServices(BusinessDocument target, BaseBusinessDto source) {
-        if (ObjectUtils.allNotNull(target, source)) {
-            List<ServicePriceDto> servicePrices = servicePriceService.getByBusinessId(source.getId());
-            if (CollectionUtils.isNotEmpty(servicePrices)) {
-                List<BusinessServiceDocument> services = servicePrices.stream()
-                        .map(price -> {
-                            BusinessServiceDocument serviceDocument = defaultConverter.convert(price, BusinessServiceDocument.class);
-                            if (serviceDocument != null) {
-                                serviceDocument.setServiceClassIds(price.getServiceClass().stream()
-                                        .map(i -> i.getId().toString())
-                                        .collect(Collectors.toList()));
-                                insertFilters(serviceDocument, price);
-                            }
-                            return serviceDocument;
-                        }).collect(Collectors.toList());
-                target.setServices(services);
-            }
+    private Map<UUID, List<ServicePriceDto>> getServiceMap(List<BaseBusinessDto> business) {
+        Map<UUID, List<ServicePriceDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(business)) {
+            List<UUID> businessIds = business.stream().map(BaseBusinessDto::getId).collect(Collectors.toList());
+            result = servicePriceService.getMapByBusinessIds(businessIds);
+        }
+        return result;
+    }
+
+    private BusinessDocument insertServices(BusinessDocument target, List<ServicePriceDto> servicePrices) {
+        if ((target != null) && CollectionUtils.isNotEmpty(servicePrices)) {
+            List<BusinessServiceDocument> services = servicePrices.stream()
+                    .map(price -> {
+                        BusinessServiceDocument serviceDocument = defaultConverter.convert(price, BusinessServiceDocument.class);
+                        if (serviceDocument != null) {
+                            serviceDocument.setServiceClassIds(price.getServiceClass().stream()
+                                    .map(i -> i.getId().toString())
+                                    .collect(Collectors.toList()));
+                            insertFilters(serviceDocument, price);
+                        }
+                        return serviceDocument;
+                    }).collect(Collectors.toList());
+            target.setServices(services);
         }
         return target;
     }

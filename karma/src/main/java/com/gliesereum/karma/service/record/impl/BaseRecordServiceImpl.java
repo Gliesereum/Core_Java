@@ -20,7 +20,6 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
-import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
@@ -446,22 +445,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<BaseRecordDto> getAllByUser(UUID businessCategoryId) {
-        List<BaseRecordDto> result = null;
-        List<UUID> ids = new ArrayList<>();
-        if (businessCategoryService.checkAndGetType(businessCategoryId).equals(BusinessType.CAR)) {
-            List<CarDto> carsUsers = carService.getAllByUserId(SecurityUtil.getUserId());
-            if (CollectionUtils.isNotEmpty(carsUsers)) {
-                ids = carsUsers.stream().map(CarDto::getId).collect(Collectors.toList());
-            } else {
-                throw new ClientException(CAR_NOT_FOUND);
-            }
-        } else {
-            ids.add(SecurityUtil.getUserId()); //todo when add new service type need to add logic
-        }
-        List<BaseRecordEntity> entities = baseRecordRepository.findAllByTargetIdInAndBusinessCategoryId(ids, businessCategoryId);
+    public List<BaseRecordDto> getAllByUser() {
+        SecurityUtil.checkUserByBanStatus();
+        List<BaseRecordEntity> entities = baseRecordRepository.findAllByClientId(SecurityUtil.getUserId());
         entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
-        result = converter.convert(entities, dtoClass);
+        List<BaseRecordDto> result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
         setServicePrice(result);
         return result;
