@@ -102,6 +102,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
+    @Transactional
+    public List<BaseRecordDto> getByTimeBetween(LocalDateTime from, Integer minutesFrom, Integer minutesTo, StatusRecord status, boolean notificationSend) {
+        List<BaseRecordEntity> entities = baseRecordRepository.getByTimeBetween(from, minutesFrom, minutesTo, status, notificationSend);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public void setNotificationSend(UUID recordId) {
         Optional<BaseRecordEntity> byId = baseRecordRepository.findById(recordId);
         if (byId.isPresent()) {
