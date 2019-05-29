@@ -16,7 +16,7 @@ public class DefaultCorsConfigurationSource extends UrlBasedCorsConfigurationSou
 
     private static final List<String> ALLOWED_ORIGINS = Arrays.asList("*");
     private static final List<String> ALLOWED_METHODS = Arrays.asList("GET", "POST", "PUT", "DELETE");
-    private static final List<String> ALLOWED_HEADERS = Arrays.asList("Authorization", "Accept", "Content-Type");
+    private static final List<String> ALLOWED_HEADERS = Arrays.asList("Authorization", "Accept", "Content-Type", "x-compress");
 
     public DefaultCorsConfigurationSource() {
         super();
