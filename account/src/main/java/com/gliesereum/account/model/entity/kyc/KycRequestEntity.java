@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -37,6 +38,12 @@ public class KycRequestEntity extends DefaultEntity {
 
     @Column(name = "comment")
     private String comment;
+
+    @Column(name = "create_date")
+    private LocalDateTime createDate;
+
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
 
     @OneToMany
     @JoinColumn(name = "kyc_request_id", insertable = false, updatable = false)

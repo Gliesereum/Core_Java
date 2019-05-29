@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,8 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
         result = new KycRequestDto();
         result.setKycRequestType(requestType);
         result.setObjectId(objectId);
+        result.setCreateDate(LocalDateTime.now());
+        result.setUpdateDate(LocalDateTime.now());
         result.setKycStatus(KycStatus.KYC_REQUESTED);
         result = super.create(result);
         UUID requestId = result.getId();
@@ -133,7 +136,8 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
         kycRequestFieldService.deleteAllByKycRequestId(requestId);
         kycRequestFields = kycRequestFieldService.create(kycRequestFields);
         request.setFields(kycRequestFields);
-        return request;
+        request.setUpdateDate(LocalDateTime.now());
+        return super.update(request);
     }
 
     @Override
@@ -176,6 +180,7 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
             }
             request.setKycStatus(newStatus);
             request.setComment(comment);
+            request.setUpdateDate(LocalDateTime.now());
             result = super.update(request);
             if (result != null && user != null) {
                 sendResultKycToUser(result, user);
