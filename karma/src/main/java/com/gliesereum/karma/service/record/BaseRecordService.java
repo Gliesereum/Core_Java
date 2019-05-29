@@ -38,11 +38,15 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto);
 
+    BaseRecordDto superCreateRecord(BaseRecordDto dto);
+
     List<BaseRecordDto> getAllByUser();
 
     BaseRecordDto createFromBusiness(BaseRecordDto dto);
 
     BaseRecordDto getFullModelById(UUID id);
+
+    BaseRecordDto getFullModelByIdWithPermission(UUID id);
 
     BaseRecordDto updateStatusPay(UUID idRecord, StatusPay status);
 

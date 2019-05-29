@@ -34,7 +34,7 @@ public class RecordController {
 
     @GetMapping("/{id}")
     public BaseRecordDto getById(@PathVariable("id") UUID id) {
-        return service.getFullModelById(id);
+        return service.getFullModelByIdWithPermission(id);
     }
 
     @PostMapping

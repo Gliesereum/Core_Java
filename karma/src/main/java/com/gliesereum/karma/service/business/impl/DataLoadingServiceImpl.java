@@ -1,13 +1,18 @@
 package com.gliesereum.karma.service.business.impl;
 
+import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
+import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.*;
+import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.media.MediaService;
+import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.ServiceService;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.*;
-import com.gliesereum.share.common.model.dto.karma.enumerated.MediaType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
+import com.gliesereum.share.common.model.dto.karma.car.CarDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
@@ -23,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +72,15 @@ public class DataLoadingServiceImpl implements DataLoadingService {
 
     @Autowired
     private MediaService mediaService;
+
+    @Autowired
+    private BaseRecordService recordService;
+
+    @Autowired
+    private CarService carService;
+
+    @Autowired
+    private BaseBusinessRepository businessRepository;
 
     private final List<String> getNameOfPlace = Arrays.asList(
             "фора", "сильпо", "лоток", "магазин", "аптека", "сто", "мойка", "шиномнтаж", "остановка", "бар", "кафе", "street", "сервис");
@@ -270,32 +286,94 @@ public class DataLoadingServiceImpl implements DataLoadingService {
 
     @Override
     public void createRecords() {
-        LocalDateTime to = LocalDateTime.now().minusDays(1L).plusYears(1L);
-        LocalDateTime from = to.minusMonths(3L);
-        List<BaseRecordDto> newRecords = new ArrayList<>();
-        List<BaseBusinessDto> baseBusiness = businessService.getAll();
-        if (CollectionUtils.isNotEmpty(baseBusiness)) {
+
+
+        List<BaseBusinessEntity> baseBusiness = businessRepository.getAllByObjectState(ObjectState.ACTIVE);
+
+        List<CarDto> cars = carService.getAll();
+
+        if (CollectionUtils.isNotEmpty(baseBusiness) && CollectionUtils.isNotEmpty(cars)) {
+
             List<BusinessFullModel> listBusiness = businessService.getFullModelByIds(baseBusiness.stream().map(m -> m.getId()).collect(Collectors.toList()));
+
+            List<BaseRecordDto> newRecords = new ArrayList<>();
+
             listBusiness.forEach(business -> {
 
-
-                while (from.isBefore(to)){
-
-
-
+                LocalDateTime to = LocalDateTime.now().minusDays(1L).plusYears(1L);
+                //LocalDateTime from = to.minusMonths(3L);
+                LocalDateTime from = to.minusDays(5L);
 
 
-
-
-
-
-                    from.plusDays(1L);
+                while (from.isBefore(to)) {
+                    LocalDateTime startOfWorkingDay = startOfWorkingDay(business, from);
+                    if (startOfWorkingDay != null) {
+                        CarDto car = getRandomCar(cars);
+                        try {
+                            BaseRecordDto record = new BaseRecordDto();
+                            record.setDescription("Test record");
+                            record.setNotificationSend(true);
+                            record.setPackageId(getPackageId(business));
+                            record.setServicesIds(getServiceIds(business));
+                            record.setClientId(car.getUserId());
+                            record.setTargetId(car.getId());
+                            record.setStatusPay(StatusPay.PAID);
+                            record.setPayType(PayType.CASH);
+                            record.setStatusProcess(StatusProcess.IN_PROCESS);
+                            record.setStatusRecord(StatusRecord.CREATED);
+                            record.setBusinessId(business.getId());
+                            record.setBegin(startOfWorkingDay);
+                            record.setBusinessCategoryId(business.getBusinessCategoryId());
+                            BaseRecordDto newRecord = recordService.getFreeTimeForRecord(record);
+                            newRecords.add(recordService.superCreateRecord(newRecord));
+                        } catch (ClientException e) {
+                          from = from.plusDays(1L);
+                        }
+                    } else {
+                        from =  from.plusDays(1L);
+                    }
                 }
-
             });
+
+            if (CollectionUtils.isNotEmpty(newRecords)) {
+                newRecords.forEach(f -> {
+                    f.setBegin(f.getBegin().minusYears(1L));
+                    f.setFinish(f.getFinish().minusYears(1L));
+                    f.setStatusRecord(StatusRecord.COMPLETED);
+                    f.setStatusProcess(StatusProcess.COMPLETED);
+                });
+                //recordService.update(newRecords);
+            }
         }
     }
 
+    private CarDto getRandomCar(List<CarDto> cars) {
+        return cars.get(random.nextInt(cars.size()));
+    }
 
+
+    private LocalDateTime startOfWorkingDay(BusinessFullModel business, LocalDateTime from) {
+        WorkTimeDto workTime = business.getWorkTimes().stream().filter(f1 -> f1.getIsWork()).filter(f -> f.getDayOfWeek().equals(from.getDayOfWeek())).findFirst().orElse(null);
+        if (workTime != null) {
+            return LocalDateTime.of(from.toLocalDate(), workTime.getFrom().plusMinutes(10L));
+        }
+        return null;
+    }
+
+    private UUID getPackageId(BusinessFullModel business) {
+        if (CollectionUtils.isNotEmpty(business.getPackages())) {
+            return business.getPackages().get(random.nextInt(business.getPackages().size())).getId();
+        }
+        return null;
+    }
+
+    private List<UUID> getServiceIds(BusinessFullModel business) {
+        List<UUID> result = new ArrayList<>();
+        final int count = random.nextInt(business.getServicePrices().size()) + 1;
+        for (int i = 0; i < count; i++) {
+            result.add(business.getServicePrices().get(random.nextInt(business.getServicePrices().size())).getId());
+        }
+        return result;
+    }
 
 }
