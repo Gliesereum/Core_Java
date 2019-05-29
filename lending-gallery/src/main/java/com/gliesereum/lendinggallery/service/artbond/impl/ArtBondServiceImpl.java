@@ -247,10 +247,10 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public Map<String, Double> currencyExchange(Long sum) {
         Map<String, Double> result = new HashMap<>();
         try {
-            FxQuote rub = YahooFinance.getFx("USDRUB=X");
-            FxQuote eur = YahooFinance.getFx("USDEUR=X");
-            result.put("USDRUB", rub.getPrice().doubleValue());
-            result.put("USDEUR", eur.getPrice().doubleValue());
+            FxQuote rub = YahooFinance.getFx("EURRUB=X");
+            FxQuote eur = YahooFinance.getFx("EURUSD=X");
+            result.put("EURRUB", rub.getPrice().doubleValue());
+            result.put("EURUSD", eur.getPrice().doubleValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
