@@ -32,7 +32,7 @@ spring:
 
   data:
     jest:
-      uri: http://localhost:9200
+      uris: http://localhost:9200
       max-connection-idle-time: 5000
       read-timeout: 5000
 
