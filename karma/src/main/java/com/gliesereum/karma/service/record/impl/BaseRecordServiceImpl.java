@@ -16,6 +16,8 @@ import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
@@ -80,6 +82,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Autowired
     private WorkerService workerService;
+
+    @Autowired
+    private UserExchangeService exchangeService;
 
     @Autowired
     public BaseRecordServiceImpl(BaseRecordRepository baseRecordRepository, DefaultConverter defaultConverter) {
@@ -148,7 +153,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public List<BaseRecordDto> getByParamsForClient(RecordsSearchDto search) {
-        List<BaseRecordDto> result = null;
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
             throw new ClientException(TARGET_ID_IS_EMPTY);
         }
@@ -160,9 +164,21 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         setSearch(search);
         List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
                 search.getStatus(), search.getProcesses(), search.getTargetIds(), search.getFrom(), search.getTo());
-        result = converter.convert(entities, dtoClass);
+        List<BaseRecordDto> result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
         return setServicePrice(result);
+    }
+
+    private void setClients(List<BaseRecordDto> result) {
+        if (CollectionUtils.isNotEmpty(result)) {
+            Set<UUID> clientIds = result.stream().map(m -> m.getClientId()).collect(Collectors.toSet());
+            Map<UUID, UserDto> clients = exchangeService.findUserMapByIds(clientIds);
+            result.forEach(r -> {
+                if (r.getClientId() != null) {
+                    r.setClient(clients.get(r.getClientId()));
+                }
+            });
+        }
     }
 
     @Override
@@ -182,6 +198,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 search.getStatus(), search.getProcesses(), search.getBusinessIds(), search.getFrom(), search.getTo());
         entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
+        setClients(result);
         setFullModelRecord(result);
         return setServicePrice(result);
     }
@@ -450,10 +467,10 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public List<BaseRecordDto> getAllByUser() {
         SecurityUtil.checkUserByBanStatus();
         List<BaseRecordEntity> entities = baseRecordRepository.findAllByClientId(SecurityUtil.getUserId());
-        entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         List<BaseRecordDto> result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
         setServicePrice(result);
+        result.sort(Comparator.comparing(BaseRecordDto::getBegin).reversed());
         return result;
     }
 
