@@ -136,7 +136,8 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
         kycRequestFieldService.deleteAllByKycRequestId(requestId);
         kycRequestFields = kycRequestFieldService.create(kycRequestFields);
         request.setFields(kycRequestFields);
-        return request;
+        request.setUpdateDate(LocalDateTime.now());
+        return super.update(request);
     }
 
     @Override
