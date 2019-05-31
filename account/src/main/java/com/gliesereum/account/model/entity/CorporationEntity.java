@@ -27,6 +27,9 @@ public class CorporationEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Column(name = "company_type")
     private String companyType;
 
