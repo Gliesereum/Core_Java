@@ -31,6 +31,7 @@ public class FilterEntity extends DefaultEntity {
     private UUID businessCategoryId;
 
     @OneToMany
+    @OrderBy("title asc")
     @JoinColumn(name = "filter_id", insertable = false, updatable = false)
     private Set<FilterAttributeEntity> attributes = new HashSet<>();
 }
