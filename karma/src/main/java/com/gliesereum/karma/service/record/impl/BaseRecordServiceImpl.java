@@ -359,7 +359,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
-    @RecordCreate
     public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto.getBusinessId() != null &&
@@ -577,9 +576,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         boolean ownerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId());
         boolean workerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId());
         boolean userPermission = false;
-        if (businessCategoryService.checkAndGetType(dto.getBusinessCategoryId()).equals(BusinessType.CAR)
-                && (dto.getTargetId() != null)) {
-            userPermission = carService.carExistByIdAndUserId(dto.getTargetId(), SecurityUtil.getUserId());
+        if (dto.getClientId().equals(SecurityUtil.getUserId())) {
+            userPermission = true;
         }
         if (!BooleanUtils.or(new Boolean[]{ownerPermission, workerPermission, userPermission})) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);

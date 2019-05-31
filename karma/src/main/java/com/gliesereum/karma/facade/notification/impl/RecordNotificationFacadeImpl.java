@@ -33,7 +33,7 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
 
     @Override
     @Async
-    public void recordCreateNotification(BaseRecordDto record) {
+    public void recordBusinessNotification(BaseRecordDto record) {
         if (record != null) {
             NotificationDto<AbstractRecordDto> notification = new NotificationDto<>();
             notification.setData(record);

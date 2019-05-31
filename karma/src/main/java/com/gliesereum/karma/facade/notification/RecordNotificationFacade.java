@@ -8,7 +8,7 @@ import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
  */
 public interface RecordNotificationFacade {
 
-    void recordCreateNotification(BaseRecordDto record);
+    void recordBusinessNotification(BaseRecordDto record);
 
     void recordUpdateNotification(BaseRecordDto record);
 
