@@ -24,4 +24,6 @@ public interface BusinessCategoryService extends DefaultService<BusinessCategory
     boolean existsByCodeIdNot(String code, UUID id);
 
     BusinessType checkAndGetType(UUID businessCategoryId);
+
+    List<BusinessCategoryDto> getAllSortByIndex();
 }

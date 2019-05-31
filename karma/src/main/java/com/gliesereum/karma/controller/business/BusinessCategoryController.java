@@ -31,7 +31,7 @@ public class BusinessCategoryController {
 
     @GetMapping
     public List<BusinessCategoryDto> getAll() {
-        return businessCategoryService.getAll();
+        return businessCategoryService.getAllSortByIndex();
     }
 
     @GetMapping("/by-business-type")
