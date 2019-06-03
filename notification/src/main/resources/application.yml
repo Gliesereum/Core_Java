@@ -55,7 +55,7 @@ exchange:
 firebase:
   properties:
     credentialPath: classpath:google-services.json
-    appName: coupler
+    appName: coupler-13
 
 notification:
   record:
