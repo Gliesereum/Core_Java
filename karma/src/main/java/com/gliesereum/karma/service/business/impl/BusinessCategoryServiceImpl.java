@@ -39,6 +39,12 @@ public class BusinessCategoryServiceImpl extends DefaultServiceImpl<BusinessCate
     }
 
     @Override
+    public List<BusinessCategoryDto> getAllSortByIndex() {
+        List<BusinessCategoryEntity> entities = businessCategoryRepository.findAllByOrderByOrderIndexAsc();
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public List<BusinessCategoryDto> getByBusinessType(BusinessType businessType) {
         List<BusinessCategoryDto> result = null;
         if (businessType != null) {
