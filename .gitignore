@@ -25,7 +25,6 @@ logs/
 */logs/
 
 
-
 *.jar
 
 .DS_Store
