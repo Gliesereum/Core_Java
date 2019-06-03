@@ -288,6 +288,7 @@ services:
       eureka.host: discovery
       eureka.port: 8761
       firebase.properties.credentialPath: /config/google-services.json
+      firebase.properties.appName: coupler-13
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
 
