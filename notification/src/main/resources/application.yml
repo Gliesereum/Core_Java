@@ -55,7 +55,7 @@ exchange:
 firebase:
   properties:
     credentialPath: classpath:google-services.json
-    appName: karma-c9d57
+    appName: coupler-13
 
 notification:
   record:
