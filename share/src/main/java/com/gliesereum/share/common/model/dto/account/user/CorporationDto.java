@@ -30,6 +30,8 @@ public class CorporationDto extends DefaultDto {
 
     private String description;
 
+    private String phone;
+
     private String index;
 
     private String country;

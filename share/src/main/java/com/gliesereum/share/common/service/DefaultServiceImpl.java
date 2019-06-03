@@ -103,6 +103,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
         return result;
     }
 
+    @Override
     public List<D> getAll() {
         List<E> entities = repository.findAll();
         return converter.convert(entities, dtoClass);

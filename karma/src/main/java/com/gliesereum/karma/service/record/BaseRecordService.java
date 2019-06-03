@@ -26,6 +26,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByBusinessIdAndStatusRecordNotificationSend(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to, boolean notificationSend);
 
+    List<BaseRecordDto> getByTimeBetween(LocalDateTime from, Integer minutesFrom, Integer minutesTo, StatusRecord status, boolean notificationSend);
+
     List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
 
     BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId);

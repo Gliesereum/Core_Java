@@ -21,4 +21,6 @@ public interface BusinessCategoryRepository extends JpaRepository<BusinessCatego
     boolean existsByCode(String code);
 
     boolean existsByCodeAndIdNot(String code, UUID id);
+
+    List<BusinessCategoryEntity> findAllByOrderByOrderIndexAsc();
 }
