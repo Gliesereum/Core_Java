@@ -21,7 +21,7 @@ services:
     environment:
       http.host: 0.0.0.0
       transport.host: 127.0.0.1
-      ES_JAVA_OPTS: "-Xms300M -Xmx1536M"
+      ES_JAVA_OPTS: "-Xms800M -Xmx3072M"
     ports:
     - 9200:9200
     - 9300:9300
