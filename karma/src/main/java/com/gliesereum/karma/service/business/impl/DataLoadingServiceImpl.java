@@ -20,9 +20,11 @@ import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.util.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +33,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  */
 @Service
+@Slf4j
 public class DataLoadingServiceImpl implements DataLoadingService {
 
     private final String TOKEN = "sk.eyJ1IjoiZm9yZXN0eXVyYSIsImEiOiJjanZ6NmZlcDMwbGo0M3ptcmNjcTBrZzg1In0.dFxSaSFyDkgOGBDhNrv2bg";
@@ -104,6 +108,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
             "https://autonews.ua/wp-content/uploads/2017/10/shinomontagnoe-oborudovanie-dlya-montaga.jpg");
 
     @Override
+    @Transactional
     public void createBusiness(String rightTop, String leftBottom) {
         getNameOfPlace.forEach(f -> getLocation(flipCoordinate(rightTop), flipCoordinate(leftBottom), f));
     }
@@ -142,7 +147,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         });
     }
 
-    @Transactional
     public void createBusiness(String address, Double longitude, Double latitude, UUID corporationId, BusinessCategoryDto category) {
         BaseBusinessDto business = new BaseBusinessDto();
         business.setBusinessCategoryId(category.getId());
@@ -164,7 +168,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         }
     }
 
-    @Transactional
     public void createWorkingTimes(UUID businessId, UUID businessCategoryId) {
         List<WorkTimeDto> workTimes = new ArrayList<>();
         Arrays.asList(DayOfWeek.values()).forEach(f -> {
@@ -180,7 +183,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         workTimeService.create(workTimes);
     }
 
-    @Transactional
     public void createWorkingSpace(UUID businessId, UUID businessCategoryId) {
         List<WorkingSpaceDto> workingSpaces = new ArrayList<>();
         int col = random.nextInt(5 - 2 + 1) + 2;
@@ -197,7 +199,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         workingSpaceService.create(workingSpaces);
     }
 
-    @Transactional
     public List<UUID> createServicePrice(UUID businessId, UUID businessCategoryId) {
         List<ServiceDto> services = serviceService.getAllByBusinessCategoryId(businessCategoryId);
         List<UUID> result = null;
@@ -222,7 +223,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         return result;
     }
 
-    @Transactional
     public void createPackage(List<UUID> serviceIds, UUID businessId) {
         if (CollectionUtils.isNotEmpty(serviceIds)) {
             int col = random.nextInt(3 - 1 + 1) + 1;
@@ -245,7 +245,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         }
     }
 
-    @Transactional
     public void setMedia(UUID businessId, String title, List<String> urls) {
         if (CollectionUtils.isNotEmpty(urls) && (count % 5 != 0)) {
             final int count = random.nextInt(urls.size()) + 1;
@@ -284,26 +283,37 @@ public class DataLoadingServiceImpl implements DataLoadingService {
 
     //+++++++++++++++++++++++++++++ Records ++++++++++++++++++++++++++++
 
+
     @Override
+    @Transactional
+    public void createRecordsByBusinessId(UUID businessId) {
+        if (businessId != null) {
+            List<CarDto> cars = carService.getAll();
+            List<BusinessFullModel> fullModelList = businessService.getFullModelByIds(Arrays.asList(businessId));
+            createRecords(cars, fullModelList);
+        }
+    }
+
+    @Override
+    @Transactional
     public void createRecords() {
-
-
         List<BaseBusinessEntity> baseBusiness = businessRepository.getAllByObjectState(ObjectState.ACTIVE);
-
         List<CarDto> cars = carService.getAll();
-
         if (CollectionUtils.isNotEmpty(baseBusiness) && CollectionUtils.isNotEmpty(cars)) {
-
             List<BusinessFullModel> listBusiness = businessService.getFullModelByIds(baseBusiness.stream().map(m -> m.getId()).collect(Collectors.toList()));
 
+            createRecords(cars, listBusiness);
+        }
+    }
+
+    private void createRecords(List<CarDto> cars, List<BusinessFullModel> listBusiness) {
+        if (CollectionUtils.isNotEmpty(cars) && CollectionUtils.isNotEmpty(listBusiness)) {
+            log.info("Start create record");
             List<BaseRecordDto> newRecords = new ArrayList<>();
 
             listBusiness.forEach(business -> {
-
-                LocalDateTime to = LocalDateTime.now().minusDays(1L).plusYears(1L);
-                //LocalDateTime from = to.minusMonths(3L);
-                LocalDateTime from = to.minusDays(5L);
-
+                LocalDateTime to = LocalDateTime.now().toLocalDate().atStartOfDay().minusDays(10L).plusYears(1L);
+                LocalDateTime from = to.plusDays(1L).minusMonths(6);
 
                 while (from.isBefore(to)) {
                     LocalDateTime startOfWorkingDay = startOfWorkingDay(business, from);
@@ -327,7 +337,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
                             BaseRecordDto newRecord = recordService.getFreeTimeForRecord(record);
                             newRecords.add(recordService.superCreateRecord(newRecord));
                         } catch (ClientException e) {
-                          from = from.plusDays(1L);
+                            from = from.plusDays(1L);
                         }
                     } else {
                         from =  from.plusDays(1L);
@@ -342,8 +352,10 @@ public class DataLoadingServiceImpl implements DataLoadingService {
                     f.setStatusRecord(StatusRecord.COMPLETED);
                     f.setStatusProcess(StatusProcess.COMPLETED);
                 });
-                //recordService.update(newRecords);
+                recordService.update(newRecords);
             }
+
+            log.info("Finish create record");
         }
     }
 
