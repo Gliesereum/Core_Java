@@ -1,13 +1,18 @@
 package com.gliesereum.karma.service.business.impl;
 
+import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
+import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.*;
+import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.media.MediaService;
+import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.ServiceService;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.*;
-import com.gliesereum.share.common.model.dto.karma.enumerated.MediaType;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
+import com.gliesereum.share.common.model.dto.karma.car.CarDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
@@ -15,15 +20,20 @@ import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.util.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,6 +42,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  */
 @Service
+@Slf4j
 public class DataLoadingServiceImpl implements DataLoadingService {
 
     private final String TOKEN = "sk.eyJ1IjoiZm9yZXN0eXVyYSIsImEiOiJjanZ6NmZlcDMwbGo0M3ptcmNjcTBrZzg1In0.dFxSaSFyDkgOGBDhNrv2bg";
@@ -66,6 +77,15 @@ public class DataLoadingServiceImpl implements DataLoadingService {
     @Autowired
     private MediaService mediaService;
 
+    @Autowired
+    private BaseRecordService recordService;
+
+    @Autowired
+    private CarService carService;
+
+    @Autowired
+    private BaseBusinessRepository businessRepository;
+
     private final List<String> getNameOfPlace = Arrays.asList(
             "фора", "сильпо", "лоток", "магазин", "аптека", "сто", "мойка", "шиномнтаж", "остановка", "бар", "кафе", "street", "сервис");
 
@@ -88,6 +108,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
             "https://autonews.ua/wp-content/uploads/2017/10/shinomontagnoe-oborudovanie-dlya-montaga.jpg");
 
     @Override
+    @Transactional
     public void createBusiness(String rightTop, String leftBottom) {
         getNameOfPlace.forEach(f -> getLocation(flipCoordinate(rightTop), flipCoordinate(leftBottom), f));
     }
@@ -126,7 +147,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         });
     }
 
-    @Transactional
     public void createBusiness(String address, Double longitude, Double latitude, UUID corporationId, BusinessCategoryDto category) {
         BaseBusinessDto business = new BaseBusinessDto();
         business.setBusinessCategoryId(category.getId());
@@ -148,7 +168,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         }
     }
 
-    @Transactional
     public void createWorkingTimes(UUID businessId, UUID businessCategoryId) {
         List<WorkTimeDto> workTimes = new ArrayList<>();
         Arrays.asList(DayOfWeek.values()).forEach(f -> {
@@ -164,7 +183,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         workTimeService.create(workTimes);
     }
 
-    @Transactional
     public void createWorkingSpace(UUID businessId, UUID businessCategoryId) {
         List<WorkingSpaceDto> workingSpaces = new ArrayList<>();
         int col = random.nextInt(5 - 2 + 1) + 2;
@@ -181,7 +199,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         workingSpaceService.create(workingSpaces);
     }
 
-    @Transactional
     public List<UUID> createServicePrice(UUID businessId, UUID businessCategoryId) {
         List<ServiceDto> services = serviceService.getAllByBusinessCategoryId(businessCategoryId);
         List<UUID> result = null;
@@ -206,7 +223,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         return result;
     }
 
-    @Transactional
     public void createPackage(List<UUID> serviceIds, UUID businessId) {
         if (CollectionUtils.isNotEmpty(serviceIds)) {
             int col = random.nextInt(3 - 1 + 1) + 1;
@@ -229,7 +245,6 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         }
     }
 
-    @Transactional
     public void setMedia(UUID businessId, String title, List<String> urls) {
         if (CollectionUtils.isNotEmpty(urls) && (count % 5 != 0)) {
             final int count = random.nextInt(urls.size()) + 1;
@@ -268,34 +283,123 @@ public class DataLoadingServiceImpl implements DataLoadingService {
 
     //+++++++++++++++++++++++++++++ Records ++++++++++++++++++++++++++++
 
+
     @Override
-    public void createRecords() {
-        LocalDateTime to = LocalDateTime.now().minusDays(1L).plusYears(1L);
-        LocalDateTime from = to.minusMonths(3L);
-        List<BaseRecordDto> newRecords = new ArrayList<>();
-        List<BaseBusinessDto> baseBusiness = businessService.getAll();
-        if (CollectionUtils.isNotEmpty(baseBusiness)) {
-            List<BusinessFullModel> listBusiness = businessService.getFullModelByIds(baseBusiness.stream().map(m -> m.getId()).collect(Collectors.toList()));
-            listBusiness.forEach(business -> {
-
-
-                while (from.isBefore(to)){
-
-
-
-
-
-
-
-
-
-                    from.plusDays(1L);
-                }
-
-            });
+    @Async
+    @Transactional
+    public void createRecordsByBusinessId(UUID businessId) {
+        if (businessId != null) {
+            List<CarDto> cars = carService.getAll();
+            List<BusinessFullModel> fullModelList = businessService.getFullModelByIds(Arrays.asList(businessId));
+            createRecords(cars, fullModelList);
         }
     }
 
+    @Override
+    @Async
+    @Transactional
+    public void createRecords() {
+        List<BaseBusinessEntity> baseBusiness = businessRepository.getAllByObjectState(ObjectState.ACTIVE);
+        List<CarDto> cars = carService.getAll();
+        if (CollectionUtils.isNotEmpty(baseBusiness) && CollectionUtils.isNotEmpty(cars)) {
+            List<BusinessFullModel> listBusiness = businessService.getFullModelByIds(baseBusiness.stream().map(m -> m.getId()).collect(Collectors.toList()));
 
+            createRecords(cars, listBusiness);
+        }
+    }
+
+    private void createRecords(List<CarDto> cars, List<BusinessFullModel> listBusiness) {
+        if (CollectionUtils.isNotEmpty(cars) && CollectionUtils.isNotEmpty(listBusiness)) {
+            log.info("Start create record");
+            List<BaseRecordDto> newRecords = new ArrayList<>();
+            Random random = new Random();
+
+            listBusiness.forEach(business -> {
+                LocalDateTime to = LocalDateTime.now().toLocalDate().atStartOfDay().minusDays(10L).plusYears(1L);
+                LocalDateTime from = to.plusDays(1L).minusMonths(12);
+
+                int recordPerDay = random.nextInt(5);
+
+                while (from.isBefore(to)) {
+                    recordPerDay = recordPerDay - 1;
+                    if (recordPerDay <= 0) {
+                        from = from.plusDays(1L);
+                        recordPerDay = random.nextInt(5);
+                    }
+                    LocalDateTime startOfWorkingDay = startOfWorkingDay(business, from);
+                    if (startOfWorkingDay != null) {
+                        CarDto car = getRandomCar(cars);
+                        try {
+                            BaseRecordDto record = new BaseRecordDto();
+                            record.setDescription("Test record");
+                            record.setNotificationSend(true);
+                            record.setPackageId(getPackageId(business));
+                            record.setServicesIds(getServiceIds(business));
+                            record.setClientId(car.getUserId());
+                            record.setTargetId(car.getId());
+                            record.setStatusPay(StatusPay.PAID);
+                            record.setPayType(PayType.CASH);
+                            record.setStatusProcess(StatusProcess.IN_PROCESS);
+                            record.setStatusRecord(StatusRecord.CREATED);
+                            record.setBusinessId(business.getId());
+                            record.setBegin(startOfWorkingDay);
+                            record.setBusinessCategoryId(business.getBusinessCategoryId());
+                            BaseRecordDto newRecord = recordService.getFreeTimeForRecord(record);
+                            newRecords.add(recordService.superCreateRecord(newRecord));
+                            log.info("write: " + newRecords.size() + "   " + from);
+                        } catch (ClientException e) {
+                            recordPerDay = random.nextInt(5);
+                            from = from.plusDays(1L);
+                        }
+                    } else {
+                        recordPerDay = random.nextInt(5);
+                        from =  from.plusDays(1L);
+                    }
+                }
+            });
+
+            if (CollectionUtils.isNotEmpty(newRecords)) {
+                newRecords.forEach(f -> {
+                    f.setBegin(f.getBegin().minusYears(1L));
+                    f.setFinish(f.getFinish().minusYears(1L));
+                    f.setStatusRecord(StatusRecord.COMPLETED);
+                    f.setStatusProcess(StatusProcess.COMPLETED);
+                });
+                log.info("start update");
+                recordService.update(newRecords);
+            }
+
+            log.info("Finish create record");
+        }
+    }
+
+    private CarDto getRandomCar(List<CarDto> cars) {
+        return cars.get(random.nextInt(cars.size()));
+    }
+
+
+    private LocalDateTime startOfWorkingDay(BusinessFullModel business, LocalDateTime from) {
+        WorkTimeDto workTime = business.getWorkTimes().stream().filter(f1 -> f1.getIsWork()).filter(f -> f.getDayOfWeek().equals(from.getDayOfWeek())).findFirst().orElse(null);
+        if (workTime != null) {
+            return LocalDateTime.of(from.toLocalDate(), workTime.getFrom().plusMinutes(10L));
+        }
+        return null;
+    }
+
+    private UUID getPackageId(BusinessFullModel business) {
+        if (CollectionUtils.isNotEmpty(business.getPackages())) {
+            return business.getPackages().get(random.nextInt(business.getPackages().size())).getId();
+        }
+        return null;
+    }
+
+    private List<UUID> getServiceIds(BusinessFullModel business) {
+        List<UUID> result = new ArrayList<>();
+        final int count = random.nextInt(business.getServicePrices().size()) + 1;
+        for (int i = 0; i < count; i++) {
+            result.add(business.getServicePrices().get(random.nextInt(business.getServicePrices().size())).getId());
+        }
+        return result;
+    }
 
 }

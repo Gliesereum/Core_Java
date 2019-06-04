@@ -371,6 +371,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    public BaseRecordDto getFullModelByIdWithPermission(UUID id) {
+        BaseRecordDto result = getFullModelById(id);
+        checkPermissionToUpdate(result);
+        return result;
+    }
+
+
+    @Override
+    @Transactional
     public BaseRecordDto getFullModelById(UUID id) {
         BaseRecordDto result = null;
         BaseRecordDto byId = getById(id);
@@ -406,9 +415,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto.getPayType() == null) {
             dto.setPayType(PayType.CASH);
         }
-        if (dto.getClientId() == null) {
-            dto.setClientId(SecurityUtil.getUserId());
-        }
+        dto.setClientId(SecurityUtil.getUserId());
         dto.setBusinessCategoryId(business.getBusinessCategoryId());
         checkRecord(dto);
         dto.setId(null);
@@ -426,6 +433,22 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 result.setServices(servicePriceService.getByIds(dto.getServicesIds()));
             }
             createOrders(result);
+        }
+        return result;
+    }
+
+    @Override
+    public BaseRecordDto superCreateRecord(BaseRecordDto dto) { //todo for create records
+        BaseRecordDto result = null;
+        BaseRecordEntity entity = converter.convert(dto, entityClass);
+        entity = repository.saveAndFlush(entity);
+        if (entity != null) {
+            for (UUID servicesId : dto.getServicesIds()) {
+                recordServiceService.create(new RecordServiceDto(entity.getId(), servicesId));
+            }
+            baseRecordRepository.refresh(entity);
+            result = converter.convert(entity, dtoClass);
+            result.setServicesIds(dto.getServicesIds());
         }
         return result;
     }
