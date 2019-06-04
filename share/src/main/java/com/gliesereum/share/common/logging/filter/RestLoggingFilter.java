@@ -70,7 +70,6 @@ public class RestLoggingFilter extends OncePerRequestFilter {
             requestInfo.setError(true);
             requestInfo.setErrorMessage(ex.getMessage());
         } else {
-            requestInfo.setResponseBody(getBody(responseWrapper.getContentAsByteArray(), responseWrapper.getCharacterEncoding()));
             setBody(getBody(responseWrapper.getContentAsByteArray(), responseWrapper.getCharacterEncoding()), requestInfo::setResponseBody, requestInfo::setResponseLength);
         }
         return requestInfo;

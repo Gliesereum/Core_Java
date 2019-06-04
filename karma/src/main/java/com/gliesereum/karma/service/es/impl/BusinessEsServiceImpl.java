@@ -231,7 +231,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                         }
                     }
                 }
-                boolQueryBuilder.should(new NestedQueryBuilder(FIELD_SERVICES, serviceRootQuery, ScoreMode.Total));
+                boolQueryBuilder.must(new NestedQueryBuilder(FIELD_SERVICES, serviceRootQuery, ScoreMode.Total));
             }
 
         }
