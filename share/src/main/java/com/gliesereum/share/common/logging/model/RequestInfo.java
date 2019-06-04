@@ -24,7 +24,11 @@ public class RequestInfo {
 
     private String requestBody;
 
+    private int requestLength;
+
     private String responseBody;
+
+    private int responseLength;
 
     private boolean isError;
 

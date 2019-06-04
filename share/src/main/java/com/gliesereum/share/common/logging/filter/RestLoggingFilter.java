@@ -5,6 +5,7 @@ import com.gliesereum.share.common.logging.service.LoggingService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author yvlasiuk
@@ -60,7 +62,7 @@ public class RestLoggingFilter extends OncePerRequestFilter {
         requestInfo.setHeaders(getHeaders(requestWrapper));
         requestInfo.setHttpStatus(responseWrapper.getStatusCode());
         requestInfo.setParameters(new HashMap<>(requestWrapper.getParameterMap()));
-        requestInfo.setRequestBody(getBody(requestWrapper.getContentAsByteArray(), requestWrapper.getCharacterEncoding()));
+        setBody(getBody(requestWrapper.getContentAsByteArray(), requestWrapper.getCharacterEncoding()), requestInfo::setRequestBody, requestInfo::setRequestLength);
         if (ObjectUtils.allNotNull(startTime, endTime)) {
             requestInfo.setDurationMillis(endTime - startTime);
         }
@@ -69,9 +71,21 @@ public class RestLoggingFilter extends OncePerRequestFilter {
             requestInfo.setErrorMessage(ex.getMessage());
         } else {
             requestInfo.setResponseBody(getBody(responseWrapper.getContentAsByteArray(), responseWrapper.getCharacterEncoding()));
+            setBody(getBody(responseWrapper.getContentAsByteArray(), responseWrapper.getCharacterEncoding()), requestInfo::setResponseBody, requestInfo::setResponseLength);
         }
         return requestInfo;
     }
+
+    private void setBody(String content, Consumer<String> bodyConsumer, Consumer<Integer> bodyLengthConsumer) {
+        if (StringUtils.isNotBlank(content)) {
+            int length = content.length();
+            if (length < 10000) {
+                bodyConsumer.accept(content);
+            }
+            bodyLengthConsumer.accept(length);
+        }
+    }
+
 
     private String getBody(byte[] contentAsByte, String characterEncoding) {
         String body = null;
