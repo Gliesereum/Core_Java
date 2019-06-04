@@ -285,6 +285,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
 
 
     @Override
+    @Async
     @Transactional
     public void createRecordsByBusinessId(UUID businessId) {
         if (businessId != null) {
@@ -295,6 +296,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
     }
 
     @Override
+    @Async
     @Transactional
     public void createRecords() {
         List<BaseBusinessEntity> baseBusiness = businessRepository.getAllByObjectState(ObjectState.ACTIVE);
@@ -310,12 +312,20 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         if (CollectionUtils.isNotEmpty(cars) && CollectionUtils.isNotEmpty(listBusiness)) {
             log.info("Start create record");
             List<BaseRecordDto> newRecords = new ArrayList<>();
+            Random random = new Random();
 
             listBusiness.forEach(business -> {
                 LocalDateTime to = LocalDateTime.now().toLocalDate().atStartOfDay().minusDays(10L).plusYears(1L);
-                LocalDateTime from = to.plusDays(1L).minusMonths(6);
+                LocalDateTime from = to.plusDays(1L).minusMonths(12);
+
+                int recordPerDay = random.nextInt(5);
 
                 while (from.isBefore(to)) {
+                    recordPerDay = recordPerDay - 1;
+                    if (recordPerDay <= 0) {
+                        from = from.plusDays(1L);
+                        recordPerDay = random.nextInt(5);
+                    }
                     LocalDateTime startOfWorkingDay = startOfWorkingDay(business, from);
                     if (startOfWorkingDay != null) {
                         CarDto car = getRandomCar(cars);
@@ -336,10 +346,13 @@ public class DataLoadingServiceImpl implements DataLoadingService {
                             record.setBusinessCategoryId(business.getBusinessCategoryId());
                             BaseRecordDto newRecord = recordService.getFreeTimeForRecord(record);
                             newRecords.add(recordService.superCreateRecord(newRecord));
+                            log.info("write: " + newRecords.size() + "   " + from);
                         } catch (ClientException e) {
+                            recordPerDay = random.nextInt(5);
                             from = from.plusDays(1L);
                         }
                     } else {
+                        recordPerDay = random.nextInt(5);
                         from =  from.plusDays(1L);
                     }
                 }
@@ -352,6 +365,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
                     f.setStatusRecord(StatusRecord.COMPLETED);
                     f.setStatusProcess(StatusProcess.COMPLETED);
                 });
+                log.info("start update");
                 recordService.update(newRecords);
             }
 
