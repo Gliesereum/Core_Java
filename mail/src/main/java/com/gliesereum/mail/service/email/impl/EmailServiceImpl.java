@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -55,6 +56,12 @@ public class EmailServiceImpl implements EmailService {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+    }
+
+    @Override
+    @Async
+    public void sendSimpleMessageAsync(String to, String subject, String text) {
+        sendSimpleMessage(to, subject, text);
     }
 
     @Override

@@ -4,9 +4,11 @@ import com.gliesereum.karma.service.business.DataLoadingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.QueryParam;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -25,7 +27,7 @@ public class DataLoadingController {
     }
 
     @GetMapping("/records")
-    public void createRecords() {
-        loadingService.createRecords();
+    public void createRecords(@RequestParam("businessId") UUID businessId) {
+        loadingService.createRecordsByBusinessId(businessId);
     }
 }
