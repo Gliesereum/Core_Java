@@ -84,7 +84,11 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             checkBusinessCategory(dto);
             checkCorporationId(dto);
             dto.setObjectState(ObjectState.ACTIVE);
-            dto = super.create(dto);
+            dto.setId(null);
+            BaseBusinessEntity entity = converter.convert(dto, entityClass);
+            entity = repository.saveAndFlush(entity);
+            baseBusinessRepository.refresh(entity);
+            dto = converter.convert(entity, dtoClass);
             businessEsService.indexAsync(dto.getId());
         }
         return dto;
