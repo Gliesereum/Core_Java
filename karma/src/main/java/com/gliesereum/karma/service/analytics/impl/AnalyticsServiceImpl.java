@@ -190,11 +190,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     private Set<LiteRecordDto> getNewRecordTreeSet() {
-        return new TreeSet<>(new Comparator<LiteRecordDto>() {
-            @Override
-            public int compare(LiteRecordDto r1, LiteRecordDto r2) {
-                return r1.getBegin().compareTo(r2.getBegin());
-            }
-        });
+        return new TreeSet<>(Comparator.comparing(LiteRecordDto::getBegin));
     }
 }
