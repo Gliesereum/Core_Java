@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,9 @@ public class PhoneServiceImpl implements PhoneService {
     @Autowired
     private MailStateService stateService;
 
+    @Autowired
+    private TaskExecutor taskExecutor;
+
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -68,15 +72,14 @@ public class PhoneServiceImpl implements PhoneService {
             PhoneResponseDto response = responseEntity.getBody();
 
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                String massage = "Message: " + text + "\nSend to phone: " + phone;
-                logger.info(massage);
-                String logInfoToEmail = massage + "\nBalance: " + checkBalance();
-                emailService.sendSimpleMessage(environment.getProperty(LOG_EMAIL), "Dispatch service info", logInfoToEmail);
+                String message = "Message: " + text + "\nSend to phone: " + phone;
+                logger.info(message);
+                sendLogInfoToEmailAsync(message);
                 Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("info");
                 stateService.create(new MailStateDto(phone, text, info.get(phone).toString(), responseEntity.getStatusCode().toString(), 0, LocalDateTime.now()));
             } else {
                 Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("additional_info");
-                emailService.sendSimpleMessage(environment.getProperty(LOG_EMAIL), "Phone service error", info.toString());
+                emailService.sendSimpleMessageAsync(environment.getProperty(LOG_EMAIL), "Phone service error", info.toString());
                 logger.error("Error send message: {} to phone: {} date: {}, return http status: {}", text, phone, new Date().toString(), responseEntity.getStatusCodeValue());
                 throw new ClientException(NOT_SEND);
             }
@@ -146,6 +149,13 @@ public class PhoneServiceImpl implements PhoneService {
         }
     }
 
+    private void sendLogInfoToEmailAsync(String message) {
+        taskExecutor.execute(() -> {
+            String logInfoToEmail = message + "\nBalance: " + checkBalance();
+            emailService.sendSimpleMessage(environment.getProperty(LOG_EMAIL), "Dispatch service info", logInfoToEmail);
+
+        });
+    }
 
     private <T> ResponseEntity<T> sendRequest(Map<String, Object> body, String url, Class<T> responseClass) {
         HttpEntity httpEntity = null;
