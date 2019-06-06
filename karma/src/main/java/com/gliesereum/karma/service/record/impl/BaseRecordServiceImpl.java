@@ -207,7 +207,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         setClients(result);
         setFullModelRecord(result);
         result = setServicePrice(result);
-        result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(result)) {
+            result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
+        }
         return result;
     }
 
@@ -500,7 +502,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         List<BaseRecordDto> result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
         setServicePrice(result);
-        result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(result)) {
+            result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
+        }
         return result;
     }
 
