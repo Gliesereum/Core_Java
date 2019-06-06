@@ -203,11 +203,12 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         setSearch(search);
         List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
                 search.getStatus(), search.getProcesses(), search.getBusinessIds(), search.getFrom(), search.getTo());
-        entities.sort(Comparator.comparing(BaseRecordEntity::getBegin).reversed());
         result = converter.convert(entities, dtoClass);
         setClients(result);
         setFullModelRecord(result);
-        return setServicePrice(result);
+        result = setServicePrice(result);
+        result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
+        return result;
     }
 
     @Override
@@ -467,7 +468,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business);
 
             if (CollectionUtils.isNotEmpty(freeTimes)) {
-                freeTimes.sort(Comparator.comparing(RecordFreeTime::getBegin));
+                freeTimes = freeTimes.stream().sorted(Comparator.comparing(RecordFreeTime::getBegin).reversed()).collect(Collectors.toList());
                 RecordFreeTime freeTime = freeTimes.stream()
                         .filter(f -> (f.getBegin().isAfter(begin.plusMinutes(1L)) && f.getMin() >= duration) ||
                                 (begin.plusMinutes(1L).isAfter(f.getBegin()) && finish.minusMinutes(1L).isBefore(f.getFinish()) && f.getMin() >= duration))
@@ -499,7 +500,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         List<BaseRecordDto> result = converter.convert(entities, dtoClass);
         setFullModelRecord(result);
         setServicePrice(result);
-        result.sort(Comparator.comparing(BaseRecordDto::getBegin).reversed());
+        result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
         return result;
     }
 
