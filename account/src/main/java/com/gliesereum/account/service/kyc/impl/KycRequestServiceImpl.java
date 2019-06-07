@@ -206,8 +206,13 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
     }
 
     @Override
-    public List<KycRequestFullModelDto> getFullModelAll() {
-        List<KycRequestEntity> entities = repository.findAll();
+    public List<KycRequestFullModelDto> getFullModelAll(List<KycStatus> statuses) {
+        List<KycRequestEntity> entities = null;
+        if (CollectionUtils.isEmpty(statuses)) {
+            entities = repository.findAll();
+        } else {
+            entities = kycRequestRepository.findAllByKycStatusIn(statuses);
+        }
         List<KycRequestFullModelDto> requested = converter.convert(entities, KycRequestFullModelDto.class);
         if (CollectionUtils.isNotEmpty(requested)) {
             requested.forEach(i -> {
