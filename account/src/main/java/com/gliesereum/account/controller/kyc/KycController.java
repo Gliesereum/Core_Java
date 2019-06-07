@@ -92,7 +92,7 @@ public class KycController {
     }
 
     @GetMapping("/request/full-model/all")
-    public List<KycRequestFullModelDto> getFullModelAllRequest() {
-        return kycRequestService.getFullModelAll();
+    public List<KycRequestFullModelDto> getFullModelAllRequest(@RequestParam(value = "statuses", required = false) List<KycStatus> statuses) {
+        return kycRequestService.getFullModelAll(statuses);
     }
 }

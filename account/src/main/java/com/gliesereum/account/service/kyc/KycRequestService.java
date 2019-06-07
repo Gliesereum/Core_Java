@@ -27,7 +27,7 @@ public interface KycRequestService extends DefaultService<KycRequestDto, KycRequ
 
     List<KycRequestDto> getAllByUserId(UUID userId);
 
-    List<KycRequestFullModelDto> getFullModelAll();
+    List<KycRequestFullModelDto> getFullModelAll(List<KycStatus> statuses);
 
     void delete(KycRequestType requestType, UUID objectId);
 }

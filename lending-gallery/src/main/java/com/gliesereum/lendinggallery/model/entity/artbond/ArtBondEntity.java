@@ -77,6 +77,9 @@ public class ArtBondEntity extends DefaultEntity {
     @Column(name = "article")
     private String article;
 
+    @Column(name = "expertise")
+    private String expertise;
+
     @Column(name = "blockchain")
     private String blockchain;
 
