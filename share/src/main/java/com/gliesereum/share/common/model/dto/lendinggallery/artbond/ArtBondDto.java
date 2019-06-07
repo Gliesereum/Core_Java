@@ -64,6 +64,8 @@ public class ArtBondDto extends DefaultDto {
 
     private String article;
 
+    private String expertise;
+
     private String blockchain;
 
     private StatusType statusType;
