@@ -17,6 +17,7 @@ import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.dto.account.user.UserCorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -26,9 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.NOT_EXIST_BY_ID;
@@ -224,5 +224,27 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         super.update(corporation);
     }
 
-
+    @Override
+    public Map<UUID, List<CorporationDto>> getCorporationByUserIds(List<UUID> userIds) {
+        Map<UUID, List<CorporationDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            List<CorporationSharedOwnershipDto> ownerships = sharedOwnershipService.getAllByUserIds(userIds);
+            if (CollectionUtils.isNotEmpty(ownerships)) {
+                List<UUID> corporationIds = ownerships.stream()
+                        .map(CorporationSharedOwnershipDto::getCorporationId)
+                        .collect(Collectors.toList());
+                List<CorporationDto> corporations = super.getByIds(corporationIds);
+                if (CollectionUtils.isNotEmpty(corporations)) {
+                    Map<UUID, CorporationDto> corporationMap = corporations.stream()
+                            .collect(Collectors.toMap(CorporationDto::getId, i -> i));
+                    ownerships.stream().forEach(i -> {
+                        List<CorporationDto> value = result.getOrDefault(i.getOwnerId(), new ArrayList<>());
+                        value.add(corporationMap.get(i.getCorporationId()));
+                        result.put(i.getOwnerId(), value);
+                    });
+                }
+            }
+        }
+        return result;
+    }
 }

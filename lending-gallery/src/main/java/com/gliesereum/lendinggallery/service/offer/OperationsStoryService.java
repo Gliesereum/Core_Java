@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStor
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -15,6 +16,8 @@ import java.util.UUID;
 public interface OperationsStoryService extends DefaultService<OperationsStoryDto, OperationsStoryEntity> {
 
     List<OperationsStoryDto> getAllByCustomerId(UUID customerId);
+
+    Map<UUID, List<OperationsStoryDto>> getAllByCustomerIds(List<UUID> customerIds);
 
     List<OperationsStoryDto> getAllByCustomerIdAndArtBondId(UUID customerId, UUID artBondId);
 

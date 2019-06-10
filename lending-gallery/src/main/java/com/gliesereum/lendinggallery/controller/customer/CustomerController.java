@@ -3,6 +3,7 @@ package com.gliesereum.lendinggallery.controller.customer;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.customer.DetailedCustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.CustomerPaymentInfo;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import com.gliesereum.share.common.model.response.MapResponse;
@@ -25,36 +26,36 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
 public class CustomerController {
 
     @Autowired
-    private CustomerService service;
+    private CustomerService customerService;
 
     @GetMapping
     public List<CustomerDto> getAll() {
-        return service.getAll();
+        return customerService.getAll();
     }
 
     @GetMapping("/{id}")
     public CustomerDto getById(@PathVariable("id") UUID id) {
-        return service.getById(id);
+        return customerService.getById(id);
     }
 
     @GetMapping("/user")
     public CustomerDto getByCurrentUser() {
-        return service.getByUser();
+        return customerService.getByUser();
     }
 
     @PostMapping
     public CustomerDto create(@Valid @RequestBody CustomerDto dto) {
-        return service.create(dto);
+        return customerService.create(dto);
     }
 
     @PutMapping
     public CustomerDto update(@Valid @RequestBody CustomerDto dto) {
-        return service.update(dto);
+        return customerService.update(dto);
     }
 
     @DeleteMapping("/{id}")
     public MapResponse delete(@PathVariable("id") UUID id) {
-        service.delete(id);
+        customerService.delete(id);
         return new MapResponse("true");
     }
 
@@ -63,7 +64,7 @@ public class CustomerController {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
         }
-        return service.getPaymentCalendar(SecurityUtil.getUserId());
+        return customerService.getPaymentCalendar(SecurityUtil.getUserId());
     }
 
     @GetMapping("/payment-info/by-art-bond")
@@ -71,7 +72,7 @@ public class CustomerController {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
         }
-        return service.getPaymentInfoByArtBond(artBondId, SecurityUtil.getUserId());
+        return customerService.getPaymentInfoByArtBond(artBondId, SecurityUtil.getUserId());
     }
 
     @GetMapping("/payment-info/common")
@@ -79,6 +80,11 @@ public class CustomerController {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
         }
-        return service.getPaymentInfoCommon(SecurityUtil.getUserId());
+        return customerService.getPaymentInfoCommon(SecurityUtil.getUserId());
+    }
+
+    @GetMapping("/detailed")
+    public List<DetailedCustomerDto> getAllDetailed() {
+        return customerService.getAllDetailed();
     }
 }

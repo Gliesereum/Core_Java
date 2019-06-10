@@ -17,4 +17,6 @@ public interface CorporationSharedOwnershipService extends DefaultService<Corpor
     List<CorporationSharedOwnershipDto> getAllByCorporationOwnerId(UUID id);
 
     List<UUID> getAllCorporationIdByUserId(UUID id);
+
+    List<CorporationSharedOwnershipDto> getAllByUserIds(List<UUID> userIds);
 }

@@ -28,10 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.*;
 import static com.gliesereum.share.common.exception.messages.KycExceptionMessage.*;
@@ -201,6 +198,40 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
             }
             List<KycRequestEntity> entities = kycRequestRepository.findAllByObjectIdIn(objectIds);
             result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public List<KycRequestDto> getAllByUserIdAndStatuses(UUID userId, List<KycStatus> kycStatuses) {
+        List<KycRequestDto> result = null;
+        if (CollectionUtils.isEmpty(kycStatuses)) {
+            result = getAllByUserId(userId);
+        } else {
+            if (userId != null) {
+                List<UUID> corporationIds = corporationSharedOwnershipService.getAllCorporationIdByUserId(userId);
+                List<UUID> objectIds = new ArrayList<>();
+                objectIds.add(userId);
+                if (CollectionUtils.isNotEmpty(corporationIds)) {
+                    objectIds.addAll(corporationIds);
+                }
+                List<KycRequestEntity> entities = kycRequestRepository.findAllByObjectIdInAndKycStatusIn(objectIds, kycStatuses);
+                result = converter.convert(entities, dtoClass);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Map<UUID, List<KycRequestDto>> getAllByUserIdsAndStatuses(List<UUID> userIds, List<KycStatus> kycStatuses) {
+        Map<UUID, List<KycRequestDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(userIds) && CollectionUtils.isNotEmpty(kycStatuses)) {
+            userIds.forEach(i -> {
+                List<KycRequestDto> requests = getAllByUserIdAndStatuses(i, kycStatuses);
+                if (CollectionUtils.isNotEmpty(requests)) {
+                    result.put(i, requests);
+                }
+            });
         }
         return result;
     }

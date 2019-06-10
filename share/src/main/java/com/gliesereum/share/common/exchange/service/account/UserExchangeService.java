@@ -1,5 +1,6 @@
 package com.gliesereum.share.common.exchange.service.account;
 
+import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.apache.catalina.User;
 
@@ -19,6 +20,8 @@ public interface UserExchangeService {
 //    boolean userKYCPassed(UUID userId);
 
     List<UserDto> findByIds(Collection<UUID> ids);
+
+    List<DetailedUserDto> findDetailedByIds(Collection<UUID> ids);
 
     Map<UUID, UserDto> findUserMapByIds(Collection<UUID> ids);
 

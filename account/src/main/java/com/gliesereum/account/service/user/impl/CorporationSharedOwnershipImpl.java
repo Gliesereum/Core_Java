@@ -55,4 +55,14 @@ public class CorporationSharedOwnershipImpl extends DefaultServiceImpl<Corporati
         }
         return result;
     }
+
+    @Override
+    public List<CorporationSharedOwnershipDto> getAllByUserIds(List<UUID> userIds) {
+        List<CorporationSharedOwnershipDto> result = null;
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            List<CorporationSharedOwnershipEntity> entities = corporationSharedOwnershipRepository.findAllByOwnerIdIn(userIds);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
 }

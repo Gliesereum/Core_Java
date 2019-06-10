@@ -1,6 +1,7 @@
 package com.gliesereum.account.controller.user;
 
 import com.gliesereum.account.service.user.UserService;
+import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -84,6 +85,11 @@ public class UserController {
     @GetMapping("/by-phone")
     public UserDto getByPhone(@RequestParam("phone") String phone) {
         return userService.getByPhone(phone);
+    }
+
+    @GetMapping("/detailed/by-ids")
+    public List<DetailedUserDto> getDetailedByIds(@RequestParam("ids") List<UUID> ids) {
+        return userService.getDetailedByIds(ids);
     }
 
 }

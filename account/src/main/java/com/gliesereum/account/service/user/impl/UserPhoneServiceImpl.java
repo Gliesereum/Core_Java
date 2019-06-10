@@ -15,12 +15,16 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_WORSE;
 import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.*;
@@ -36,8 +40,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     private static final Class<UserPhoneDto> DTO_CLASS = UserPhoneDto.class;
     private static final Class<UserPhoneEntity> ENTITY_CLASS = UserPhoneEntity.class;
 
-    @Autowired
-    private UserPhoneRepository repository;
+    private final UserPhoneRepository userPhoneRepository;
 
     @Autowired
     private DefaultConverter converter;
@@ -51,15 +54,16 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     @Autowired
     private VerificationService verificationService;
 
+    @Autowired
     public UserPhoneServiceImpl(UserPhoneRepository userPhoneRepository, DefaultConverter defaultConverter) {
         super(userPhoneRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.userPhoneRepository = userPhoneRepository;
     }
-
 
     @Override
     public void deleteByUserId(UUID id) {
         if (id != null) {
-            repository.deleteUserPhoneEntityByUserId(id);
+            userPhoneRepository.deleteUserPhoneEntityByUserId(id);
         }
     }
 
@@ -79,7 +83,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     public UserPhoneDto getByUserId(UUID id) {
         UserPhoneDto result = null;
         if (id != null) {
-            UserPhoneEntity phone = repository.getByUserId(id);
+            UserPhoneEntity phone = userPhoneRepository.getByUserId(id);
             if (phone != null) {
                 result = converter.convert(phone, UserPhoneDto.class);
             }
@@ -91,7 +95,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     public UserPhoneDto getByPhone(String value) {
         UserPhoneDto result = null;
         checkIsPhone(value);
-        UserPhoneEntity user = repository.getUserPhoneEntityByPhone(value);
+        UserPhoneEntity user = userPhoneRepository.getUserPhoneEntityByPhone(value);
         if (user != null) {
             result = converter.convert(user, UserPhoneDto.class);
         }
@@ -157,16 +161,28 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     @Override
     public boolean checkPhoneByExist(String phone) {
         checkIsPhone(phone);
-        return repository.existsUserPhoneEntityByPhone(phone);
+        return userPhoneRepository.existsUserPhoneEntityByPhone(phone);
     }
 
     @Override
     public List<UserPhoneDto> getByUserIds(List<UUID> ids) {
-        List<UserPhoneEntity> entities = repository.getByUserIdIn(ids);
+        List<UserPhoneEntity> entities = userPhoneRepository.getByUserIdIn(ids);
         return converter.convert(entities,dtoClass);
     }
 
-    public void checkIsPhone(String phone) {
+    @Override
+    public Map<UUID, UserPhoneDto> getMapByUserIds(List<UUID> ids) {
+        Map<UUID, UserPhoneDto> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<UserPhoneDto> phones = getByUserIds(ids);
+            if (CollectionUtils.isNotEmpty(phones)) {
+                result = phones.stream().collect(Collectors.toMap(UserPhoneDto::getUserId, i -> i));
+            }
+        }
+        return result;
+    }
+
+    private void checkIsPhone(String phone) {
         if (StringUtils.isEmpty(phone)) {
             throw new ClientException(PHONE_EMPTY);
         }

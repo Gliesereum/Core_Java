@@ -4,6 +4,7 @@ import com.gliesereum.account.model.entity.UserEmailEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,4 +20,6 @@ public interface UserEmailRepository extends JpaRepository<UserEmailEntity, UUID
     boolean existsUserEmailEntityByEmail(String email);
 
     UserEmailEntity getByUserId(UUID id);
+
+    List<UserEmailEntity> findByUserIdIn(List<UUID> ids);
 }
