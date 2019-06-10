@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.ART_BOND_NOT_FOUND_BY_ID;
@@ -54,7 +55,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(customerId);
         List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
         if(CollectionUtils.isNotEmpty(result)){
-           result.forEach(f->setArtBond(f));
+           setArtBond(result);
         }
         return result;
     }
@@ -64,11 +65,15 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         Map<UUID, List<OperationsStoryDto>> result = new HashMap<>();
         if (CollectionUtils.isNotEmpty(customerIds)) {
             List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdIn(customerIds);
-            entities.forEach(i -> {
-                List<OperationsStoryDto> value = result.getOrDefault(i.getCustomerId(), new ArrayList<>());
-                value.add(converter.convert(i, dtoClass));
-                result.put(i.getCustomerId(), value);
-            });
+            List<OperationsStoryDto> dtos = converter.convert(entities, dtoClass);
+            if (CollectionUtils.isNotEmpty(dtos)) {
+                setArtBond(dtos);
+                dtos.forEach(i -> {
+                    List<OperationsStoryDto> value = result.getOrDefault(i.getCustomerId(), new ArrayList<>());
+                    value.add(i);
+                    result.put(i.getCustomerId(), value);
+                });
+            }
         }
         return result;
     }
@@ -88,7 +93,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         }
         List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
         if(CollectionUtils.isNotEmpty(result)){
-            result.forEach(f->setArtBond(f));
+            setArtBond(result);
         }
         return result;
     }
@@ -105,7 +110,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         }
         List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
         if(CollectionUtils.isNotEmpty(result)){
-            result.forEach(f->setArtBond(f));
+            setArtBond(result);
         }
         return result;
     }
@@ -141,7 +146,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             result = converter.convert(entities, dtoClass);
         }
         if(CollectionUtils.isNotEmpty(result)){
-            result.forEach(f->setArtBond(f));
+            setArtBond(result);
         }
         return result;
     }
@@ -156,9 +161,22 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             }
         }
         if(CollectionUtils.isNotEmpty(result)){
-            result.forEach(f->setArtBond(f));
+            setArtBond(result);
         }
         return result;
+    }
+
+    private void setArtBond(List<OperationsStoryDto> operationsStories) {
+        if (CollectionUtils.isNotEmpty(operationsStories)) {
+            Set<UUID> artBondIds = operationsStories.stream().map(OperationsStoryDto::getArtBondId).collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(artBondIds)) {
+                List<ArtBondDto> artBonds = artBondService.getByIds(artBondIds);
+                if (CollectionUtils.isNotEmpty(artBonds)) {
+                    Map<UUID, ArtBondDto> artBondMap = artBonds.stream().collect(Collectors.toMap(ArtBondDto::getId, i -> i));
+                    operationsStories.forEach(i -> i.setArtBond(artBondMap.get(i.getArtBondId())));
+                }
+            }
+        }
     }
 
     private void setArtBond(OperationsStoryDto dto) {
