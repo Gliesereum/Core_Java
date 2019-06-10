@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -27,4 +28,6 @@ public interface UserPhoneService extends DefaultService<UserPhoneDto, UserPhone
     boolean checkPhoneByExist(String phone);
 
     List<UserPhoneDto> getByUserIds(List<UUID> ids);
+
+    Map<UUID, UserPhoneDto> getMapByUserIds(List<UUID> ids);
 }

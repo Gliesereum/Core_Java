@@ -20,8 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.ART_BOND_NOT_FOUND_BY_ID;
@@ -56,6 +55,20 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
         if(CollectionUtils.isNotEmpty(result)){
            result.forEach(f->setArtBond(f));
+        }
+        return result;
+    }
+
+    @Override
+    public Map<UUID, List<OperationsStoryDto>> getAllByCustomerIds(List<UUID> customerIds) {
+        Map<UUID, List<OperationsStoryDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(customerIds)) {
+            List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdIn(customerIds);
+            entities.forEach(i -> {
+                List<OperationsStoryDto> value = result.getOrDefault(i.getCustomerId(), new ArrayList<>());
+                value.add(converter.convert(i, dtoClass));
+                result.put(i.getCustomerId(), value);
+            });
         }
         return result;
     }

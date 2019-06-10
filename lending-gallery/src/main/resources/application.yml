@@ -48,3 +48,4 @@ exchange:
     account:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
+      findDetailedByIds: http://account-service/user/detailed/by-ids

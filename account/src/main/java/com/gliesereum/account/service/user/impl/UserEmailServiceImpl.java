@@ -14,12 +14,18 @@ import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.CODE_WORSE;
 import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.*;
@@ -32,8 +38,13 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Service
 public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserEmailEntity> implements UserEmailService {
 
-    @Autowired
-    private UserEmailRepository repository;
+    private static final Class<UserEmailDto> DTO_CLASS = UserEmailDto.class;
+    private static final Class<UserEmailEntity> ENTITY_CLASS = UserEmailEntity.class;
+
+    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private static final Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
+
+    private final UserEmailRepository userEmailRepository;
 
     @Autowired
     private UserService userService;
@@ -44,22 +55,17 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     @Autowired
     private VerificationService verificationService;
 
-    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
-    public static final Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
-
-    private static final Class<UserEmailDto> DTO_CLASS = UserEmailDto.class;
-    private static final Class<UserEmailEntity> ENTITY_CLASS = UserEmailEntity.class;
-
+    @Autowired
     public UserEmailServiceImpl(UserEmailRepository userEmailRepository, DefaultConverter defaultConverter) {
         super(userEmailRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.userEmailRepository = userEmailRepository;
     }
 
 
     @Override
     public void deleteByUserId(UUID id) {
         if (id != null) {
-            repository.deleteUserEmailEntityByUserId(id);
+            userEmailRepository.deleteUserEmailEntityByUserId(id);
         }
     }
 
@@ -79,7 +85,7 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     public UserEmailDto getByUserId(UUID id) {
         UserEmailDto result = null;
         if (id != null) {
-            UserEmailEntity email = repository.getByUserId(id);
+            UserEmailEntity email = userEmailRepository.getByUserId(id);
             if (email != null) {
                 result = converter.convert(email, UserEmailDto.class);
             }
@@ -91,7 +97,7 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     public UserEmailDto getByValue(String value) {
         UserEmailDto result = null;
         if (!StringUtils.isEmpty(value)) {
-            UserEmailEntity user = repository.getUserEmailEntityByEmail(value);
+            UserEmailEntity user = userEmailRepository.getUserEmailEntityByEmail(value);
             if (user != null) {
                 result = converter.convert(user, UserEmailDto.class);
             }
@@ -156,10 +162,32 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     @Override
     public boolean checkEmailByExist(String email) {
         checkIsEmail(email);
-        return repository.existsUserEmailEntityByEmail(email);
+        return userEmailRepository.existsUserEmailEntityByEmail(email);
     }
 
-    public void checkIsEmail(String email) {
+    @Override
+    public List<UserEmailDto> getByUserIds(List<UUID> ids) {
+        List<UserEmailDto> result = null;
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<UserEmailEntity> entities = userEmailRepository.findByUserIdIn(ids);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public Map<UUID, UserEmailDto> getMapByUserIds(List<UUID> ids) {
+        Map<UUID, UserEmailDto> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<UserEmailDto> emails = getByUserIds(ids);
+            if (CollectionUtils.isNotEmpty(emails)) {
+                result = emails.stream().collect(Collectors.toMap(UserEmailDto::getUserId, i -> i));
+            }
+        }
+        return result;
+    }
+
+    private void checkIsEmail(String email) {
         if (StringUtils.isEmpty(email)) {
             throw new ClientException(EMAIL_EMPTY);
         }

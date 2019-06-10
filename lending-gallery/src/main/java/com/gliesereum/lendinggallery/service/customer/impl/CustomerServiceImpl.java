@@ -7,8 +7,11 @@ import com.gliesereum.lendinggallery.service.customer.CustomerService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.customer.DetailedCustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.CustomerPaymentInfo;
@@ -51,6 +54,9 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
 
     @Autowired
     private ArtBondService artBondService;
+
+    @Autowired
+    private UserExchangeService userExchangeService;
 
     @Autowired
     public CustomerServiceImpl(CustomerRepository customerRepository, DefaultConverter defaultConverter) {
@@ -177,6 +183,29 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                     result.setProfit(result.getProfit() + paymentInfoByArtBond.getProfit());
                     result.setBalance(result.getBalance() + paymentInfoByArtBond.getBalance());
                 }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<DetailedCustomerDto> getAllDetailed() {
+        List<DetailedCustomerDto> result = null;
+        List<CustomerDto> all = super.getAll();
+        if (CollectionUtils.isNotEmpty(all)) {
+            Map<UUID, CustomerDto> userCustomer = all.stream().collect(Collectors.toMap(CustomerDto::getUserId, i -> i));
+            List<DetailedUserDto> detailedUser = userExchangeService.findDetailedByIds(userCustomer.keySet());
+            if (CollectionUtils.isNotEmpty(detailedUser)) {
+                result = converter.convert(detailedUser, DetailedCustomerDto.class);
+                result = result.stream()
+                        .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
+                        .peek(i -> i.setCustomer(userCustomer.get(i.getId())))
+                        .collect(Collectors.toList());
+                List<UUID> resultCustomerIds = result.stream().map(i -> i.getCustomer().getId()).collect(Collectors.toList());
+                Map<UUID, List<OperationsStoryDto>> operationStory = operationsStoryService.getAllByCustomerIds(resultCustomerIds);
+                result.forEach(i -> {
+                    i.setOperationsStories(operationStory.get(i.getCustomer().getId()));
+                });
             }
         }
         return result;

@@ -9,6 +9,7 @@ import com.gliesereum.share.common.model.dto.account.kyc.KycRequestDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -26,6 +27,10 @@ public interface KycRequestService extends DefaultService<KycRequestDto, KycRequ
     KycRequestDto updateStatus(UUID id, KycStatus newStatus, String comment);
 
     List<KycRequestDto> getAllByUserId(UUID userId);
+
+    List<KycRequestDto> getAllByUserIdAndStatuses(UUID userId, List<KycStatus> kycStatuses);
+
+    Map<UUID, List<KycRequestDto>> getAllByUserIdsAndStatuses(List<UUID> userIds, List<KycStatus> kycStatuses);
 
     List<KycRequestFullModelDto> getFullModelAll(List<KycStatus> statuses);
 

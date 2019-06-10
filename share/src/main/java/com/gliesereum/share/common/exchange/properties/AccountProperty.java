@@ -18,6 +18,8 @@ public class AccountProperty {
 
     private String findByIds;
 
+    private String findDetailedByIds;
+
     private String getByPhone;
 
     private String findUserPhonesByUserIds;
