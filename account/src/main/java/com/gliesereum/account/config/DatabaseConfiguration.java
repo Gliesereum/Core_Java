@@ -1,6 +1,7 @@
 package com.gliesereum.account.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
@@ -9,5 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @Configuration
 @EnableJpaRepositories("com.gliesereum.account.model.repository")
+@EnableJpaAuditing
 public class DatabaseConfiguration {
 }

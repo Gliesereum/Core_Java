@@ -131,4 +131,18 @@ public class GroupUserServiceImpl extends DefaultServiceImpl<GroupUserDto, Group
         result = result.stream().distinct().collect(Collectors.toList());
         return result;
     }
+
+    @Override
+    public List<GroupUserDto> getByGroupPurpose(GroupPurpose groupPurpose) {
+        List<GroupUserDto> result = null;
+        if (groupPurpose != null) {
+            List<GroupDto> groups = groupService.getByPurposes(Arrays.asList(groupPurpose));
+            if (CollectionUtils.isNotEmpty(groups)) {
+                List<UUID> groupIds = groups.stream().map(GroupDto::getId).collect(Collectors.toList());
+                List<GroupUserEntity> entities = groupUserRepository.findAllByGroupIdIn(groupIds);
+                result = converter.convert(entities, dtoClass);
+            }
+        }
+        return result;
+    }
 }

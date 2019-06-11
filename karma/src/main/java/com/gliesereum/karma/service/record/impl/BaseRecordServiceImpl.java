@@ -422,6 +422,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setBusinessCategoryId(business.getBusinessCategoryId());
         checkRecord(dto);
         dto.setId(null);
+        setRecordNumber(dto);
         BaseRecordEntity entity = converter.convert(dto, entityClass);
         entity = repository.saveAndFlush(entity);
         if (entity != null) {
@@ -740,5 +741,14 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             records.forEach(r -> r.setServicesIds(mapIds.get(r.getId())));
         }
         return records;
+    }
+
+    private void setRecordNumber(BaseRecordDto dto) {
+        if (dto != null) {
+            LocalDateTime startOfDay = LocalDateTime.of(dto.getBegin().toLocalDate(), LocalTime.MIDNIGHT);
+            LocalDateTime endOfDay = LocalDateTime.of(dto.getBegin().toLocalDate(), LocalTime.MAX);
+            long recordToDay = baseRecordRepository.countByBusinessIdAndBeginBetween(dto.getBusinessId(), startOfDay, endOfDay);
+            dto.setRecordNumber((int)recordToDay + 1);
+        }
     }
 }

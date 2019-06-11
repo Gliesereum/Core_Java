@@ -1,5 +1,6 @@
 package com.gliesereum.account.controller.user;
 
+import com.gliesereum.account.facade.user.UserFacade;
 import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
@@ -23,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserFacade userFacade;
 
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable("id") UUID id) {
@@ -89,7 +93,7 @@ public class UserController {
 
     @GetMapping("/detailed/by-ids")
     public List<DetailedUserDto> getDetailedByIds(@RequestParam("ids") List<UUID> ids) {
-        return userService.getDetailedByIds(ids);
+        return userFacade.getDetailedByIds(ids);
     }
 
 }

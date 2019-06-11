@@ -23,4 +23,6 @@ public interface GroupUserService extends DefaultService<GroupUserDto, GroupUser
     void removeFromGroup(UUID groupId, UUID userId);
 
     List<GroupDto> getGroupByUser(UserDto user);
+
+    List<GroupUserDto> getByGroupPurpose(GroupPurpose groupPurpose);
 }

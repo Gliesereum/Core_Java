@@ -13,13 +13,16 @@ import com.gliesereum.share.common.model.dto.karma.service.ServiceClassPriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
@@ -101,6 +104,32 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     }
 
     @Override
+    @Transactional
+    public ServicePriceDto createAndGetPrice(UUID idPrice, List<UUID> classes) {
+        ServicePriceDto result;
+        if (idPrice == null) {
+            throw new ClientException(PRICE_ID_IS_EMPTY);
+        }
+        ServicePriceDto price = servicePriceService.getById(idPrice);
+        checkPermission(price);
+        if (CollectionUtils.isNotEmpty(classes)) {
+            classes.forEach(i -> {
+                if (!serviceClassService.isExist(i)) {
+                    throw new ClientException(SERVICE_CLASS_NOT_FOUND);
+                }
+            });
+        }
+        serviceClassPriceRepository.deleteByPriceId(idPrice);
+        if (CollectionUtils.isNotEmpty(classes)) {
+            List<ServiceClassPriceDto> classPrice = classes.stream().map(i -> new ServiceClassPriceDto(idPrice, i)).collect(Collectors.toList());
+            this.create(classPrice);
+        }
+        result = servicePriceService.getByIdAndRefresh(idPrice);
+        businessEsService.indexAsync(price.getBusinessId());
+        return result;
+    }
+
+    @Override
     public void delete(UUID id) {
         if (id != null) {
             Optional<ServiceClassPriceEntity> entity = repository.findById(id);
@@ -147,14 +176,18 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
 
     private void checkPermission(ServicePriceDto price, UUID serviceClassId) {
         if (serviceClassId != null) {
-            if (price == null) {
-                throw new ClientException(SERVICE_PRICE_NOT_FOUND);
-            }
-            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(price.getBusinessId());
+            checkPermission(price);
             if (!serviceClassService.isExist(serviceClassId)) {
                 throw new ClientException(SERVICE_CLASS_NOT_FOUND);
             }
         }
+    }
+
+    private void checkPermission(ServicePriceDto price) {
+        if (price == null) {
+            throw new ClientException(SERVICE_PRICE_NOT_FOUND);
+        }
+        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(price.getBusinessId());
     }
 
     private void checkPriceServiceExist(UUID priceId, UUID serviceClassId) {

@@ -58,4 +58,9 @@ public class GroupUserController {
         }
         return result;
     }
+
+    @GetMapping("/by-group-purpose")
+    public List<GroupUserDto> getByGroupPurpose(@RequestParam("groupPurpose") GroupPurpose groupPurpose) {
+        return groupUserService.getByGroupPurpose(groupPurpose);
+    }
 }

@@ -187,12 +187,14 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         List<PriceFilterAttributeDto> list = new ArrayList<>();
         priceFilterAttributeService.deleteByPriceId(idPrice);
         price.setAttributes(new ArrayList<>());
-        idsAttribute.forEach(f -> {
-            checkFilterAttribute(f, price.getService().getBusinessCategoryId());
-            list.add(new PriceFilterAttributeDto(idPrice, f));
-            price.getAttributes().add(filterAttributeService.getById(f));
-        });
-        priceFilterAttributeService.create(list);
+        if (CollectionUtils.isNotEmpty(idsAttribute)) {
+            idsAttribute.forEach(f -> {
+                checkFilterAttribute(f, price.getService().getBusinessCategoryId());
+                list.add(new PriceFilterAttributeDto(idPrice, f));
+                price.getAttributes().add(filterAttributeService.getById(f));
+            });
+            priceFilterAttributeService.create(list);
+        }
         businessEsService.indexAsync(price.getBusinessId());
         return price;
     }

@@ -83,6 +83,11 @@ public class ServicePriceController {
         return serviceClassPriceService.getByPriceId(priceId);
     }
 
+    @PostMapping("/classes/{idPrice}")
+    public ServicePriceDto addClasses(@PathVariable("idPrice") UUID idPrice, @RequestBody(required = false) List<UUID> classes) {
+        return serviceClassPriceService.createAndGetPrice(idPrice, classes);
+    }
+
     @PostMapping("/filter-attribute/{idPrice}/{idAttribute}")
     public MapResponse addFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
         servicePriceService.addFilterAttribute(idPrice, idAttribute);
@@ -90,7 +95,7 @@ public class ServicePriceController {
     }
 
     @PostMapping("/filter-attributes/{idPrice}")
-    public ServicePriceDto addFilterAttributes(@PathVariable("idPrice") UUID idPrice, @RequestBody List<UUID> idAttributes) {
+    public ServicePriceDto addFilterAttributes(@PathVariable("idPrice") UUID idPrice, @RequestBody(required = false) List<UUID> idAttributes) {
       return  servicePriceService.addFilterAttributes(idPrice, idAttributes);
     }
 

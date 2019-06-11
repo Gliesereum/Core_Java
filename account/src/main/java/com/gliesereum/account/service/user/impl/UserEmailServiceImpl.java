@@ -46,8 +46,8 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
 
     private final UserEmailRepository userEmailRepository;
 
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
 
     @Autowired
     private UserPhoneService phoneService;
@@ -136,7 +136,7 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
         UserEmailDto result = null;
         UUID userId = SecurityUtil.getUserId();
         checkUserAuthentication(userId);
-        UserDto user = userService.getById(userId);
+        //UserDto user = userService.getById(userId);
         if (verificationService.checkVerification(email, code)) {
             if (checkEmailByExist(email)) {
                 throw new ClientException(EMAIL_EXIST);
@@ -146,7 +146,8 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
             }
             result = new UserEmailDto();
             result.setEmail(email);
-            result.setUserId(user.getId());
+            //result.setUserId(user.getId());
+            result.setUserId(userId);
         } else {
             throw new ClientException(CODE_WORSE);
         }

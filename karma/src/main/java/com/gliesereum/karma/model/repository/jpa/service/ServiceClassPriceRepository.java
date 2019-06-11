@@ -18,4 +18,6 @@ public interface ServiceClassPriceRepository extends JpaRepository<ServiceClassP
     Optional<ServiceClassPriceEntity> findByPriceIdAndServiceClassId(UUID priceId, UUID serviceClassId);
 
     boolean existsByPriceIdAndServiceClassId(UUID priceId, UUID serviceClassId);
+
+    void deleteByPriceId(UUID priceId);
 }

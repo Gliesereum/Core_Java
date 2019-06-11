@@ -45,8 +45,8 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     @Autowired
     private DefaultConverter converter;
 
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
 
     @Autowired
     private UserEmailService emailService;
@@ -139,13 +139,14 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
             if (checkPhoneByExist(phone)) {
                 throw new ClientException(PHONE_EXIST);
             }
-            UserDto user = userService.getById(userId);
+            //UserDto user = userService.getById(userId);
             if (getByUserId(userId) != null) {
                 throw new ClientException(USER_ALREADY_HAS_PHONE);
             }
             result = new UserPhoneDto();
             result.setPhone(phone);
-            result.setUserId(user.getId());
+            //result.setUserId(user.getId());
+            result.setUserId(userId);
         } else {
             throw new ClientException(CODE_WORSE);
         }

@@ -19,4 +19,9 @@ public class ServiceClassPriceDto extends DefaultDto {
     private UUID priceId;
 
     private UUID serviceClassId;
+
+    public ServiceClassPriceDto(UUID priceId, UUID serviceClassId) {
+        this.priceId = priceId;
+        this.serviceClassId = serviceClassId;
+    }
 }

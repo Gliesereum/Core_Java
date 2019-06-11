@@ -21,30 +21,31 @@ import java.util.UUID;
 @Service
 public class PriceFilterAttributeServiceImpl extends DefaultServiceImpl<PriceFilterAttributeDto, PriceFilterAttributeEntity> implements PriceFilterAttributeService {
 
-    @Autowired
-    private PriceFilterAttributeRepository repository;
-
     private static final Class<PriceFilterAttributeDto> DTO_CLASS = PriceFilterAttributeDto.class;
     private static final Class<PriceFilterAttributeEntity> ENTITY_CLASS = PriceFilterAttributeEntity.class;
 
-    public PriceFilterAttributeServiceImpl(PriceFilterAttributeRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    private final PriceFilterAttributeRepository priceFilterAttributeRepository;
+
+    @Autowired
+    public PriceFilterAttributeServiceImpl(PriceFilterAttributeRepository priceFilterAttributeRepository, DefaultConverter defaultConverter) {
+        super(priceFilterAttributeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.priceFilterAttributeRepository = priceFilterAttributeRepository;
     }
 
     @Override
     @Transactional
     public void deleteByPriceIdAndFilterId(UUID idPrice, UUID filterAttributeId) {
-        repository.deleteByPriceIdAndFilterAttributeId(idPrice, filterAttributeId);
+        priceFilterAttributeRepository.deleteByPriceIdAndFilterAttributeId(idPrice, filterAttributeId);
     }
 
     @Override
     public void deleteByPriceId(UUID idPrice) {
-        repository.deleteByPriceId(idPrice);
+        priceFilterAttributeRepository.deleteByPriceId(idPrice);
     }
 
     @Override
     public boolean existByPriceIdAndAttributeId(UUID idPrice, UUID filterAttributeId) {
-        return repository.existsByPriceIdAndFilterAttributeId(idPrice, filterAttributeId);
+        return priceFilterAttributeRepository.existsByPriceIdAndFilterAttributeId(idPrice, filterAttributeId);
     }
 
 }

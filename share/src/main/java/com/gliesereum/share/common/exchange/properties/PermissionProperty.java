@@ -15,4 +15,6 @@ public class PermissionProperty {
     private String endpointUpdatePack;
 
     private String addUserByGroupPurpose;
+
+    private String getGroupUserByGroupPurpose;
 }
