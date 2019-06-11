@@ -1,5 +1,6 @@
 package com.gliesereum.lendinggallery.controller.customer;
 
+import com.gliesereum.lendinggallery.facade.customer.CustomerFacade;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
@@ -27,6 +28,9 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private CustomerFacade customerFacade;
 
     @GetMapping
     public List<CustomerDto> getAll() {
@@ -83,8 +87,18 @@ public class CustomerController {
         return customerService.getPaymentInfoCommon(SecurityUtil.getUserId());
     }
 
-    @GetMapping("/detailed")
-    public List<DetailedCustomerDto> getAllDetailed() {
-        return customerService.getAllDetailed();
+    @GetMapping("/detailed/investor")
+    public List<DetailedCustomerDto> getDetailedInvestor(@RequestParam(value = "artBondId", required = false) UUID artBondId) {
+        return customerFacade.getDetailedInvestor(artBondId);
+    }
+
+    @GetMapping("/detailed/borrower")
+    public List<DetailedCustomerDto> getDetailedBorrower() {
+        return customerFacade.getDetailedBorrower();
+    }
+
+    @GetMapping("/detailed/admin")
+    public List<DetailedCustomerDto> getDetailedAdmin() {
+        return customerFacade.getDetailedAdmin();
     }
 }

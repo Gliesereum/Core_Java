@@ -1,8 +1,10 @@
 package com.gliesereum.lendinggallery.model.repository.jpa.customer;
 
 import com.gliesereum.lendinggallery.model.entity.customer.CustomerEntity;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.CustomerType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -12,4 +14,10 @@ import java.util.UUID;
 public interface CustomerRepository extends JpaRepository<CustomerEntity, UUID> {
 
     CustomerEntity findByUserId(UUID id);
+
+    List<CustomerEntity> findAllByCustomerType(CustomerType customerType);
+
+    List<CustomerEntity> findAllByCustomerTypeAndIdIn(CustomerType customerType, List<UUID> ids);
+
+    List<CustomerEntity> findAllByUserIdIn(List<UUID> userIds);
 }

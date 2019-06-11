@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface GroupUserExchangeService {
 
     List<GroupUserDto> addUserByGroupPurpose(UUID userId, GroupPurpose groupPurpose);
+
+    List<UUID> getUserIdsByGroupPurpose(GroupPurpose groupPurpose);
 }

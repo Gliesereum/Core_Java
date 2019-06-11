@@ -2,7 +2,7 @@ package com.gliesereum.lendinggallery.model.entity.customer;
 
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BorrowerType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.CustomerType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.InverstorType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.InvestorType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OriginFunds;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
@@ -58,7 +58,7 @@ public class CustomerEntity extends DefaultEntity {
 
     @Column(name = "investor_type")
     @Enumerated(EnumType.STRING)
-    private InverstorType inverstorType;
+    private InvestorType inverstorType;
 
     @Column(name = "borrower_type")
     @Enumerated(EnumType.STRING)

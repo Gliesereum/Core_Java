@@ -4,6 +4,7 @@ import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.permission.GroupUserExchangeService;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.model.dto.permission.group.GroupUserDto;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author yvlasiuk
@@ -52,6 +54,30 @@ public class GroupUserExchangeServiceImpl implements GroupUserExchangeService {
                     new ParameterizedTypeReference<List<GroupUserDto>>() {});
             if ((response != null) && response.getStatusCode().is2xxSuccessful()) {
                 result = response.getBody();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<UUID> getUserIdsByGroupPurpose(GroupPurpose groupPurpose) {
+        List<UUID> result = null;
+        if (groupPurpose != null) {
+            String uri = UriComponentsBuilder.fromUriString(exchangeProperties.getPermission().getGetGroupUserByGroupPurpose())
+                    .queryParam("groupPurpose", groupPurpose)
+                    .build()
+                    .toUriString();
+            ResponseEntity<List<GroupUserDto>> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<List<GroupUserDto>>() {
+                    });
+            if ((response != null) && response.getStatusCode().is2xxSuccessful()) {
+                List<GroupUserDto> body = response.getBody();
+                if (CollectionUtils.isNotEmpty(body)) {
+                    result = body.stream().map(GroupUserDto::getUserId).distinct().collect(Collectors.toList());
+                }
             }
         }
         return result;

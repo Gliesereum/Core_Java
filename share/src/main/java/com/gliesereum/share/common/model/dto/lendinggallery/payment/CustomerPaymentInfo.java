@@ -18,5 +18,7 @@ public class CustomerPaymentInfo {
 
     private Double profit = 0.0;
 
+    private Double resultProfit = 0.0;
+
     private Double nkd = 0.0;
 }
