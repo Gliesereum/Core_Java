@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BorrowerType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.CustomerType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.InverstorType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OriginFunds;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,4 +46,8 @@ public class CustomerDto extends DefaultDto {
     private OriginFunds originFunds;
 
     private CustomerType customerType;
+
+    private InverstorType inverstorType;
+
+    private BorrowerType borrowerType;
 }
