@@ -11,6 +11,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
+import com.gliesereum.share.common.model.query.lendinggallery.offer.OperationsStoryQuery;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -86,14 +87,28 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
 
     @Override
     public List<OperationsStoryDto> getAllByUserId(UUID userId) {
-        CustomerDto customer = getCustomer();
-        List<OperationsStoryEntity> entities = null;
+        List<OperationsStoryDto> result = null;
+        CustomerDto customer = getCustomer(userId);
         if (customer != null) {
-            entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(customer.getId());
+            List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(customer.getId());
+            result = converter.convert(entities, dtoClass);
+            if(CollectionUtils.isNotEmpty(result)){
+                setArtBond(result);
+            }
         }
-        List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
-        if(CollectionUtils.isNotEmpty(result)){
-            setArtBond(result);
+        return result;
+    }
+
+    @Override
+    public List<OperationsStoryDto> filterByUserId(OperationsStoryQuery operationsStoryQuery, UUID userId) {
+        List<OperationsStoryDto> result = null;
+        CustomerDto customer = getCustomer(userId);
+        if (customer != null) {
+            List<OperationsStoryEntity> entities = operationsStoryRepository.search(operationsStoryQuery, customer.getId());
+            result = converter.convert(entities, dtoClass);
+            if (CollectionUtils.isNotEmpty(result)) {
+                setArtBond(result);
+            }
         }
         return result;
     }
@@ -187,6 +202,10 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             }
             dto.setArtBond(artBond);
         }
+    }
+
+    private CustomerDto getCustomer(UUID userId) {
+        return customerService.findByUserId(SecurityUtil.getUserId());
     }
 
     private CustomerDto getCustomer(){

@@ -68,7 +68,7 @@ public class CustomizedArtBondRepositoryImpl implements CustomizedArtBondReposit
             if ((queryRequest.getOrderType() != null) && queryRequest.getOrderType().equals(OrderType.DESC)) {
                 criteriaQuery.orderBy(criteriaBuilder.desc(root.get(queryRequest.getOrderField())));
             } else {
-                criteriaQuery.orderBy(criteriaBuilder.desc(root.get(queryRequest.getOrderField())));
+                criteriaQuery.orderBy(criteriaBuilder.asc(root.get(queryRequest.getOrderField())));
             }
 
         }

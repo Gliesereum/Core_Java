@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author vitalij
  * @version 1.0
  */
-public interface OperationsStoryRepository extends JpaRepository<OperationsStoryEntity, UUID> {
+public interface OperationsStoryRepository extends JpaRepository<OperationsStoryEntity, UUID>, CustomizedOperationsStoryRepository {
 
     List<OperationsStoryEntity> findAllByCustomerIdOrderByCreate(UUID customerId);
 
