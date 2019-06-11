@@ -66,6 +66,8 @@ public class AbstractRecordDto extends DefaultDto {
 
     private boolean notificationSend;
 
+    private Integer recordNumber;
+
     private List<ServicePriceDto> services = new ArrayList<>();
 
     private List<UUID> servicesIds = new ArrayList<>();

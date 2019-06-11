@@ -69,4 +69,7 @@ public class AbstractRecordEntity extends DefaultEntity {
 
     @Column(name = "notification_send")
     private boolean notificationSend;
+
+    @Column(name = "record_number")
+    private Integer recordNumber;
 }

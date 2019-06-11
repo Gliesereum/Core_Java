@@ -1,0 +1,1 @@
+ALTER TABLE karma.record ADD COLUMN record_number integer;

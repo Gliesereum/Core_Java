@@ -31,4 +31,6 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
 
     List<BaseRecordEntity> findAllByClientId(UUID id);
 
+    long countByBusinessIdAndBeginBetween(UUID businessId, LocalDateTime from, LocalDateTime to);
+
 }
