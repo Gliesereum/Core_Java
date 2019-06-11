@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -89,6 +90,8 @@ public class AuthServiceImpl implements AuthService {
             }
             if (user != null) {
                 TokenStoreDomain token = tokenService.generate(user.getId().toString());
+                user.setLastSignIn(LocalDateTime.now());
+                userService.updateAsync(user);
                 result = createModel(token, user);
             } else {
                 throw new ClientException(USER_NOT_FOUND);
@@ -221,6 +224,8 @@ public class AuthServiceImpl implements AuthService {
         if(user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }
+        user.setLastActivity(LocalDateTime.now());
+        userService.updateAsync(user);
         return createModel(token, user);
     }
 

@@ -24,6 +24,6 @@ public interface UserService extends DefaultService<UserDto, UserEntity> {
 
     UserDto getByPhone(String phone);
 
-    List<DetailedUserDto> getDetailedByIds(List<UUID> ids);
+    void updateAsync(UserDto user);
 
 }

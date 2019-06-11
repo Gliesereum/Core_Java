@@ -2,29 +2,26 @@ package com.gliesereum.account.service.user.impl;
 
 import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserRepository;
-import com.gliesereum.account.service.kyc.KycRequestService;
-import com.gliesereum.account.service.user.*;
+import com.gliesereum.account.service.user.CorporationSharedOwnershipService;
+import com.gliesereum.account.service.user.UserEmailService;
+import com.gliesereum.account.service.user.UserPhoneService;
+import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.enumerated.KycStatus;
-import com.gliesereum.share.common.model.dto.account.kyc.KycRequestDto;
-import com.gliesereum.share.common.model.dto.account.user.*;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
@@ -50,13 +47,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     private UserPhoneService phoneService;
 
     @Autowired
-    private CorporationService corporationService;
-
-    @Autowired
     private CorporationSharedOwnershipService corporationSharedOwnershipService;
-
-    @Autowired
-    private KycRequestService kycRequestService;
 
     public UserServiceImpl(UserRepository userRepository, DefaultConverter defaultConverter) {
         super(userRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -132,7 +123,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Override
     public UserDto getById(UUID id) {
         UserDto byId = super.getById(id);
-        if(byId != null) {
+        if (byId != null) {
             byId.setCorporationIds(corporationSharedOwnershipService.getAllCorporationIdByUserId(byId.getId()));
         }
         return byId;
@@ -159,28 +150,8 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     }
 
     @Override
-    public List<DetailedUserDto> getDetailedByIds(List<UUID> ids) {
-        List<DetailedUserDto> result = null;
-        if (CollectionUtils.isNotEmpty(ids)) {
-            List<UserDto> users = this.getByIds(ids);
-            if (CollectionUtils.isNotEmpty(users)) {
-                List<UUID> userIds = users.stream().map(UserDto::getId).collect(Collectors.toList());
-                Map<UUID, List<CorporationDto>> corporationMap = corporationService.getCorporationByUserIds(userIds);
-                Map<UUID, List<KycRequestDto>> kycMap = kycRequestService.getAllByUserIdsAndStatuses(ids, Arrays.asList(KycStatus.KYC_PASSED));
-                Map<UUID, UserPhoneDto> phoneMap = phoneService.getMapByUserIds(userIds);
-                Map<UUID, UserEmailDto> emailMap = emailService.getMapByUserIds(userIds);
-                result = users.stream().map(i -> {
-                    DetailedUserDto detailedUser = new DetailedUserDto();
-                    detailedUser.setId(i.getId());
-                    detailedUser.setUser(i);
-                    detailedUser.setPhone(phoneMap.getOrDefault(i.getId(), new UserPhoneDto()).getPhone());
-                    detailedUser.setEmail(emailMap.getOrDefault(i.getId(), new UserEmailDto()).getEmail());
-                    detailedUser.setCorporations(corporationMap.get(i.getId()));
-                    detailedUser.setPassedKycRequests(kycMap.get(i.getId()));
-                    return detailedUser;
-                }).collect(Collectors.toList());
-            }
-        }
-        return result;
+    @Async
+    public void updateAsync(UserDto user) {
+        this.update(user);
     }
 }

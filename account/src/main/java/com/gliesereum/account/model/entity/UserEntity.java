@@ -6,8 +6,11 @@ import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +23,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "user")
+@EntityListeners(AuditingEntityListener.class)
 public class UserEntity extends DefaultEntity {
 
     @Column(name = "first_name")
@@ -60,4 +64,14 @@ public class UserEntity extends DefaultEntity {
     @Column(name = "kyc_approved")
     private Boolean kycApproved;
 
+    @Column(name = "last_sign_in")
+    @CreatedDate
+    private LocalDateTime lastSignIn;
+
+    @Column(name = "last_activity")
+    private LocalDateTime lastActivity;
+
+    @Column(name = "create_date")
+    @CreatedDate
+    private LocalDateTime createDate;
 }

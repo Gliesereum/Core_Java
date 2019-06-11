@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,6 +59,12 @@ public class UserDto extends DefaultDto {
     private BanStatus banStatus;
 
     private Boolean kycApproved;
+
+    private LocalDateTime lastSignIn;
+
+    private LocalDateTime lastActivity;
+
+    private LocalDateTime createDate;
 
     private List<UUID> corporationIds = new ArrayList<>();
 }
