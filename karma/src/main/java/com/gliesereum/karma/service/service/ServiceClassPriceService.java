@@ -21,4 +21,6 @@ public interface ServiceClassPriceService extends DefaultService<ServiceClassPri
     ServicePriceDto createAndGetPrice(ServiceClassPriceDto dto);
 
     ServicePriceDto updateAndGetPrice(ServiceClassPriceDto dto);
+
+    ServicePriceDto createAndGetPrice(UUID idPrice, List<UUID> classes);
 }
