@@ -3,6 +3,7 @@ package com.gliesereum.lendinggallery.controller.offer;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
+import com.gliesereum.share.common.model.query.lendinggallery.offer.OperationsStoryQuery;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,12 @@ public class OperationsStoryController {
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         return service.getAllByUserId(SecurityUtil.getUserId());
+    }
+
+    @PostMapping("/by-user/filter")
+    public List<OperationsStoryDto> filterByUser(@RequestBody(required = false) OperationsStoryQuery operationsStoryQuery) {
+        SecurityUtil.checkUserByBanStatus();
+        return service.filterByUserId(operationsStoryQuery, SecurityUtil.getUserId());
     }
 
     @GetMapping("by-customer/{customerId}")

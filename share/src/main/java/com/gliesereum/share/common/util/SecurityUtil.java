@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
@@ -70,7 +71,7 @@ public class SecurityUtil {
 
     public static void checkUserByBanStatus() {
         if (isAnonymous()) {
-            throw new ClientException(USER_NOT_AUTHENTICATION);
+            throw new ClientException(USER_IS_ANONYMOUS);
         }
         UserDto user = SecurityUtil.getUser().getUser();
         if ((user.getBanStatus() != null) && user.getBanStatus().equals(BanStatus.BAN)) {
