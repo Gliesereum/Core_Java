@@ -96,6 +96,9 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
                 throw new ClientException(USER_NOT_FOUND);
             }
             dto.setBanStatus(byId.getBanStatus());
+            dto.setLastActivity(byId.getLastActivity());
+            dto.setLastSignIn(byId.getLastSignIn());
+            dto.setCreateDate(byId.getCreateDate());
             result = super.update(dto);
         }
         return result;

@@ -206,6 +206,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
                     story.setCreate(LocalDateTime.now());
                     story.setOperationType(OperationType.PURCHASE);
                     story.setCustomerId(f.getCustomerId());
+                    story.setStockCount(f.getStockCount());
                     operationsStoryService.create(story);
                 });
             }
