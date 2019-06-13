@@ -1,5 +1,6 @@
 package com.gliesereum.lendinggallery.model.entity.offer;
 
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationStatus;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
@@ -41,6 +42,16 @@ public class OperationsStoryEntity extends DefaultEntity {
 
     @Column(name = "create_date")
     private LocalDateTime create;
+
+    @Column(name = "document_url")
+    private String documentUrl;
+
+    @Column(name = "comment")
+    private String comment;
+
+    @Column(name = "operation_status")
+    @Enumerated(EnumType.STRING)
+    private OperationStatus operationStatus;
 
     @Column(name = "operation_type")
     @Enumerated(EnumType.STRING)
