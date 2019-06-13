@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -193,6 +196,22 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         return result;
     }
 
+    @Override
+    public List<OperationsStoryDto> getByArtBondIdAndOperationType(UUID artBondId, OperationType operationType) {
+        List<OperationsStoryDto> result = null;
+        if (ObjectUtils.allNotNull(artBondId, operationType)) {
+            List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByArtBondIdAndOperationTypeOrderByCreateDesc(artBondId, operationType);
+            result = converter.convert(entities, dtoClass);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                if (operationType.equals(OperationType.PAYMENT)) {
+                    setDaysAfterLastPayment(result);
+                }
+                setArtBond(result, artBondId);
+            }
+        }
+        return result;
+    }
+
     private void setArtBond(List<OperationsStoryDto> operationsStories) {
         if (CollectionUtils.isNotEmpty(operationsStories)) {
             Set<UUID> artBondIds = operationsStories.stream().map(OperationsStoryDto::getArtBondId).collect(Collectors.toSet());
@@ -203,6 +222,13 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
                     operationsStories.forEach(i -> i.setArtBond(artBondMap.get(i.getArtBondId())));
                 }
             }
+        }
+    }
+
+    private void setArtBond(List<OperationsStoryDto> operationsStories, UUID artBondId) {
+        if (CollectionUtils.isNotEmpty(operationsStories) && (artBondId != null)) {
+            ArtBondDto artBond = artBondService.getById(artBondId);
+            operationsStories.forEach(i -> i.setArtBond(artBond));
         }
     }
 
@@ -225,5 +251,23 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         return customerService.findByUserId(SecurityUtil.getUserId());
+    }
+
+    private void setDaysAfterLastPayment(List<OperationsStoryDto> operationsStories) {
+        if (CollectionUtils.isNotEmpty(operationsStories)) {
+            for (int i = 0; i < operationsStories.size(); i++) {
+                for (int j = i + 1; j < operationsStories.size(); j++) {
+                    OperationsStoryDto target = operationsStories.get(i);
+                    OperationsStoryDto compared = operationsStories.get(j);
+                    if (target.getCustomerId().equals(compared.getCustomerId())) {
+                        LocalDateTime targetCreate = target.getCreate();
+                        LocalDateTime comparedCreate = compared.getCreate();
+                        long days = ChronoUnit.DAYS.between(comparedCreate, targetCreate);
+                        target.setDaysAfterLastPayment(days);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

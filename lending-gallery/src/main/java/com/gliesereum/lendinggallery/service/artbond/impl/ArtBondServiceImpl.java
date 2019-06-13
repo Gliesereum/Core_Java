@@ -194,23 +194,24 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             return artBond;
         }
         artBond.setStatusType(status);
-        if (status.equals(StatusType.COMPLETED_COLLECTION)) {
-            List<InvestorOfferDto> offers = investorOfferService.getAllByArtBond(id);
-            if (CollectionUtils.isNotEmpty(offers)) {
-                offers.forEach(f -> {
-                    OperationsStoryDto story = new OperationsStoryDto();
-                    story.setName(artBond.getName());
-                    story.setSum(f.getSumInvestment().doubleValue());
-                    story.setDescription(null);
-                    story.setArtBondId(f.getArtBondId());
-                    story.setCreate(LocalDateTime.now());
-                    story.setOperationType(OperationType.PURCHASE);
-                    story.setCustomerId(f.getCustomerId());
-                    story.setStockCount(f.getStockCount());
-                    operationsStoryService.create(story);
-                });
-            }
-        }
+            //TODO: remove useless code, broke business logic
+//        if (status.equals(StatusType.COMPLETED_COLLECTION)) {
+//            List<InvestorOfferDto> offers = investorOfferService.getAllByArtBond(id);
+//            if (CollectionUtils.isNotEmpty(offers)) {
+//                offers.forEach(f -> {
+//                    OperationsStoryDto story = new OperationsStoryDto();
+//                    story.setName(artBond.getName());
+//                    story.setSum(f.getSumInvestment().doubleValue());
+//                    story.setDescription(null);
+//                    story.setArtBondId(f.getArtBondId());
+//                    story.setCreate(LocalDateTime.now());
+//                    story.setOperationType(OperationType.PURCHASE);
+//                    story.setCustomerId(f.getCustomerId());
+//                    story.setStockCount(f.getStockCount());
+//                    operationsStoryService.create(story);
+//                });
+//            }
+//        }
         return super.update(artBond);
     }
 

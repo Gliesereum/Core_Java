@@ -24,4 +24,6 @@ public interface OperationsStoryRepository extends JpaRepository<OperationsStory
     List<OperationsStoryEntity> findAllByCustomerIdIn(List<UUID> customerIds);
 
     List<OperationsStoryEntity> findAllByArtBondId(UUID artBondId);
+
+    List<OperationsStoryEntity> findAllByArtBondIdAndOperationTypeOrderByCreateDesc(UUID artBondId, OperationType operationType);
 }

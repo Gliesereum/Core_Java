@@ -43,6 +43,8 @@ public class OperationsStoryDto extends DefaultDto {
 
     private OperationType operationType;
 
+    private Long daysAfterLastPayment;
+
     public OperationsStoryDto(UUID customerId, UUID artBondId, Double sum,
                               Integer stockCount,
                               String name, String description,
