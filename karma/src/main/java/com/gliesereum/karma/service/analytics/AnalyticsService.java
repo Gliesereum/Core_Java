@@ -2,6 +2,7 @@ package com.gliesereum.karma.service.analytics;
 
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticDto;
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
+import com.gliesereum.share.common.model.dto.karma.analytics.CountAnalyticDto;
 
 /**
  * @author vitalij
@@ -10,4 +11,6 @@ import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
 public interface AnalyticsService {
 
     AnalyticDto getAnalyticByFilter(AnalyticFilterDto filter);
+
+    CountAnalyticDto getCountAnalyticByFilter(AnalyticFilterDto filter);
 }
