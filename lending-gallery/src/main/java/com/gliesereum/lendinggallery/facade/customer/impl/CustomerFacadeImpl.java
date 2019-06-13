@@ -81,6 +81,7 @@ public class CustomerFacadeImpl implements CustomerFacade {
                 result = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
                 result = result.stream()
                         .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
+                        .peek(i -> i.setCustomer(userCustomer.get(i.getId())))
                         .collect(Collectors.toList());
                 insertOperationsStory(result);
             }
@@ -99,6 +100,9 @@ public class CustomerFacadeImpl implements CustomerFacade {
                 List<DetailedUserDto> detailedUser = userExchangeService.findDetailedByIds(userCustomer.keySet());
                 if (CollectionUtils.isNotEmpty(detailedUser)) {
                     result = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
+                    result = result.stream()
+                            .peek(i -> i.setCustomer(userCustomer.get(i.getId())))
+                            .collect(Collectors.toList());
                 }
             }
 
