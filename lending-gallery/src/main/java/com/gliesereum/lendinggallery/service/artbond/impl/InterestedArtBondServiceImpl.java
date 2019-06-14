@@ -26,25 +26,25 @@ public class InterestedArtBondServiceImpl extends DefaultServiceImpl<InterestedA
     private static final Class<InterestedArtBondDto> DTO_CLASS = InterestedArtBondDto.class;
     private static final Class<InterestedArtBondEntity> ENTITY_CLASS = InterestedArtBondEntity.class;
 
-    private final InterestedArtBondRepository repository;
+    private final InterestedArtBondRepository interestedArtBondRepository;
 
-    public InterestedArtBondServiceImpl(InterestedArtBondRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
+    public InterestedArtBondServiceImpl(InterestedArtBondRepository interestedArtBondRepository, DefaultConverter defaultConverter) {
+        super(interestedArtBondRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.interestedArtBondRepository = interestedArtBondRepository;
     }
 
     @Override
     public InterestedArtBondDto getByArtBondIdAndCustomerId(UUID artBondId, UUID customerId) {
-        InterestedArtBondEntity entity = repository.findByArtBondIdAndCustomerId(artBondId, customerId);
+        InterestedArtBondEntity entity = interestedArtBondRepository.findByArtBondIdAndCustomerId(artBondId, customerId);
         return converter.convert(entity, dtoClass);
     }
 
     @Override
     public List<InterestedArtBondDto> getByArtBondId(UUID artBondId) {
-        if(artBondId ==null){
-            throw  new ClientException(ID_IS_EMPTY);
+        if (artBondId == null) {
+            throw new ClientException(ID_IS_EMPTY);
         }
-        List<InterestedArtBondEntity> entity = repository.findByArtBondId(artBondId);
+        List<InterestedArtBondEntity> entity = interestedArtBondRepository.findByArtBondId(artBondId);
         return converter.convert(entity, dtoClass);
     }
 

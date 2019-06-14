@@ -1,14 +1,13 @@
 package com.gliesereum.permission.model.entity.module;
 
-import com.gliesereum.permission.model.entity.endpoint.EndpointEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author yvlasiuk

@@ -2,7 +2,6 @@ package com.gliesereum.notification.controller;
 
 import com.gliesereum.notification.service.device.UserDeviceService;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.exception.messages.CommonExceptionMessage;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceRegistrationDto;
 import com.gliesereum.share.common.model.response.MapResponse;

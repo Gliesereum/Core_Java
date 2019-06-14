@@ -22,19 +22,20 @@ import java.util.UUID;
 @Service
 public class ModelCarServiceImpl extends DefaultServiceImpl<ModelCarDto, ModelCarEntity> implements ModelCarService {
 
-    @Autowired
-    private ModelCarRepository repository;
-
     private static final Class<ModelCarDto> DTO_CLASS = ModelCarDto.class;
     private static final Class<ModelCarEntity> ENTITY_CLASS = ModelCarEntity.class;
 
-    public ModelCarServiceImpl(ModelCarRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    private ModelCarRepository modelCarRepository;
+
+    @Autowired
+    public ModelCarServiceImpl(ModelCarRepository modelCarRepository, DefaultConverter defaultConverter) {
+        super(modelCarRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.modelCarRepository = modelCarRepository;
     }
 
     @Override
     public List<ModelCarDto> getAllByBrandId(UUID id) {
-        List<ModelCarEntity> entities = repository.getAllByBrandId(id);
+        List<ModelCarEntity> entities = modelCarRepository.getAllByBrandId(id);
         List<ModelCarDto> result = converter.convert(entities, dtoClass);
         result.sort(Comparator.comparing(ModelCarDto::getName));
         return result;

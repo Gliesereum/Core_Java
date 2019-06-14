@@ -21,19 +21,20 @@ import java.util.List;
 @Service
 public class MailStateServiceImpl extends DefaultServiceImpl<MailStateDto, MailStateEntity> implements MailStateService {
 
-    @Autowired
-    private MailStateRepository repository;
-
     private static final Class<MailStateDto> DTO_CLASS = MailStateDto.class;
     private static final Class<MailStateEntity> ENTITY_CLASS = MailStateEntity.class;
 
-    public MailStateServiceImpl(MailStateRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    private MailStateRepository mailStateRepository;
+
+    @Autowired
+    public MailStateServiceImpl(MailStateRepository mailStateRepository, DefaultConverter defaultConverter) {
+        super(mailStateRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.mailStateRepository = mailStateRepository;
     }
 
     @Override
     public List<MailStateDto> getByMessageStatusAndDateAfter(Integer status, LocalDateTime date) {
-        List<MailStateEntity> entities = repository.findAllByMessageStatusAndCreateAfter(status, date);
+        List<MailStateEntity> entities = mailStateRepository.findAllByMessageStatusAndCreateAfter(status, date);
         return converter.convert(entities, dtoClass);
     }
 }

@@ -8,6 +8,7 @@ public enum BanStatus {
     UNBAN,
     BAN;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

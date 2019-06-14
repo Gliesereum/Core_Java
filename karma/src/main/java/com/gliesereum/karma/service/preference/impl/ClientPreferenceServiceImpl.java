@@ -29,15 +29,16 @@ public class ClientPreferenceServiceImpl extends DefaultServiceImpl<ClientPrefer
     private static final Class<ClientPreferenceDto> DTO_CLASS = ClientPreferenceDto.class;
     private static final Class<ClientPreferenceEntity> ENTITY_CLASS = ClientPreferenceEntity.class;
 
-    public ClientPreferenceServiceImpl(ClientPreferenceRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
-    }
-
-    private final ClientPreferenceRepository repository;
+    private final ClientPreferenceRepository clientPreferenceRepository;
 
     @Autowired
     private ServiceService serviceService;
+
+    @Autowired
+    public ClientPreferenceServiceImpl(ClientPreferenceRepository clientPreferenceRepository, DefaultConverter defaultConverter) {
+        super(clientPreferenceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.clientPreferenceRepository = clientPreferenceRepository;
+    }
 
     @Override
     @Transactional
@@ -54,9 +55,7 @@ public class ClientPreferenceServiceImpl extends DefaultServiceImpl<ClientPrefer
             List<ServiceDto> services = serviceService.getByIds(new HashSet<>(serviceIds));
             if (CollectionUtils.isNotEmpty(services)) {
                 List<ClientPreferenceDto> dtos = new ArrayList<>();
-                services.forEach(f -> {
-                    dtos.add(new ClientPreferenceDto(clientId, f.getId(), f.getBusinessCategoryId()));
-                });
+                services.forEach(f -> dtos.add(new ClientPreferenceDto(clientId, f.getId(), f.getBusinessCategoryId())));
                 result = super.create(dtos);
             }
         }
@@ -69,7 +68,7 @@ public class ClientPreferenceServiceImpl extends DefaultServiceImpl<ClientPrefer
         SecurityUtil.checkUserByBanStatus();
         UUID clientId = SecurityUtil.getUserId();
         ClientPreferenceDto result = null;
-        if (!repository.existsByClientIdAndServiceId(clientId, id)) {
+        if (!clientPreferenceRepository.existsByClientIdAndServiceId(clientId, id)) {
             ServiceDto service = serviceService.getById(id);
             if (service != null) {
                 result = create(new ClientPreferenceDto(clientId, service.getId(), service.getBusinessCategoryId()));
@@ -86,13 +85,13 @@ public class ClientPreferenceServiceImpl extends DefaultServiceImpl<ClientPrefer
 
     @Override
     public List<ClientPreferenceDto> getAllByUserId(UUID id) {
-        List<ClientPreferenceEntity> entities = repository.getAllByClientId(id);
+        List<ClientPreferenceEntity> entities = clientPreferenceRepository.getAllByClientId(id);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public List<ClientPreferenceDto> getAllByUserIdAndBusinessCategoryIds(UUID userId, List<UUID> businessCategoryIds) {
-        List<ClientPreferenceEntity> entities = repository.getAllByClientIdAndBusinessCategoryIdIn(userId, businessCategoryIds);
+        List<ClientPreferenceEntity> entities = clientPreferenceRepository.getAllByClientIdAndBusinessCategoryIdIn(userId, businessCategoryIds);
         return converter.convert(entities, dtoClass);
     }
 
@@ -100,13 +99,13 @@ public class ClientPreferenceServiceImpl extends DefaultServiceImpl<ClientPrefer
     @Transactional
     public void deleteByServiceId(UUID id) {
         SecurityUtil.checkUserByBanStatus();
-        repository.deleteByClientIdAndServiceId(SecurityUtil.getUserId(), id);
+        clientPreferenceRepository.deleteByClientIdAndServiceId(SecurityUtil.getUserId(), id);
     }
 
     @Override
     @Transactional
     public void deleteAllByUser() {
         SecurityUtil.checkUserByBanStatus();
-        repository.deleteAllByClientId(SecurityUtil.getUserId());
+        clientPreferenceRepository.deleteAllByClientId(SecurityUtil.getUserId());
     }
 }

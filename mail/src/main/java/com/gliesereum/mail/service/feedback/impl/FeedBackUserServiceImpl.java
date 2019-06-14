@@ -8,6 +8,7 @@ import com.gliesereum.share.common.model.dto.mail.FeedBackUserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,18 +27,19 @@ public class FeedBackUserServiceImpl extends DefaultServiceImpl<FeedBackUserDto,
     private static final Class<FeedBackUserDto> DTO_CLASS = FeedBackUserDto.class;
     private static final Class<FeedBackUserEntity> ENTITY_CLASS = FeedBackUserEntity.class;
 
-    public FeedBackUserServiceImpl(FeedBackUserRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
-    }
+    private final FeedBackUserRepository feedBackUserRepository;
 
-    private final FeedBackUserRepository repository;
+    @Autowired
+    public FeedBackUserServiceImpl(FeedBackUserRepository feedBackUserRepository, DefaultConverter defaultConverter) {
+        super(feedBackUserRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.feedBackUserRepository = feedBackUserRepository;
+    }
 
     @Override
     @Transactional
     public FeedBackUserDto create(FeedBackUserDto dto) {
         FeedBackUserDto result = null;
-        if (dto != null && !repository.existsByAppIdAndUserId(dto.getAppId(), dto.getUserId())) {
+        if (dto != null && !feedBackUserRepository.existsByAppIdAndUserId(dto.getAppId(), dto.getUserId())) {
             result = super.create(dto);
         }
         return result;
@@ -46,7 +48,7 @@ public class FeedBackUserServiceImpl extends DefaultServiceImpl<FeedBackUserDto,
 
     @Override
     public List<FeedBackUserDto> getAllByAppId(UUID id) {
-        List<FeedBackUserEntity> entities = repository.getAllByAppId(id);
+        List<FeedBackUserEntity> entities = feedBackUserRepository.getAllByAppId(id);
         return converter.convert(entities, dtoClass);
     }
 
@@ -54,7 +56,7 @@ public class FeedBackUserServiceImpl extends DefaultServiceImpl<FeedBackUserDto,
     @Transactional
     public List<FeedBackUserDto> createList(List<FeedBackUserDto> dtos) {
         if (CollectionUtils.isNotEmpty(dtos)) {
-            dtos = dtos.stream().filter(f -> !repository.existsByAppIdAndUserId(f.getAppId(), f.getUserId())).collect(Collectors.toList());
+            dtos = dtos.stream().filter(f -> !feedBackUserRepository.existsByAppIdAndUserId(f.getAppId(), f.getUserId())).collect(Collectors.toList());
         }
         return super.create(dtos);
     }

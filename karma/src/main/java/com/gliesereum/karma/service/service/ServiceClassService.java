@@ -4,7 +4,6 @@ import com.gliesereum.karma.model.entity.service.ServiceClassEntity;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceClassDto;
 import com.gliesereum.share.common.service.DefaultService;
 
-import java.util.List;
 import java.util.UUID;
 
 /**

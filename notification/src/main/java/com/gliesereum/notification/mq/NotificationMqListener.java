@@ -28,7 +28,7 @@ public class NotificationMqListener {
         try {
             notificationService.processRecordNotification(recordNotification);
         } catch (Exception e) {
-            log.warn("Error while send notification", e);
+            log.warn("Error while receive record notification", e);
         }
     }
 
@@ -37,7 +37,7 @@ public class NotificationMqListener {
         try {
             notificationService.processBusinessNotification(businessNotification);
         } catch (Exception e) {
-            log.warn("Error while send notification", e);
+            log.warn("Error while receive business notification", e);
         }
     }
 
@@ -46,7 +46,7 @@ public class NotificationMqListener {
         try {
             notificationService.processChatMessageNotification(chatMessageNotification);
         } catch (Exception e) {
-            log.warn("Error while send notification", e);
+            log.warn("Error while receive chat message notification", e);
         }
     }
 }

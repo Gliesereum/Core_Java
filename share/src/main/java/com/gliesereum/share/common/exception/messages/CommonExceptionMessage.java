@@ -6,6 +6,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class CommonExceptionMessage {
 
+    private CommonExceptionMessage() {
+    }
+
     public static final ExceptionMessage ID_NOT_SPECIFIED = new ExceptionMessage(1000, 400, "Id not specified");
     public static final ExceptionMessage VALIDATION_ERROR = new ExceptionMessage(1001, 400, "Validation error");
     public static final ExceptionMessage NOT_VALID_URI = new ExceptionMessage(1002, 400, "Not valid uri");

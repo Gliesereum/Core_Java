@@ -8,6 +8,7 @@ public enum VerifiedStatus {
     VERIFIED,
     UNVERIFIED;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

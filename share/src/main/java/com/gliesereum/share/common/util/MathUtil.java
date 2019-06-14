@@ -6,6 +6,9 @@ package com.gliesereum.share.common.util;
  */
 public class MathUtil {
 
+    private MathUtil() {
+    }
+
     public static Double getOneIfZero(Double value) {
         return (value < 1) ? 1 : value;
     }

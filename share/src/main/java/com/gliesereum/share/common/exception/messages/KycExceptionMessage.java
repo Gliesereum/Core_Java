@@ -6,6 +6,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class KycExceptionMessage {
 
+    private KycExceptionMessage() {
+    }
+
     public static final ExceptionMessage KYC_REQUEST_TYPE_MISSED = new ExceptionMessage(1080, 400, "KYC request type missed");
     public static final ExceptionMessage KYC_OBJECT_ID_MISSED = new ExceptionMessage(1081, 400, "KYC objectId missed");
     public static final ExceptionMessage KYC_REQUEST_CANT_TO_ANOTHER_USER = new ExceptionMessage(1082, 400, "Can't create request to another user");

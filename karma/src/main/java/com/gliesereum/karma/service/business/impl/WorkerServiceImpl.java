@@ -40,8 +40,10 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Service
 public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntity> implements WorkerService {
 
-    @Autowired
-    private WorkerRepository repository;
+    private static final Class<WorkerDto> DTO_CLASS = WorkerDto.class;
+    private static final Class<WorkerEntity> ENTITY_CLASS = WorkerEntity.class;
+
+    private final WorkerRepository workerRepository;
 
     @Autowired
     private WorkingSpaceService workingSpaceService;
@@ -55,11 +57,10 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     @Autowired
     private GroupUserExchangeFacade groupUserExchangeFacade;
 
-    private static final Class<WorkerDto> DTO_CLASS = WorkerDto.class;
-    private static final Class<WorkerEntity> ENTITY_CLASS = WorkerEntity.class;
-
-    public WorkerServiceImpl(WorkerRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    @Autowired
+    public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
+        super(workerRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.workerRepository = workerRepository;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (workingSpaceId == null) {
             throw new ClientException(WORKING_SPACE_ID_IS_EMPTY);
         }
-        List<WorkerEntity> entities = repository.findAllByWorkingSpaceId(workingSpaceId);
+        List<WorkerEntity> entities = workerRepository.findAllByWorkingSpaceId(workingSpaceId);
         return converter.convert(entities, dtoClass);
     }
 
@@ -76,7 +77,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        List<WorkerEntity> entities = repository.findAllByBusinessId(businessId);
+        List<WorkerEntity> entities = workerRepository.findAllByBusinessId(businessId);
         List<WorkerDto> result = converter.convert(entities, dtoClass);
         if (CollectionUtils.isNotEmpty(result)) {
             setUsers(result);
@@ -86,25 +87,21 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Override
     public List<LiteWorkerDto> getLiteWorkerByBusinessId(UUID id) {
-        List<WorkerEntity> entities = repository.findAllByBusinessId(id);
+        List<WorkerEntity> entities = workerRepository.findAllByBusinessId(id);
         List<LiteWorkerDto> result = converter.convert(entities, LiteWorkerDto.class);
         if (CollectionUtils.isNotEmpty(result)) {
-            Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(result.stream().map(m -> m.getUserId()).collect(Collectors.toList()));
+            Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(result.stream().map(LiteWorkerDto::getUserId).collect(Collectors.toList()));
             if (MapUtils.isNotEmpty(users)) {
-                result.forEach(f -> {
-                    f.setUser(users.get(f.getUserId()));
-                });
+                result.forEach(f -> f.setUser(users.get(f.getUserId())));
             }
         }
         return result;
     }
 
     private void setUsers(List<WorkerDto> result) {
-        Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(result.stream().map(m -> m.getUserId()).collect(Collectors.toList()));
+        Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(result.stream().map(WorkerDto::getUserId).collect(Collectors.toList()));
         if (MapUtils.isNotEmpty(users)) {
-            result.forEach(f -> {
-                f.setUser(users.get(f.getUserId()));
-            });
+            result.forEach(f -> f.setUser(users.get(f.getUserId())));
         }
     }
 
@@ -116,7 +113,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (userId == null) {
             throw new ClientException(USER_ID_IS_EMPTY);
         }
-        WorkerEntity entity = repository.findByUserIdAndBusinessId(userId, businessId);
+        WorkerEntity entity = workerRepository.findByUserIdAndBusinessId(userId, businessId);
         return converter.convert(entity, dtoClass);
     }
 
@@ -125,7 +122,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (userId == null) {
             throw new ClientException(USER_ID_IS_EMPTY);
         }
-        List<WorkerEntity> entities = repository.findAllByUserId(userId);
+        List<WorkerEntity> entities = workerRepository.findAllByUserId(userId);
         return converter.convert(entities, dtoClass);
     }
 

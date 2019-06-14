@@ -1,7 +1,6 @@
 package com.gliesereum.account.model.repository.jpa.user;
 
 import com.gliesereum.account.model.entity.CorporationSharedOwnershipEntity;
-import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

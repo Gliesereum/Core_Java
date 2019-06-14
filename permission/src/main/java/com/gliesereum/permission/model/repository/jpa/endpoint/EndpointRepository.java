@@ -2,7 +2,6 @@ package com.gliesereum.permission.model.repository.jpa.endpoint;
 
 import com.gliesereum.permission.model.entity.endpoint.EndpointEntity;
 import com.gliesereum.share.common.model.dto.base.enumerated.Method;
-import com.gliesereum.share.common.model.dto.permission.endpoint.EndpointDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

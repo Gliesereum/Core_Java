@@ -319,7 +319,7 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
     private void sendResultKycToUser(KycRequestDto result, UserDto user) {
         String message = "Status KYC change to: ".concat(result.getKycStatus().value);
         if(StringUtils.isNotEmpty(result.getComment())){
-            message.concat(". Comment: ").concat(result.getComment());
+            message = message.concat(". Comment: ").concat(result.getComment());
         }
         UserEmailDto email = emailService.getByUserId(user.getId());
         if (email != null) {

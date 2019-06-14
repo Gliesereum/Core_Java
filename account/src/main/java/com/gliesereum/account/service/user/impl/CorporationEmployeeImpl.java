@@ -22,22 +22,23 @@ import java.util.UUID;
 @Service
 public class CorporationEmployeeImpl extends DefaultServiceImpl<CorporationEmployeeDto, CorporationEmployeeEntity> implements CorporationEmployeeService {
 
-    @Autowired
-    private CorporationEmployeeRepository repository;
+    private static final Class<CorporationEmployeeDto> DTO_CLASS = CorporationEmployeeDto.class;
+    private static final Class<CorporationEmployeeEntity> ENTITY_CLASS = CorporationEmployeeEntity.class;
+
+    private final CorporationEmployeeRepository corporationEmployeeRepository;
 
     @Autowired
     private CorporationService corporationService;
 
-    private static final Class<CorporationEmployeeDto> DTO_CLASS = CorporationEmployeeDto.class;
-    private static final Class<CorporationEmployeeEntity> ENTITY_CLASS = CorporationEmployeeEntity.class;
-
-    public CorporationEmployeeImpl(CorporationEmployeeRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    @Autowired
+    public CorporationEmployeeImpl(CorporationEmployeeRepository corporationEmployeeRepository, DefaultConverter defaultConverter) {
+        super(corporationEmployeeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.corporationEmployeeRepository = corporationEmployeeRepository;
     }
 
     @Override
     public List<CorporationEmployeeDto> getAllByCorporationId(UUID id) {
-        List<CorporationEmployeeEntity> entities = repository.findByCorporationId(id);
+        List<CorporationEmployeeEntity> entities = corporationEmployeeRepository.findByCorporationId(id);
         return converter.convert(entities, dtoClass);
     }
 

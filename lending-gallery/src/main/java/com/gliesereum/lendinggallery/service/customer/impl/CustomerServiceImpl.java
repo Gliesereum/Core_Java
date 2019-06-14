@@ -44,8 +44,6 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
     private static final Class<CustomerDto> DTO_CLASS = CustomerDto.class;
     private static final Class<CustomerEntity> ENTITY_CLASS = CustomerEntity.class;
 
-    private static final Integer PAYMENT_PERIOD_DAYS = 30;
-
     private final CustomerRepository customerRepository;
 
     @Autowired

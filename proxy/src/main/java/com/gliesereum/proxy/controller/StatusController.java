@@ -1,7 +1,6 @@
 package com.gliesereum.proxy.controller;
 
 import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;

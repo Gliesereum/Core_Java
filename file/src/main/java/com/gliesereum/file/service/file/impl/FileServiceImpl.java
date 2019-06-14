@@ -171,9 +171,10 @@ public class FileServiceImpl implements FileService {
                 throw new ClientException(MULTIPART_FILE_NAME_UNDEFINED);
             }
             file = new File(originalFilename);
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(multipartFile.getBytes());
-            fos.close();
+
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                fos.write(multipartFile.getBytes());
+            }
         } catch (Exception e) {
             throw new CustomException(CommonExceptionMessage.UNKNOWN_SERVER_EXCEPTION, e);
         }

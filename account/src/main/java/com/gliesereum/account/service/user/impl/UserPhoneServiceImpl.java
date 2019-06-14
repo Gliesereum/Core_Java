@@ -4,12 +4,10 @@ import com.gliesereum.account.model.entity.UserPhoneEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserPhoneRepository;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
-import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
-import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.RegexUtil;
@@ -41,12 +39,6 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     private static final Class<UserPhoneEntity> ENTITY_CLASS = UserPhoneEntity.class;
 
     private final UserPhoneRepository userPhoneRepository;
-
-    @Autowired
-    private DefaultConverter converter;
-
-//    @Autowired
-//    private UserService userService;
 
     @Autowired
     private UserEmailService emailService;
@@ -139,13 +131,11 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
             if (checkPhoneByExist(phone)) {
                 throw new ClientException(PHONE_EXIST);
             }
-            //UserDto user = userService.getById(userId);
             if (getByUserId(userId) != null) {
                 throw new ClientException(USER_ALREADY_HAS_PHONE);
             }
             result = new UserPhoneDto();
             result.setPhone(phone);
-            //result.setUserId(user.getId());
             result.setUserId(userId);
         } else {
             throw new ClientException(CODE_WORSE);
@@ -168,7 +158,7 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     @Override
     public List<UserPhoneDto> getByUserIds(List<UUID> ids) {
         List<UserPhoneEntity> entities = userPhoneRepository.getByUserIdIn(ids);
-        return converter.convert(entities,dtoClass);
+        return converter.convert(entities, dtoClass);
     }
 
     @Override

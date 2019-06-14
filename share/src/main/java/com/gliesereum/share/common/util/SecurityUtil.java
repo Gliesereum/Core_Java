@@ -2,8 +2,6 @@ package com.gliesereum.share.common.util;
 
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
-import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
-import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.security.model.UserAuthentication;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,10 +11,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_IN_BAN;
 
 /**
  * @author yvlasiuk
@@ -25,6 +22,9 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 public class SecurityUtil {
 
     private static final UUID ANONYMOUS_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
+    private SecurityUtil() {
+    }
 
     public static UserAuthentication getUser() {
         SecurityContext context = SecurityContextHolder.getContext();

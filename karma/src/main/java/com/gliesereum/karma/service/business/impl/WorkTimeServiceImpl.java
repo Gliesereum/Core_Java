@@ -76,7 +76,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                 throw new ClientException(ALL_OBJECT_ID_NOT_EQUALS);
             }
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(workTime.getBusinessCategoryId(), workTime.getObjectId());
-            list.forEach(f -> checkDayExist(f));
+            list.forEach(this::checkDayExist);
             result = super.create(list);
             businessEsService.indexAsync(workTime.getObjectId());
         }

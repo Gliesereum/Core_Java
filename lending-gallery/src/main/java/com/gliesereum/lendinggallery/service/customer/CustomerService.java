@@ -2,7 +2,6 @@ package com.gliesereum.lendinggallery.service.customer;
 
 import com.gliesereum.lendinggallery.model.entity.customer.CustomerEntity;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.customer.DetailedCustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.CustomerType;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.CustomerPaymentInfo;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;

@@ -9,6 +9,7 @@ import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,14 +27,15 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEntity> implements ServiceService {
 
-    private final ServiceRepository repository;
-
     private static final Class<ServiceDto> DTO_CLASS = ServiceDto.class;
     private static final Class<ServiceEntity> ENTITY_CLASS = ServiceEntity.class;
 
-    public ServiceServiceImpl(ServiceRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
+    private final ServiceRepository serviceRepository;
+
+    @Autowired
+    public ServiceServiceImpl(ServiceRepository serviceRepository, DefaultConverter defaultConverter) {
+        super(serviceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.serviceRepository = serviceRepository;
     }
 
     @Override
@@ -59,13 +61,13 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
 
     @Override
     public List<ServiceDto> getAll() {
-        List<ServiceEntity> entities = repository.getAllByObjectState(ObjectState.ACTIVE);
+        List<ServiceEntity> entities = serviceRepository.getAllByObjectState(ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public ServiceDto getById(UUID id) {
-        ServiceEntity entity = repository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        ServiceEntity entity = serviceRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entity, dtoClass);
     }
 
@@ -73,7 +75,7 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
     public List<ServiceDto> getByIds(Iterable<UUID> ids) {
         List<ServiceDto> result = null;
         if (ids != null) {
-            List<ServiceEntity> entities = repository.getAllByIdInAndObjectState(ids, ObjectState.ACTIVE);
+            List<ServiceEntity> entities = serviceRepository.getAllByIdInAndObjectState(ids, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -97,7 +99,7 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
     public List<ServiceDto> getAllByBusinessCategoryId(UUID businessCategoryId) {
         List<ServiceDto> result = null;
         if (businessCategoryId != null) {
-            List<ServiceEntity> entities = repository.getAllByBusinessCategoryIdAndObjectStateOrderByName(businessCategoryId, ObjectState.ACTIVE);
+            List<ServiceEntity> entities = serviceRepository.getAllByBusinessCategoryIdAndObjectStateOrderByName(businessCategoryId, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
         return result;

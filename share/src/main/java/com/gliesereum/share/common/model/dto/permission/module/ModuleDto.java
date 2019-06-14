@@ -1,14 +1,11 @@
 package com.gliesereum.share.common.model.dto.permission.module;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.permission.endpoint.EndpointDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author yvlasiuk

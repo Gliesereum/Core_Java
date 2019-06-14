@@ -5,7 +5,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,11 +16,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CdnConfiguration {
 
-    @Autowired
-    private CdnProperties cdnProperties;
-
     @Bean
-    public AmazonS3 client() {
+    public AmazonS3 client(CdnProperties cdnProperties) {
         BasicAWSCredentials credentials = new BasicAWSCredentials(
                 cdnProperties.getAccessKey(),
                 cdnProperties.getSecretKey());

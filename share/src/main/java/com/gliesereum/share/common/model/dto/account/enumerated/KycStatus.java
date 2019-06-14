@@ -18,6 +18,7 @@ public enum KycStatus {
         this.value = value;
     }
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

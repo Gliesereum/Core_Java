@@ -5,6 +5,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class AuthExceptionMessage {
 
+    private AuthExceptionMessage() {
+    }
+
     public static final ExceptionMessage VALUE_EMPTY = new ExceptionMessage(1160, 400, "Value is empty");
     public static final ExceptionMessage CODE_EMPTY = new ExceptionMessage(1161, 400, "Code is empty");
     public static final ExceptionMessage TYPE_EMPTY = new ExceptionMessage(1162, 400, "Type is empty");

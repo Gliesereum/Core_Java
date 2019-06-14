@@ -6,6 +6,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class TokenExceptionMessage {
 
+    private TokenExceptionMessage() {
+    }
+
     public static final ExceptionMessage ACCESS_REFRESH_EMPTY = new ExceptionMessage(1100, 400, "Access or Refresh token empty");
     public static final ExceptionMessage ACCESS_EMPTY = new ExceptionMessage(1101, 400, "Access token empty");
     public static final ExceptionMessage ACCESS_TOKEN_NOT_FOUND = new ExceptionMessage(1102, 400, "Access token not found ");

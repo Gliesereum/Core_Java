@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.account.enumerated.VerifiedStatus;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

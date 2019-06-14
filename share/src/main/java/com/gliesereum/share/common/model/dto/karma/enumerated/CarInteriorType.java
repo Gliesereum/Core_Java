@@ -14,6 +14,7 @@ public enum CarInteriorType {
     TASKANA,
     VELOURS;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

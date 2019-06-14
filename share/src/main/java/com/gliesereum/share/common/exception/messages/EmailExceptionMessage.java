@@ -5,6 +5,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class EmailExceptionMessage {
 
+    private EmailExceptionMessage() {
+    }
+
     public static final ExceptionMessage EMAIL_EMPTY = new ExceptionMessage(1140, 400, "Value email is empty");
     public static final ExceptionMessage EMAIL_CODE_EMPTY = new ExceptionMessage(1141, 400, "Value code by email is empty");
     public static final ExceptionMessage EMAIL_NOT_FOUND = new ExceptionMessage(1142, 400, "Email not found ");

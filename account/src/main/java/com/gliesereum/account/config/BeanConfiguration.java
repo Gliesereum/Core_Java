@@ -8,9 +8,7 @@ import org.springframework.boot.validation.MessageInterpolatorFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @author yvlasiuk

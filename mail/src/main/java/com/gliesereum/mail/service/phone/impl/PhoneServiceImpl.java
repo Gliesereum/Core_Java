@@ -6,6 +6,7 @@ import com.gliesereum.mail.service.phone.PhoneService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.mail.MailStateDto;
 import com.gliesereum.share.common.model.dto.mail.PhoneResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +27,13 @@ import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessa
  * @author vitalij
  */
 @Service
+@Slf4j
 public class PhoneServiceImpl implements PhoneService {
 
-    private final static Logger logger = LoggerFactory.getLogger(PhoneServiceImpl.class);
-
-    private final String API_PHONE_URL = "phone.url";
-    private final String TOKEN = "phone.token";
-    private final String ALPHA_NAME = "phone.alpha-name";
-    private final String LOG_EMAIL = "spring.mail.log-email";
+    private static final String API_PHONE_URL = "phone.url";
+    private static final String TOKEN = "phone.token";
+    private static final String ALPHA_NAME = "phone.alpha-name";
+    private static final String LOG_EMAIL = "spring.mail.log-email";
 
     @Autowired
     private Environment environment;
@@ -73,19 +73,19 @@ public class PhoneServiceImpl implements PhoneService {
 
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 String message = "Message: " + text + "\nSend to phone: " + phone;
-                logger.info(message);
+                log.info(message);
                 sendLogInfoToEmailAsync(message);
                 Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("info");
                 stateService.create(new MailStateDto(phone, text, info.get(phone).toString(), responseEntity.getStatusCode().toString(), 0, LocalDateTime.now()));
             } else {
                 Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("additional_info");
                 emailService.sendSimpleMessageAsync(environment.getProperty(LOG_EMAIL), "Phone service error", info.toString());
-                logger.error("Error send message: {} to phone: {} date: {}, return http status: {}", text, phone, new Date().toString(), responseEntity.getStatusCodeValue());
+                log.error("Error send message: {} to phone: {} date: {}, return http status: {}", text, phone, new Date(), responseEntity.getStatusCodeValue());
                 throw new ClientException(NOT_SEND);
             }
         } catch (Exception e) {
             String error = "Error to send request for send phone message: " + e.getMessage();
-            logger.error(error);
+            log.error(error);
             throw e;
         }
     }
@@ -100,16 +100,16 @@ public class PhoneServiceImpl implements PhoneService {
                 Map<String, Object> responseObject = response.getSuccessful_request();
                 String balance = responseObject.get("money").toString().concat(" ")
                         .concat(responseObject.get("currency").toString());
-                logger.info("Balance: {} date: {}", balance, new Date().toString());
+                log.info("Balance: {} date: {}", balance, new Date());
                 return balance;
             } else {
                 String error = "Error check balance";
-                logger.error(error);
+                log.error(error);
                 return error;
             }
         } catch (Exception e) {
             String error = "Error to send request for check balance: " + e.getMessage();
-            logger.error(error);
+            log.error(error);
             throw e;
         }
     }

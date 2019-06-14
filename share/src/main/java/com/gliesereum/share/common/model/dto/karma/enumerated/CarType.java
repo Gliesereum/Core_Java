@@ -16,6 +16,7 @@ public enum CarType {
     CROSSOVER,
     SUV;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

@@ -17,7 +17,6 @@ import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.model.dto.account.user.UserCorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
-import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -44,7 +43,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     private static final Class<CorporationDto> DTO_CLASS = CorporationDto.class;
     private static final Class<CorporationEntity> ENTITY_CLASS = CorporationEntity.class;
 
-    private final CorporationRepository repository;
+    private final CorporationRepository corporationRepository;
 
     @Autowired
     private UserCorporationService userCorporationService;
@@ -61,9 +60,10 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     @Autowired
     private SystemNotificationFacade systemNotificationFacade;
 
-    public CorporationServiceImpl(CorporationRepository repository, DefaultConverter converter) {
-        super(repository, converter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
+    @Autowired
+    public CorporationServiceImpl(CorporationRepository corporationRepository, DefaultConverter converter) {
+        super(corporationRepository, converter, DTO_CLASS, ENTITY_CLASS);
+        this.corporationRepository = corporationRepository;
     }
 
     @Override
@@ -78,13 +78,11 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             userCorporationService.create(new UserCorporationDto(SecurityUtil.getUserId(), result.getId())); //todo in a future remove user-corporation
             if (CollectionUtils.isNotEmpty(dto.getCorporationSharedOwnerships())) {
                 if (dto.getCorporationSharedOwnerships().stream()
-                        .peek(p -> checkCorporationSharedOwnerships(p))
+                        .peek(this::checkCorporationSharedOwnerships)
                         .mapToInt(CorporationSharedOwnershipDto::getShare).sum() > 100) {
                     throw new ClientException(SUM_SHARE_MORE_THEN_100);
                 }
-                dto.getCorporationSharedOwnerships().forEach(f -> {
-                    sharedOwnershipService.create(f);
-                });
+                dto.getCorporationSharedOwnerships().forEach(sharedOwnershipService::create);
             } else {
                 sharedOwnershipService.create(new CorporationSharedOwnershipDto(100, SecurityUtil.getUserId(), null, result.getId()));
             }
@@ -94,7 +92,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
 
     @Override
     public List<CorporationDto> getAll() {
-        List<CorporationEntity> entities = repository.findAllByObjectStateOrderByName(ObjectState.ACTIVE);
+        List<CorporationEntity> entities = corporationRepository.findAllByObjectStateOrderByName(ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
     }
 
@@ -105,7 +103,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
             checkCurrentUserForPermissionActionThisCorporation(dto.getId());
-            CorporationEntity byId = repository.findByIdAndObjectState(dto.getId(), ObjectState.ACTIVE);
+            CorporationEntity byId = corporationRepository.findByIdAndObjectState(dto.getId(), ObjectState.ACTIVE);
             if (byId == null) {
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
@@ -195,7 +193,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         if (id == null) {
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
-        CorporationEntity corporation = repository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        CorporationEntity corporation = corporationRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         if (corporation == null) {
             throw new ClientException(CORPORATION_NOT_FOUND);
         }
@@ -207,7 +205,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         List<CorporationDto> result = null;
         List<UUID> corporationIds = sharedOwnershipService.getAllCorporationIdByUserId(userId);
         if (CollectionUtils.isNotEmpty(corporationIds)) {
-            List<CorporationEntity> entities = repository.findAllByIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
+            List<CorporationEntity> entities = corporationRepository.findAllByIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = converter.convert(entities, dtoClass);
 

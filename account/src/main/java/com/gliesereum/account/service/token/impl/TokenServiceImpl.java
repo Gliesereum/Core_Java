@@ -5,14 +5,12 @@ import com.gliesereum.account.model.repository.redis.TokenStoreRepository;
 import com.gliesereum.account.service.token.TokenService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
@@ -66,7 +64,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public TokenStoreDomain generate(@NotNull String userId) {
+    public TokenStoreDomain generate(String userId) {
         TokenStoreDomain tokenStore = null;
         if (userId != null) {
             tokenStore = new TokenStoreDomain();

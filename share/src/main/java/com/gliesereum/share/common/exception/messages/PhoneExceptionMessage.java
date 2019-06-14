@@ -5,6 +5,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class PhoneExceptionMessage {
 
+    private PhoneExceptionMessage() {
+    }
+
     public static final ExceptionMessage PHONE_EMPTY = new ExceptionMessage(1120, 400, "Value phone number is empty");
     public static final ExceptionMessage PHONE_CODE_EMPTY = new ExceptionMessage(1121, 400, "Value code by phone is empty");
     public static final ExceptionMessage PHONE_NOT_FOUND = new ExceptionMessage(1122, 400, "Phone number not found ");

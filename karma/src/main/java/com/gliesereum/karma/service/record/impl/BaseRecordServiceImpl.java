@@ -137,7 +137,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(businessId)) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
         }
-        LocalDateTime fromDate, toDate;
+        LocalDateTime fromDate;
+        LocalDateTime toDate;
         if (CollectionUtils.isEmpty(statuses)) {
             statuses = Arrays.asList(StatusRecord.values());
         }
@@ -164,9 +165,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             throw new ClientException(TARGET_ID_IS_EMPTY);
         }
         if (businessCategoryService.checkAndGetType(search.getBusinessCategoryId()).equals(BusinessType.CAR)) {
-            search.getTargetIds().forEach(f -> {
-                carService.checkCarExistInCurrentUser(f);
-            });
+            search.getTargetIds().forEach(carService::checkCarExistInCurrentUser);
         } else return Collections.emptyList(); //todo when add new service type need to add logic
         setSearch(search);
         List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
@@ -178,7 +177,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     private void setClients(List<BaseRecordDto> result) {
         if (CollectionUtils.isNotEmpty(result)) {
-            Set<UUID> clientIds = result.stream().map(m -> m.getClientId()).collect(Collectors.toSet());
+            Set<UUID> clientIds = result.stream().map(BaseRecordDto::getClientId).collect(Collectors.toSet());
             Map<UUID, UserDto> clients = exchangeService.findUserMapByIds(clientIds);
             result.forEach(r -> {
                 if (r.getClientId() != null) {
@@ -206,7 +205,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         result = converter.convert(entities, dtoClass);
         setClients(result);
         setFullModelRecord(result);
-        result = setServicePrice(result);
+        setServicePrice(result);
         if (CollectionUtils.isNotEmpty(result)) {
             result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
         }
@@ -243,21 +242,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
 
             });
-        }
-    }
-
-    private void setSearch(RecordsSearchDto search) {
-        if (search == null || CollectionUtils.isEmpty(search.getStatus())) {
-            search.setStatus(Arrays.asList(StatusRecord.values()));
-        }
-        if (search == null || CollectionUtils.isEmpty(search.getProcesses())) {
-            search.setProcesses(Arrays.asList(StatusProcess.values()));
-        }
-        if (search == null || search.getFrom() == null) {
-            search.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
-        }
-        if (search == null || search.getTo() == null) {
-            search.setTo(search.getFrom().plusYears(1L));
         }
     }
 
@@ -345,6 +329,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Transactional
     @RecordCreate
     public BaseRecordDto create(BaseRecordDto dto) {
+        BaseRecordDto result = null;
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
             setType(dto);
@@ -354,10 +339,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
-            BaseRecordDto result = createRecord(dto);
-            return result;
+            result = createRecord(dto);
         }
-        return null;
+        return result;
     }
 
     @Override
@@ -368,8 +352,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
-        BaseRecordDto result = createRecord(dto);
-        return result;
+        return createRecord(dto);
     }
 
     @Override
@@ -616,9 +599,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private void createOrders(BaseRecordDto dto) {
         if (dto != null && CollectionUtils.isNotEmpty(dto.getServicesIds())) {
             List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
-            services.forEach(f -> {
-                orderService.create(new OrderDto(f.getServiceId(), dto.getId(), f.getPrice(), false));
-            });
+            services.forEach(f -> orderService.create(new OrderDto(f.getServiceId(), dto.getId(), f.getPrice(), false)));
         }
         if (dto != null && dto.getPackageId() != null) {
             PackageDto packageDto = packageService.getById(dto.getPackageId());
@@ -749,6 +730,24 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             LocalDateTime endOfDay = LocalDateTime.of(dto.getBegin().toLocalDate(), LocalTime.MAX);
             long recordToDay = baseRecordRepository.countByBusinessIdAndBeginBetween(dto.getBusinessId(), startOfDay, endOfDay);
             dto.setRecordNumber((int)recordToDay + 1);
+        }
+    }
+
+    private void setSearch(RecordsSearchDto search) {
+        if (search == null) {
+            search = new RecordsSearchDto();
+        }
+        if (CollectionUtils.isEmpty(search.getStatus())) {
+            search.setStatus(Arrays.asList(StatusRecord.values()));
+        }
+        if (CollectionUtils.isEmpty(search.getProcesses())) {
+            search.setProcesses(Arrays.asList(StatusProcess.values()));
+        }
+        if (search.getFrom() == null) {
+            search.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
+        }
+        if (search.getTo() == null) {
+            search.setTo(search.getFrom().plusYears(1L));
         }
     }
 }

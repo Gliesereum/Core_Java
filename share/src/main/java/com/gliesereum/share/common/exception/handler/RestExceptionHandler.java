@@ -1,7 +1,6 @@
 package com.gliesereum.share.common.exception.handler;
 
 import com.gliesereum.share.common.exception.CustomException;
-import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.exception.response.ErrorResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +47,7 @@ public class RestExceptionHandler {
         errorResponse.setMessage(ex.getMessage());
         errorResponse.setHttpCode(ex.getHttpCode());
         errorResponse.setPath(ex.getOriginalPath());
-        return buildResponse(errorResponse,ex);
+        return buildResponse(errorResponse, ex);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -95,7 +94,7 @@ public class RestExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(ErrorResponse response, Exception ex) {
-        if(StringUtils.isBlank(response.getPath())) {
+        if (StringUtils.isBlank(response.getPath())) {
             response.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
         }
         response.setTimestamp(LocalDateTime.now());

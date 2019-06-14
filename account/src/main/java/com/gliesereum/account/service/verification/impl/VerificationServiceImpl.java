@@ -30,6 +30,8 @@ public class VerificationServiceImpl implements VerificationService {
     @Autowired
     private MailExchangeService mailExchangeService;
 
+    private final Random random;
+
 /*    @Autowired
     private Environment environment;
 
@@ -37,6 +39,10 @@ public class VerificationServiceImpl implements VerificationService {
     private RabbitTemplate template;
 
     private final String MAIL_QUEUE = "spring.rabbitmq.queue-mail";*/
+
+    public VerificationServiceImpl() {
+        random = new Random();
+    }
 
     @Override
     public boolean checkVerification(@NotNull String value, @NotNull String code) {
@@ -52,7 +58,6 @@ public class VerificationServiceImpl implements VerificationService {
 
     @Override
     public void sendVerificationCode(@NotNull String value, VerificationType type) {
-        Random random = new Random();
         String code = String.valueOf(random.ints(100000, (999998 + 1)).limit(1).findFirst().getAsInt());
         VerificationDomain domain = new VerificationDomain();
         domain.setId(value + code);

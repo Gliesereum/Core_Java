@@ -5,6 +5,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class UserExceptionMessage {
 
+    private UserExceptionMessage() {
+    }
+
     public static final ExceptionMessage USER_NOT_FOUND = new ExceptionMessage(1010, 400, "User not found ");
     public static final ExceptionMessage USER_NOT_AUTHENTICATION = new ExceptionMessage(1011, 400, "User not authentication ");
     public static final ExceptionMessage USER_ERROR_CHANGE_FIRST_NAME = new ExceptionMessage(1012, 400, "You can't change first name. Contact administrator");

@@ -8,6 +8,7 @@ public enum PayType {
 
     CASH, NO_CASH;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }
