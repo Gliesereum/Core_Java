@@ -6,6 +6,7 @@ import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationStatus;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,6 +37,12 @@ public class OperationsStoryDto extends DefaultDto {
     private String name;
 
     private String description;
+
+    private String documentUrl;
+
+    private String comment;
+
+    private OperationStatus operationStatus;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
