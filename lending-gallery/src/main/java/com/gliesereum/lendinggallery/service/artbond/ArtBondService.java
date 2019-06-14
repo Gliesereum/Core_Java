@@ -2,6 +2,7 @@ package com.gliesereum.lendinggallery.service.artbond;
 
 import com.gliesereum.lendinggallery.model.entity.artbond.ArtBondEntity;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.artbond.DetailedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
@@ -28,6 +29,8 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
     List<ArtBondDto> getAllByTags(List<String> tags);
 
     List<ArtBondDto> getAllByUser();
+
+    List<DetailedArtBondDto> getDetailedAll();
 
     Map<String, Double> currencyExchange(Long sum);
 
