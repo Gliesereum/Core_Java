@@ -7,6 +7,9 @@ import com.gliesereum.lendinggallery.service.customer.CustomerService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.CustomerType;
@@ -27,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
@@ -51,6 +56,9 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
 
     @Autowired
     private ArtBondService artBondService;
+
+    @Autowired
+    private UserExchangeService userExchangeService;
 
     @Autowired
     public CustomerServiceImpl(CustomerRepository customerRepository, DefaultConverter defaultConverter) {
@@ -216,6 +224,34 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
             }
         }
         return result;
+    }
+
+    @Override
+    public <T extends DefaultDto> void setCustomerAndUser(List<T> list,
+                                                          Function<T, UUID> customerIdGetter,
+                                                          BiConsumer<T, CustomerDto> customerSetter,
+                                                          BiConsumer<T, UserDto> userSetter) {
+        if (CollectionUtils.isNotEmpty(list)) {
+            List<UUID> customerIds = list.stream().map(customerIdGetter).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(customerIds)) {
+                List<CustomerDto> customers = super.getByIds(customerIds);
+                if (CollectionUtils.isNotEmpty(customers)) {
+                    Map<UUID, CustomerDto> customerMap = customers.stream().collect(Collectors.toMap(CustomerDto::getId, i -> i));
+                    List<UUID> userIds = customers.stream().map(CustomerDto::getUserId).collect(Collectors.toList());
+                    Map<UUID, UserDto> userMap = userExchangeService.findUserMapByIds(userIds);
+                    list.forEach(i -> {
+                        UUID customerId = customerIdGetter.apply(i);
+                        if (customerId != null) {
+                            CustomerDto customer = customerMap.get(customerId);
+                            if (customer != null) {
+                                customerSetter.accept(i, customer);
+                                userSetter.accept(i, userMap.get(customer.getUserId()));
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 
     private void checkExist() {

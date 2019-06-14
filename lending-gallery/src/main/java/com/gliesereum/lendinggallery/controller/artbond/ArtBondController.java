@@ -3,6 +3,7 @@ package com.gliesereum.lendinggallery.controller.artbond;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.media.MediaService;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.artbond.DetailedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
@@ -71,6 +72,11 @@ public class ArtBondController {
     @GetMapping("/status")
     public List<ArtBondDto> getAllByStatus(@RequestParam("status") StatusType status) {
         return service.getAllByStatus(status);
+    }
+
+    @GetMapping("/detailed/all")
+    public List<DetailedArtBondDto> getDetailedAll() {
+        return service.getDetailedAll();
     }
 
     @GetMapping("/by-user")

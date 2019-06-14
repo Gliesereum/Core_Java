@@ -11,12 +11,10 @@ import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.artbond.DetailedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
@@ -36,6 +34,7 @@ import yahoofinance.YahooFinance;
 import yahoofinance.quotes.fx.FxQuote;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -249,6 +248,18 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     }
 
     @Override
+    public List<DetailedArtBondDto> getDetailedAll() {
+        List<DetailedArtBondDto> result = null;
+        List<ArtBondEntity> entities = artBondRepository.findAll();
+        result = converter.convert(entities, DetailedArtBondDto.class);
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(this::setAdditionalField);
+            setDetailedInfo(result);
+        }
+        return result;
+    }
+
+    @Override
     public Map<String, Double> currencyExchange(Long sum) {
         Map<String, Double> result = new HashMap<>();
         try {
@@ -377,6 +388,61 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             interested = Collections.emptyList();
         }
         dto.setInterested(interested);
+    }
+
+    private void setAdditionalField(DetailedArtBondDto dto) {
+        setMedia(dto);
+
+        dto.setPaymentCalendar(getPaymentCalendar(dto, false));
+        dto.setNkd(getNkd(dto));
+        dto.setPercentPerYear(getPercentPerYear(dto));
+        dto.setAmountCollected(getAmountCollected(dto.getId()));
+        List<InterestedArtBondDto> interested = interestedArtBondService.getByArtBondId(dto.getId());
+        if (CollectionUtils.isEmpty(interested)) {
+            interested = Collections.emptyList();
+        }
+        dto.setInterested(interested);
+    }
+
+    private void setDetailedInfo(List<DetailedArtBondDto> artBonds) {
+        if (CollectionUtils.isNotEmpty(artBonds)) {
+            setOperationsStory(artBonds);
+            artBonds.forEach(i -> {
+                List<OperationsStoryDto> operations = i.getOperations();
+                double paymentSum = 0.0;
+                long purchaseCount = 0;
+                if (CollectionUtils.isNotEmpty(operations)) {
+                    for (OperationsStoryDto operation : operations) {
+                        if (operation.getOperationType().equals(OperationType.PAYMENT) || operation.getOperationType().equals(OperationType.PAYMENT_REWARD)) {
+                            paymentSum = paymentSum + operation.getSum();
+                        }
+                        if (operation.getOperationType().equals(OperationType.PURCHASE)) {
+                            purchaseCount = purchaseCount + 1;
+                        }
+                    }
+                }
+                i.setPaymentSum(paymentSum);
+                i.setPurchaseCount(purchaseCount);
+                List<PaymentCalendarDto> paymentCalendar = i.getPaymentCalendar();
+                if (CollectionUtils.isNotEmpty(paymentCalendar)) {
+                    LocalDateTime currentDate = LocalDate.now().atStartOfDay();
+                    for (PaymentCalendarDto paymentCalendarDto : paymentCalendar) {
+                        if (paymentCalendarDto.getDate().isAfter(currentDate)) {
+                            i.setNextPaymentDate(paymentCalendarDto.getDate());
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void setOperationsStory(List<DetailedArtBondDto> artBonds) {
+        if (CollectionUtils.isNotEmpty(artBonds)) {
+            List<UUID> artBondIds = artBonds.stream().map(DetailedArtBondDto::getId).collect(Collectors.toList());
+            Map<UUID, List<OperationsStoryDto>> operations = operationsStoryService.getAllByArtBondIds(artBondIds);
+            artBonds.forEach(i -> i.setOperations(operations.get(i.getId())));
+        }
     }
 
     private void setMedia(ArtBondDto dto) {

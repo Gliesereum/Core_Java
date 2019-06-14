@@ -25,5 +25,7 @@ public interface OperationsStoryRepository extends JpaRepository<OperationsStory
 
     List<OperationsStoryEntity> findAllByArtBondId(UUID artBondId);
 
+    List<OperationsStoryEntity> findAllByArtBondIdIn(List<UUID> artBondIds);
+
     List<OperationsStoryEntity> findAllByArtBondIdAndOperationTypeOrderByCreateDesc(UUID artBondId, OperationType operationType);
 }

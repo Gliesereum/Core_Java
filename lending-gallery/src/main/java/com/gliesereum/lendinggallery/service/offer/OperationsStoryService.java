@@ -3,6 +3,7 @@ package com.gliesereum.lendinggallery.service.offer;
 import com.gliesereum.lendinggallery.model.entity.offer.OperationsStoryEntity;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryFullDto;
 import com.gliesereum.share.common.model.query.lendinggallery.offer.OperationsStoryQuery;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -20,6 +21,8 @@ public interface OperationsStoryService extends DefaultService<OperationsStoryDt
 
     Map<UUID, List<OperationsStoryDto>> getAllByCustomerIds(List<UUID> customerIds);
 
+    Map<UUID, List<OperationsStoryDto>> getAllByArtBondIds(List<UUID> artBondIds);
+
     List<OperationsStoryDto> getAllByCustomerIdAndArtBondId(UUID customerId, UUID artBondId);
 
     List<OperationsStoryDto> getAllByUserId(UUID userId);
@@ -35,4 +38,6 @@ public interface OperationsStoryService extends DefaultService<OperationsStoryDt
     List<OperationsStoryDto> getAllPurchaseByArtBond(UUID artBondId);
 
     List<OperationsStoryDto> getByArtBondIdAndOperationType(UUID artBondId, OperationType operationType);
+
+    List<OperationsStoryFullDto> getByArtBondIdAndOperationTypeFull(UUID artBondId, OperationType operationType);
 }

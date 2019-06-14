@@ -11,6 +11,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryFullDto;
 import com.gliesereum.share.common.model.query.lendinggallery.offer.OperationsStoryQuery;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -72,11 +73,20 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             List<OperationsStoryDto> dtos = converter.convert(entities, dtoClass);
             if (CollectionUtils.isNotEmpty(dtos)) {
                 setArtBond(dtos);
-                dtos.forEach(i -> {
-                    List<OperationsStoryDto> value = result.getOrDefault(i.getCustomerId(), new ArrayList<>());
-                    value.add(i);
-                    result.put(i.getCustomerId(), value);
-                });
+                result = dtos.stream().collect(Collectors.groupingBy(OperationsStoryDto::getCustomerId));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Map<UUID, List<OperationsStoryDto>> getAllByArtBondIds(List<UUID> artBondIds) {
+        Map<UUID, List<OperationsStoryDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(artBondIds)) {
+            List<OperationsStoryEntity> operations = operationsStoryRepository.findAllByArtBondIdIn(artBondIds);
+            List<OperationsStoryDto> dtos = converter.convert(operations, dtoClass);
+            if (CollectionUtils.isNotEmpty(dtos)) {
+                result = dtos.stream().collect(Collectors.groupingBy(OperationsStoryDto::getArtBondId));
             }
         }
         return result;
@@ -208,6 +218,18 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
                 }
                 setArtBond(result, artBondId);
             }
+        }
+        return result;
+    }
+
+    @Override
+    public List<OperationsStoryFullDto> getByArtBondIdAndOperationTypeFull(UUID artBondId, OperationType operationType) {
+        List<OperationsStoryFullDto> result = null;
+        List<OperationsStoryDto> operations = getByArtBondIdAndOperationType(artBondId, operationType);
+        if (CollectionUtils.isNotEmpty(operations)) {
+            result = converter.convert(operations, OperationsStoryFullDto.class);
+            customerService.setCustomerAndUser(result, OperationsStoryDto::getCustomerId,
+                    OperationsStoryFullDto::setCustomer, OperationsStoryFullDto::setUser);
         }
         return result;
     }

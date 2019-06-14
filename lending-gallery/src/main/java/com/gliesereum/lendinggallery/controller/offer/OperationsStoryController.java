@@ -4,6 +4,7 @@ import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryFullDto;
 import com.gliesereum.share.common.model.query.lendinggallery.offer.OperationsStoryQuery;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -57,8 +58,8 @@ public class OperationsStoryController {
     }
 
     @GetMapping("/by-art-bond")
-    public List<OperationsStoryDto> getByArtBond(@RequestParam("artBondId") UUID artBondId, @RequestParam("operationType") OperationType operationType) {
-        return service.getByArtBondIdAndOperationType(artBondId, operationType);
+    public List<OperationsStoryFullDto> getByArtBond(@RequestParam("artBondId") UUID artBondId, @RequestParam("operationType") OperationType operationType) {
+        return service.getByArtBondIdAndOperationTypeFull(artBondId, operationType);
     }
 
     @GetMapping("/{id}")
