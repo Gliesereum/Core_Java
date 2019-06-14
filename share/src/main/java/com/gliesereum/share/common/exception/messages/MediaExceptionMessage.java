@@ -6,6 +6,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class MediaExceptionMessage {
 
+    private MediaExceptionMessage() {
+    }
+
     public static final ExceptionMessage MULTIPART_DATA_EMTPY = new ExceptionMessage(1510, 400, "Multipart data is empty");
     public static final ExceptionMessage MULTIPART_TYPE_UNDEFINED = new ExceptionMessage(1511, 400, "Multipart data type undefined");
     public static final ExceptionMessage MULTIPART_FILE_NAME_UNDEFINED = new ExceptionMessage(1512, 400, "Multipart file name undefined");

@@ -27,7 +27,7 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
 
     private PatternLayout layout;
 
-    private List<Map<String,Object>> eventQueue = new LinkedList<>();
+    private static List<Map<String,Object>> eventQueue = new LinkedList<>();
 
     public static LoggingService loggingService;
 
@@ -43,20 +43,20 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
     public void setPublisher(LoggingService loggingService,
                              @Value("${remoteLogging.enable:true}") Boolean remoteLoggingEnable) {
         if (remoteLoggingEnable) {
-            this.loggingService = loggingService;
-            publisherEnable = true;
+            LoggingAppender.loggingService = loggingService;
+            LoggingAppender.publisherEnable = true;
         } else {
-            if(activeAppender != null) {
-                activeAppender.stop();
+            if(LoggingAppender.activeAppender != null) {
+                LoggingAppender.activeAppender.stop();
             }
-            this.remoteLoggingEnable = false;
-            eventQueue.clear();
+            LoggingAppender.remoteLoggingEnable = false;
+            LoggingAppender.eventQueue.clear();
         }
     }
 
     @Override
     protected void append(ILoggingEvent event) {
-        if (remoteLoggingEnable) {
+        if (LoggingAppender.remoteLoggingEnable) {
             Map<String, Object> eventMap = new HashMap<>();
             eventMap.put("timestamp", event.getTimeStamp());
             eventMap.put("level", event.getLevel());
@@ -65,16 +65,16 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
             eventMap.put("massage", event.getFormattedMessage());
             eventMap.put("mdc", event.getMDCPropertyMap());
             putError(eventMap, event);
-            if (publisherEnable) {
-                if (queueIsNotEmpty) {
-                    eventQueue.forEach(loggingService::publishingObject);
-                    eventQueue.clear();
-                    queueIsNotEmpty = false;
+            if (LoggingAppender.publisherEnable) {
+                if (LoggingAppender.queueIsNotEmpty) {
+                    LoggingAppender.eventQueue.forEach(loggingService::publishingObject);
+                    LoggingAppender.eventQueue.clear();
+                    LoggingAppender.queueIsNotEmpty = false;
                 }
-                loggingService.publishingObject(eventMap);
+                LoggingAppender.loggingService.publishingObject(eventMap);
             } else {
-                eventQueue.add(eventMap);
-                queueIsNotEmpty = true;
+                LoggingAppender.eventQueue.add(eventMap);
+                LoggingAppender.queueIsNotEmpty = true;
             }
         }
     }
@@ -82,7 +82,7 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
     @Override
     public void start() {
         super.start();
-        activeAppender = this;
+        LoggingAppender.activeAppender = this;
     }
 
     private void putError(Map<String, Object> eventMap, ILoggingEvent event) {

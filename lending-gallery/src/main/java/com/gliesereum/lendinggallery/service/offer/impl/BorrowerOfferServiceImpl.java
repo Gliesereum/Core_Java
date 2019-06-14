@@ -30,22 +30,22 @@ import static com.gliesereum.share.common.exception.messages.LandingGalleryExcep
 @Service
 public class BorrowerOfferServiceImpl extends DefaultServiceImpl<BorrowerOfferDto, BorrowerOfferEntity> implements BorrowerOfferService {
 
-    @Autowired
-    private BorrowerOfferRepository repository;
+    private static final Class<BorrowerOfferDto> DTO_CLASS = BorrowerOfferDto.class;
+    private static final Class<BorrowerOfferEntity> ENTITY_CLASS = BorrowerOfferEntity.class;
+
+    private final BorrowerOfferRepository borrowerOfferRepository;
 
     @Autowired
     private CustomerService customerService;
 
-    private static final Class<BorrowerOfferDto> DTO_CLASS = BorrowerOfferDto.class;
-    private static final Class<BorrowerOfferEntity> ENTITY_CLASS = BorrowerOfferEntity.class;
-
-    public BorrowerOfferServiceImpl(BorrowerOfferRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    public BorrowerOfferServiceImpl(BorrowerOfferRepository borrowerOfferRepository, DefaultConverter defaultConverter) {
+        super(borrowerOfferRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.borrowerOfferRepository = borrowerOfferRepository;
     }
 
     @Override
     public List<BorrowerOfferDto> getAllByState(OfferStateType state) {
-        List<BorrowerOfferEntity> entities = repository.findAllByStateType(state);
+        List<BorrowerOfferEntity> entities = borrowerOfferRepository.findAllByStateType(state);
         return converter.convert(entities, dtoClass);
     }
 
@@ -65,7 +65,7 @@ public class BorrowerOfferServiceImpl extends DefaultServiceImpl<BorrowerOfferDt
         CustomerDto customer = getCustomer();
         List<BorrowerOfferEntity> entities = null;
         if(customer != null) {
-            entities = repository.findAllByCustomerIdOrderByCreate(customer.getUserId());
+            entities = borrowerOfferRepository.findAllByCustomerIdOrderByCreate(customer.getUserId());
         }
         return converter.convert(entities, dtoClass);
     }

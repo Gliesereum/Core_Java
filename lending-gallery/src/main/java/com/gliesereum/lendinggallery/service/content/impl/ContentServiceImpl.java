@@ -24,28 +24,29 @@ import java.util.List;
 @Service
 public class ContentServiceImpl extends DefaultServiceImpl<ContentDto, ContentEntity> implements ContentService {
 
-    @Autowired
-    private ContentRepository repository;
-
     private static final Class<ContentDto> DTO_CLASS = ContentDto.class;
     private static final Class<ContentEntity> ENTITY_CLASS = ContentEntity.class;
 
-    public ContentServiceImpl(ContentRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    private final ContentRepository contentRepository;
+
+    @Autowired
+    public ContentServiceImpl(ContentRepository contentRepository, DefaultConverter defaultConverter) {
+        super(contentRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.contentRepository = contentRepository;
     }
 
     @Override
     public List<ContentDto> getAllByContentType(ContentType type, Integer page, Integer size) {
-        List<ContentEntity> entities = repository.findAllByContentTypeOrderByCreate(type, PageRequest.of(page, size));
+        List<ContentEntity> entities = contentRepository.findAllByContentTypeOrderByCreate(type, PageRequest.of(page, size));
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public List<ContentDto> getAllByTags(List<String> tags, Integer page, Integer size) {
-        if(CollectionUtils.isEmpty(tags)){
+        if (CollectionUtils.isEmpty(tags)) {
             return new ArrayList<>();
         }
-        List<ContentEntity> entities = repository.findAllByTagsContainsOrderByCreate(tags, PageRequest.of(page, size));
+        List<ContentEntity> entities = contentRepository.findAllByTagsContainsOrderByCreate(tags, PageRequest.of(page, size));
         return converter.convert(entities, dtoClass);
     }
 }

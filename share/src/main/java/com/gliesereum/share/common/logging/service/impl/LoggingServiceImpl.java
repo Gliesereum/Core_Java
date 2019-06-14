@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoggingServiceImpl implements LoggingService {
 
-    private final String SERVICE_NAME = "spring.application.name";
-    private final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
+    private static final String SERVICE_NAME = "spring.application.name";
+    private static final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
 
     @Autowired
     private Environment environment;
@@ -38,7 +38,7 @@ public class LoggingServiceImpl implements LoggingService {
         try {
             rabbitTemplate.convertAndSend(environment.getRequiredProperty(QUEUE_LOGSTASH), jsonNode);
         } catch (Exception e) {
-
+            log.warn("Error while logging: {} ", e.getMessage());
         }
     }
 
@@ -51,8 +51,7 @@ public class LoggingServiceImpl implements LoggingService {
                 ((ObjectNode) jsonNode).put("service_name", environment.getRequiredProperty(SERVICE_NAME));
                 publishing(jsonNode);
             } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
+                log.warn("Error while logging: {} ", e.getMessage());
             }
         }
     }

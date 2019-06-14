@@ -1,7 +1,5 @@
 package com.gliesereum.share.common.config.redis;
 
-import com.gliesereum.share.common.redis.publisher.RedisMessagePublisher;
-import com.gliesereum.share.common.redis.publisher.impl.RedisMessagePublisherImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,11 +24,5 @@ public class RedisDefaultConfiguration {
         template.setHashValueSerializer(new GenericToStringSerializer<>(Object.class));
         template.setValueSerializer(new GenericToStringSerializer<>(Object.class));
         return template;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public RedisMessagePublisher redisMessagePublisher(RedisTemplate<String, Object> redisTemplate) {
-        return new RedisMessagePublisherImpl(redisTemplate);
     }
 }

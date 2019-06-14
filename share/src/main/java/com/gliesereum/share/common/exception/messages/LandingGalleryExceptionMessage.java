@@ -5,6 +5,9 @@ package com.gliesereum.share.common.exception.messages;
  */
 public class LandingGalleryExceptionMessage {
 
+    private LandingGalleryExceptionMessage() {
+    }
+
     public static final ExceptionMessage ID_IS_EMPTY = new ExceptionMessage(1600, 400, "Id is empty");
     public static final ExceptionMessage MODEL_IS_EMPTY = new ExceptionMessage(1601, 400, "Model is empty");
     public static final ExceptionMessage MEDIA_NOT_FOUND_BY_ID = new ExceptionMessage(1602, 400, "Media not found by id");

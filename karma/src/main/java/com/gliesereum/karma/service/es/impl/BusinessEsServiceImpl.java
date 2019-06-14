@@ -46,16 +46,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BusinessEsServiceImpl implements BusinessEsService {
 
-    private final static String EMPTY_FIELD_SCRIPT = "doc[''{0}''].values.length < 1";
+    private static final String EMPTY_FIELD_SCRIPT = "doc[''{0}''].values.length < 1";
 
-    private final static String FIELD_SERVICES = "services";
-    private final static String FIELD_SERVICE_ID = "services.serviceId";
-    private final static String FIELD_CLASS_IDS = "services.serviceClassIds";
-    private final static String FIELD_FILTER_IDS = "services.filterIds";
-    private final static String FIELD_FILTER_ATTRIBUTE_IDS = "services.filterAttributeIds";
-    private final static String FIELD_BUSINESS_CATEGORY_ID = "businessCategoryId";
-    private final static String FIELD_GEO_POINT = "geoPoint";
-    private final static String FIELD_OBJECT_STATE = "objectState";
+    private static final String FIELD_SERVICES = "services";
+    private static final String FIELD_SERVICE_ID = "services.serviceId";
+    private static final String FIELD_CLASS_IDS = "services.serviceClassIds";
+    private static final String FIELD_FILTER_IDS = "services.filterIds";
+    private static final String FIELD_FILTER_ATTRIBUTE_IDS = "services.filterAttributeIds";
+    private static final String FIELD_BUSINESS_CATEGORY_ID = "businessCategoryId";
+    private static final String FIELD_GEO_POINT = "geoPoint";
+    private static final String FIELD_OBJECT_STATE = "objectState";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -156,9 +156,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessList);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
-                if (ObjectUtils.allNotNull(document)) {
-                    document = insertGeoPoint(document, business);
-                    document = insertServices(document, serviceMap.get(business.getId()));
+                if (document != null) {
+                    insertGeoPoint(document, business);
+                    insertServices(document, serviceMap.get(business.getId()));
                     if (CollectionUtils.isNotEmpty(business.getSpaces())) {
                         document.setCountBox(business.getSpaces().size());
                     }
@@ -267,14 +267,13 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     }
 
     private void addGeoDistanceQuery(BoolQueryBuilder boolQueryBuilder, GeoDistanceDto geoDistance) {
-        if (geoDistance != null) {
-            if (ObjectUtils.allNotNull(geoDistance.getLatitude(), geoDistance.getLongitude(), geoDistance.getDistanceMeters())) {
-                GeoDistanceQueryBuilder geoDistanceQueryBuilder = new GeoDistanceQueryBuilder(FIELD_GEO_POINT)
-                        .point(geoDistance.getLatitude(), geoDistance.getLongitude())
-                        .distance(geoDistance.getDistanceMeters(), DistanceUnit.METERS);
-                boolQueryBuilder.filter(geoDistanceQueryBuilder);
-            }
+        if ((geoDistance != null) && ObjectUtils.allNotNull(geoDistance.getLatitude(), geoDistance.getLongitude(), geoDistance.getDistanceMeters())) {
+            GeoDistanceQueryBuilder geoDistanceQueryBuilder = new GeoDistanceQueryBuilder(FIELD_GEO_POINT)
+                    .point(geoDistance.getLatitude(), geoDistance.getLongitude())
+                    .distance(geoDistance.getDistanceMeters(), DistanceUnit.METERS);
+            boolQueryBuilder.filter(geoDistanceQueryBuilder);
         }
+
     }
 
     private void addObjectStateQuery(BoolQueryBuilder boolQueryBuilder, ObjectState objectState) {
@@ -296,22 +295,19 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     }
 
     private void setServices(BusinessSearchDto businessSearch) {
-        if (businessSearch != null) {
-            if (CollectionUtils.isEmpty(businessSearch.getServiceIds())) {
-                if (!SecurityUtil.isAnonymous()) {
-                    List<ClientPreferenceDto> clientPreference = null;
-                    UUID userId = SecurityUtil.getUserId();
-                    List<UUID> businessCategoryIds = businessSearch.getBusinessCategoryIds();
-                    if (CollectionUtils.isEmpty(businessCategoryIds)) {
-                        clientPreference = clientPreferenceService.getAllByUserId(userId);
-                    } else {
-                        clientPreference = clientPreferenceService.getAllByUserIdAndBusinessCategoryIds(userId, businessCategoryIds);
-                    }
-                    if (CollectionUtils.isNotEmpty(clientPreference)) {
-                        businessSearch.setServiceIds(clientPreference.stream().map(ClientPreferenceDto::getServiceId).collect(Collectors.toList()));
-                    }
-                }
+        if ((businessSearch != null) && CollectionUtils.isEmpty(businessSearch.getServiceIds()) && !SecurityUtil.isAnonymous()) {
+            List<ClientPreferenceDto> clientPreference;
+            UUID userId = SecurityUtil.getUserId();
+            List<UUID> businessCategoryIds = businessSearch.getBusinessCategoryIds();
+            if (CollectionUtils.isEmpty(businessCategoryIds)) {
+                clientPreference = clientPreferenceService.getAllByUserId(userId);
+            } else {
+                clientPreference = clientPreferenceService.getAllByUserIdAndBusinessCategoryIds(userId, businessCategoryIds);
             }
+            if (CollectionUtils.isNotEmpty(clientPreference)) {
+                businessSearch.setServiceIds(clientPreference.stream().map(ClientPreferenceDto::getServiceId).collect(Collectors.toList()));
+            }
+
         }
     }
 }

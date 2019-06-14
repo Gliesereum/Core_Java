@@ -1,7 +1,6 @@
 package com.gliesereum.share.common.databind.json;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
@@ -16,9 +15,8 @@ import java.time.ZoneId;
  */
 public class LocalTimeJsonDeserializer extends JsonDeserializer<LocalTime> {
     @Override
-    public LocalTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        Long millis = p.getValueAsLong();
-        LocalTime result = Instant.ofEpochMilli(millis).atZone(ZoneId.of("UTC")).toLocalTime();
-        return result;
+    public LocalTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        long millis = p.getValueAsLong();
+        return Instant.ofEpochMilli(millis).atZone(ZoneId.of("UTC")).toLocalTime();
     }
 }

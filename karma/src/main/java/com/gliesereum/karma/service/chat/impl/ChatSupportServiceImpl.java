@@ -28,25 +28,26 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, ChatSupportEntity> implements ChatSupportService {
 
-    private final ChatSupportRepository repository;
-
     private static final Class<ChatSupportDto> DTO_CLASS = ChatSupportDto.class;
     private static final Class<ChatSupportEntity> ENTITY_CLASS = ChatSupportEntity.class;
 
-    public ChatSupportServiceImpl(ChatSupportRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
-    }
+    private final ChatSupportRepository chatSupportRepository;
 
     @Autowired
     private BaseBusinessService businessService;
+
+    @Autowired
+    public ChatSupportServiceImpl(ChatSupportRepository chatSupportRepository, DefaultConverter defaultConverter) {
+        super(chatSupportRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.chatSupportRepository = chatSupportRepository;
+    }
 
     @Override
     @Transactional
     public ChatSupportDto create(ChatSupportDto dto) {
         ChatSupportDto result = null;
         checkPermission(dto);
-        if (dto != null && !repository.existsByBusinessIdAndUserId(dto.getBusinessId(), dto.getUserId())) {
+        if (dto != null && !chatSupportRepository.existsByBusinessIdAndUserId(dto.getBusinessId(), dto.getUserId())) {
             result = super.create(dto);
         }
         return result;
@@ -68,25 +69,20 @@ public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, C
                 throw new ClientException(ALL_OBJECT_ID_NOT_EQUALS);
             }
             checkPermission(support);
-            dtos = dtos.stream().filter(f -> !repository.existsByBusinessIdAndUserId(f.getBusinessId(), f.getUserId())).collect(Collectors.toList());
+            dtos = dtos.stream().filter(f -> !chatSupportRepository.existsByBusinessIdAndUserId(f.getBusinessId(), f.getUserId())).collect(Collectors.toList());
         }
         return super.update(dtos);
     }
 
     @Override
     public List<ChatSupportDto> getByBusinessId(UUID businessId) {
-        List<ChatSupportEntity> entities = repository.getAllByBusinessId(businessId);
+        List<ChatSupportEntity> entities = chatSupportRepository.getAllByBusinessId(businessId);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public boolean existChatSupport(UUID userId, UUID businessId) {
-        return repository.existsByBusinessIdAndUserId(businessId, userId);
-    }
-
-    @Override
-    public ChatSupportDto getById(UUID id) {
-        return super.getById(id);
+        return chatSupportRepository.existsByBusinessIdAndUserId(businessId, userId);
     }
 
     @Transactional

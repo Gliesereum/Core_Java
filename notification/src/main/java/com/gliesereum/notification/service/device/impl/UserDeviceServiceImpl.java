@@ -79,7 +79,7 @@ public class UserDeviceServiceImpl extends DefaultServiceImpl<UserDeviceDto, Use
                 List<UserSubscribeDto> subscribes = userDeviceRegistration.getSubscribes().stream()
                         .peek(i -> i.setUserDeviceId(userDeviceId))
                         .collect(Collectors.toList());
-                List<UserSubscribeDto> subscribe = userSubscribeService.subscribe(subscribes, entity.getUserId(), entity.getFirebaseRegistrationToken());
+                userSubscribeService.subscribe(subscribes, entity.getUserId(), entity.getFirebaseRegistrationToken());
             }
             result = converter.convert(entity, dtoClass);
         }

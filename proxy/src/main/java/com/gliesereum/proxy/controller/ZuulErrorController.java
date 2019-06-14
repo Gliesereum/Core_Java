@@ -5,7 +5,6 @@ import com.gliesereum.share.common.exception.controller.error.DefaultErrorContro
 import com.netflix.client.ClientException;
 import com.netflix.zuul.exception.ZuulException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVICE_NOT_AVAILABLE;
 
 /**
  * @author yvlasiuk

@@ -33,8 +33,8 @@ public class EmailServiceImpl implements EmailService {
 
     private static Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    private final String RECEIVER = "spring.mail.from";
-    private final String SUBJECT = "spring.mail.subject";
+    private static final String RECEIVER = "spring.mail.from";
+    private static final String SUBJECT = "spring.mail.subject";
 
     @Autowired
     private Environment environment;
@@ -72,7 +72,7 @@ public class EmailServiceImpl implements EmailService {
             freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
             Template template = freemarkerConfig.getTemplate("email-verification.ftl");
             sendSingleMessage(to, environment.getProperty(SUBJECT), model, template);
-            logger.info("Verification code: " + code + "\nSend to email: " + to);
+            logger.info("Verification code: {} \nSend to email: {}", code, to);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

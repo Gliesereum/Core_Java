@@ -21,19 +21,20 @@ import java.util.UUID;
 @Service
 public class CarServiceClassServiceImpl extends DefaultServiceImpl<CarServiceClassDto, CarServiceClassEntity> implements CarServiceClassService {
 
-    @Autowired
-    private CarServiceClassRepository repository;
-
     private static final Class<CarServiceClassDto> DTO_CLASS = CarServiceClassDto.class;
     private static final Class<CarServiceClassEntity> ENTITY_CLASS = CarServiceClassEntity.class;
 
-    public CarServiceClassServiceImpl(CarServiceClassRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    private final CarServiceClassRepository carServiceClassRepository;
+
+    @Autowired
+    public CarServiceClassServiceImpl(CarServiceClassRepository carServiceClassRepository, DefaultConverter defaultConverter) {
+        super(carServiceClassRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.carServiceClassRepository = carServiceClassRepository;
     }
 
     @Override
     @Transactional
     public void deleteByIdCarAndIdService(UUID idCar, UUID idService) {
-       repository.deleteByCarIdAndAndServiceClassId(idCar, idService);
+        carServiceClassRepository.deleteByCarIdAndAndServiceClassId(idCar, idService);
     }
 }

@@ -19,6 +19,7 @@ public enum  ColourCarType {
     GREEN,
     OTHER;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

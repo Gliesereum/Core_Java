@@ -37,22 +37,22 @@ public class ChatMessageServiceImpl extends DefaultServiceImpl<ChatMessageDto, C
     private static final Class<ChatMessageDto> DTO_CLASS = ChatMessageDto.class;
     private static final Class<ChatMessageEntity> ENTITY_CLASS = ChatMessageEntity.class;
 
-    private final ChatMessageRepository repository;
+    private final ChatMessageRepository chatMessageRepository;
 
     @Autowired
     private ChatNotificationFacade chatNotificationFacade;
-
-    @Autowired
-    public ChatMessageServiceImpl(ChatMessageRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
-    }
 
     @Autowired
     private ChatService chatService;
 
     @Autowired
     private ChatSupportService supportService;
+
+    @Autowired
+    public ChatMessageServiceImpl(ChatMessageRepository chatMessageRepository, DefaultConverter defaultConverter) {
+        super(chatMessageRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.chatMessageRepository = chatMessageRepository;
+    }
 
     @Override
     public List<ChatMessageDto> getAllByChatId(UUID id) {
@@ -64,7 +64,7 @@ public class ChatMessageServiceImpl extends DefaultServiceImpl<ChatMessageDto, C
         if (!chat.getUserId().equals(SecurityUtil.getUserId()) && !currentUserHavePermissionLikeBusinessUser(chat.getBusinessId())) {
             throw new ClientException(NOT_PERMISSION_TO_CHAT);
         }
-        List<ChatMessageEntity> entities = repository.getAllByChatId(id);
+        List<ChatMessageEntity> entities = chatMessageRepository.getAllByChatId(id);
         return converter.convert(entities, dtoClass);
     }
 

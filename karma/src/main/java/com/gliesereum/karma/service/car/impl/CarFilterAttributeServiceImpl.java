@@ -24,20 +24,21 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class CarFilterAttributeServiceImpl extends DefaultServiceImpl<CarFilterAttributeDto, CarFilterAttributeEntity> implements CarFilterAttributeService {
 
-    @Autowired
-    private CarFilterAttributeRepository repository;
-
     private static final Class<CarFilterAttributeDto> DTO_CLASS = CarFilterAttributeDto.class;
     private static final Class<CarFilterAttributeEntity> ENTITY_CLASS = CarFilterAttributeEntity.class;
 
-    public CarFilterAttributeServiceImpl(CarFilterAttributeRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    private final CarFilterAttributeRepository carFilterAttributeRepository;
+
+    @Autowired
+    public CarFilterAttributeServiceImpl(CarFilterAttributeRepository carFilterAttributeRepository, DefaultConverter defaultConverter) {
+        super(carFilterAttributeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.carFilterAttributeRepository = carFilterAttributeRepository;
     }
 
     @Override
     @Transactional
     public void deleteByCarIdAndFilterId(UUID idCar, UUID filterAttributeId) {
-        repository.deleteByCarIdAndFilterAttributeId(idCar, filterAttributeId);
+        carFilterAttributeRepository.deleteByCarIdAndFilterAttributeId(idCar, filterAttributeId);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class CarFilterAttributeServiceImpl extends DefaultServiceImpl<CarFilterA
         if (filterAttributeId == null){
             throw new ClientException(FILTER_ATTRIBUTE_ID_IS_EMPTY);
         }
-        return repository.existsByCarIdAndFilterAttributeId(idCar, filterAttributeId);
+        return carFilterAttributeRepository.existsByCarIdAndFilterAttributeId(idCar, filterAttributeId);
     }
 
 }

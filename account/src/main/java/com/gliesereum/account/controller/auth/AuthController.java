@@ -4,7 +4,6 @@ import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.account.service.token.TokenService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.model.dto.account.auth.SignInDto;
-import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,18 +24,18 @@ public class AuthController {
     private TokenService tokenService;
 
     @PostMapping("/signin")
-    public AuthDto signIn(@Valid @RequestBody SignInDto signInDto) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+    public AuthDto signIn(@Valid @RequestBody SignInDto signInDto) {
         return authService.signIn(signInDto);
     }
 
     //TODO: merge signin with signup
     /*@PostMapping("/signup")
-    public AuthDto signUp(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+    public AuthDto signUp(@RequestBody Map<String, String> params) {
         return authService.signUp(params);
     }
 
     @PostMapping("/signin")
-    public AuthDto signIn(@RequestBody Map<String, String> params) { //params: {'value': value(String), 'code': code(String),'type': type(PHONE,EMAIL)}
+    public AuthDto signIn(@RequestBody Map<String, String> params) {
         return authService.signIn(params);
     }*/
 

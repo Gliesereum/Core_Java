@@ -2,7 +2,6 @@ package com.gliesereum.share.common.exchange.service.account;
 
 import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
-import org.apache.catalina.User;
 
 import java.util.Collection;
 import java.util.List;

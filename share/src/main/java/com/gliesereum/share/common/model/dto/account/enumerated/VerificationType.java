@@ -7,6 +7,7 @@ public enum VerificationType {
 
     PHONE,EMAIL;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

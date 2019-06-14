@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -90,25 +89,22 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendBusinessNotification(SendNotificationDto sendNotification) {
-        if (sendNotification != null) {
-            SubscribeDestination destination = sendNotification.getDestination();
-            if (destination != null) {
-                switch (destination) {
-                    case KARMA_BUSINESS_NOTIFICATION: {
-                        UUID businessId = sendNotification.getBusinessId();
-                        List<BaseBusinessDto> business = karmaExchangeService.getBusinessForCurrentUser();
-                        if (CollectionUtils.isNotEmpty(business) && business.stream().anyMatch(i -> i.getId().equals(businessId))) {
-                            List<UserDeviceDto> devices = userDeviceService.getByUserIdsAndSubscribeExist(sendNotification.getUserIds(), destination);
-                            if (CollectionUtils.isNotEmpty(devices)) {
-                                List<String> tokens = devices.stream().map(UserDeviceDto::getFirebaseRegistrationToken).collect(Collectors.toList());
-                                Map<String, String> data = new HashMap<>();
-                                data.put("businessId", businessId.toString());
-                                data.put("destination", destination.toString());
-                                firebaseService.sendNotificationToDevices(tokens, sendNotification.getTitle(), sendNotification.getBody(), data);
-                            }
+        if ((sendNotification != null) && (sendNotification.getDestination() != null)) {
+            switch (sendNotification.getDestination()) {
+                case KARMA_BUSINESS_NOTIFICATION: {
+                    UUID businessId = sendNotification.getBusinessId();
+                    List<BaseBusinessDto> business = karmaExchangeService.getBusinessForCurrentUser();
+                    if (CollectionUtils.isNotEmpty(business) && business.stream().anyMatch(i -> i.getId().equals(businessId))) {
+                        List<UserDeviceDto> devices = userDeviceService.getByUserIdsAndSubscribeExist(sendNotification.getUserIds(), sendNotification.getDestination());
+                        if (CollectionUtils.isNotEmpty(devices)) {
+                            List<String> tokens = devices.stream().map(UserDeviceDto::getFirebaseRegistrationToken).collect(Collectors.toList());
+                            Map<String, String> data = new HashMap<>();
+                            data.put("businessId", businessId.toString());
+                            data.put("destination", sendNotification.getDestination().toString());
+                            firebaseService.sendNotificationToDevices(tokens, sendNotification.getTitle(), sendNotification.getBody(), data);
                         }
-                        break;
                     }
+                    break;
                 }
             }
         }

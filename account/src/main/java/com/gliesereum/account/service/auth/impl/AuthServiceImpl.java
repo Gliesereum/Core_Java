@@ -229,7 +229,7 @@ public class AuthServiceImpl implements AuthService {
         return createModel(token, user);
     }
 
-    private void checkField(Map<String, String> params) {
+    /*private void checkField(Map<String, String> params) {
         if (StringUtils.isEmpty(params.get("value"))) {
             throw new ClientException(VALUE_EMPTY);
         }
@@ -239,7 +239,7 @@ public class AuthServiceImpl implements AuthService {
         if (StringUtils.isEmpty(params.get("type"))) {
             throw new ClientException(TYPE_EMPTY);
         }
-    }
+    }*/
 
     private void checkValueByExist(String value, VerificationType verificationType, boolean isNew) {
         if (verificationType.equals(VerificationType.PHONE)) {

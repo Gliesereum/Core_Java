@@ -13,7 +13,10 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
@@ -91,7 +94,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public List<ArtBondDto> getAllByStatus(StatusType status) {
         List<ArtBondEntity> entities = artBondRepository.findAllByStatusTypeAndSpecialStatusType(status, SpecialStatusType.ACTIVE);
         List<ArtBondDto> result = converter.convert(entities, dtoClass);
-        result.forEach(f -> setAdditionalField(f));
+        result.forEach(this::setAdditionalField);
         return result;
     }
 
@@ -194,7 +197,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             return artBond;
         }
         artBond.setStatusType(status);
-            //TODO: remove useless code, broke business logic
+        //TODO: remove useless code, broke business logic
 //        if (status.equals(StatusType.COMPLETED_COLLECTION)) {
 //            List<InvestorOfferDto> offers = investorOfferService.getAllByArtBond(id);
 //            if (CollectionUtils.isNotEmpty(offers)) {
@@ -236,7 +239,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         List<InvestorOfferDto> offers = investorOfferService.getAllByUser();
         List<UUID> ids = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(offers)) {
-            ids = offers.stream().filter(io -> !io.getStateType().equals(OfferStateType.REFUSED)).map(m -> m.getArtBondId()).collect(Collectors.toList());
+            ids = offers.stream().filter(io -> !io.getStateType().equals(OfferStateType.REFUSED)).map(InvestorOfferDto::getArtBondId).collect(Collectors.toList());
         }
         List<ArtBondDto> result = getByIds(ids);
         if (CollectionUtils.isNotEmpty(result)) {
@@ -254,7 +257,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             result.put("EURRUB", rub.getPrice().doubleValue());
             result.put("EURUSD", eur.getPrice().doubleValue());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn("Error while get currency exchange", e);
         }
         return result;
     }
@@ -280,22 +283,21 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public List<PaymentCalendarDto> getPaymentCalendar(ArtBondDto artBond, LocalDateTime paymentStartDate, Long stockCount, boolean setArtBond) {
         List<PaymentCalendarDto> result = new ArrayList<>();
-        if (ObjectUtils.allNotNull(artBond, paymentStartDate)) {
-            if (ObjectUtils.allNotNull(artBond.getDividendPercent(), artBond.getPaymentPeriod(), artBond.getPaymentFinishDate())) {
-                LocalDateTime paymentDate = paymentStartDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
-                while (paymentDate.isBefore(artBond.getPaymentFinishDate())) {
-                    PaymentCalendarDto paymentCalendar = new PaymentCalendarDto();
-                    if (setArtBond) {
-                        paymentCalendar.setArtBond(artBond);
-                    }
-                    paymentCalendar.setDividendPercent(artBond.getDividendPercent());
-                    paymentCalendar.setDate(paymentDate);
-                    double purchaseValue = stockCount * artBond.getStockPrice();
-                    paymentCalendar.setDividendValue(purchaseValue / 100 * artBond.getDividendPercent());
-                    result.add(paymentCalendar);
-                    paymentDate = paymentDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
+        if (ObjectUtils.allNotNull(artBond, paymentStartDate, artBond.getDividendPercent(), artBond.getPaymentPeriod(), artBond.getPaymentFinishDate())) {
+            LocalDateTime paymentDate = paymentStartDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
+            while (paymentDate.isBefore(artBond.getPaymentFinishDate())) {
+                PaymentCalendarDto paymentCalendar = new PaymentCalendarDto();
+                if (setArtBond) {
+                    paymentCalendar.setArtBond(artBond);
                 }
+                paymentCalendar.setDividendPercent(artBond.getDividendPercent());
+                paymentCalendar.setDate(paymentDate);
+                double purchaseValue = stockCount * artBond.getStockPrice();
+                paymentCalendar.setDividendValue(purchaseValue / 100 * artBond.getDividendPercent());
+                result.add(paymentCalendar);
+                paymentDate = paymentDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
             }
+
         }
         return result;
     }
@@ -311,9 +313,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         if (artBond != null) {
             double dividendValue = artBond.getStockPrice() / 100 * artBond.getDividendPercent();
             int paymentPeriod = artBond.getPaymentPeriod();
-            long daysAfterLastPayment = PAYMENT_PERIOD_DAYS * paymentPeriod;
+            long daysAfterLastPayment = (long) PAYMENT_PERIOD_DAYS * paymentPeriod;
             double rewardValue = artBond.getStockPrice() / 100 * artBond.getRewardPercent();
-            long daysAfterPaymentStart = PAYMENT_PERIOD_DAYS * paymentPeriod;
+            long daysAfterPaymentStart = (long) PAYMENT_PERIOD_DAYS * paymentPeriod;
             long daysPayment = ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
             if (daysPayment < 1) {
                 daysPayment = 1;
@@ -325,7 +327,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public double calculateNkd(double dividendValue, int paymentPeriod, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart) {
-        long paymentPeriodDays = PAYMENT_PERIOD_DAYS * paymentPeriod;
+        long paymentPeriodDays = (long) PAYMENT_PERIOD_DAYS * paymentPeriod;
         return (dividendValue / MathUtil.getOneIfZero(paymentPeriodDays)) * daysAfterLastPayment + (rewardValue / MathUtil.getOneIfZero(daysPayment)) * daysAfterPaymentStart;
     }
 
@@ -398,22 +400,21 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             media.forEach(f -> {
                 if (f.getBlockMediaType() != null) {
                     switch (f.getBlockMediaType()) {
-                        case IMAGES: {
+                        case IMAGES:
                             result.getImages().add(f);
                             break;
-                        }
-                        case ART_BOND_INFO: {
+                        case ART_BOND_INFO:
                             result.getArtBondInfo().add(f);
                             break;
-                        }
-                        case AUTHOR_INFO: {
+
+                        case AUTHOR_INFO:
                             result.getAuthorInfo().add(f);
                             break;
-                        }
-                        case DOCUMENTS: {
+
+                        case DOCUMENTS:
                             result.getDocuments().add(f);
                             break;
-                        }
+
                     }
                 }
             });

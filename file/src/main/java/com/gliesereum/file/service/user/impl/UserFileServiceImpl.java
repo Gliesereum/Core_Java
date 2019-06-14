@@ -7,7 +7,6 @@ import com.gliesereum.file.service.user.UserFileService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.file.UserFileDto;
-import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;

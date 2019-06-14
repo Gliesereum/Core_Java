@@ -27,35 +27,36 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
 @Service
 public class MessageServiceImpl extends DefaultServiceImpl<MessageDto, MessageEntity> implements MessageService {
 
-    @Autowired
-    private MessageRepository repository;
+    private static final Class<MessageDto> DTO_CLASS = MessageDto.class;
+    private static final Class<MessageEntity> ENTITY_CLASS = MessageEntity.class;
+
+    private final MessageRepository messageRepository;
 
     @Autowired
     private CustomerService customerService;
 
-    private static final Class<MessageDto> DTO_CLASS = MessageDto.class;
-    private static final Class<MessageEntity> ENTITY_CLASS = MessageEntity.class;
-
-    public MessageServiceImpl(MessageRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    @Autowired
+    public MessageServiceImpl(MessageRepository messageRepository, DefaultConverter defaultConverter) {
+        super(messageRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.messageRepository = messageRepository;
     }
 
     @Override
     public List<MessageDto> getAllByUser() {
-        if(SecurityUtil.isAnonymous()){
+        if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         CustomerDto customer = customerService.findByUserId(SecurityUtil.getUserId());
         List<MessageEntity> entities = null;
-        if(customer != null) {
-            entities = repository.findAllByCustomerIdOrderByCreate(customer.getId());
+        if (customer != null) {
+            entities = messageRepository.findAllByCustomerIdOrderByCreate(customer.getId());
         }
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public List<MessageDto> getAllBySections(List<SectionType> types) {
-        List<MessageEntity> entities = repository.findAllBySectionTypeInOrderByCreate(types);
+        List<MessageEntity> entities = messageRepository.findAllBySectionTypeInOrderByCreate(types);
         return converter.convert(entities, dtoClass);
     }
 }

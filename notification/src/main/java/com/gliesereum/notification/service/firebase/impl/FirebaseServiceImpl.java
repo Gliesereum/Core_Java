@@ -7,7 +7,6 @@ import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDe
 import com.gliesereum.share.common.util.NotificationUtil;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +60,7 @@ public class FirebaseServiceImpl implements FirebaseService {
         try {
             response = firebaseMessagingKarma.unsubscribeFromTopic(Arrays.asList(registrationToken), NotificationUtil.routingKey(subscribeDestination, subscribeId));
         } catch (FirebaseMessagingException e) {
-            log.warn("Error while unsubscribe" ,e);
+            log.warn("Error while unsubscribe", e);
         }
         return response;
     }
@@ -111,7 +110,7 @@ public class FirebaseServiceImpl implements FirebaseService {
                 .map(registrationToken -> buildMessage(registrationToken, title, body, data))
                 .collect(Collectors.toList());
         try {
-            BatchResponse batchResponse = firebaseMessagingKarma.sendAll(messages);
+            firebaseMessagingKarma.sendAll(messages);
         } catch (FirebaseMessagingException e) {
             log.warn("Error while send batch messages for ", e);
 

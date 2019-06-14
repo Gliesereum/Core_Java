@@ -8,6 +8,7 @@ public enum Gender {
 
     MALE, FEMALE, UNKNOWN;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

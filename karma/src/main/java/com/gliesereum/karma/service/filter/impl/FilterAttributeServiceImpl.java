@@ -24,19 +24,20 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class FilterAttributeServiceImpl extends DefaultServiceImpl<FilterAttributeDto, FilterAttributeEntity> implements FilterAttributeService {
 
-    @Autowired
-    private FilterAttributeRepository repository;
-
     private static final Class<FilterAttributeDto> DTO_CLASS = FilterAttributeDto.class;
     private static final Class<FilterAttributeEntity> ENTITY_CLASS = FilterAttributeEntity.class;
 
-    public FilterAttributeServiceImpl(FilterAttributeRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    private final FilterAttributeRepository filterAttributeRepository;
+
+    @Autowired
+    public FilterAttributeServiceImpl(FilterAttributeRepository filterAttributeRepository, DefaultConverter defaultConverter) {
+        super(filterAttributeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.filterAttributeRepository = filterAttributeRepository;
     }
 
     @Override
     public List<FilterAttributeDto> getByFilterId(UUID filterId) {
-        List<FilterAttributeEntity> entities = repository.findAllByFilterId(filterId);
+        List<FilterAttributeEntity> entities = filterAttributeRepository.findAllByFilterId(filterId);
         return converter.convert(entities, dtoClass);
     }
 

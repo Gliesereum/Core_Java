@@ -4,19 +4,16 @@ import com.gliesereum.account.model.entity.UserEmailEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserEmailRepository;
 import com.gliesereum.account.service.user.UserEmailService;
 import com.gliesereum.account.service.user.UserPhoneService;
-import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.account.service.verification.VerificationService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
-import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -45,9 +42,6 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     private static final Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
 
     private final UserEmailRepository userEmailRepository;
-
-//    @Autowired
-//    private UserService userService;
 
     @Autowired
     private UserPhoneService phoneService;
@@ -136,7 +130,6 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
         UserEmailDto result = null;
         UUID userId = SecurityUtil.getUserId();
         checkUserAuthentication(userId);
-        //UserDto user = userService.getById(userId);
         if (verificationService.checkVerification(email, code)) {
             if (checkEmailByExist(email)) {
                 throw new ClientException(EMAIL_EXIST);
@@ -146,7 +139,6 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
             }
             result = new UserEmailDto();
             result.setEmail(email);
-            //result.setUserId(user.getId());
             result.setUserId(userId);
         } else {
             throw new ClientException(CODE_WORSE);

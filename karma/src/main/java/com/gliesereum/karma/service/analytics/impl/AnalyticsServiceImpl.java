@@ -10,8 +10,8 @@ import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticDto;
-import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
+import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.analytics.*;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
@@ -21,10 +21,12 @@ import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.BODY_INVALID;
@@ -61,90 +63,106 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public AnalyticDto getAnalyticByFilter(AnalyticFilterDto filter) {
-        checkFilter(filter);
         AnalyticDto result = new AnalyticDto();
+        List<LiteRecordDto> records = getRecords(filter);
+        FullAnalyticDto dataToAnalytic = getDataToAnalytic(records, filter);
+        mapToAnalyticModel(result, dataToAnalytic.getPackages(), AnalyticDto::setPackages);
+        mapToAnalyticModel(result, dataToAnalytic.getServices(), AnalyticDto::setServices);
+        mapToAnalyticModel(result, dataToAnalytic.getWorkers(), AnalyticDto::setWorkers);
+        mapToAnalyticModel(result, dataToAnalytic.getWorkingSpaces(), AnalyticDto::setWorkingSpaces);
 
+        return result;
+    }
+
+    @Override
+    public CountAnalyticDto getCountAnalyticByFilter(AnalyticFilterDto filter) {
+        CountAnalyticDto result = new CountAnalyticDto();
+        List<LiteRecordDto> records = getRecords(filter);
+        FullAnalyticDto dataToAnalytic = getDataToAnalytic(records, filter);
+        mapToCountAnalyticModel(result, dataToAnalytic.getPackages(), CountAnalyticDto::setPackages);
+        mapToCountAnalyticModel(result, dataToAnalytic.getServices(), CountAnalyticDto::setServices);
+        mapToCountAnalyticModel(result, dataToAnalytic.getWorkers(), CountAnalyticDto::setWorkers);
+        mapToCountAnalyticModel(result, dataToAnalytic.getWorkingSpaces(), CountAnalyticDto::setWorkingSpaces);
+
+        return result;
+    }
+
+    private <T extends DefaultDto> void mapToCountAnalyticModel(CountAnalyticDto target, Map<String, FullAnalyticItemDto<T>> source,
+                                                                BiConsumer<CountAnalyticDto, List<CountAnalyticItemDto<T>>> valueMapper) {
+        if (MapUtils.isNotEmpty(source)) {
+            long recordCountForCategory = source.values().stream().mapToInt(i -> i.getRecords().size()).sum();
+            List<CountAnalyticItemDto<T>> list = source.entrySet().stream().map(i -> {
+                CountAnalyticItemDto<T> item = new CountAnalyticItemDto<>();
+                FullAnalyticItemDto<T> value = i.getValue();
+                item.setName(i.getKey());
+                item.setId(value.getObject().getId());
+                item.setObject(value.getObject());
+                item.setRecords(value.getRecords());
+                int count = value.getRecords().size();
+                item.setRecordCount(count);
+                if (count > 0) {
+                    item.setUsagePercent(((double) count / recordCountForCategory) * 100);
+                } else {
+                    item.setUsagePercent(0.0);
+                }
+                return item;
+            }).collect(Collectors.toList());
+            valueMapper.accept(target, list);
+        }
+    }
+
+    private <T extends DefaultDto> void mapToAnalyticModel(AnalyticDto target, Map<String, FullAnalyticItemDto<T>> source,
+                                                           BiConsumer<AnalyticDto, Map<String, Set<LiteRecordDto>>> valueMapper) {
+        if (MapUtils.isNotEmpty(source)) {
+            Map<String, Set<LiteRecordDto>> value = source.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> i.getValue().getRecords()));
+            valueMapper.accept(target, value);
+        }
+    }
+
+    private List<LiteRecordDto> getRecords(AnalyticFilterDto filter) {
+        List<LiteRecordDto> records = null;
+        checkFilter(filter);
         List<BaseRecordEntity> entities = baseRecordRepository.getRecordsByFilter(filter);
+        if (CollectionUtils.isNotEmpty(entities)) {
+            records = baseRecordService.convertToLiteRecordDto(entities);
+        }
+        return records;
+    }
+
+    private FullAnalyticDto getDataToAnalytic(List<LiteRecordDto> records, AnalyticFilterDto filter) {
+        FullAnalyticDto result = new FullAnalyticDto();
 
         Map<UUID, Set<LiteRecordDto>> services = new HashMap<>();
         Map<UUID, Set<LiteRecordDto>> packages = new HashMap<>();
         Map<UUID, Set<LiteRecordDto>> workers = new HashMap<>();
         Map<UUID, Set<LiteRecordDto>> spaces = new HashMap<>();
 
-        if (CollectionUtils.isNotEmpty(entities)) {
-
-            List<LiteRecordDto> dtos = baseRecordService.convertToLiteRecordDto(entities);
-
-            dtos.forEach(record -> {
-
+        if (CollectionUtils.isNotEmpty(records)) {
+            records.forEach(record -> {
                 if (CollectionUtils.isNotEmpty(record.getServicesIds())) {
-                    record.getServicesIds().forEach(s -> {
-                        if (services.containsKey(s)) {
-                            services.get(s).add(record);
-                        } else {
-                            Set<LiteRecordDto> records = getNewRecordTreeSet();
-                            records.add(record);
-                            services.put(s, records);
-                        }
-                    });
+                    record.getServicesIds().forEach(s -> putToMapIfKeyNotNull(services, s, record));
                 }
-
-                if (record.getPackageId() != null) {
-                    if (packages.containsKey(record.getPackageId())) {
-                        packages.get(record.getPackageId()).add(record);
-                    } else {
-                        Set<LiteRecordDto> records = getNewRecordTreeSet();
-                        records.add(record);
-                        packages.put(record.getPackageId(), records);
-                    }
-                }
-
-                if (record.getWorkerId() != null) {
-                    if (workers.containsKey(record.getWorkerId())) {
-                        workers.get(record.getWorkerId()).add(record);
-                    } else {
-                        Set<LiteRecordDto> records = getNewRecordTreeSet();
-                        records.add(record);
-                        workers.put(record.getWorkerId(), records);
-                    }
-                }
-
-                if (record.getWorkingSpaceId() != null) {
-                    if (spaces.containsKey(record.getWorkingSpaceId())) {
-                        spaces.get(record.getWorkingSpaceId()).add(record);
-                    } else {
-                        Set<LiteRecordDto> records = getNewRecordTreeSet();
-                        records.add(record);
-                        spaces.put(record.getWorkingSpaceId(), records);
-                    }
-                }
+                putToMapIfKeyNotNull(packages, record.getPackageId(), record);
+                putToMapIfKeyNotNull(workers, record.getWorkerId(), record);
+                putToMapIfKeyNotNull(spaces, record.getWorkingSpaceId(), record);
             });
         }
 
         List<LitePackageDto> businessPackages = packageService.getLitePackageByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessPackages)) {
-            businessPackages.forEach(f -> {
-                Set<LiteRecordDto> record;
-                result.getPackages().put(f.getName(), (record = packages.get(f.getId())) != null ? record : new HashSet<>());
-            });
+            businessPackages.forEach(f -> result.getPackages().put(f.getName(), getAnalyticItem(f, packages.get(f.getId()))));
             result.setPackages(sortMap(result.getPackages()));
         }
 
         List<LiteServicePriceDto> businessServices = servicePriceService.getLiteServicePriceByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessServices)) {
-            businessServices.forEach(f -> {
-                Set<LiteRecordDto> record;
-                result.getServices().put(f.getName(), (record = services.get(f.getId())) != null ? record : new HashSet<>());
-            });
+            businessServices.forEach(f -> result.getServices().put(f.getName(), getAnalyticItem(f, services.get(f.getId()))));
             result.setServices(sortMap(result.getServices()));
         }
 
         List<LiteWorkingSpaceDto> businessWorkingSpace = workingSpaceService.getLiteWorkingSpaceByBusinessId(filter.getBusinessId());
         if (CollectionUtils.isNotEmpty(businessWorkingSpace)) {
-            businessWorkingSpace.forEach(f -> {
-                Set<LiteRecordDto> record;
-                result.getWorkingSpaces().put(f.getIndexNumber().toString(), (record = spaces.get(f.getId())) != null ? record : new HashSet<>());
-            });
+            businessWorkingSpace.forEach(f -> result.getWorkingSpaces().put(f.getIndexNumber().toString(), getAnalyticItem(f, spaces.get(f.getId()))));
             result.setWorkingSpaces(sortMap(result.getWorkingSpaces()));
         }
 
@@ -152,13 +170,19 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         if (CollectionUtils.isNotEmpty(businessWorkers)) {
             businessWorkers.forEach(f -> {
                 if (f.getUser() != null) {
-                    Set<LiteRecordDto> record;
-                    result.getWorkers().put(f.getUser().getFirstName().concat(" ").concat(f.getUser().getLastName()), (record = workers.get(f.getId())) != null ? record : new HashSet<>());
+                    result.getWorkers().put(f.getUser().getFirstName().concat(" ").concat(f.getUser().getLastName()), getAnalyticItem(f, workers.get(f.getId())));
                 }
             });
             result.setWorkers(sortMap(result.getWorkers()));
         }
         return result;
+    }
+
+    private <T extends DefaultDto> FullAnalyticItemDto<T> getAnalyticItem(T object, Set<LiteRecordDto> records) {
+        FullAnalyticItemDto<T> analyticItem = new FullAnalyticItemDto<>();
+        analyticItem.setObject(object);
+        analyticItem.setRecords((records != null) ? records : new HashSet<>());
+        return analyticItem;
     }
 
     private void checkFilter(AnalyticFilterDto filter) {
@@ -175,15 +199,15 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         if (filter.getFrom() != null && filter.getTo() != null && filter.getFrom().isAfter(filter.getTo())) {
             throw new ClientException(TIME_IS_NOT_CORRECT);
         }
-        if (CollectionUtils.isEmpty(filter.getStatuses())){
+        if (CollectionUtils.isEmpty(filter.getStatuses())) {
             filter.setStatuses(Arrays.asList(StatusRecord.COMPLETED));
         }
     }
 
-    private Map<String, Set<LiteRecordDto>> sortMap(Map<String, Set<LiteRecordDto>> map) {
-        if (!map.isEmpty()) {
+    private <T extends DefaultDto> Map<String, FullAnalyticItemDto<T>> sortMap(Map<String, FullAnalyticItemDto<T>> map) {
+        if (MapUtils.isNotEmpty(map)) {
             return map.entrySet().stream()
-                    .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Set::size)))
+                    .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(i -> i.getRecords().size())))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         }
         return map;
@@ -191,5 +215,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     private Set<LiteRecordDto> getNewRecordTreeSet() {
         return new TreeSet<>(Comparator.comparing(LiteRecordDto::getBegin));
+    }
+
+    private void putToMapIfKeyNotNull(Map<UUID, Set<LiteRecordDto>> map, UUID key, LiteRecordDto record) {
+        if (key != null) {
+            Set<LiteRecordDto> value = map.getOrDefault(key, getNewRecordTreeSet());
+            value.add(record);
+            map.put(key, value);
+        }
     }
 }

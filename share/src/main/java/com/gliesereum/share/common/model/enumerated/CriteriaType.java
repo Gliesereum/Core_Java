@@ -13,6 +13,7 @@ public enum CriteriaType {
     GT,
     GTE;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
@@ -46,8 +45,10 @@ import static com.gliesereum.share.common.exception.messages.LandingGalleryExcep
 @Service
 public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDto, InvestorOfferEntity> implements InvestorOfferService {
 
-    @Autowired
-    private InvestorOfferRepository repository;
+    private static final Class<InvestorOfferDto> DTO_CLASS = InvestorOfferDto.class;
+    private static final Class<InvestorOfferEntity> ENTITY_CLASS = InvestorOfferEntity.class;
+
+    private final InvestorOfferRepository investorOfferRepository;
 
     @Autowired
     private CustomerService customerService;
@@ -61,16 +62,14 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Autowired
     private UserExchangeService userExchangeService;
 
-    private static final Class<InvestorOfferDto> DTO_CLASS = InvestorOfferDto.class;
-    private static final Class<InvestorOfferEntity> ENTITY_CLASS = InvestorOfferEntity.class;
-
-    public InvestorOfferServiceImpl(InvestorOfferRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+    public InvestorOfferServiceImpl(InvestorOfferRepository investorOfferRepository, DefaultConverter defaultConverter) {
+        super(investorOfferRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.investorOfferRepository = investorOfferRepository;
     }
 
     @Override
     public List<InvestorOfferDto> getAllByState(OfferStateType state) {
-        List<InvestorOfferEntity> entities = repository.findAllByStateType(state);
+        List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateType(state);
         return converter.convert(entities, dtoClass);
     }
 
@@ -84,18 +83,17 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         checkUpdateState(result, state);
         result.setStateType(state);
         result = super.update(result);
-        if (result != null) {
-            if (state.equals(OfferStateType.COMPLETED)) {
-                operationsStoryService.create(
-                        new OperationsStoryDto(result.getCustomerId(),
-                                result.getArtBondId(),
-                                result.getSumInvestment().doubleValue(),
-                                result.getStockCount(),
-                                OperationType.PURCHASE.name().toLowerCase(),
-                                OperationType.PURCHASE.name().toLowerCase(),
-                                LocalDateTime.now(),
-                                OperationType.PURCHASE));
-            }
+        if ((result != null) && state.equals(OfferStateType.COMPLETED)) {
+            operationsStoryService.create(
+                    new OperationsStoryDto(result.getCustomerId(),
+                            result.getArtBondId(),
+                            result.getSumInvestment().doubleValue(),
+                            result.getStockCount(),
+                            OperationType.PURCHASE.name().toLowerCase(),
+                            OperationType.PURCHASE.name().toLowerCase(),
+                            LocalDateTime.now(),
+                            OperationType.PURCHASE));
+
         }
         return result;
     }
@@ -137,13 +135,13 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Override
     public List<InvestorOfferDto> getAllByArtBond(UUID id) {
-        List<InvestorOfferEntity> entities = repository.findAllByArtBondId(id);
+        List<InvestorOfferEntity> entities = investorOfferRepository.findAllByArtBondId(id);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public List<InvestorOfferDto> getAllByArtBondAndStateType(UUID id, OfferStateType stateType) {
-        List<InvestorOfferEntity> entities = repository.findAllByArtBondIdAndStateType(id, stateType);
+        List<InvestorOfferEntity> entities = investorOfferRepository.findAllByArtBondIdAndStateType(id, stateType);
         return converter.convert(entities, dtoClass);
     }
 
@@ -152,7 +150,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         CustomerDto customer = getCustomer();
         List<InvestorOfferEntity> entities = null;
         if (customer != null) {
-            entities = repository.findAllByCustomerIdOrderByCreate(customer.getId());
+            entities = investorOfferRepository.findAllByCustomerIdOrderByCreate(customer.getId());
         }
         return converter.convert(entities, dtoClass);
     }
@@ -162,7 +160,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         CustomerDto customer = getCustomer();
         List<InvestorOfferEntity> entities = null;
         if (customer != null) {
-            entities = repository.findAllByArtBondIdAndCustomerIdOrderByCreate(artBondId, customer.getId());
+            entities = investorOfferRepository.findAllByArtBondIdAndCustomerIdOrderByCreate(artBondId, customer.getId());
         }
         return converter.convert(entities, dtoClass);
     }
@@ -194,7 +192,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Override
     public List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state) {
-        List<InvestorOfferEntity> entities = repository.findAllByStateType(state);
+        List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateType(state);
         List<InvestorOfferFullModelDto> result = converter.convert(entities, InvestorOfferFullModelDto.class);
         if (CollectionUtils.isNotEmpty(result)) {
             List<UUID> userIds = new ArrayList<>();

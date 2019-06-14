@@ -7,11 +7,8 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.permission.module.ModuleDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -21,13 +18,14 @@ import java.util.UUID;
 @Service
 public class ModuleServiceImpl extends DefaultServiceImpl<ModuleDto, ModuleEntity> implements ModuleService {
 
-    public static final String DEFAULT_VERSION = "v1";
-
     private static final Class<ModuleDto> DTO_CLASS = ModuleDto.class;
     private static final Class<ModuleEntity> ENTITY_CLASS = ModuleEntity.class;
 
+    private static final String DEFAULT_VERSION = "v1";
+
     private final ModuleRepository moduleRepository;
 
+    @Autowired
     public ModuleServiceImpl(ModuleRepository moduleRepository, DefaultConverter defaultConverter) {
         super(moduleRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.moduleRepository = moduleRepository;

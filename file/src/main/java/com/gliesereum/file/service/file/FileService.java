@@ -2,7 +2,6 @@ package com.gliesereum.file.service.file;
 
 import com.gliesereum.share.common.model.dto.file.FileResponseDto;
 import com.gliesereum.share.common.model.dto.file.UserFileDto;
-import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;

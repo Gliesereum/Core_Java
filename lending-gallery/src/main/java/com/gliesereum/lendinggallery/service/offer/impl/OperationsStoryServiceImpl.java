@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -49,6 +48,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     @Autowired
     private ArtBondService artBondService;
 
+    @Autowired
     public OperationsStoryServiceImpl(OperationsStoryRepository operationsStoryRepository, DefaultConverter defaultConverter) {
         super(operationsStoryRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.operationsStoryRepository = operationsStoryRepository;
@@ -58,8 +58,8 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     public List<OperationsStoryDto> getAllByCustomerId(UUID customerId) {
         List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(customerId);
         List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
-        if(CollectionUtils.isNotEmpty(result)){
-           setArtBond(result);
+        if (CollectionUtils.isNotEmpty(result)) {
+            setArtBond(result);
         }
         return result;
     }
@@ -95,7 +95,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         if (customer != null) {
             List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdOrderByCreate(customer.getId());
             result = converter.convert(entities, dtoClass);
-            if(CollectionUtils.isNotEmpty(result)){
+            if (CollectionUtils.isNotEmpty(result)) {
                 setArtBond(result);
             }
         }
@@ -130,7 +130,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
 
     @Override
     public List<OperationsStoryDto> getAllForUserByArtBondId(UUID artBondId) {
-        if(artBondId == null || !artBondService.isExist(artBondId)){
+        if (artBondId == null || !artBondService.isExist(artBondId)) {
             throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
         }
         CustomerDto customer = getCustomer();
@@ -139,7 +139,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             entities = operationsStoryRepository.findAllByCustomerIdAndArtBondIdOrderByCreate(customer.getId(), artBondId);
         }
         List<OperationsStoryDto> result = converter.convert(entities, dtoClass);
-        if(CollectionUtils.isNotEmpty(result)){
+        if (CollectionUtils.isNotEmpty(result)) {
             setArtBond(result);
         }
         return result;
@@ -175,7 +175,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
             List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByCustomerIdAndOperationType(customerId, operationType);
             result = converter.convert(entities, dtoClass);
         }
-        if(CollectionUtils.isNotEmpty(result)){
+        if (CollectionUtils.isNotEmpty(result)) {
             setArtBond(result);
         }
         return result;
@@ -184,13 +184,13 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     @Override
     public List<OperationsStoryDto> getAllPurchaseByArtBond(UUID artBondId) {
         List<OperationsStoryDto> result = null;
-        if(artBondId != null) {
+        if (artBondId != null) {
             List<OperationsStoryEntity> entities = operationsStoryRepository.findAllByArtBondIdAndOperationType(artBondId, OperationType.PURCHASE);
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = converter.convert(entities, dtoClass);
             }
         }
-        if(CollectionUtils.isNotEmpty(result)){
+        if (CollectionUtils.isNotEmpty(result)) {
             setArtBond(result);
         }
         return result;
@@ -235,7 +235,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     private void setArtBond(OperationsStoryDto dto) {
         if (dto != null) {
             ArtBondDto artBond = artBondService.getById(dto.getArtBondId());
-            if(artBond == null){
+            if (artBond == null) {
                 throw new ClientException(ART_BOND_NOT_FOUND_BY_ID);
             }
             dto.setArtBond(artBond);
@@ -246,7 +246,7 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
         return customerService.findByUserId(SecurityUtil.getUserId());
     }
 
-    private CustomerDto getCustomer(){
+    private CustomerDto getCustomer() {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
         }

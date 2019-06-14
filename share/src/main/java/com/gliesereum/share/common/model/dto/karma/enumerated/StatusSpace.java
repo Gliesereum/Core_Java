@@ -10,6 +10,7 @@ public enum StatusSpace {
     BUSY,
     NOT_WORK;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

@@ -1,7 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.record;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

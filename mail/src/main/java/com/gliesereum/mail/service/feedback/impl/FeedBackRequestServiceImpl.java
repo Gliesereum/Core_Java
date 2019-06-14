@@ -38,14 +38,9 @@ public class FeedBackRequestServiceImpl extends DefaultServiceImpl<FeedBackReque
     private static final Class<FeedBackRequestDto> DTO_CLASS = FeedBackRequestDto.class;
     private static final Class<FeedBackRequestEntity> ENTITY_CLASS = FeedBackRequestEntity.class;
 
-    public FeedBackRequestServiceImpl(FeedBackRequestRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
-    }
+    private static final String LOG_EMAIL = "spring.mail.log-email";
 
-    private final FeedBackRequestRepository repository;
-
-    private final String LOG_EMAIL = "spring.mail.log-email";
+    private final FeedBackRequestRepository feedBackRequestRepository;
 
     @Autowired
     private Environment environment;
@@ -62,13 +57,19 @@ public class FeedBackRequestServiceImpl extends DefaultServiceImpl<FeedBackReque
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    public FeedBackRequestServiceImpl(FeedBackRequestRepository feedBackRequestRepository, DefaultConverter defaultConverter) {
+        super(feedBackRequestRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.feedBackRequestRepository = feedBackRequestRepository;
+    }
+
     @Override
     @Transactional
     public FeedBackRequestDto create(FeedBackRequestDto dto) {
         if (!RegexUtil.phoneIsValid(dto.getPhone())) {
             throw new ClientException(NOT_PHONE_BY_REGEX);
         }
-        boolean exist = repository.existsByPhone(dto.getPhone());
+        boolean exist = feedBackRequestRepository.existsByPhone(dto.getPhone());
         dto.setCreateDate(LocalDateTime.now());
         FeedBackRequestDto result = super.create(dto);
         if (result != null) {
@@ -78,7 +79,7 @@ public class FeedBackRequestServiceImpl extends DefaultServiceImpl<FeedBackReque
                 //todo add get User by app id
                 List<FeedBackUserDto> feedBackUsers = userService.getAll();
                 if (CollectionUtils.isNotEmpty(feedBackUsers)) {
-                    List<UserPhoneDto> phones = exchangeService.findUserPhoneByUserIds(feedBackUsers.stream().map(m -> m.getUserId()).collect(Collectors.toList()));
+                    List<UserPhoneDto> phones = exchangeService.findUserPhoneByUserIds(feedBackUsers.stream().map(FeedBackUserDto::getUserId).collect(Collectors.toList()));
                     if (CollectionUtils.isNotEmpty(phones)) {
                         phones.forEach(userPhone -> {
                             phoneService.sendSingleMessage(userPhone.getPhone(), massage);

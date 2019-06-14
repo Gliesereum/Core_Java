@@ -139,12 +139,12 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
 
     @Override
     public List<ServicePriceDto> getAllByPackage(UUID id) {
+        List<ServicePriceDto> result = Collections.emptyList();
         PackageDto packageDto = packageService.getById(id);
         if (packageDto != null && CollectionUtils.isNotEmpty(packageDto.getServices())) {
-            return packageDto.getServices().stream().filter(f -> f.getObjectState().equals(ObjectState.ACTIVE)).collect(Collectors.toList());
+            result =  packageDto.getServices().stream().filter(f -> f.getObjectState().equals(ObjectState.ACTIVE)).collect(Collectors.toList());
         }
-        List<ServicePriceDto> emptyList = Collections.emptyList();
-        return emptyList;
+        return result;
     }
 
     @Override

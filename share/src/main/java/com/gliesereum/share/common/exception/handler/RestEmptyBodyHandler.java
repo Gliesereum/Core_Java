@@ -30,15 +30,11 @@ public class RestEmptyBodyHandler implements ResponseBodyAdvice<Object> {
         if (body == null) {
             response.setStatusCode(HttpStatus.NO_CONTENT);
         } else {
-            if (body instanceof Collection) {
-                if (((Collection) body).isEmpty()) {
-                    response.setStatusCode(HttpStatus.NO_CONTENT);
-                }
+            if ((body instanceof Collection) && ((Collection) body).isEmpty()) {
+                response.setStatusCode(HttpStatus.NO_CONTENT);
             }
-            if (body instanceof Map) {
-                if (((Map) body).isEmpty()) {
-                    response.setStatusCode(HttpStatus.NO_CONTENT);
-                }
+            if ((body instanceof Map) && ((Map) body).isEmpty()) {
+                response.setStatusCode(HttpStatus.NO_CONTENT);
             }
         }
 

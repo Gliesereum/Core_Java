@@ -10,6 +10,7 @@ public enum StatusRecord {
     COMPLETED,
     CANCELED;
 
+    @Override
     public String toString() {
         return name().toLowerCase();
     }

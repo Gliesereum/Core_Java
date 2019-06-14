@@ -1,12 +1,13 @@
 package com.gliesereum.permission.model.entity.group;
 
-import com.gliesereum.permission.model.entity.endpoint.EndpointEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
@@ -25,7 +26,7 @@ public class GroupEndpointEntity extends DefaultEntity {
     private UUID groupId;
 
     @Column(name = "endpoint_id")
-    private UUID endpoint_id;
+    private UUID endpointId;
 
     //TODO: REMOVE
 //    @ManyToOne(fetch = FetchType.LAZY)

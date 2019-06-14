@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -67,9 +66,7 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
         if (CollectionUtils.isNotEmpty(validSubscribes)) {
             result = super.create(validSubscribes);
             if (CollectionUtils.isNotEmpty(result)) {
-                result.forEach(i -> {
-                    firebaseService.subscribeToTopic(registrationToken, i.getSubscribeDestination().toString(), i.getObjectId());
-                });
+                result.forEach(i -> firebaseService.subscribeToTopic(registrationToken, i.getSubscribeDestination().toString(), i.getObjectId()));
             }
         }
         return result;
@@ -121,9 +118,7 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
         if (deviceId != null) {
             List<UserSubscribeEntity> subscribes = userSubscribeRepository.findAllByUserDeviceId(deviceId);
             if (CollectionUtils.isNotEmpty(subscribes)) {
-                subscribes.forEach(subscribe -> {
-                    firebaseService.unsubscribeFromTopic(registrationToken, subscribe.getSubscribeDestination().toString(), subscribe.getObjectId());
-                });
+                subscribes.forEach(subscribe -> firebaseService.unsubscribeFromTopic(registrationToken, subscribe.getSubscribeDestination().toString(), subscribe.getObjectId()));
                 userSubscribeRepository.deleteAll(subscribes);
             }
         }
@@ -159,8 +154,8 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                 subscribes = subscribes.stream()
                         .filter(i -> entities.stream()
                                 .noneMatch(e ->
-                                e.getSubscribeDestination().equals(i.getSubscribeDestination()) &&
-                                        (((e.getObjectId() == null) && (i.getObjectId() == null)) || (e.getObjectId().equals(i.getObjectId())))))
+                                        e.getSubscribeDestination().equals(i.getSubscribeDestination()) &&
+                                                (((e.getObjectId() == null) && (i.getObjectId() == null)) || (e.getObjectId().equals(i.getObjectId())))))
                         .peek(i -> i.setUserDeviceId(userDeviceId))
                         .collect(Collectors.toList());
             }
@@ -180,9 +175,7 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                 }
                 result = super.create(subscribes);
                 if (CollectionUtils.isNotEmpty(result)) {
-                    result.forEach(i -> {
-                        firebaseService.subscribeToTopic(userDevice.getFirebaseRegistrationToken(), i.getSubscribeDestination().toString(), i.getObjectId());
-                    });
+                    result.forEach(i -> firebaseService.subscribeToTopic(userDevice.getFirebaseRegistrationToken(), i.getSubscribeDestination().toString(), i.getObjectId()));
                 }
             }
         }
@@ -217,11 +210,11 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                         break;
                     }
                     case KARMA_CHAT_BUSINESS: {
-                       if (subscribe.getObjectId() != null) {
-                           if (karmaExchangeService.existChatSupport(subscribe.getObjectId(), userId)) {
-                               validSubscribes.add(subscribe);
-                           }
-                       }
+                        if (subscribe.getObjectId() != null) {
+                            if (karmaExchangeService.existChatSupport(subscribe.getObjectId(), userId)) {
+                                validSubscribes.add(subscribe);
+                            }
+                        }
                         break;
                     }
                 }

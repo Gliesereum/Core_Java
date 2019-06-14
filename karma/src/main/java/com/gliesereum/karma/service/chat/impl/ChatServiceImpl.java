@@ -26,28 +26,29 @@ import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessa
 @Service
 public class ChatServiceImpl extends DefaultServiceImpl<ChatDto, ChatEntity> implements ChatService {
 
-    private final ChatRepository repository;
-
     private static final Class<ChatDto> DTO_CLASS = ChatDto.class;
     private static final Class<ChatEntity> ENTITY_CLASS = ChatEntity.class;
 
-    public ChatServiceImpl(ChatRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
-    }
+    private final ChatRepository chatRepository;
 
     @Autowired
     private BaseBusinessService businessService;
 
+    @Autowired
+    public ChatServiceImpl(ChatRepository chatRepository, DefaultConverter defaultConverter) {
+        super(chatRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.chatRepository = chatRepository;
+    }
+
     @Override
     public List<ChatDto> getAllByUserId(UUID userId) {
-        List<ChatEntity> entities = repository.getAllByUserId(userId);
+        List<ChatEntity> entities = chatRepository.getAllByUserId(userId);
         return converter.convert(entities, dtoClass);
     }
 
     @Override
     public ChatDto getByUserIdAndBusinessId(UUID userId, UUID businessId) {
-        ChatEntity entity = repository.getByUserIdAndBusinessId(userId, businessId);
+        ChatEntity entity = chatRepository.getByUserIdAndBusinessId(userId, businessId);
         return converter.convert(entity, dtoClass);
     }
 
@@ -59,7 +60,7 @@ public class ChatServiceImpl extends DefaultServiceImpl<ChatDto, ChatEntity> imp
         if (!businessService.currentUserHavePermissionToActionInBusinessLikeOwner(businessId)) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
         }
-        List<ChatEntity> entities = repository.getAllByBusinessId(businessId);
+        List<ChatEntity> entities = chatRepository.getAllByBusinessId(businessId);
         return converter.convert(entities, dtoClass);
     }
 }

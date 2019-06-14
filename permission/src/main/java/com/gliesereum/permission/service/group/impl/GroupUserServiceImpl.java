@@ -17,7 +17,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +86,7 @@ public class GroupUserServiceImpl extends DefaultServiceImpl<GroupUserDto, Group
                     .filter(i -> !groupUserRepository.existsByGroupIdAndUserId(i.getId(), userId))
                     .map(i -> new GroupUserDto(i.getId(), userId))
                     .collect(Collectors.toList());
-            if(CollectionUtils.isNotEmpty(groupsUser)) {
+            if (CollectionUtils.isNotEmpty(groupsUser)) {
                 result = super.create(groupsUser);
             }
         }
