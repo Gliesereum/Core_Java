@@ -9,7 +9,6 @@ import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
-import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
@@ -23,7 +22,6 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
@@ -195,35 +192,16 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateType(state);
         List<InvestorOfferFullModelDto> result = converter.convert(entities, InvestorOfferFullModelDto.class);
         if (CollectionUtils.isNotEmpty(result)) {
-            List<UUID> userIds = new ArrayList<>();
             result.forEach(i -> {
-                UUID customerId = i.getCustomerId();
-                if (customerId != null) {
-                    CustomerDto customer = customerService.getById(customerId);
-                    if (customer != null) {
-                        i.setCustomer(customer);
-                        UUID userId = customer.getUserId();
-                        if (userId != null) {
-                            userIds.add(userId);
-                        }
-                    }
-                }
                 UUID artBondId = i.getArtBondId();
                 if (artBondId != null) {
                     i.setArtBond(artBondService.getById(artBondId));
                     i.getArtBond().setAmountCollected(artBondService.getAmountCollected(artBondId));
                 }
             });
-            if (CollectionUtils.isNotEmpty(userIds)) {
-                Map<UUID, UserDto> userMap = userExchangeService.findUserMapByIds(userIds);
-                if (MapUtils.isNotEmpty(userMap)) {
-                    result.forEach(i -> {
-                        if ((i.getCustomer() != null) && (i.getCustomer().getUserId() != null)) {
-                            i.setUser(userMap.get(i.getCustomer().getUserId()));
-                        }
-                    });
-                }
-            }
+
+            customerService.setCustomerAndUser(result, InvestorOfferFullModelDto::getCustomerId,
+                    InvestorOfferFullModelDto::setCustomer, InvestorOfferFullModelDto::setUser);
         }
         return result;
     }
