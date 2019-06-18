@@ -58,7 +58,7 @@ public class CustomerEntity extends DefaultEntity {
 
     @Column(name = "investor_type")
     @Enumerated(EnumType.STRING)
-    private InvestorType inverstorType;
+    private InvestorType investorType;
 
     @Column(name = "borrower_type")
     @Enumerated(EnumType.STRING)
