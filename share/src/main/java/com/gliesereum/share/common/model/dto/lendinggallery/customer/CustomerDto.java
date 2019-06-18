@@ -47,7 +47,7 @@ public class CustomerDto extends DefaultDto {
 
     private CustomerType customerType;
 
-    private InvestorType inverstorType;
+    private InvestorType investorType;
 
     private BorrowerType borrowerType;
 }
