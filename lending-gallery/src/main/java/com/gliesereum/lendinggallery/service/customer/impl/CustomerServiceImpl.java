@@ -118,6 +118,7 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
     @Transactional
     public CustomerDto create(CustomerDto dto) {
         checkExist();
+        dto.setUserId(SecurityUtil.getUserId());
         return super.create(dto);
     }
 

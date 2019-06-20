@@ -84,6 +84,21 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     @Override
+    public List<WorkTimeDto> update(List<WorkTimeDto> list) {
+        List<WorkTimeDto> result = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            WorkTimeDto workTime = list.get(0);
+            if (list.stream().anyMatch(i -> !i.getObjectId().equals(workTime.getObjectId()))) {
+                throw new ClientException(ALL_OBJECT_ID_NOT_EQUALS);
+            }
+            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(workTime.getBusinessCategoryId(), workTime.getObjectId());
+            result = super.update(list);
+            businessEsService.indexAsync(workTime.getObjectId());
+        }
+        return result;
+    }
+
+    @Override
     public WorkTimeDto update(WorkTimeDto dto) {
         WorkTimeDto result = null;
         if (dto != null) {
