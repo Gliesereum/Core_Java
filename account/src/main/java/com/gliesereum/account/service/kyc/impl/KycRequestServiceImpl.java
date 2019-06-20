@@ -134,6 +134,7 @@ public class KycRequestServiceImpl extends DefaultServiceImpl<KycRequestDto, Kyc
         kycRequestFields = kycRequestFieldService.create(kycRequestFields);
         request.setFields(kycRequestFields);
         request.setUpdateDate(LocalDateTime.now());
+        request.setKycStatus(KycStatus.KYC_REWORKED);
         return super.update(request);
     }
 

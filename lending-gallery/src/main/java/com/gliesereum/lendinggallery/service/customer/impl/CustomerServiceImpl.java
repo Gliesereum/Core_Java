@@ -123,6 +123,14 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
     }
 
     @Override
+    public CustomerDto update(CustomerDto dto) {
+        if (dto != null) {
+            dto.setUserId(SecurityUtil.getUserId());
+        }
+        return super.update(dto);
+    }
+
+    @Override
     public List<PaymentCalendarDto> getPaymentCalendar(UUID userId) {
         List<PaymentCalendarDto> result = null;
         CustomerDto customer = findByUserId(userId);
