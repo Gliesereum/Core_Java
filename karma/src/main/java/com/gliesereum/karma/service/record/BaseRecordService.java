@@ -59,4 +59,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     void setFullModelRecord(List<BaseRecordDto> list);
 
     void setNotificationSend(UUID recordId);
+
+    List<UUID> getCustomerIdsByBusinessIds(List<UUID> ids);
 }

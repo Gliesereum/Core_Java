@@ -3,6 +3,7 @@ package com.gliesereum.share.common.exchange.service.account.impl;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +77,7 @@ public class UserExchangeServiceImpl implements UserExchangeService {
     @Override
     public List<UserDto> findByIds(Collection<UUID> ids) {
         List<UserDto> result = null;
-        if(CollectionUtils.isNotEmpty(ids)) {
+        if (CollectionUtils.isNotEmpty(ids)) {
             String uri = UriComponentsBuilder
                     .fromUriString(exchangeProperties.getAccount().getFindByIds())
                     .queryParam("ids", ids.toArray())
@@ -86,7 +87,8 @@ public class UserExchangeServiceImpl implements UserExchangeService {
                     uri,
                     HttpMethod.GET,
                     HttpEntity.EMPTY,
-                    new ParameterizedTypeReference<List<UserDto>>() {});
+                    new ParameterizedTypeReference<List<UserDto>>() {
+                    });
             if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
                 result = response.getBody();
             }
@@ -97,7 +99,7 @@ public class UserExchangeServiceImpl implements UserExchangeService {
     @Override
     public List<DetailedUserDto> findDetailedByIds(Collection<UUID> ids) {
         List<DetailedUserDto> result = null;
-        if(CollectionUtils.isNotEmpty(ids)) {
+        if (CollectionUtils.isNotEmpty(ids)) {
             String uri = UriComponentsBuilder
                     .fromUriString(exchangeProperties.getAccount().getFindDetailedByIds())
                     .queryParam("ids", ids.toArray())
@@ -107,7 +109,30 @@ public class UserExchangeServiceImpl implements UserExchangeService {
                     uri,
                     HttpMethod.GET,
                     HttpEntity.EMPTY,
-                    new ParameterizedTypeReference<List<DetailedUserDto>>() {});
+                    new ParameterizedTypeReference<List<DetailedUserDto>>() {
+                    });
+            if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
+                result = response.getBody();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<PublicUserDto> findPublicUserByIds(Collection<UUID> ids) {
+        List<PublicUserDto> result = null;
+        if (CollectionUtils.isNotEmpty(ids)) {
+            String uri = UriComponentsBuilder
+                    .fromUriString(exchangeProperties.getAccount().getFindPublicUserByUserIds())
+                    .queryParam("ids", ids.toArray())
+                    .build()
+                    .toString();
+            ResponseEntity<List<PublicUserDto>> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<List<PublicUserDto>>() {
+                    });
             if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
                 result = response.getBody();
             }
@@ -128,7 +153,7 @@ public class UserExchangeServiceImpl implements UserExchangeService {
     @Override
     public UserDto getByPhone(String phone) {
         UserDto result = null;
-        if(StringUtils.isNotBlank(phone)) {
+        if (StringUtils.isNotBlank(phone)) {
             String uri = UriComponentsBuilder
                     .fromUriString(exchangeProperties.getAccount().getGetByPhone())
                     .queryParam("phone", phone)

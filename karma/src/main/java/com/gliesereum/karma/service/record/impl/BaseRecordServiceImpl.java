@@ -124,6 +124,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
+    public List<UUID> getCustomerIdsByBusinessIds(List<UUID> ids) {
+        return baseRecordRepository.getCustomerIdsByBusinessIds(ids);
+    }
+
+    @Override
     public List<LiteRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities) {
         List<LiteRecordDto> result = converter.convert(entities, LiteRecordDto.class);
         return setServicePriceIds(result);

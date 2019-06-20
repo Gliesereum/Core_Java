@@ -67,4 +67,29 @@ public class UserFacadeImpl implements UserFacade {
         }
         return result;
     }
+
+    @Override
+    public List<PublicUserDto> getPublicUserByIds(List<UUID> ids) {
+        List<PublicUserDto> result = null;
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<UserDto> users = userService.getByIds(ids);
+            if (CollectionUtils.isNotEmpty(users)) {
+                List<UUID> userIds = users.stream().map(UserDto::getId).collect(Collectors.toList());
+                Map<UUID, UserPhoneDto> phoneMap = userPhoneService.getMapByUserIds(userIds);
+                Map<UUID, UserEmailDto> emailMap = userEmailService.getMapByUserIds(userIds);
+                result = users.stream().map(i -> {
+                    PublicUserDto publicUser = new PublicUserDto();
+                    publicUser.setId(i.getId());
+                    publicUser.setFirstName(i.getFirstName());
+                    publicUser.setLastName(i.getLastName());
+                    publicUser.setMiddleName(i.getMiddleName());
+                    publicUser.setAvatarUrl(i.getAvatarUrl());
+                    publicUser.setPhone(phoneMap.getOrDefault(i.getId(), new UserPhoneDto()).getPhone());
+                    publicUser.setEmail(emailMap.getOrDefault(i.getId(), new UserEmailDto()).getEmail());
+                    return publicUser;
+                }).collect(Collectors.toList());
+            }
+        }
+        return result;
+    }
 }
