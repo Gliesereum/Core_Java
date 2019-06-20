@@ -49,6 +49,9 @@ public class CustomerController {
 
     @PostMapping
     public CustomerDto create(@Valid @RequestBody CustomerDto dto) {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
         return customerService.create(dto);
     }
 
