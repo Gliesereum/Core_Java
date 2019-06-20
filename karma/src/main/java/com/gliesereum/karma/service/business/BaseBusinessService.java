@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.business;
 
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
@@ -44,5 +45,7 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
     void deleteByCorporationId(UUID id);
 
     List<UUID> searchClient(RecordsSearchDto search);
+
+    List<PublicUserDto> getCustomersByBusinessIds(List<UUID> ids);
 }
 
