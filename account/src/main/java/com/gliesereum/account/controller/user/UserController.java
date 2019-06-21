@@ -1,7 +1,9 @@
 package com.gliesereum.account.controller.user;
 
 import com.gliesereum.account.facade.user.UserFacade;
+import com.gliesereum.account.service.referral.ReferralCodeService;
 import com.gliesereum.account.service.user.UserService;
+import com.gliesereum.share.common.model.dto.account.referral.ReferralCodeDto;
 import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
@@ -28,6 +30,9 @@ public class UserController {
 
     @Autowired
     private UserFacade userFacade;
+
+    @Autowired
+    private ReferralCodeService referralCodeService;
 
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable("id") UUID id) {
@@ -100,6 +105,12 @@ public class UserController {
     @GetMapping("/public/by-ids")
     public List<PublicUserDto> getPublicUsersByIds(@RequestParam("ids") List<UUID> ids) {
         return userFacade.getPublicUserByIds(ids);
+    }
+
+    @GetMapping("/referral-code/me")
+    public ReferralCodeDto referralCodeForCurrentUser() {
+        SecurityUtil.checkUserByBanStatus();
+        return referralCodeService.getOrCreate(SecurityUtil.getUserId());
     }
 
 }
