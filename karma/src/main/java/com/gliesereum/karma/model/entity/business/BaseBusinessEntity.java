@@ -30,4 +30,8 @@ public class BaseBusinessEntity extends AbstractBusinessEntity {
     @OneToMany
     @JoinColumn(name = "business_id", insertable = false, updatable = false)
     private Set<WorkingSpaceEntity> spaces = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<BusinessDescriptionEntity> descriptions = new HashSet<>();
 }
