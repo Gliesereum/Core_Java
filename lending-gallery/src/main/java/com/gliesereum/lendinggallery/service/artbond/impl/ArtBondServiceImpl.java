@@ -388,6 +388,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             interested = Collections.emptyList();
         }
         dto.setInterested(interested);
+        setPaymentDuration(dto);
     }
 
     private void setAdditionalField(DetailedArtBondDto dto) {
@@ -402,6 +403,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             interested = Collections.emptyList();
         }
         dto.setInterested(interested);
+        setPaymentDuration(dto);
     }
 
     private void setDetailedInfo(List<DetailedArtBondDto> artBonds) {
@@ -484,6 +486,14 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
                     }
                 }
             });
+        }
+    }
+
+    private void setPaymentDuration(ArtBondDto artBond) {
+        if ((artBond != null) && ObjectUtils.allNotNull(artBond.getPaymentStartDate(), artBond.getPaymentFinishDate())) {
+            long between = ChronoUnit.MONTHS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
+            artBond.setPaymentDuration(between);
+
         }
     }
 }
