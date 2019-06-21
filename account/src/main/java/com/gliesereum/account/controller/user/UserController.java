@@ -3,6 +3,7 @@ package com.gliesereum.account.controller.user;
 import com.gliesereum.account.facade.user.UserFacade;
 import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -94,6 +95,11 @@ public class UserController {
     @GetMapping("/detailed/by-ids")
     public List<DetailedUserDto> getDetailedByIds(@RequestParam("ids") List<UUID> ids) {
         return userFacade.getDetailedByIds(ids);
+    }
+
+    @GetMapping("/public/by-ids")
+    public List<PublicUserDto> getPublicUsersByIds(@RequestParam("ids") List<UUID> ids) {
+        return userFacade.getPublicUserByIds(ids);
     }
 
 }

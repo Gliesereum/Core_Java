@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.exchange.service.account;
 
 import com.gliesereum.share.common.model.dto.account.user.DetailedUserDto;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 
 import java.util.Collection;
@@ -21,6 +22,8 @@ public interface UserExchangeService {
     List<UserDto> findByIds(Collection<UUID> ids);
 
     List<DetailedUserDto> findDetailedByIds(Collection<UUID> ids);
+
+    List<PublicUserDto> findPublicUserByIds(Collection<UUID> ids);
 
     Map<UUID, UserDto> findUserMapByIds(Collection<UUID> ids);
 

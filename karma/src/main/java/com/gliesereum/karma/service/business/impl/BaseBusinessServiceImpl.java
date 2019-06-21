@@ -15,6 +15,12 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.*;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
+import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
@@ -70,6 +76,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     @Autowired
     private BusinessEsService businessEsService;
+
+    @Autowired
+    private UserExchangeService exchangeService;
 
     @Autowired
     private BusinessDescriptionService businessDescriptionService;
@@ -318,6 +327,22 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
                         .map(BaseRecordDto::getClientId)
                         .distinct()
                         .collect(Collectors.toList());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<PublicUserDto> getCustomersByBusinessIds(List<UUID> ids) {
+        List<PublicUserDto> result = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(ids)) {
+            ids.forEach(f -> {
+                if (!currentUserHavePermissionToActionInBusinessLikeOwner(f))
+                    throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+            });
+            List<UUID> userIds = baseRecordService.getCustomerIdsByBusinessIds(ids);
+            if (CollectionUtils.isNotEmpty(userIds)) {
+                result = exchangeService.findPublicUserByIds(new HashSet<>(userIds));
             }
         }
         return result;

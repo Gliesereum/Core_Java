@@ -2,11 +2,12 @@ package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.model.document.BusinessDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
-import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
@@ -199,6 +200,11 @@ public class BaseBusinessController {
     public MapResponse indexing() {
         businessEsService.indexAll();
         return MapResponse.resultTrue();
+    }
+
+    @GetMapping("/customers")
+    public List<PublicUserDto> getCustomersByBusinessIds(@RequestParam("ids") List<UUID> ids){
+        return baseBusinessService.getCustomersByBusinessIds(ids);
     }
 
 }

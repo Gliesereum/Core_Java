@@ -5,6 +5,8 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.repository.refreshable.RefreshableRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,4 +35,6 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
 
     long countByBusinessIdAndBeginBetween(UUID businessId, LocalDateTime from, LocalDateTime to);
 
+    @Query("SELECT DISTINCT b.clientId FROM BaseRecordEntity b WHERE b.businessId IN :ids")
+    List<UUID> getCustomerIdsByBusinessIds(@Param("ids") List<UUID> ids);
 }
