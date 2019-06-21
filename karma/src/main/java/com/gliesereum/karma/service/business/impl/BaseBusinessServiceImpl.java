@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.business.impl;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.business.BusinessDescriptionService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
@@ -14,10 +15,8 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
-import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
@@ -77,6 +76,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     @Autowired
     private UserExchangeService exchangeService;
 
+    @Autowired
+    private BusinessDescriptionService businessDescriptionService;
+
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.baseBusinessRepository = repository;
@@ -92,6 +94,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             dto.setId(null);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
+            businessDescriptionService.create(dto.getDescriptions(), entity.getId());
             baseBusinessRepository.refresh(entity);
             dto = converter.convert(entity, dtoClass);
             businessEsService.indexAsync(dto.getId());
@@ -111,7 +114,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             checkCorporationId(dto);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
+            DescriptionReadableDto<BusinessDescriptionDto> descriptions = businessDescriptionService.update(dto.getDescriptions(), entity.getId());
             dto = converter.convert(entity, dtoClass);
+            dto.setDescriptions(descriptions);
             businessEsService.indexAsync(dto.getId());
         }
         return dto;

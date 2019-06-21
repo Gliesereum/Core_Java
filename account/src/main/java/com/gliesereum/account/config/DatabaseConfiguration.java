@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @version 1.0
  */
 @Configuration
-@EnableJpaRepositories("com.gliesereum.account.model.repository")
+@EnableJpaRepositories("com.gliesereum.account.model.repository.jpa")
 @EnableJpaAuditing
 public class DatabaseConfiguration {
 }

@@ -59,6 +59,8 @@ public class BusinessFullModel extends DefaultDto {
 
     private List<WorkingSpaceDto> spaces = new ArrayList<>();
 
+    private List<BusinessDescriptionDto> descriptions = new ArrayList<>();
+
     private List<ServicePriceDto> servicePrices = new ArrayList<>();
 
     private List<PackageDto> packages = new ArrayList<>();

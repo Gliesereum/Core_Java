@@ -84,6 +84,8 @@ public class ArtBondDto extends DefaultDto {
 
     private Integer paymentPeriod;
 
+    private Long paymentDuration;
+
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime paymentStartDate;
