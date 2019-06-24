@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author yvlasiuk
@@ -41,4 +43,8 @@ public class BusinessCategoryEntity extends DefaultEntity {
 
     @Column(name = "order_index")
     private Integer orderIndex;
+
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<BusinessCategoryDescriptionEntity> descriptions = new HashSet<>();
 }

@@ -2,9 +2,12 @@ package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.model.entity.business.BusinessCategoryEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BusinessCategoryRepository;
+import com.gliesereum.karma.service.business.BusinessCategoryDescriptionService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
+import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -31,6 +34,9 @@ public class BusinessCategoryServiceImpl extends DefaultServiceImpl<BusinessCate
     private static final Class<BusinessCategoryEntity> ENTITY_CLASS = BusinessCategoryEntity.class;
 
     private final BusinessCategoryRepository businessCategoryRepository;
+
+    @Autowired
+    private BusinessCategoryDescriptionService businessCategoryDescriptionService;
 
     @Autowired
     public BusinessCategoryServiceImpl(BusinessCategoryRepository businessCategoryRepository, DefaultConverter defaultConverter) {
@@ -96,14 +102,26 @@ public class BusinessCategoryServiceImpl extends DefaultServiceImpl<BusinessCate
 
     @Override
     public BusinessCategoryDto create(BusinessCategoryDto dto) {
-        throwExceptionIfCodeExist(dto.getCode());
-        return super.create(dto);
+        BusinessCategoryDto result = null;
+        if (dto != null) {
+            throwExceptionIfCodeExist(dto.getCode());
+            result = super.create(dto);
+            DescriptionReadableDto<BusinessCategoryDescriptionDto> descriptions = businessCategoryDescriptionService.create(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
+        }
+        return result;
     }
 
     @Override
     public BusinessCategoryDto update(BusinessCategoryDto dto) {
-        throwExceptionIfCodeExist(dto.getCode(), dto.getId());
-        return super.update(dto);
+        BusinessCategoryDto result = null;
+        if (dto != null) {
+            throwExceptionIfCodeExist(dto.getCode(), dto.getId());
+            result = super.update(dto);
+            DescriptionReadableDto<BusinessCategoryDescriptionDto> descriptions = businessCategoryDescriptionService.update(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
+        }
+        return result;
     }
 
     private void throwExceptionIfCodeExist(String code, UUID id) {
