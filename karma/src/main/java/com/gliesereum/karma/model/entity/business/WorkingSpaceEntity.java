@@ -45,4 +45,7 @@ public class WorkingSpaceEntity extends DefaultEntity {
     @JoinColumn(name = "work_space_id", insertable = false, updatable = false)
     private Set<WorkerEntity> workers = new HashSet<>();
 
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<WorkingSpaceDescriptionEntity> descriptions = new HashSet<>();
 }

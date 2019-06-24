@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,4 +33,7 @@ public class WorkingSpaceDto extends DefaultDto {
     private UUID businessCategoryId;
 
     private List<WorkerDto> workers = new ArrayList<>();
+
+    private DescriptionReadableDto<WorkingSpaceDescriptionDto> descriptions = new DescriptionReadableDto<>();
+
 }
