@@ -75,20 +75,21 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     @Override
-    public CountAnalyticDto getCountAnalyticByFilter(AnalyticFilterDto filter) {
+    public CountAnalyticDto getCountAnalyticByFilter(AnalyticFilterDto filter, boolean includeRecord) {
         CountAnalyticDto result = new CountAnalyticDto();
         List<LiteRecordDto> records = getRecords(filter);
         FullAnalyticDto dataToAnalytic = getDataToAnalytic(records, filter);
-        mapToCountAnalyticModel(result, dataToAnalytic.getPackages(), CountAnalyticDto::setPackages);
-        mapToCountAnalyticModel(result, dataToAnalytic.getServices(), CountAnalyticDto::setServices);
-        mapToCountAnalyticModel(result, dataToAnalytic.getWorkers(), CountAnalyticDto::setWorkers);
-        mapToCountAnalyticModel(result, dataToAnalytic.getWorkingSpaces(), CountAnalyticDto::setWorkingSpaces);
+        mapToCountAnalyticModel(result, dataToAnalytic.getPackages(), CountAnalyticDto::setPackages, includeRecord);
+        mapToCountAnalyticModel(result, dataToAnalytic.getServices(), CountAnalyticDto::setServices, includeRecord);
+        mapToCountAnalyticModel(result, dataToAnalytic.getWorkers(), CountAnalyticDto::setWorkers, includeRecord);
+        mapToCountAnalyticModel(result, dataToAnalytic.getWorkingSpaces(), CountAnalyticDto::setWorkingSpaces, includeRecord);
 
         return result;
     }
 
     private <T extends DefaultDto> void mapToCountAnalyticModel(CountAnalyticDto target, Map<String, FullAnalyticItemDto<T>> source,
-                                                                BiConsumer<CountAnalyticDto, List<CountAnalyticItemDto<T>>> valueMapper) {
+                                                                BiConsumer<CountAnalyticDto, List<CountAnalyticItemDto<T>>> valueMapper,
+                                                                boolean includeRecord) {
         if (MapUtils.isNotEmpty(source)) {
             long recordCountForCategory = source.values().stream().mapToInt(i -> i.getRecords().size()).sum();
             List<CountAnalyticItemDto<T>> list = source.entrySet().stream().map(i -> {
@@ -97,7 +98,9 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 item.setName(i.getKey());
                 item.setId(value.getObject().getId());
                 item.setObject(value.getObject());
-                item.setRecords(value.getRecords());
+                if (includeRecord) {
+                    item.setRecords(value.getRecords());
+                }
                 int count = value.getRecords().size();
                 item.setRecordCount(count);
                 if (count > 0) {
