@@ -77,4 +77,6 @@ public class UserDto extends DefaultDto {
     private LocalDateTime createDate;
 
     private List<UUID> corporationIds = new ArrayList<>();
+
+    private String phone;
 }

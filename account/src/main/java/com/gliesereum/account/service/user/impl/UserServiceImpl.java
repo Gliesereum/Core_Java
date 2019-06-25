@@ -128,6 +128,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         UserDto byId = super.getById(id);
         if (byId != null) {
             byId.setCorporationIds(corporationSharedOwnershipService.getAllCorporationIdByUserId(byId.getId()));
+            byId.setPhone(phoneService.getPhoneByUserId(byId.getId()));
         }
         return byId;
     }
