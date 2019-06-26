@@ -2,6 +2,7 @@ package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.WorkingSpaceDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

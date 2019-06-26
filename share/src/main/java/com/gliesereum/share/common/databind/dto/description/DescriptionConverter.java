@@ -4,25 +4,30 @@ import com.gliesereum.share.common.model.dto.base.description.BaseDescriptionDto
 import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.LanguageCode;
 import com.gliesereum.share.common.model.entity.description.BaseDescriptionEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.internal.MappingEngineImpl;
 import org.modelmapper.internal.util.Types;
 import org.modelmapper.spi.MappingContext;
+import org.reflections.Reflections;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * @author yvlasiuk
  * @version 1.0
  */
+@Slf4j
 public class DescriptionConverter<D extends BaseDescriptionDto, E extends BaseDescriptionEntity> {
+
+    private static final String DTO_POSTFIX = "Dto";
+    private static final String ENTITY_POSTFIX = "Entity";
 
     private final Class<D> dtoClass;
 
@@ -31,6 +36,29 @@ public class DescriptionConverter<D extends BaseDescriptionDto, E extends BaseDe
     public DescriptionConverter(Class<D> dtoClass, Class<E> entityClass) {
         this.dtoClass = dtoClass;
         this.entityClass = entityClass;
+    }
+
+    public static void init(ModelMapper modelMapper) {
+        Reflections reflections = new Reflections("com.gliesereum");
+        Set<Class<? extends BaseDescriptionDto>> dtos = reflections.getSubTypesOf(BaseDescriptionDto.class);
+        Set<Class<? extends BaseDescriptionEntity>> entities = reflections.getSubTypesOf(BaseDescriptionEntity.class);
+        if (CollectionUtils.isNotEmpty(entities) && CollectionUtils.isNotEmpty(dtos)) {
+            List<Pair<Class<? extends BaseDescriptionDto>, Class<? extends BaseDescriptionEntity>>> pairs = new ArrayList<>();
+            Map<String, ? extends Class<? extends BaseDescriptionDto>> dtoMap = dtos.stream().collect(Collectors.toMap(i -> i.getSimpleName().replace(DTO_POSTFIX, ""), i -> i));
+            for (Class<? extends BaseDescriptionEntity> entity : entities) {
+                Class<? extends BaseDescriptionDto> dto = dtoMap.get(entity.getSimpleName().replace(ENTITY_POSTFIX, ""));
+                if (dto != null) {
+                    pairs.add(Pair.of(dto, entity));
+                }
+            }
+            if (CollectionUtils.isNotEmpty(pairs)) {
+                pairs.forEach(i -> {
+                    log.info("Create ModelMapper converters for {} and {}", i.getLeft().getSimpleName(), i.getRight().getSimpleName());
+                    setConverters(modelMapper, i.getLeft(), i.getRight());
+                });
+            }
+
+        }
     }
 
 

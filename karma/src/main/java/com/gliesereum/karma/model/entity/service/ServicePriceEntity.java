@@ -1,6 +1,8 @@
 package com.gliesereum.karma.model.entity.service;
 
 import com.gliesereum.karma.model.entity.filter.FilterAttributeEntity;
+import com.gliesereum.karma.model.entity.service.descriptions.ServiceDescriptionEntity;
+import com.gliesereum.karma.model.entity.service.descriptions.ServicePriceDescriptionEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
@@ -48,6 +50,10 @@ public class ServicePriceEntity extends DefaultEntity {
     @Column(name = "object_state")
     @Enumerated(EnumType.STRING)
     private ObjectState objectState;
+
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<ServicePriceDescriptionEntity> descriptions = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "service_class_price",

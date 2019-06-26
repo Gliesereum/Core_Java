@@ -1,6 +1,6 @@
-package com.gliesereum.karma.model.repository.jpa.business;
+package com.gliesereum.karma.model.repository.jpa.business.descriptions;
 
-import com.gliesereum.karma.model.entity.business.BusinessCategoryDescriptionEntity;
+import com.gliesereum.karma.model.entity.business.descriptions.BusinessCategoryDescriptionEntity;
 import com.gliesereum.share.common.repository.description.DescriptionRepository;
 
 /**

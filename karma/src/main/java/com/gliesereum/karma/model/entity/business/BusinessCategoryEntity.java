@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.business;
 
+import com.gliesereum.karma.model.entity.business.descriptions.BusinessCategoryDescriptionEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
