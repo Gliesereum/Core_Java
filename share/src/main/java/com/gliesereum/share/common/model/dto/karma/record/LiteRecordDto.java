@@ -27,6 +27,12 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class LiteRecordDto extends DefaultDto {
 
+    private String firstName;
+
+    private String lastName;
+
+    private String phone;
+
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime begin;
@@ -62,6 +68,8 @@ public class LiteRecordDto extends DefaultDto {
     private UUID businessCategoryId;
 
     private boolean notificationSend;
+
+    private Integer recordNumber;
 
     private List<UUID> servicesIds = new ArrayList<>();
 

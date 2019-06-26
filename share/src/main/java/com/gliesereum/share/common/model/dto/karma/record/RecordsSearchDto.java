@@ -41,4 +41,16 @@ public class RecordsSearchDto {
 
     private List<UUID> businessIds;
 
+    private  UUID corporationId;
+
+    private  String registrationNumber;
+
+    private  String phone;
+
+    private  String firstName;
+
+    private  String lastName;
+
+    private Integer recordNumber;
+
 }

@@ -17,6 +17,7 @@ import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
@@ -126,6 +127,20 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Override
     public List<UUID> getCustomerIdsByBusinessIds(List<UUID> ids) {
         return baseRecordRepository.getCustomerIdsByBusinessIds(ids);
+    }
+
+    @Override
+    public List<LiteRecordDto> getLiteByClientForBusiness(RecordsSearchDto search) {
+        if (!baseBusinessService.currentUserHavePermissionToActionInCorporationLikeWorker(search.getCorporationId())) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+        }
+        List<BaseRecordEntity> entities = null;
+        List<UUID> businessIds = baseBusinessService.getIdsByCorporationId(search.getCorporationId());
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            search.setBusinessIds(businessIds);
+            entities = baseRecordRepository.getRecordsBySearchDto(search);
+        }
+        return convertToLiteRecordDto(entities);
     }
 
     @Override
@@ -344,6 +359,10 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 }
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
+            UserDto user = SecurityUtil.getUser().getUser();
+            dto.setFirstName(user.getFirstName());
+            dto.setLastName(user.getLastName());
+            dto.setPhone(user.getPhone());
             result = createRecord(dto);
         }
         return result;
@@ -356,6 +375,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto.getBusinessId() != null &&
                 !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
+        }
+        if (dto.getClientId() != null) {
+            List<PublicUserDto> users = exchangeService.findPublicUserByIds(Arrays.asList(dto.getClientId()));
+            if (CollectionUtils.isNotEmpty(users)) {
+                PublicUserDto user = users.get(0);
+                dto.setLastName(user.getLastName());
+                dto.setFirstName(user.getFirstName());
+                dto.setPhone(user.getPhone());
+            }
         }
         return createRecord(dto);
     }
@@ -496,7 +524,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
         return result;
     }
-
 
     private void checkRecord(BaseRecordDto dto) {
         if (dto != null) {
@@ -734,7 +761,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             LocalDateTime startOfDay = LocalDateTime.of(dto.getBegin().toLocalDate(), LocalTime.MIDNIGHT);
             LocalDateTime endOfDay = LocalDateTime.of(dto.getBegin().toLocalDate(), LocalTime.MAX);
             long recordToDay = baseRecordRepository.countByBusinessIdAndBeginBetween(dto.getBusinessId(), startOfDay, endOfDay);
-            dto.setRecordNumber((int)recordToDay + 1);
+            dto.setRecordNumber((int) recordToDay + 1);
         }
     }
 

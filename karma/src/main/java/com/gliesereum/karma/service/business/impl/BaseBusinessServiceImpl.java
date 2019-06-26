@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.CORPORATION_ID_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
@@ -254,6 +255,17 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    public boolean currentUserHavePermissionToActionInCorporationLikeWorker(UUID corporationId) {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
+        if (corporationId == null) {
+            throw new ClientException(CORPORATION_ID_IS_EMPTY);
+        }
+        return CollectionUtils.isNotEmpty(workerService.findByUserIdAndCorporationId(SecurityUtil.getUserId(), corporationId));
+    }
+
+    @Override
     public List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds) {
         List<BaseBusinessDto> result = null;
         if (CollectionUtils.isNotEmpty(corporationIds)) {
@@ -342,6 +354,14 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             }
         }
         return result;
+    }
+
+    @Override
+    public List<UUID> getIdsByCorporationId(UUID corporationId) {
+        if (corporationId == null) {
+            throw new ClientException(CORPORATION_ID_IS_EMPTY);
+        }
+        return baseBusinessRepository.getIdsByCorporationId(corporationId);
     }
 
     private void checkCorporationId(BaseBusinessDto business) {

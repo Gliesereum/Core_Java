@@ -117,4 +117,9 @@ public class RecordController {
     public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
     }
+
+    @PostMapping("/lite/by-client-for-business")
+    public List<LiteRecordDto> getLiteByClientForBusiness(@RequestBody RecordsSearchDto search) {
+        return service.getLiteByClientForBusiness(search);
+    }
 }
