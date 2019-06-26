@@ -340,7 +340,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         checkPermissionToUpdate(dto);
         dto.setStatusRecord(StatusRecord.CANCELED);
         dto.setStatusProcess(StatusProcess.CANCELED);
-        dto.setRefuseDescription(message);
+        dto.setCanceledDescription(message);
         BaseRecordDto result = super.update(dto);
         setServicePrice(Arrays.asList(result));
         return result;

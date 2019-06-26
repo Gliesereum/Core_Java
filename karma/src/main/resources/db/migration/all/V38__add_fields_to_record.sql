@@ -1,1 +1,1 @@
-ALTER TABLE karma.record ADD COLUMN refuse_description character varying;
+ALTER TABLE karma.record ADD COLUMN canceled_description character varying;

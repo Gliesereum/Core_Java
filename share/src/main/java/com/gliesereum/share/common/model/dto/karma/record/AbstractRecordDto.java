@@ -50,7 +50,7 @@ public class AbstractRecordDto extends DefaultDto {
 
     private String description;
 
-    private String refuseDescription;
+    private String canceledDescription;
 
     private PackageDto packageDto;
 
