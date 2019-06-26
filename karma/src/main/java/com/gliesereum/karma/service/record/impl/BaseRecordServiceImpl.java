@@ -335,11 +335,12 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Override
     @Transactional
     @RecordUpdate
-    public BaseRecordDto canceledRecord(UUID idRecord) {
+    public BaseRecordDto canceledRecord(UUID idRecord, String message) {
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
         dto.setStatusRecord(StatusRecord.CANCELED);
         dto.setStatusProcess(StatusProcess.CANCELED);
+        dto.setRefuseDescription(message);
         BaseRecordDto result = super.update(dto);
         setServicePrice(Arrays.asList(result));
         return result;

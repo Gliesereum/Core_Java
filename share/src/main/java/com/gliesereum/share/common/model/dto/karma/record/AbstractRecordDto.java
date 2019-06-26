@@ -50,6 +50,8 @@ public class AbstractRecordDto extends DefaultDto {
 
     private String description;
 
+    private String refuseDescription;
+
     private PackageDto packageDto;
 
     private BaseBusinessDto business;

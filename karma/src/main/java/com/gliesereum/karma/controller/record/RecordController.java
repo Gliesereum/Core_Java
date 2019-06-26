@@ -52,8 +52,9 @@ public class RecordController {
     }
 
     @PutMapping("/record/canceled")
-    public BaseRecordDto canceledRecord(@RequestParam("idRecord") UUID idRecord) {
-        return service.canceledRecord(idRecord);
+    public BaseRecordDto canceledRecord(@RequestParam("idRecord") UUID idRecord,
+                                        @RequestParam("message") String message) {
+        return service.canceledRecord(idRecord, message);
     }
 
     @PutMapping("/time/record")

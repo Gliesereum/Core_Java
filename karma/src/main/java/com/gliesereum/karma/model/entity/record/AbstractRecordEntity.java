@@ -48,6 +48,9 @@ public class AbstractRecordEntity extends DefaultEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "refuse_description")
+    private String refuseDescription;
+
     @Column(name = "status_pay")
     @Enumerated(EnumType.STRING)
     private StatusPay statusPay;

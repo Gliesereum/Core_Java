@@ -1,0 +1,1 @@
+ALTER TABLE karma.record ADD COLUMN refuse_description character varying;
