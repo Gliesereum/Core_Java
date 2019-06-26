@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.model.dto.karma.business;
+package com.gliesereum.share.common.model.dto.karma.service.descriptions;
 
 import com.gliesereum.share.common.model.dto.base.description.BaseDescriptionDto;
 import lombok.Data;
@@ -13,9 +13,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BusinessCategoryDescriptionDto extends BaseDescriptionDto {
+public class ServiceClassDescriptionDto extends BaseDescriptionDto {
 
     private String name;
 
     private String description;
+
 }

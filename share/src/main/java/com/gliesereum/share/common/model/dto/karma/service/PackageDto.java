@@ -1,6 +1,8 @@
 package com.gliesereum.share.common.model.dto.karma.service;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
+import com.gliesereum.share.common.model.dto.karma.service.descriptions.PackageDescriptionDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,4 +43,7 @@ public class PackageDto extends DefaultDto {
     private List<UUID> servicesIds = new ArrayList<>();
 
     private List<ServicePriceDto> services = new ArrayList<>();
+
+    private DescriptionReadableDto<PackageDescriptionDto> descriptions = new DescriptionReadableDto<>();
+
 }

@@ -1,7 +1,7 @@
-package com.gliesereum.karma.service.business;
+package com.gliesereum.karma.service.business.descriptions;
 
-import com.gliesereum.karma.model.entity.business.BusinessDescriptionEntity;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessDescriptionDto;
+import com.gliesereum.karma.model.entity.business.descriptions.BusinessDescriptionEntity;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.service.descrption.DefaultDescriptionService;
 
 /**

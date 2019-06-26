@@ -2,12 +2,12 @@ package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.model.entity.business.BusinessCategoryEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BusinessCategoryRepository;
-import com.gliesereum.karma.service.business.BusinessCategoryDescriptionService;
+import com.gliesereum.karma.service.business.descriptions.BusinessCategoryDescriptionService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDescriptionDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessCategoryDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;

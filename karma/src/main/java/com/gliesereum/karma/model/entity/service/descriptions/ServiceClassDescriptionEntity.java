@@ -1,4 +1,4 @@
-package com.gliesereum.karma.model.entity.business;
+package com.gliesereum.karma.model.entity.service.descriptions;
 
 import com.gliesereum.share.common.model.entity.description.BaseDescriptionEntity;
 import lombok.Data;
@@ -18,8 +18,8 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "working_space_description")
-public class WorkingSpaceDescriptionEntity extends BaseDescriptionEntity {
+@Table(name = "service_class_description")
+public class ServiceClassDescriptionEntity extends BaseDescriptionEntity {
 
     @Column(name = "name")
     private String name;

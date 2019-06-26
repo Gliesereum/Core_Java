@@ -1,7 +1,10 @@
 package com.gliesereum.share.common.model.dto.karma.service;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
+import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServiceDescriptionDto;
+import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServicePriceDescriptionDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,6 +46,9 @@ public class ServicePriceDto extends DefaultDto {
     @Max(1440)
     @Min(0)
     private Integer duration;
+
+    private DescriptionReadableDto<ServicePriceDescriptionDto> descriptions = new DescriptionReadableDto<>();
+
 
     private List<ServiceClassDto> serviceClass = new ArrayList<>();
 

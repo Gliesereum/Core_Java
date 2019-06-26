@@ -16,4 +16,6 @@ public interface DefaultDescriptionService<D extends BaseDescriptionDto, E exten
     DescriptionReadableDto<D> create(DescriptionReadableDto<D> description, UUID objectId);
 
     DescriptionReadableDto<D> update(DescriptionReadableDto<D> description, UUID objectId);
+
+    void deleteByObjectId(UUID objectId);
 }
