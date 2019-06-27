@@ -84,6 +84,18 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     }
 
     @Override
+    public String getPhoneByUserId(UUID id) {
+        String result = null;
+        if (id != null) {
+            UserPhoneEntity userPhone = userPhoneRepository.getByUserId(id);
+            if (userPhone != null) {
+                result = userPhone.getPhone();
+            }
+        }
+        return result;
+    }
+
+    @Override
     public UserPhoneDto getByPhone(String value) {
         UserPhoneDto result = null;
         checkIsPhone(value);

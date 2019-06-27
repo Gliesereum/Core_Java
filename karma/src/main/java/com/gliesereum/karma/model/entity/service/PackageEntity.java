@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.service;
 
+import com.gliesereum.karma.model.entity.service.descriptions.PackageDescriptionEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
@@ -43,4 +44,8 @@ public class PackageEntity extends DefaultEntity {
             joinColumns = {@JoinColumn(name = "package_id", insertable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "service_id", insertable = false, updatable = false)})
     private Set<ServicePriceEntity> services = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<PackageDescriptionEntity> descriptions = new HashSet<>();
 }

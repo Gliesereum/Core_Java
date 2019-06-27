@@ -3,8 +3,8 @@ package com.gliesereum.karma.service.business.impl;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
-import com.gliesereum.karma.service.business.BusinessDescriptionService;
 import com.gliesereum.karma.service.business.WorkerService;
+import com.gliesereum.karma.service.business.descriptions.BusinessDescriptionService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
@@ -16,7 +16,11 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
-import com.gliesereum.share.common.model.dto.karma.business.*;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
+import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
@@ -37,6 +41,7 @@ import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.CORPORATION_ID_IS_EMPTY;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
@@ -254,6 +259,17 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    public boolean currentUserHavePermissionToActionInCorporationLikeWorker(UUID corporationId) {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
+        if (corporationId == null) {
+            throw new ClientException(CORPORATION_ID_IS_EMPTY);
+        }
+        return CollectionUtils.isNotEmpty(workerService.findByUserIdAndCorporationId(SecurityUtil.getUserId(), corporationId));
+    }
+
+    @Override
     public List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds) {
         List<BaseBusinessDto> result = null;
         if (CollectionUtils.isNotEmpty(corporationIds)) {
@@ -342,6 +358,14 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             }
         }
         return result;
+    }
+
+    @Override
+    public List<UUID> getIdsByCorporationId(UUID corporationId) {
+        if (corporationId == null) {
+            throw new ClientException(CORPORATION_ID_IS_EMPTY);
+        }
+        return baseBusinessRepository.getIdsByCorporationId(corporationId);
     }
 
     private void checkCorporationId(BaseBusinessDto business) {

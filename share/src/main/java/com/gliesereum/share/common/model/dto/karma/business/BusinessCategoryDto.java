@@ -1,6 +1,8 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessCategoryDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,4 +37,7 @@ public class BusinessCategoryDto extends DefaultDto {
     private boolean active;
 
     private Integer orderIndex;
+
+    private DescriptionReadableDto<BusinessCategoryDescriptionDto> descriptions = new DescriptionReadableDto<>();
+
 }

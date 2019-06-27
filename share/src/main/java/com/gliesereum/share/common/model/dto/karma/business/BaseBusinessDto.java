@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

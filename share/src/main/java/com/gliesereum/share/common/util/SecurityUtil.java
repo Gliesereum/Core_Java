@@ -50,6 +50,15 @@ public class SecurityUtil {
         return result;
     }
 
+    public static UserDto getUserModel() {
+        UserDto result = null;
+        UserAuthentication user = getUser();
+        if ((user != null) && (!user.isAnonymous())) {
+            result = user.getUser();
+        }
+        return result;
+    }
+
     public static boolean userHavePermissionToCorporation(UUID corporationId) {
         boolean result = false;
         List<UUID> userCorporationIds = getUserCorporationIds();

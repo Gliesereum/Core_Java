@@ -4,6 +4,8 @@ import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.repository.refreshable.RefreshableRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,4 +30,7 @@ public interface BaseBusinessRepository extends JpaRepository<BaseBusinessEntity
     List<BaseBusinessEntity> getAllByObjectState(ObjectState objectState);
 
     List<BaseBusinessEntity> getAllByIdInAndObjectState(Iterable<UUID> ids, ObjectState objectState);
+
+    @Query("SELECT DISTINCT b.id FROM BaseBusinessEntity b WHERE b.corporationId = :corporationId")
+    List<UUID> getIdsByCorporationId(@Param("corporationId") UUID corporationId);
 }

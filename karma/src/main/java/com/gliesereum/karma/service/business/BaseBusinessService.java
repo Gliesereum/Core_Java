@@ -28,6 +28,8 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     boolean currentUserHavePermissionToActionInBusinessLikeWorker(UUID businessId);
 
+    boolean currentUserHavePermissionToActionInCorporationLikeWorker(UUID corporationId);
+
     List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds);
 
     List<BusinessFullModel> getFullModelByIds(List<UUID> id);
@@ -47,5 +49,7 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
     List<UUID> searchClient(RecordsSearchDto search);
 
     List<PublicUserDto> getCustomersByBusinessIds(List<UUID> ids);
+
+    List<UUID> getIdsByCorporationId(UUID corporationId);
 }
 

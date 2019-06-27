@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.business;
 
+import com.gliesereum.karma.model.entity.business.descriptions.WorkingSpaceDescriptionEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
@@ -45,4 +46,7 @@ public class WorkingSpaceEntity extends DefaultEntity {
     @JoinColumn(name = "work_space_id", insertable = false, updatable = false)
     private Set<WorkerEntity> workers = new HashSet<>();
 
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<WorkingSpaceDescriptionEntity> descriptions = new HashSet<>();
 }

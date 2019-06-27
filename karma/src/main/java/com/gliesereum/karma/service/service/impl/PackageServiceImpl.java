@@ -4,16 +4,16 @@ import com.gliesereum.karma.model.entity.service.PackageEntity;
 import com.gliesereum.karma.model.repository.jpa.service.PackageRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
+import com.gliesereum.karma.service.service.descriptions.PackageDescriptionService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.PackageServiceService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
-import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
-import com.gliesereum.share.common.model.dto.karma.service.PackageServiceDto;
-import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.service.*;
+import com.gliesereum.share.common.model.dto.karma.service.descriptions.PackageDescriptionDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +54,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
 
     @Autowired
     private ServicePriceService servicePriceService;
+
+    @Autowired
+    private PackageDescriptionService packageDescriptionService;
 
     public PackageServiceImpl(PackageRepository packageRepository, DefaultConverter defaultConverter) {
         super(packageRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -114,6 +117,8 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         dto.setObjectState(ObjectState.ACTIVE);
         PackageDto result = super.create(dto);
         setServices(dto, result);
+        DescriptionReadableDto<PackageDescriptionDto> descriptions = packageDescriptionService.create(dto.getDescriptions(), result.getId());
+        result.setDescriptions(descriptions);
         return result;
 
     }
@@ -131,6 +136,8 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         PackageDto result = super.update(dto);
         deletePackageServicePrice(dto);
         setServices(dto, result);
+        DescriptionReadableDto<PackageDescriptionDto> descriptions = packageDescriptionService.update(dto.getDescriptions(), result.getId());
+        result.setDescriptions(descriptions);
         return result;
     }
 

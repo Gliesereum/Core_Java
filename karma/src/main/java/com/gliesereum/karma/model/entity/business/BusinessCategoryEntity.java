@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.business;
 
+import com.gliesereum.karma.model.entity.business.descriptions.BusinessCategoryDescriptionEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
@@ -7,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author yvlasiuk
@@ -41,4 +44,8 @@ public class BusinessCategoryEntity extends DefaultEntity {
 
     @Column(name = "order_index")
     private Integer orderIndex;
+
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<BusinessCategoryDescriptionEntity> descriptions = new HashSet<>();
 }

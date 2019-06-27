@@ -6,6 +6,7 @@ import com.gliesereum.account.service.referral.ReferralCodeService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.account.referral.ReferralCodeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +62,16 @@ public class ReferralCodeServiceImpl extends DefaultServiceImpl<ReferralCodeDto,
         ReferralCodeDto result = null;
         if (userId != null) {
             ReferralCodeEntity entity = referralCodeRepository.findByUserId(userId);
+            result = converter.convert(entity, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public ReferralCodeDto getByCode(String code) {
+        ReferralCodeDto result = null;
+        if (StringUtils.isNotEmpty(code)) {
+            ReferralCodeEntity entity = referralCodeRepository.findByCode(code);
             result = converter.convert(entity, dtoClass);
         }
         return result;

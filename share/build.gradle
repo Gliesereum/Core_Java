@@ -10,6 +10,7 @@ buildscript {
         jjwtVersion = '0.9.1'
         lombokVersion = '1.18.2'
         swaggerVersion = '2.9.2'
+        reflectionsVersion = '0.9.11'
     }
     repositories {
         mavenCentral()
@@ -59,6 +60,7 @@ dependencies {
     implementation "commons-io:commons-io:${commonsIOVersion}"
     implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
     implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
+    implementation "org.reflections:reflections:${reflectionsVersion}"
 
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     

@@ -3,9 +3,12 @@ package com.gliesereum.karma.service.service.impl;
 import com.gliesereum.karma.model.entity.service.ServiceEntity;
 import com.gliesereum.karma.model.repository.jpa.service.ServiceRepository;
 import com.gliesereum.karma.service.service.ServiceService;
+import com.gliesereum.karma.service.service.descriptions.ServiceDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
+import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServiceDescriptionDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,9 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
     private final ServiceRepository serviceRepository;
 
     @Autowired
+    private ServiceDescriptionService serviceDescriptionService;
+
+    @Autowired
     public ServiceServiceImpl(ServiceRepository serviceRepository, DefaultConverter defaultConverter) {
         super(serviceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.serviceRepository = serviceRepository;
@@ -44,6 +50,8 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
         if (dto != null) {
             dto.setObjectState(ObjectState.ACTIVE);
             result = super.create(dto);
+            DescriptionReadableDto<ServiceDescriptionDto> descriptions = serviceDescriptionService.create(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
         }
         return result;
     }
@@ -51,12 +59,18 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
     @Override
     @Transactional
     public ServiceDto update(ServiceDto dto) {
-        ServiceDto oldDto = getById(dto.getId());
-        if (oldDto == null) {
-            throw new ClientException(SERVICE_NOT_FOUND);
+        ServiceDto result = null;
+        if (dto != null) {
+            ServiceDto oldDto = getById(dto.getId());
+            if (oldDto == null) {
+                throw new ClientException(SERVICE_NOT_FOUND);
+            }
+            dto.setObjectState(oldDto.getObjectState());
+            result = super.update(dto);
+            DescriptionReadableDto<ServiceDescriptionDto> descriptions = serviceDescriptionService.update(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
         }
-        dto.setObjectState(oldDto.getObjectState());
-        return super.update(dto);
+        return result;
     }
 
     @Override

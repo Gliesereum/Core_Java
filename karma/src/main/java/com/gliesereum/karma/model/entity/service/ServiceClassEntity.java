@@ -1,13 +1,14 @@
 package com.gliesereum.karma.model.entity.service;
 
+import com.gliesereum.karma.model.entity.service.descriptions.ServiceClassDescriptionEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author vitalij
@@ -29,5 +30,9 @@ public class ServiceClassEntity extends DefaultEntity {
 
     @Column(name = "order_index")
     private Integer orderIndex;
+
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<ServiceClassDescriptionEntity> descriptions = new HashSet<>();
 
 }

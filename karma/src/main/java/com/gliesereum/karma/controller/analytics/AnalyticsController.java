@@ -5,10 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticDto;
 import com.gliesereum.share.common.model.dto.karma.analytics.AnalyticFilterDto;
 import com.gliesereum.share.common.model.dto.karma.analytics.CountAnalyticDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author vitalij
@@ -27,7 +24,8 @@ public class AnalyticsController {
     }
 
     @PostMapping("/count/by-filter")
-    public CountAnalyticDto getCountByFilter(@RequestBody AnalyticFilterDto filter) {
-        return service.getCountAnalyticByFilter(filter);
+    public CountAnalyticDto getCountByFilter(@RequestBody AnalyticFilterDto filter,
+                                             @RequestParam(value = "includeRecord", required = false, defaultValue = "false") boolean includeRecord) {
+        return service.getCountAnalyticByFilter(filter, includeRecord);
     }
 }

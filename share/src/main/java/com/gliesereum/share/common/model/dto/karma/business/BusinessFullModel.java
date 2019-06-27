@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;

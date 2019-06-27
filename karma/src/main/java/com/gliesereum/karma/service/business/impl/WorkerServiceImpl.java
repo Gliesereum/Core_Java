@@ -23,14 +23,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_ID_IS_EMPTY;
-import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -94,6 +94,23 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             if (MapUtils.isNotEmpty(users)) {
                 result.forEach(f -> f.setUser(users.get(f.getUserId())));
             }
+        }
+        return result;
+    }
+
+    @Override
+    public List<WorkerDto> findByUserIdAndCorporationId(UUID userId, UUID corporationId) {
+        if (corporationId == null) {
+            throw new ClientException(CORPORATION_ID_IS_EMPTY);
+        }
+        if (userId == null) {
+            throw new ClientException(USER_ID_IS_EMPTY);
+        }
+        List<WorkerDto> result = new ArrayList<>();
+        List<UUID> businessIds = baseBusinessService.getIdsByCorporationId(corporationId);
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            List<WorkerEntity> entities = workerRepository.findByUserIdAndBusinessIdIn(userId, businessIds);
+            result = converter.convert(entities, dtoClass);
         }
         return result;
     }

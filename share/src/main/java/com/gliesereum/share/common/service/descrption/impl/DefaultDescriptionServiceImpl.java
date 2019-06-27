@@ -64,4 +64,12 @@ public abstract class DefaultDescriptionServiceImpl<D extends BaseDescriptionDto
         }
         return result;
     }
+
+    @Override
+    @Transactional
+    public void deleteByObjectId(UUID objectId) {
+        if (objectId != null) {
+            descriptionRepository.deleteAllByObjectId(objectId);
+        }
+    }
 }

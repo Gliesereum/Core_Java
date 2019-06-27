@@ -52,8 +52,9 @@ public class RecordController {
     }
 
     @PutMapping("/record/canceled")
-    public BaseRecordDto canceledRecord(@RequestParam("idRecord") UUID idRecord) {
-        return service.canceledRecord(idRecord);
+    public BaseRecordDto canceledRecord(@RequestParam("idRecord") UUID idRecord,
+                                        @RequestParam("message") String message) {
+        return service.canceledRecord(idRecord, message);
     }
 
     @PutMapping("/time/record")
@@ -116,5 +117,10 @@ public class RecordController {
     @PostMapping("/free-time")
     public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
+    }
+
+    @PostMapping("/lite/by-client-for-business")
+    public List<LiteRecordDto> getLiteByClientForBusiness(@RequestBody RecordsSearchDto search) {
+        return service.getLiteByClientForBusiness(search);
     }
 }

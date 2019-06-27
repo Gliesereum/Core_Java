@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface ReferralCodeRepository extends JpaRepository<ReferralCodeEntity, UUID> {
 
     ReferralCodeEntity findByUserId(UUID userId);
+
+    ReferralCodeEntity findByCode(String code);
 }

@@ -17,6 +17,8 @@ public interface UserPhoneService extends DefaultService<UserPhoneDto, UserPhone
 
     UserPhoneDto getByUserId(UUID id);
 
+    String getPhoneByUserId(UUID id);
+
     UserPhoneDto getByPhone(String value);
 
     void sendCode(String phone);

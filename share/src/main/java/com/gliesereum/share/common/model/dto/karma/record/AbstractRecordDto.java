@@ -50,6 +50,8 @@ public class AbstractRecordDto extends DefaultDto {
 
     private String description;
 
+    private String canceledDescription;
+
     private PackageDto packageDto;
 
     private BaseBusinessDto business;
@@ -67,6 +69,12 @@ public class AbstractRecordDto extends DefaultDto {
     private boolean notificationSend;
 
     private Integer recordNumber;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String phone;
 
     private List<ServicePriceDto> services = new ArrayList<>();
 

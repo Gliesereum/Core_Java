@@ -3,10 +3,13 @@ package com.gliesereum.karma.service.business.impl;
 import com.gliesereum.karma.model.entity.business.WorkingSpaceEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkingSpaceRepository;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
+import com.gliesereum.karma.service.business.descriptions.WorkingSpaceDescriptionService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.WorkingSpaceDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +40,9 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     private BusinessCategoryFacade businessCategoryFacade;
 
     @Autowired
+    private WorkingSpaceDescriptionService workingSpaceDescriptionService;
+
+    @Autowired
     public WorkingSpaceServiceImpl(WorkingSpaceRepository workingSpaceRepository, DefaultConverter defaultConverter) {
         super(workingSpaceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.workingSpaceRepository = workingSpaceRepository;
@@ -65,6 +71,8 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             dto = checkIndex(Arrays.asList(dto), dto.getBusinessId()).get(0);
             result = super.create(dto);
+            DescriptionReadableDto<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.create(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
         }
         return result;
     }
@@ -81,6 +89,10 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             dtos = checkIndex(dtos, dtos.get(0).getBusinessId());
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             result = super.create(dtos);
+            for (int i = 0; i < result.size(); i++) {
+                DescriptionReadableDto<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.create(dtos.get(i).getDescriptions(), result.get(0).getId());
+                result.get(0).setDescriptions(descriptions);
+            }
         }
         return result;
     }
@@ -92,6 +104,8 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             dto = checkIndex(Arrays.asList(dto), dto.getBusinessId()).get(0);
             result = super.update(dto);
+            DescriptionReadableDto<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.update(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
         }
         return result;
     }

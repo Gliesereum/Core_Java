@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.business;
 
+import com.gliesereum.karma.model.entity.business.descriptions.BusinessDescriptionEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

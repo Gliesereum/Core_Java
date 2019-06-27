@@ -1,4 +1,4 @@
-package com.gliesereum.karma.model.entity.business;
+package com.gliesereum.karma.model.entity.business.descriptions;
 
 import com.gliesereum.share.common.model.entity.description.BaseDescriptionEntity;
 import lombok.Data;

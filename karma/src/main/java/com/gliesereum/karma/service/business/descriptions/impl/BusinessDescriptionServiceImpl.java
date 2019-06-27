@@ -1,10 +1,10 @@
-package com.gliesereum.karma.service.business.impl;
+package com.gliesereum.karma.service.business.descriptions.impl;
 
-import com.gliesereum.karma.model.entity.business.BusinessDescriptionEntity;
-import com.gliesereum.karma.model.repository.jpa.business.BusinessDescriptionRepository;
-import com.gliesereum.karma.service.business.BusinessDescriptionService;
+import com.gliesereum.karma.model.entity.business.descriptions.BusinessDescriptionEntity;
+import com.gliesereum.karma.model.repository.jpa.business.descriptions.BusinessDescriptionRepository;
+import com.gliesereum.karma.service.business.descriptions.BusinessDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessDescriptionDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.service.descrption.impl.DefaultDescriptionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

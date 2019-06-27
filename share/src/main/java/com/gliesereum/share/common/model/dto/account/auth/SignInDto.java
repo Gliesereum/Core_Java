@@ -24,4 +24,6 @@ public class SignInDto {
 
     @NotNull
     private VerificationType type;
+
+    private String referralCode;
 }

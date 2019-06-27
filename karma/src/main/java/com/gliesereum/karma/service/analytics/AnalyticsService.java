@@ -12,5 +12,5 @@ public interface AnalyticsService {
 
     AnalyticDto getAnalyticByFilter(AnalyticFilterDto filter);
 
-    CountAnalyticDto getCountAnalyticByFilter(AnalyticFilterDto filter);
+    CountAnalyticDto getCountAnalyticByFilter(AnalyticFilterDto filter, boolean includeRecord);
 }

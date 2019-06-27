@@ -10,8 +10,10 @@ import com.gliesereum.karma.service.filter.PriceFilterAttributeService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.ServiceService;
+import com.gliesereum.karma.service.service.descriptions.ServicePriceDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
 import com.gliesereum.share.common.model.dto.karma.filter.PriceFilterAttributeDto;
@@ -19,6 +21,7 @@ import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServicePriceDescriptionDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -44,21 +47,32 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
 
     private static final Class<ServicePriceDto> DTO_CLASS = ServicePriceDto.class;
     private static final Class<ServicePriceEntity> ENTITY_CLASS = ServicePriceEntity.class;
+
     private final ServicePriceRepository servicePriceRepository;
+
     @Autowired
     private PackageService packageService;
+
     @Autowired
     private ServiceService serviceService;
+
     @Autowired
     private BusinessCategoryFacade businessCategoryFacade;
+
     @Autowired
     private PriceFilterAttributeService priceFilterAttributeService;
+
     @Autowired
     private FilterAttributeService filterAttributeService;
+
     @Autowired
     private FilterService filterService;
+
     @Autowired
     private BusinessEsService businessEsService;
+
+    @Autowired
+    private ServicePriceDescriptionService servicePriceDescriptionService;
 
     public ServicePriceServiceImpl(ServicePriceRepository servicePriceRepository, DefaultConverter defaultConverter) {
         super(servicePriceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -67,24 +81,34 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
 
     @Override
     public ServicePriceDto create(ServicePriceDto dto) {
-        checkPermission(dto);
-        dto.setObjectState(ObjectState.ACTIVE);
-        ServicePriceDto result = super.create(setCustomName(dto));
-        businessEsService.indexAsync(result.getBusinessId());
+        ServicePriceDto result = null;
+        if (dto != null) {
+            checkPermission(dto);
+            dto.setObjectState(ObjectState.ACTIVE);
+            result = super.create(setCustomName(dto));
+            DescriptionReadableDto<ServicePriceDescriptionDto> descriptions = servicePriceDescriptionService.create(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
+            businessEsService.indexAsync(result.getBusinessId());
+        }
         return result;
     }
 
     @Override
     @Transactional
     public ServicePriceDto update(ServicePriceDto dto) {
-        checkPermission(dto);
-        ServicePriceDto oldDto = getById(dto.getId());
-        if (oldDto == null) {
-            throw new ClientException(SERVICE_NOT_FOUND);
+        ServicePriceDto result = null;
+        if (dto != null) {
+            checkPermission(dto);
+            ServicePriceDto oldDto = getById(dto.getId());
+            if (oldDto == null) {
+                throw new ClientException(SERVICE_NOT_FOUND);
+            }
+            dto.setObjectState(oldDto.getObjectState());
+            result = super.update(setCustomName(dto));
+            DescriptionReadableDto<ServicePriceDescriptionDto> descriptions = servicePriceDescriptionService.update(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
+            businessEsService.indexAsync(result.getBusinessId());
         }
-        dto.setObjectState(oldDto.getObjectState());
-        ServicePriceDto result = super.update(setCustomName(dto));
-        businessEsService.indexAsync(result.getBusinessId());
         return result;
     }
 
@@ -142,7 +166,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         List<ServicePriceDto> result = Collections.emptyList();
         PackageDto packageDto = packageService.getById(id);
         if (packageDto != null && CollectionUtils.isNotEmpty(packageDto.getServices())) {
-            result =  packageDto.getServices().stream().filter(f -> f.getObjectState().equals(ObjectState.ACTIVE)).collect(Collectors.toList());
+            result = packageDto.getServices().stream().filter(f -> f.getObjectState().equals(ObjectState.ACTIVE)).collect(Collectors.toList());
         }
         return result;
     }
