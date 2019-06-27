@@ -17,4 +17,6 @@ public interface ReferralCodeService extends DefaultService<ReferralCodeDto, Ref
     ReferralCodeDto getByUserId(UUID userId);
 
     ReferralCodeDto generate(UUID userId);
+
+    ReferralCodeDto getByCode(String code);
 }

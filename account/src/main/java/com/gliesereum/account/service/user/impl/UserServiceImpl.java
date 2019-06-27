@@ -1,5 +1,6 @@
 package com.gliesereum.account.service.user.impl;
 
+import com.gliesereum.account.facade.referral.ReferralFacade;
 import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserRepository;
 import com.gliesereum.account.service.user.CorporationSharedOwnershipService;
@@ -49,6 +50,9 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Autowired
     private CorporationSharedOwnershipService corporationSharedOwnershipService;
 
+    @Autowired
+    private ReferralFacade referralFacade;
+
     public UserServiceImpl(UserRepository userRepository, DefaultConverter defaultConverter) {
         super(userRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.userRepository = userRepository;
@@ -72,6 +76,16 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             dto.setBanStatus(BanStatus.UNBAN);
             dto.setKycApproved(false);
             result = super.create(dto);
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public UserDto create(UserDto user, String referralCode) {
+        UserDto result = create(user);
+        if ((result != null) && (StringUtils.isNotEmpty(referralCode))) {
+            referralFacade.signUpWithCode(result.getId(), referralCode);
         }
         return result;
     }

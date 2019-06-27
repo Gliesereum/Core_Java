@@ -21,4 +21,11 @@ public class RabbitMQConfiguration {
                     String corporationDeleteExchangeName) {
         return new FanoutExchange(corporationDeleteExchangeName);
     }
+
+    @Bean
+    public FanoutExchange signupWithCodeExchange(
+            @Value("${system-notification.signup-with-code.exchange-name}")
+                    String signupWithCodeExchangeName) {
+        return new FanoutExchange(signupWithCodeExchangeName);
+    }
 }
