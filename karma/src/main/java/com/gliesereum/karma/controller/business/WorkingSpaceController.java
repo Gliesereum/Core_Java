@@ -4,6 +4,7 @@ import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceServicePriceDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -77,5 +78,10 @@ public class WorkingSpaceController {
     public MapResponse checkWorkerExistByPhone(@RequestParam("phone") String phone) {
         Boolean exist = workerService.checkWorkerExistByPhone(phone);
         return new MapResponse("exist", exist);
+    }
+
+    @PostMapping("/add-service-price")
+    public List<WorkingSpaceServicePriceDto> addServicePrice(@RequestBody List<WorkingSpaceServicePriceDto> dtos) {
+        return workingSpaceService.addServicePrice(dtos);
     }
 }

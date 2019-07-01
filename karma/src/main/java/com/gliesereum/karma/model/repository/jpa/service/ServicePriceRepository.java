@@ -24,4 +24,6 @@ public interface ServicePriceRepository extends JpaRepository<ServicePriceEntity
 
     ServicePriceEntity findByIdAndObjectState(UUID id, ObjectState objectState);
 
+    int countAllByBusinessIdAndIdIn(UUID businessId, List<UUID> ids);
+
 }

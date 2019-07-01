@@ -32,4 +32,6 @@ public interface ServicePriceService extends DefaultService<ServicePriceDto, Ser
     ServicePriceDto getByIdAndRefresh(UUID id);
 
     List<LiteServicePriceDto> getLiteServicePriceByBusinessId(UUID id);
+
+    int getCountByBusinessIdAndServicePriceIds(UUID businessId, List<UUID> servicePriceIds);
 }

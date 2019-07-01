@@ -41,7 +41,7 @@ public class RecordsSearchDto {
 
     private List<UUID> businessIds;
 
-    private  UUID corporationId;
+    private  List<UUID> corporationIds;
 
     private  String registrationNumber;
 
@@ -52,5 +52,9 @@ public class RecordsSearchDto {
     private  String lastName;
 
     private Integer recordNumber;
+
+    private int firstResult = 0;
+
+    private int maxResult;
 
 }

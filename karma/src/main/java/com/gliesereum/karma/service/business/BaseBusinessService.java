@@ -50,6 +50,6 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     List<PublicUserDto> getCustomersByBusinessIds(List<UUID> ids);
 
-    List<UUID> getIdsByCorporationId(UUID corporationId);
+    List<UUID> getIdsByCorporationIds(List<UUID> corporationIds);
 }
 

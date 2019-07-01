@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.LiteRecordPageDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,13 +115,13 @@ public class RecordController {
         return service.getByParamsForBusiness(search);
     }
 
+    @PostMapping("/business/params/lite")
+    public LiteRecordPageDto getLiteByParamsForBusiness(@RequestBody RecordsSearchDto search) {
+        return service.getLiteByParamsForBusiness(search);
+    }
+
     @PostMapping("/free-time")
     public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
-    }
-
-    @PostMapping("/lite/by-client-for-business")
-    public List<LiteRecordDto> getLiteByClientForBusiness(@RequestBody RecordsSearchDto search) {
-        return service.getLiteByClientForBusiness(search);
     }
 }

@@ -23,10 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
@@ -107,7 +104,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             throw new ClientException(USER_ID_IS_EMPTY);
         }
         List<WorkerDto> result = new ArrayList<>();
-        List<UUID> businessIds = baseBusinessService.getIdsByCorporationId(corporationId);
+        List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(corporationId));
         if (CollectionUtils.isNotEmpty(businessIds)) {
             List<WorkerEntity> entities = workerRepository.findByUserIdAndBusinessIdIn(userId, businessIds);
             result = converter.convert(entities, dtoClass);
