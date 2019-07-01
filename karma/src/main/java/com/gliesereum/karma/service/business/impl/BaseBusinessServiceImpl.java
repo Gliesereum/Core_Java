@@ -349,7 +349,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         List<PublicUserDto> result = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(ids)) {
             ids.forEach(f -> {
-                if (!currentUserHavePermissionToActionInBusinessLikeWorker(f) ||
+                if (!currentUserHavePermissionToActionInBusinessLikeWorker(f) &&
                         !currentUserHavePermissionToActionInBusinessLikeOwner(f))
                     throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
             });
