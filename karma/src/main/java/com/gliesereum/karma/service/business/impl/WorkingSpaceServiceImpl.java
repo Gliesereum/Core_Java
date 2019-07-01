@@ -2,15 +2,19 @@ package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.model.entity.business.WorkingSpaceEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkingSpaceRepository;
+import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
-import com.gliesereum.karma.service.business.descriptions.WorkingSpaceDescriptionService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
+import com.gliesereum.karma.service.business.WorkingSpaceServicePriceService;
+import com.gliesereum.karma.service.business.descriptions.WorkingSpaceDescriptionService;
+import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
-import com.gliesereum.share.common.model.dto.karma.business.descriptions.WorkingSpaceDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.WorkingSpaceDescriptionDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,8 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.DIFFERENT_BUSINESS_OR_CATEGORY_OF_BUSINESS;
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.WORKING_SPACE_INDEX_NUMBER_EXIST;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -43,6 +46,15 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     private WorkingSpaceDescriptionService workingSpaceDescriptionService;
 
     @Autowired
+    private BaseBusinessService baseBusinessService;
+
+    @Autowired
+    private ServicePriceService servicePriceService;
+
+    @Autowired
+    private WorkingSpaceServicePriceService workingSpaceServicePriceService;
+
+    @Autowired
     public WorkingSpaceServiceImpl(WorkingSpaceRepository workingSpaceRepository, DefaultConverter defaultConverter) {
         super(workingSpaceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.workingSpaceRepository = workingSpaceRepository;
@@ -62,6 +74,33 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public List<LiteWorkingSpaceDto> getLiteWorkingSpaceByBusinessId(UUID id) {
         List<WorkingSpaceEntity> entities = workingSpaceRepository.findByBusinessId(id);
         return converter.convert(entities, LiteWorkingSpaceDto.class);
+    }
+
+    @Override
+    public List<WorkingSpaceServicePriceDto> addServicePrice(List<WorkingSpaceServicePriceDto> dtos) {
+        List<WorkingSpaceServicePriceDto> result = null;
+        if (CollectionUtils.isNotEmpty(dtos)) {
+            Set<UUID> ids = dtos.stream().map(m -> m.getWorkingSpaceId()).collect(Collectors.toSet());
+            List<WorkingSpaceEntity> entities = workingSpaceRepository.findAllById(ids);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                Set<UUID> businessIds = entities.stream().map(m -> m.getBusinessId()).collect(Collectors.toSet());
+                if (CollectionUtils.isNotEmpty(businessIds) && businessIds.size() > 1) {
+                    throw new ClientException(TRY_CHANGE_DIFFERENT_BUSINESS);
+                }
+                UUID businessId = businessIds.iterator().next();
+                if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(businessId) ||
+                        !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(businessId)) {
+                    throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
+                }
+                Set<UUID> servicePriceIds = dtos.stream().map(m -> m.getPriceId()).collect(Collectors.toSet());
+                int count = servicePriceService.getCountByBusinessIdAndServicePriceIds(businessId, new ArrayList<>(servicePriceIds));
+                if (servicePriceIds.size() != count) {
+                    throw new ClientException(SERVICE_NOT_FOUND);
+                }
+                result = workingSpaceServicePriceService.create(dtos);
+            }
+        }
+        return result;
     }
 
     @Override

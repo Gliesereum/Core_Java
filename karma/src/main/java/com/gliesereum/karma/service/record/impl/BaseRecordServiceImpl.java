@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.record.impl;
 import com.gliesereum.karma.aspect.annotation.RecordCreate;
 import com.gliesereum.karma.aspect.annotation.RecordUpdate;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
+import com.gliesereum.karma.model.entity.record.BaseRecordPageEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
@@ -130,17 +131,19 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<LiteRecordDto> getLiteByClientForBusiness(RecordsSearchDto search) {
-        if (!baseBusinessService.currentUserHavePermissionToActionInCorporationLikeWorker(search.getCorporationId())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+    public LiteRecordPageDto getLiteByParamsForBusiness(RecordsSearchDto search) {
+        List<UUID> businessIds = null;
+        LiteRecordPageDto result = new LiteRecordPageDto();
+        if (CollectionUtils.isNotEmpty(search.getCorporationIds())) {
+            businessIds = baseBusinessService.getIdsByCorporationIds(search.getCorporationIds());
         }
-        List<BaseRecordEntity> entities = null;
-        List<UUID> businessIds = baseBusinessService.getIdsByCorporationId(search.getCorporationId());
-        if (CollectionUtils.isNotEmpty(businessIds)) {
-            search.setBusinessIds(businessIds);
-            entities = baseRecordRepository.getRecordsBySearchDto(search);
+        if (CollectionUtils.isNotEmpty(businessIds) || CollectionUtils.isNotEmpty(search.getBusinessIds())) {
+            search.getBusinessIds().addAll(businessIds);
+            BaseRecordPageEntity entity = baseRecordRepository.getRecordsBySearchDto(search);
+            result.setCount(entity.getCount());
+            result.setRecords(convertToLiteRecordDto(entity.getRecords()));
         }
-        return convertToLiteRecordDto(entities);
+        return result;
     }
 
     @Override

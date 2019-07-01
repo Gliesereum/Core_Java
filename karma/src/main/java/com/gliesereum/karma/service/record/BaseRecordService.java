@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.LiteRecordPageDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -62,5 +63,5 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<UUID> getCustomerIdsByBusinessIds(List<UUID> ids);
 
-    List<LiteRecordDto> getLiteByClientForBusiness(RecordsSearchDto search);
+    LiteRecordPageDto getLiteByParamsForBusiness(RecordsSearchDto search);
 }

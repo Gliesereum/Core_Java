@@ -2,6 +2,7 @@ package com.gliesereum.karma.model.repository.jpa.record.impl;
 
 import com.gliesereum.karma.model.entity.car.CarEntity;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
+import com.gliesereum.karma.model.entity.record.BaseRecordPageEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordSearchRepository;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
@@ -51,7 +52,7 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
     }
 
     @Override
-    public List<BaseRecordEntity> getRecordsBySearchDto(RecordsSearchDto search) {
+    public BaseRecordPageEntity getRecordsBySearchDto(RecordsSearchDto search) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<BaseRecordEntity> query = builder.createQuery(BaseRecordEntity.class);
         Root<BaseRecordEntity> root = query.from(BaseRecordEntity.class);
@@ -77,8 +78,15 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
         if (CollectionUtils.isNotEmpty(predicates)) {
             query.where(predicates.toArray(new Predicate[predicates.size()]));
         }
-        TypedQuery<BaseRecordEntity> result = entityManager.createQuery(query);
-        return result.getResultList();
+        TypedQuery<BaseRecordEntity> typedQuery = entityManager.createQuery(query);
+        BaseRecordPageEntity result = new BaseRecordPageEntity();
+        result.setCount(typedQuery.getResultList().size());
+        if (search.getMaxResult() > 0) {
+            typedQuery.setFirstResult(search.getFirstResult());
+            typedQuery.setMaxResults(search.getMaxResult());
+        }
+        result.setRecords(typedQuery.getResultList());
+        return result;
     }
 
 

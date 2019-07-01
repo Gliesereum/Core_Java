@@ -152,6 +152,11 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     }
 
     @Override
+    public int getCountByBusinessIdAndServicePriceIds(UUID businessId, List<UUID> servicePriceIds) {
+        return servicePriceRepository.countAllByBusinessIdAndIdIn(businessId, servicePriceIds);
+    }
+
+    @Override
     public List<ServicePriceDto> getByIds(Iterable<UUID> ids) {
         List<ServicePriceDto> result = null;
         if (ids != null) {

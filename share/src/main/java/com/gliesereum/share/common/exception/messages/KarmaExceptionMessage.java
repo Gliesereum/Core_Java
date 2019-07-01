@@ -86,4 +86,6 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage CHAT_NOT_FOUND = new ExceptionMessage(1478, 404, "Chat not found");
     public static final ExceptionMessage NOT_PERMISSION_TO_CHAT = new ExceptionMessage(1479, 400, "You don't have permission to this chat");
+
+    public static final ExceptionMessage TRY_CHANGE_DIFFERENT_BUSINESS = new ExceptionMessage(1480, 401, "You try to change different business");
 }

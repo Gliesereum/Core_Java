@@ -361,11 +361,11 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public List<UUID> getIdsByCorporationId(UUID corporationId) {
-        if (corporationId == null) {
+    public List<UUID> getIdsByCorporationIds(List<UUID> corporationIds) {
+        if (CollectionUtils.isEmpty(corporationIds)) {
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
-        return baseBusinessRepository.getIdsByCorporationId(corporationId);
+        return baseBusinessRepository.getIdsByCorporationIdIn(corporationIds);
     }
 
     private void checkCorporationId(BaseBusinessDto business) {

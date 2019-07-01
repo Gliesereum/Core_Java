@@ -31,6 +31,6 @@ public interface BaseBusinessRepository extends JpaRepository<BaseBusinessEntity
 
     List<BaseBusinessEntity> getAllByIdInAndObjectState(Iterable<UUID> ids, ObjectState objectState);
 
-    @Query("SELECT DISTINCT b.id FROM BaseBusinessEntity b WHERE b.corporationId = :corporationId")
-    List<UUID> getIdsByCorporationId(@Param("corporationId") UUID corporationId);
+    @Query("SELECT DISTINCT b.id FROM BaseBusinessEntity b WHERE b.corporationId IN :corporationIds")
+    List<UUID> getIdsByCorporationIdIn(@Param("corporationIds") List<UUID> corporationIds);
 }
