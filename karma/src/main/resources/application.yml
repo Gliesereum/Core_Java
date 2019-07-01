@@ -62,4 +62,7 @@ notification:
 
 system-notification:
   corporation-delete:
-    exchange-name: system-notification
+    exchange-name: system-notification-corporation-delete
+  signup-with-code:
+    exchange-name: system-notification-signup-with-code
+    queue-name: signup-with-code-${spring.application.name}-queue

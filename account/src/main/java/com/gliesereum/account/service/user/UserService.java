@@ -24,4 +24,6 @@ public interface UserService extends DefaultService<UserDto, UserEntity> {
 
     void updateAsync(UserDto user);
 
+    UserDto create(UserDto user, String referralCode);
+
 }

@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
                     (type.equals(VerificationType.PHONE) && phoneService.checkPhoneByExist(value))) {
                 result = signIn(value, signInDto.getCode(), type);
             } else {
-                result = signUp(value, signInDto.getCode(), type);
+                result = signUp(value, signInDto.getCode(), type, signInDto.getReferralCode());
             }
 
         }
@@ -103,11 +103,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
-    public AuthDto signUp(String value, String code, VerificationType type) {
+    public AuthDto signUp(String value, String code, VerificationType type, String referralCode) {
         AuthDto result = null;
         if (verificationService.checkVerification(value, code)) {
             checkValueByExist(value, type, true);
-            UserDto newUser = userService.create(new UserDto());
+            UserDto newUser = userService.create(new UserDto(), referralCode);
             if (newUser != null) {
                 if(type.equals(VerificationType.EMAIL)) {
                     UserEmailDto newEmail = new UserEmailDto();
