@@ -1,0 +1,4 @@
+rootProject.name = 'license'
+
+include 'share'
+project(':share').projectDir = new File(settingsDir,  '../share')

@@ -26,6 +26,7 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.record.*;
+import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -487,9 +488,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
             LocalDateTime begin = dto.getBegin();
             LocalDateTime finish = dto.getFinish();
-
             List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business);
-
             if (CollectionUtils.isNotEmpty(freeTimes)) {
                 freeTimes = freeTimes.stream().sorted(Comparator.comparing(RecordFreeTime::getBegin).reversed()).collect(Collectors.toList());
                 RecordFreeTime freeTime = freeTimes.stream()
@@ -503,7 +502,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                     } else {
                         dto.setBegin(freeTime.getBegin());
                     }
-                    dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
+                    //dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
+                    dto.setFinish(dto.getBegin().plusMinutes(duration));
                     dto.setPrice(getPriceByRecord(dto));
                 } else {
                     throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
@@ -604,7 +604,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             } else throw new ClientException(SERVICE_NOT_FOUND);
         }
         if (dto != null && dto.getPackageId() != null) {
-            PackageDto packageDto = packageService.getById(dto.getPackageId());
+            LitePackageDto packageDto = packageService.getLiteById(dto.getPackageId());
             if (packageDto != null) {
                 result += packageDto.getDuration();
             } else throw new ClientException(PACKAGE_NOT_FOUND);

@@ -19,4 +19,6 @@ public interface PackageService extends DefaultService<PackageDto, PackageEntity
     PackageDto getByIdIgnoreState(UUID id);
 
     List<LitePackageDto> getLitePackageByBusinessId(UUID id);
+
+    LitePackageDto getLiteById(UUID id);
 }

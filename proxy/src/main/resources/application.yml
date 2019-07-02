@@ -38,6 +38,12 @@ zuul:
     notification-service:
       path: /notification/v1/**
       service-id: notification-service
+    payment-service:
+      path: /payment/v1/**
+      service-id: payment-service
+    license-service:
+      path: /license/v1/**
+      service-id: license-service
   ignored-services: '*'
   host:
     connectTimeoutMillis: 30000

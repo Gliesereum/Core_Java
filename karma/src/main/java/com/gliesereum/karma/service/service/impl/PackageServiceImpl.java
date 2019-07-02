@@ -100,6 +100,12 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     }
 
     @Override
+    public LitePackageDto getLiteById(UUID id) {
+        PackageEntity entity = packageRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        return converter.convert(entity, LitePackageDto.class);
+    }
+
+    @Override
     public List<PackageDto> getByIds(Iterable<UUID> ids) {
         List<PackageDto> result = null;
         if (ids != null) {
