@@ -4,14 +4,13 @@ import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
-import com.gliesereum.share.common.model.dto.karma.record.LiteRecordPageDto;
-import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -64,4 +63,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     List<UUID> getCustomerIdsByBusinessIds(List<UUID> ids);
 
     LiteRecordPageDto getLiteByParamsForBusiness(RecordsSearchDto search);
+
+    Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, Long from, UUID packageId, List<UUID> serviceIds);
 }
