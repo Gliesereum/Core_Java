@@ -148,6 +148,42 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
+    public Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, Long from, UUID packageId, List<UUID> serviceIds) {
+        Map<UUID, Set<RecordFreeTime>> result = new HashMap<>();
+        LocalDateTime begin = null;
+        LocalDateTime finish = null;
+        if (from != null) {
+            begin = Instant.ofEpochMilli(from).atZone(ZoneId.of("UTC")).toLocalDateTime();
+        } else {
+            begin = LocalDateTime.now();
+        }
+        BaseBusinessDto business = baseBusinessService.getById(businessId);
+        if (business == null) {
+            throw new ClientException(BUSINESS_NOT_FOUND);
+        }
+        Long duration = getDurationByRecord(serviceIds, packageId);
+        finish = begin.plusMinutes(duration);
+        List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business);
+        if (CollectionUtils.isNotEmpty(freeTimes)) {
+            LocalDateTime finalBegin = begin;
+            freeTimes.forEach(f -> {
+                if (f.getFinish().minusMinutes(duration).isAfter(finalBegin) && f.getMin() >= duration) {
+                    putToMapIfKeyNotNull(result, f.getWorkingSpaceID(), f);
+                }
+            });
+        }
+        return result;
+    }
+
+    private void putToMapIfKeyNotNull(Map<UUID, Set<RecordFreeTime>> map, UUID key, RecordFreeTime time) {
+        if (key != null) {
+            Set<RecordFreeTime> value = map.getOrDefault(key, new TreeSet<>(Comparator.comparing(RecordFreeTime::getBegin)));
+            value.add(time);
+            map.put(key, value);
+        }
+    }
+
+    @Override
     public List<LiteRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities) {
         List<LiteRecordDto> result = converter.convert(entities, LiteRecordDto.class);
         return setServicePriceIds(result);
@@ -280,7 +316,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
         dto.setBegin(begin);
-        LocalDateTime finish = begin.plusMinutes(getDurationByRecord(dto));
+        LocalDateTime finish = begin.plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId()));
         dto.setFinish(finish);
         checkRecord(dto);
         BaseRecordDto result = super.update(dto);
@@ -431,7 +467,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         BaseRecordDto result = null;
         BaseBusinessDto business = getBusinessByRecord(dto);
         checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
-        dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
+        dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId())));
         dto.setPrice(getPriceByRecord(dto));
         dto.setStatusRecord(StatusRecord.CREATED);
         dto.setStatusProcess(StatusProcess.WAITING);
@@ -483,27 +519,17 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto != null) {
             BaseBusinessDto business = getBusinessByRecord(dto);
             checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
-            Long duration = getDurationByRecord(dto);
+            Long duration = getDurationByRecord(dto.getServicesIds(), dto.getPackageId());
             dto.setFinish(dto.getBegin().plusMinutes(duration));
-
-            LocalDateTime begin = dto.getBegin();
-            LocalDateTime finish = dto.getFinish();
-            List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business);
+            List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(dto.getBegin(), dto.getFinish(), business);
             if (CollectionUtils.isNotEmpty(freeTimes)) {
-                freeTimes = freeTimes.stream().sorted(Comparator.comparing(RecordFreeTime::getBegin).reversed()).collect(Collectors.toList());
-                RecordFreeTime freeTime = freeTimes.stream()
-                        .filter(f -> (f.getBegin().isAfter(begin.plusMinutes(1L)) && f.getMin() >= duration) ||
-                                (begin.plusMinutes(1L).isAfter(f.getBegin()) && finish.minusMinutes(1L).isBefore(f.getFinish()) && f.getMin() >= duration))
-                        .findFirst().orElse(null);
+                RecordFreeTime freeTime = getNearest(freeTimes, dto.getBegin(), duration);
                 if (freeTime != null) {
                     dto.setWorkingSpaceId(freeTime.getWorkingSpaceID());
-                    if (freeTime.getBegin().isBefore(begin.plusMinutes(1L))) {
-                        dto.setBegin(begin);
-                    } else {
+                    if (freeTime.getBegin().isAfter(dto.getBegin())) {
                         dto.setBegin(freeTime.getBegin());
+                        dto.setFinish(dto.getBegin().plusMinutes(duration));
                     }
-                    //dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto)));
-                    dto.setFinish(dto.getBegin().plusMinutes(duration));
                     dto.setPrice(getPriceByRecord(dto));
                 } else {
                     throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
@@ -514,6 +540,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             }
         }
         return dto;
+    }
+
+    private RecordFreeTime getNearest(List<RecordFreeTime> times, LocalDateTime begin, Long duration) {
+        if (CollectionUtils.isNotEmpty(times)) {
+            return times.stream()
+                    .filter(f -> f.getMin() >= duration && f.getFinish().minusMinutes(duration).isAfter(begin))
+                    .sorted(Comparator.comparing(RecordFreeTime::getBegin)).findFirst().orElse(null);
+        }
+        return null;
     }
 
     @Override
@@ -594,17 +629,19 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return result;
     }
 
-    private Long getDurationByRecord(BaseRecordDto dto) {
+    private Long getDurationByRecord(List<UUID> servicesIds, UUID packageId) {
         Long result = 0L;
-        checkServiceChoose(dto);
-        if (dto != null && CollectionUtils.isNotEmpty(dto.getServicesIds())) {
-            List<ServicePriceDto> services = servicePriceService.getByIds(dto.getServicesIds());
+        if (packageId == null && CollectionUtils.isEmpty(servicesIds)) {
+            throw new ClientException(SERVICE_NOT_CHOOSE);
+        }
+        if (CollectionUtils.isNotEmpty(servicesIds)) {
+            List<ServicePriceDto> services = servicePriceService.getByIds(servicesIds);
             if (CollectionUtils.isNotEmpty(services)) {
                 result += services.stream().mapToInt(ServicePriceDto::getDuration).sum();
             } else throw new ClientException(SERVICE_NOT_FOUND);
         }
-        if (dto != null && dto.getPackageId() != null) {
-            LitePackageDto packageDto = packageService.getLiteById(dto.getPackageId());
+        if (packageId != null) {
+            LitePackageDto packageDto = packageService.getLiteById(packageId);
             if (packageDto != null) {
                 result += packageDto.getDuration();
             } else throw new ClientException(PACKAGE_NOT_FOUND);
@@ -715,7 +752,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                                 begin = recordsBySpace.get(i).getFinish();
                                 end = endTimeWork;
                             }
-                            if (!begin.equals(end)) {
+                            if (!begin.equals(end) && begin.isBefore(end)) {
                                 result.add(new RecordFreeTime(currentId, begin, end));
                             }
                         }

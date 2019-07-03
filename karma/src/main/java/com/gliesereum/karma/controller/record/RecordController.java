@@ -4,16 +4,15 @@ import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
-import com.gliesereum.share.common.model.dto.karma.record.LiteRecordPageDto;
-import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -123,5 +122,13 @@ public class RecordController {
     @PostMapping("/free-time")
     public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto) {
         return service.getFreeTimeForRecord(dto);
+    }
+
+    @GetMapping("/free-times")
+    public Map<UUID, Set<RecordFreeTime>> getFreeTimes(@RequestParam("businessId") UUID businessId,
+                                                       @RequestParam(value = "from", required = false) Long from,
+                                                       @RequestParam(value = "packageId", required = false) UUID packageId,
+                                                       @RequestParam(value = "serviceIds", required = false) List<UUID> serviceIds) {
+        return service.getFreeTimes(businessId, from, packageId, serviceIds);
     }
 }
