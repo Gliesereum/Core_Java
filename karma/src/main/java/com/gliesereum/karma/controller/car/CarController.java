@@ -55,6 +55,11 @@ public class CarController {
         return ListUtils.emptyIfNull(carService.getAllByUserId(userId));
     }
 
+    @GetMapping("/user/{userId}")
+    public List<CarDto> getAllById(@PathVariable("userId") UUID userId) {
+        return ListUtils.emptyIfNull(carService.getAllByUserId(userId));
+    }
+
     @PostMapping
     public CarDto create(@RequestBody @Valid  CarDto car) {
         return carService.create(car);
