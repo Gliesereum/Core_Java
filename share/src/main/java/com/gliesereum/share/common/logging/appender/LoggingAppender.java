@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -23,7 +25,7 @@ import java.util.Map;
 @Setter
 @Getter
 @Component
-public class LoggingAppender extends AppenderBase<ILoggingEvent> {
+public class LoggingAppender extends AppenderBase<ILoggingEvent> implements ApplicationListener<ContextClosedEvent> {
 
     private PatternLayout layout;
 
@@ -52,6 +54,11 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> {
             LoggingAppender.remoteLoggingEnable = false;
             LoggingAppender.eventQueue.clear();
         }
+    }
+
+    @Override
+    public void onApplicationEvent(ContextClosedEvent event) {
+        LoggingAppender.remoteLoggingEnable = false;
     }
 
     @Override

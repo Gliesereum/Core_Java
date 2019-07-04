@@ -5,7 +5,6 @@ import com.gliesereum.karma.model.repository.jpa.record.RecordMessageRepository;
 import com.gliesereum.karma.service.record.RecordMessageDescriptionService;
 import com.gliesereum.karma.service.record.RecordMessageService;
 import com.gliesereum.share.common.converter.DefaultConverter;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordMessageDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordMessageDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -13,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author vitalij
@@ -25,15 +26,16 @@ public class RecordMessageServiceImpl extends DefaultServiceImpl<RecordMessageDt
     private static final Class<RecordMessageDto> DTO_CLASS = RecordMessageDto.class;
     private static final Class<RecordMessageEntity> ENTITY_CLASS = RecordMessageEntity.class;
 
-    public RecordMessageServiceImpl(RecordMessageRepository repository, DefaultConverter defaultConverter) {
-        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
-        this.repository = repository;
-    }
-
     private final RecordMessageRepository repository;
 
     @Autowired
     private RecordMessageDescriptionService recordMessageDescriptionService;
+
+    @Autowired
+    public RecordMessageServiceImpl(RecordMessageRepository repository, DefaultConverter defaultConverter) {
+        super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
+        this.repository = repository;
+    }
 
     @Override
     @Transactional
@@ -41,7 +43,7 @@ public class RecordMessageServiceImpl extends DefaultServiceImpl<RecordMessageDt
         RecordMessageDto result = null;
         if (dto != null) {
             result = super.create(dto);
-            DescriptionReadableDto<RecordMessageDescriptionDto> descriptions = recordMessageDescriptionService.create(dto.getDescriptions(), result.getId());
+            List<RecordMessageDescriptionDto> descriptions = recordMessageDescriptionService.create(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;
@@ -53,7 +55,7 @@ public class RecordMessageServiceImpl extends DefaultServiceImpl<RecordMessageDt
         RecordMessageDto result = null;
         if (dto != null) {
             result = super.update(dto);
-            DescriptionReadableDto<RecordMessageDescriptionDto> descriptions = recordMessageDescriptionService.update(dto.getDescriptions(), result.getId());
+            List<RecordMessageDescriptionDto> descriptions = recordMessageDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;

@@ -13,7 +13,6 @@ import com.gliesereum.karma.service.service.ServiceService;
 import com.gliesereum.karma.service.service.descriptions.ServicePriceDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
 import com.gliesereum.share.common.model.dto.karma.filter.PriceFilterAttributeDto;
@@ -86,7 +85,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             checkPermission(dto);
             dto.setObjectState(ObjectState.ACTIVE);
             result = super.create(setCustomName(dto));
-            DescriptionReadableDto<ServicePriceDescriptionDto> descriptions = servicePriceDescriptionService.create(dto.getDescriptions(), result.getId());
+            List<ServicePriceDescriptionDto> descriptions = servicePriceDescriptionService.create(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
             businessEsService.indexAsync(result.getBusinessId());
         }
@@ -105,7 +104,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             }
             dto.setObjectState(oldDto.getObjectState());
             result = super.update(setCustomName(dto));
-            DescriptionReadableDto<ServicePriceDescriptionDto> descriptions = servicePriceDescriptionService.update(dto.getDescriptions(), result.getId());
+            List<ServicePriceDescriptionDto> descriptions = servicePriceDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
             businessEsService.indexAsync(result.getBusinessId());
         }

@@ -2,17 +2,17 @@ package com.gliesereum.karma.service.service.impl;
 
 import com.gliesereum.karma.model.entity.service.ServiceClassEntity;
 import com.gliesereum.karma.model.repository.jpa.service.ServiceClassRepository;
-import com.gliesereum.karma.service.service.descriptions.ServiceClassDescriptionService;
 import com.gliesereum.karma.service.service.ServiceClassService;
+import com.gliesereum.karma.service.service.descriptions.ServiceClassDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
-import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServiceClassDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceClassDto;
+import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServiceClassDescriptionDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -48,7 +48,7 @@ public class ServiceClassServiceImpl extends DefaultServiceImpl<ServiceClassDto,
         ServiceClassDto result = null;
         if (dto != null) {
             result = super.create(dto);
-            DescriptionReadableDto<ServiceClassDescriptionDto> descriptions = serviceClassDescriptionService.create(dto.getDescriptions(), result.getId());
+            List<ServiceClassDescriptionDto> descriptions = serviceClassDescriptionService.create(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;
@@ -59,7 +59,7 @@ public class ServiceClassServiceImpl extends DefaultServiceImpl<ServiceClassDto,
         ServiceClassDto result = null;
         if (dto != null) {
             result = super.update(dto);
-            DescriptionReadableDto<ServiceClassDescriptionDto> descriptions = serviceClassDescriptionService.update(dto.getDescriptions(), result.getId());
+            List<ServiceClassDescriptionDto> descriptions = serviceClassDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;

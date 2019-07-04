@@ -2,13 +2,12 @@ package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.model.entity.business.BusinessCategoryEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BusinessCategoryRepository;
-import com.gliesereum.karma.service.business.descriptions.BusinessCategoryDescriptionService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
+import com.gliesereum.karma.service.business.descriptions.BusinessCategoryDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
-import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessCategoryDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDto;
+import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessCategoryDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -106,7 +105,7 @@ public class BusinessCategoryServiceImpl extends DefaultServiceImpl<BusinessCate
         if (dto != null) {
             throwExceptionIfCodeExist(dto.getCode());
             result = super.create(dto);
-            DescriptionReadableDto<BusinessCategoryDescriptionDto> descriptions = businessCategoryDescriptionService.create(dto.getDescriptions(), result.getId());
+            List<BusinessCategoryDescriptionDto> descriptions = businessCategoryDescriptionService.create(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;
@@ -118,7 +117,7 @@ public class BusinessCategoryServiceImpl extends DefaultServiceImpl<BusinessCate
         if (dto != null) {
             throwExceptionIfCodeExist(dto.getCode(), dto.getId());
             result = super.update(dto);
-            DescriptionReadableDto<BusinessCategoryDescriptionDto> descriptions = businessCategoryDescriptionService.update(dto.getDescriptions(), result.getId());
+            List<BusinessCategoryDescriptionDto> descriptions = businessCategoryDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;

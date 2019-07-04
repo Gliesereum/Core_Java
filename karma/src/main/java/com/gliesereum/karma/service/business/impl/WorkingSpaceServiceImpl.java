@@ -137,7 +137,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             dto = checkIndex(Arrays.asList(dto), dto.getBusinessId()).get(0);
             result = super.create(dto);
-            DescriptionReadableDto<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.create(dto.getDescriptions(), result.getId());
+            List<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.create(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;
@@ -156,7 +156,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             result = super.create(dtos);
             for (int i = 0; i < result.size(); i++) {
-                DescriptionReadableDto<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.create(dtos.get(i).getDescriptions(), result.get(0).getId());
+                List<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.create(dtos.get(i).getDescriptions(), result.get(0).getId());
                 result.get(0).setDescriptions(descriptions);
             }
         }
@@ -170,7 +170,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
             dto = checkIndex(Arrays.asList(dto), dto.getBusinessId()).get(0);
             result = super.update(dto);
-            DescriptionReadableDto<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.update(dto.getDescriptions(), result.getId());
+            List<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;

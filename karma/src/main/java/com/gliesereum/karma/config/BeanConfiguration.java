@@ -2,7 +2,6 @@ package com.gliesereum.karma.config;
 
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.converter.imp.DefaultConverterImp;
-import com.gliesereum.share.common.databind.dto.description.DescriptionConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,6 @@ public class BeanConfiguration {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        DescriptionConverter.init(modelMapper);
         return modelMapper;
     }
 

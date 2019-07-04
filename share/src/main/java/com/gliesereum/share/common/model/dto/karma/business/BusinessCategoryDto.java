@@ -1,7 +1,10 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.description.DescriptionJsonDeserializer;
+import com.gliesereum.share.common.databind.json.description.DescriptionJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessCategoryDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import lombok.Data;
@@ -10,6 +13,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yvlasiuk
@@ -38,6 +43,8 @@ public class BusinessCategoryDto extends DefaultDto {
 
     private Integer orderIndex;
 
-    private DescriptionReadableDto<BusinessCategoryDescriptionDto> descriptions = new DescriptionReadableDto<>();
+    @JsonDeserialize(using = DescriptionJsonDeserializer.class)
+    @JsonSerialize(using = DescriptionJsonSerializer.class)
+    private List<BusinessCategoryDescriptionDto> descriptions = new ArrayList<>();
 
 }
