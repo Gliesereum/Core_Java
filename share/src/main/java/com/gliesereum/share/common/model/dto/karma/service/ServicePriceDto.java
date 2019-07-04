@@ -1,9 +1,11 @@
 package com.gliesereum.share.common.model.dto.karma.service;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.description.DescriptionJsonDeserializer;
+import com.gliesereum.share.common.databind.json.description.DescriptionJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
-import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServiceDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServicePriceDescriptionDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
@@ -47,8 +49,9 @@ public class ServicePriceDto extends DefaultDto {
     @Min(0)
     private Integer duration;
 
-    private DescriptionReadableDto<ServicePriceDescriptionDto> descriptions = new DescriptionReadableDto<>();
-
+    @JsonDeserialize(using = DescriptionJsonDeserializer.class)
+    @JsonSerialize(using = DescriptionJsonSerializer.class)
+    private List<ServicePriceDescriptionDto> descriptions = new ArrayList<>();
 
     private List<ServiceClassDto> serviceClass = new ArrayList<>();
 

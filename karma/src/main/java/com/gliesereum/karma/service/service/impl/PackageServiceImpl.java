@@ -4,15 +4,17 @@ import com.gliesereum.karma.model.entity.service.PackageEntity;
 import com.gliesereum.karma.model.repository.jpa.service.PackageRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
-import com.gliesereum.karma.service.service.descriptions.PackageDescriptionService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.PackageServiceService;
 import com.gliesereum.karma.service.service.ServicePriceService;
+import com.gliesereum.karma.service.service.descriptions.PackageDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.service.*;
+import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.PackageServiceDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.descriptions.PackageDescriptionDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -58,6 +60,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     @Autowired
     private PackageDescriptionService packageDescriptionService;
 
+    @Autowired
     public PackageServiceImpl(PackageRepository packageRepository, DefaultConverter defaultConverter) {
         super(packageRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.packageRepository = packageRepository;
@@ -117,7 +120,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         dto.setObjectState(ObjectState.ACTIVE);
         PackageDto result = super.create(dto);
         setServices(dto, result);
-        DescriptionReadableDto<PackageDescriptionDto> descriptions = packageDescriptionService.create(dto.getDescriptions(), result.getId());
+        List<PackageDescriptionDto> descriptions = packageDescriptionService.create(dto.getDescriptions(), result.getId());
         result.setDescriptions(descriptions);
         return result;
 
@@ -136,7 +139,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         PackageDto result = super.update(dto);
         deletePackageServicePrice(dto);
         setServices(dto, result);
-        DescriptionReadableDto<PackageDescriptionDto> descriptions = packageDescriptionService.update(dto.getDescriptions(), result.getId());
+        List<PackageDescriptionDto> descriptions = packageDescriptionService.update(dto.getDescriptions(), result.getId());
         result.setDescriptions(descriptions);
         return result;
     }
@@ -162,7 +165,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     private void setServices(PackageDto dto, PackageDto result) {
         if (result != null) {
             result.setServicesIds(dto.getServicesIds());
-            if(CollectionUtils.isNotEmpty(result.getServicesIds())) {
+            if (CollectionUtils.isNotEmpty(result.getServicesIds())) {
                 List<ServicePriceDto> services = servicePriceService.getByIds(result.getServicesIds());
                 result.setServices(services);
             }
