@@ -401,6 +401,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 carService.checkCarExistInCurrentUser(dto.getTargetId());
             }
             UserDto user = SecurityUtil.getUser().getUser();
+            dto.setClientId(user.getId());
             dto.setFirstName(user.getFirstName());
             dto.setLastName(user.getLastName());
             dto.setPhone(user.getPhone());
@@ -424,6 +425,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 dto.setLastName(user.getLastName());
                 dto.setFirstName(user.getFirstName());
                 dto.setPhone(user.getPhone());
+                dto.setClientId(user.getId());
             }
         }
         return createRecord(dto);
