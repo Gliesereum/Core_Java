@@ -1,5 +1,6 @@
 package com.gliesereum.account.service.user.impl;
 
+import com.gliesereum.account.facade.auth.AuthFacade;
 import com.gliesereum.account.facade.notification.SystemNotificationFacade;
 import com.gliesereum.account.model.entity.CorporationEntity;
 import com.gliesereum.account.model.repository.jpa.user.CorporationRepository;
@@ -61,6 +62,9 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     private SystemNotificationFacade systemNotificationFacade;
 
     @Autowired
+    private AuthFacade authFacade;
+
+    @Autowired
     public CorporationServiceImpl(CorporationRepository corporationRepository, DefaultConverter converter) {
         super(corporationRepository, converter, DTO_CLASS, ENTITY_CLASS);
         this.corporationRepository = corporationRepository;
@@ -82,9 +86,11 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                         .mapToInt(CorporationSharedOwnershipDto::getShare).sum() > 100) {
                     throw new ClientException(SUM_SHARE_MORE_THEN_100);
                 }
-                dto.getCorporationSharedOwnerships().forEach(sharedOwnershipService::create);
+                List<UUID> userIds = dto.getCorporationSharedOwnerships().stream().map(sharedOwnershipService::create).map(CorporationSharedOwnershipDto::getOwnerId).collect(Collectors.toList());
+                authFacade.tokenInfoUpdateEvent(userIds);
             } else {
                 sharedOwnershipService.create(new CorporationSharedOwnershipDto(100, SecurityUtil.getUserId(), null, result.getId()));
+                authFacade.tokenInfoUpdateEvent(Arrays.asList(SecurityUtil.getUserId()));
             }
         }
         return result;
@@ -130,7 +136,8 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     @Override
     public void addOwnerCorporation(CorporationSharedOwnershipDto dto) {
         checkCorporationSharedOwnerships(dto);
-        sharedOwnershipService.create(dto);
+        CorporationSharedOwnershipDto owner = sharedOwnershipService.create(dto);
+        authFacade.tokenInfoUpdateEvent(Arrays.asList(owner.getOwnerId()));
     }
 
     @Override

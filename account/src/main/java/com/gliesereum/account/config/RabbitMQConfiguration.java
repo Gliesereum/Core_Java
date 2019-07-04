@@ -16,16 +16,20 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfiguration {
 
     @Bean
-    public FanoutExchange corporationDeleteExchange(
-            @Value("${system-notification.corporation-delete.exchange-name}")
-                    String corporationDeleteExchangeName) {
+    public FanoutExchange corporationDeleteExchange(@Value("${system-notification.corporation-delete.exchange-name}")
+                                                            String corporationDeleteExchangeName) {
         return new FanoutExchange(corporationDeleteExchangeName);
     }
 
     @Bean
-    public FanoutExchange signupWithCodeExchange(
-            @Value("${system-notification.signup-with-code.exchange-name}")
-                    String signupWithCodeExchangeName) {
+    public FanoutExchange signupWithCodeExchange(@Value("${system-notification.signup-with-code.exchange-name}")
+                                                         String signupWithCodeExchangeName) {
         return new FanoutExchange(signupWithCodeExchangeName);
+    }
+
+    @Bean
+    public FanoutExchange updateAuthInfoExchange(@Value("${system-notification.update-auth-info.exchange-name}")
+                                                         String updateAuthInfoExchangeName) {
+        return new FanoutExchange(updateAuthInfoExchangeName);
     }
 }

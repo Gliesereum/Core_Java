@@ -54,3 +54,5 @@ system-notification:
     exchange-name: system-notification-corporation-delete
   signup-with-code:
     exchange-name: system-notification-signup-with-code
+  update-auth-info:
+    exchange-name: system-notification-update-auth-info

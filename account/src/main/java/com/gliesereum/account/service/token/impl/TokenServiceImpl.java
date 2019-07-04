@@ -6,14 +6,18 @@ import com.gliesereum.account.service.token.TokenService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.TokenExceptionMessage.*;
 
@@ -105,6 +109,20 @@ public class TokenServiceImpl implements TokenService {
             throw new ClientException(ACCESS_TOKEN_NOT_FOUND);
         }
         tokenStoreRepository.delete(tokenStore);
+    }
+
+    @Override
+    public Map<UUID, List<TokenStoreDomain>> getByUserIds(List<UUID> userIds) {
+        Map<UUID, List<TokenStoreDomain>> result = null;
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            List<TokenStoreDomain> list = userIds.stream().map(UUID::toString).map(tokenStoreRepository::findByUserId).flatMap(List::stream).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(list)) {
+                result = list.stream()
+                        .filter(i -> StringUtils.isNotEmpty(i.getUserId()))
+                        .collect(Collectors.groupingBy(i -> UUID.fromString(i.getUserId())));
+            }
+        }
+        return result;
     }
 
     private LocalDateTime generateAccessExpirationDate() {
