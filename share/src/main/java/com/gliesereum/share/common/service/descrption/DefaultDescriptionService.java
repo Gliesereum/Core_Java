@@ -1,10 +1,10 @@
 package com.gliesereum.share.common.service.descrption;
 
 import com.gliesereum.share.common.model.dto.base.description.BaseDescriptionDto;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.entity.description.BaseDescriptionEntity;
 import com.gliesereum.share.common.service.DefaultService;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,9 +13,9 @@ import java.util.UUID;
  */
 public interface DefaultDescriptionService<D extends BaseDescriptionDto, E extends BaseDescriptionEntity> extends DefaultService<D, E> {
 
-    DescriptionReadableDto<D> create(DescriptionReadableDto<D> description, UUID objectId);
+    List<D> create(List<D> description, UUID objectId);
 
-    DescriptionReadableDto<D> update(DescriptionReadableDto<D> description, UUID objectId);
+    List<D> update(List<D> description, UUID objectId);
 
     void deleteByObjectId(UUID objectId);
 }

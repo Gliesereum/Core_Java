@@ -1,7 +1,10 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.description.DescriptionJsonDeserializer;
+import com.gliesereum.share.common.databind.json.description.DescriptionJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.WorkingSpaceDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusSpace;
 import lombok.Data;
@@ -35,6 +38,8 @@ public class WorkingSpaceDto extends DefaultDto {
 
     private List<WorkerDto> workers = new ArrayList<>();
 
-    private DescriptionReadableDto<WorkingSpaceDescriptionDto> descriptions = new DescriptionReadableDto<>();
+    @JsonDeserialize(using = DescriptionJsonDeserializer.class)
+    @JsonSerialize(using = DescriptionJsonSerializer.class)
+    private List<WorkingSpaceDescriptionDto> descriptions = new ArrayList<>();
 
 }

@@ -6,7 +6,6 @@ import com.gliesereum.karma.service.service.ServiceService;
 import com.gliesereum.karma.service.service.descriptions.ServiceDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServiceDescriptionDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
@@ -50,7 +49,7 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
         if (dto != null) {
             dto.setObjectState(ObjectState.ACTIVE);
             result = super.create(dto);
-            DescriptionReadableDto<ServiceDescriptionDto> descriptions = serviceDescriptionService.create(dto.getDescriptions(), result.getId());
+            List<ServiceDescriptionDto> descriptions = serviceDescriptionService.create(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;
@@ -67,7 +66,7 @@ public class ServiceServiceImpl extends DefaultServiceImpl<ServiceDto, ServiceEn
             }
             dto.setObjectState(oldDto.getObjectState());
             result = super.update(dto);
-            DescriptionReadableDto<ServiceDescriptionDto> descriptions = serviceDescriptionService.update(dto.getDescriptions(), result.getId());
+            List<ServiceDescriptionDto> descriptions = serviceDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
         return result;

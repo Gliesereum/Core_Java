@@ -15,7 +15,6 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
-import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
@@ -84,6 +83,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     @Autowired
     private BusinessDescriptionService businessDescriptionService;
 
+    @Autowired
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.baseBusinessRepository = repository;
@@ -119,7 +119,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             checkCorporationId(dto);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
-            DescriptionReadableDto<BusinessDescriptionDto> descriptions = businessDescriptionService.update(dto.getDescriptions(), entity.getId());
+            List<BusinessDescriptionDto> descriptions = businessDescriptionService.update(dto.getDescriptions(), entity.getId());
             dto = converter.convert(entity, dtoClass);
             dto.setDescriptions(descriptions);
             businessEsService.indexAsync(dto.getId());
@@ -220,6 +220,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    @Transactional
     public List<BaseBusinessDto> getByIds(Iterable<UUID> ids) {
         List<BaseBusinessDto> result = null;
         if (ids != null) {
