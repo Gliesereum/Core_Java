@@ -16,6 +16,8 @@ public interface WorkerRepository extends JpaRepository<WorkerEntity, UUID> {
 
     List<WorkerEntity> findAllByBusinessId(UUID businessId);
 
+    List<WorkerEntity> findAllByBusinessIdIn(List<UUID> businessIds);
+
     List<WorkerEntity> findAllByUserId(UUID userId);
 
     WorkerEntity findByUserIdAndBusinessId(UUID userId, UUID businessId);

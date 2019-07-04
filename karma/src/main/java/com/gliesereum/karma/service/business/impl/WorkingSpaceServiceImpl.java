@@ -10,14 +10,18 @@ import com.gliesereum.karma.service.business.descriptions.WorkingSpaceDescriptio
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.base.description.DescriptionReadableDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.WorkingSpaceDescriptionDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,17 +59,40 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     private WorkingSpaceServicePriceService workingSpaceServicePriceService;
 
     @Autowired
+    private UserExchangeService userExchangeService;
+
+    @Autowired
     public WorkingSpaceServiceImpl(WorkingSpaceRepository workingSpaceRepository, DefaultConverter defaultConverter) {
         super(workingSpaceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.workingSpaceRepository = workingSpaceRepository;
     }
 
     @Override
-    public List<WorkingSpaceDto> getByBusinessId(UUID businessId) {
+    public List<WorkingSpaceDto> getByBusinessId(UUID businessId, boolean setUsers) {
         List<WorkingSpaceDto> result = null;
         if (businessId != null) {
             List<WorkingSpaceEntity> entities = workingSpaceRepository.findByBusinessId(businessId);
             result = converter.convert(entities, dtoClass);
+            if (setUsers && CollectionUtils.isNotEmpty(result)) {
+                Set<UUID> userIds = new HashSet<>();
+                result.forEach(f -> {
+                    List<WorkerDto> workers = f.getWorkers();
+                    if (CollectionUtils.isNotEmpty(workers)) {
+                        userIds.addAll(workers.stream().map(m -> m.getUserId()).collect(Collectors.toSet()));
+                    }
+                });
+                if (CollectionUtils.isNotEmpty(userIds)) {
+                    Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(userIds);
+                    if (MapUtils.isNotEmpty(users)) {
+                        result.forEach(f -> {
+                            List<WorkerDto> workers = f.getWorkers();
+                            if (CollectionUtils.isNotEmpty(workers)) {
+                                workers.forEach(w -> w.setUser(users.get(w.getUserId())));
+                            }
+                        });
+                    }
+                }
+            }
         }
         return result;
     }

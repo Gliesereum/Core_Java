@@ -15,7 +15,7 @@ import java.util.UUID;
  */
 public interface WorkingSpaceService extends DefaultService<WorkingSpaceDto, WorkingSpaceEntity> {
 
-    List<WorkingSpaceDto> getByBusinessId(UUID businessId);
+    List<WorkingSpaceDto> getByBusinessId(UUID businessId, boolean setUsers);
 
     List<LiteWorkingSpaceDto> getLiteWorkingSpaceByBusinessId(UUID id);
 
