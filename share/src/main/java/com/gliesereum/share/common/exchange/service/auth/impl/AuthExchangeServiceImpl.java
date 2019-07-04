@@ -34,7 +34,6 @@ public class AuthExchangeServiceImpl implements AuthExchangeService {
     }
 
     @Override
-    @Cacheable(value = "tokenInfo", key="#accessToken", unless="#result == null")
     public AuthDto checkAccessToken(String accessToken) {
         AuthDto result = null;
         try {

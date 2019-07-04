@@ -32,4 +32,6 @@ public interface UserPhoneService extends DefaultService<UserPhoneDto, UserPhone
     List<UserPhoneDto> getByUserIds(List<UUID> ids);
 
     Map<UUID, UserPhoneDto> getMapByUserIds(List<UUID> ids);
+
+    Map<UUID, String> getPhoneByUserIds(List<UUID> ids);
 }

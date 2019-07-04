@@ -28,6 +28,7 @@ public class TokenStoreDomain implements Serializable {
 
     private LocalDateTime refreshExpirationDate;
 
+    @Indexed
     private String userId;
 
 }

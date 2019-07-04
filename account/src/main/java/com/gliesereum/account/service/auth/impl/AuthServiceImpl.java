@@ -15,14 +15,15 @@ import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserEmailDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.*;
 import static com.gliesereum.share.common.exception.messages.EmailExceptionMessage.EMAIL_EXIST;
@@ -227,6 +228,28 @@ public class AuthServiceImpl implements AuthService {
         user.setLastActivity(LocalDateTime.now());
         userService.updateAsync(user);
         return createModel(token, user);
+    }
+
+    @Override
+    public List<AuthDto> createAuthModel(Map<UUID, List<TokenStoreDomain>> userTokenMap) {
+        List<AuthDto> result = null;
+        if (MapUtils.isNotEmpty(userTokenMap)) {
+            Set<UUID> userIds = userTokenMap.keySet();
+            List<UserDto> users = userService.getByIds(userIds);
+            if (CollectionUtils.isNotEmpty(users)) {
+                result = new ArrayList<>();
+                for (UserDto user : users) {
+                    List<TokenStoreDomain> tokens = userTokenMap.get(user.getId());
+                    if (CollectionUtils.isNotEmpty(tokens)) {
+                        for (TokenStoreDomain token : tokens) {
+                            result.add(createModel(token, user));
+                        }
+                    }
+                }
+
+            }
+        }
+        return result;
     }
 
     /*private void checkField(Map<String, String> params) {
