@@ -326,6 +326,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         }
         dto.setObjectState(ObjectState.DELETED);
         super.update(dto);
+        businessEsService.indexAsync(dto.getId());
     }
 
     @Override
