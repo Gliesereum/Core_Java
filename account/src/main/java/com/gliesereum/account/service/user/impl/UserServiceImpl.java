@@ -1,5 +1,6 @@
 package com.gliesereum.account.service.user.impl;
 
+import com.gliesereum.account.facade.auth.AuthFacade;
 import com.gliesereum.account.facade.referral.ReferralFacade;
 import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserRepository;
@@ -15,12 +16,17 @@ import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -52,6 +58,9 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
 
     @Autowired
     private ReferralFacade referralFacade;
+
+    @Autowired
+    private AuthFacade authFacade;
 
     public UserServiceImpl(UserRepository userRepository, DefaultConverter defaultConverter) {
         super(userRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -114,6 +123,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             dto.setLastSignIn(byId.getLastSignIn());
             dto.setCreateDate(byId.getCreateDate());
             result = super.update(dto);
+            authFacade.tokenInfoUpdateEvent(Arrays.asList(result.getId()));
         }
         return result;
     }
@@ -135,6 +145,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         }
         user.setBanStatus(status);
         super.update(user);
+        authFacade.tokenInfoUpdateEvent(Arrays.asList(user.getId()));
     }
 
     @Override
@@ -148,6 +159,22 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     }
 
     @Override
+    public List<UserDto> getByIds(Iterable<UUID> ids) {
+        List<UserDto> byIds = super.getByIds(ids);
+        if (CollectionUtils.isNotEmpty(byIds)) {
+            List<UUID> userIds = IteratorUtils.toList(ids.iterator());
+            Map<UUID, List<UUID>> corporationsIds = corporationSharedOwnershipService.getAllCorporationIdByUserIds(userIds);
+            Map<UUID, String> phones = phoneService.getPhoneByUserIds(userIds);
+            byIds.forEach(i -> {
+                        i.setPhone(phones.get(i.getId()));
+                        i.setCorporationIds(corporationsIds.get(i.getId()));
+                    }
+            );
+        }
+        return byIds;
+    }
+
+    @Override
     public void setKycApproved(UUID objectId) {
         UserDto user = super.getById(objectId);
         if (user == null) {
@@ -155,6 +182,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         }
         user.setKycApproved(true);
         super.update(user);
+        authFacade.tokenInfoUpdateEvent(Arrays.asList(user.getId()));
     }
 
     @Override

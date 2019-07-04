@@ -27,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CacheConfiguration {
 
+    public static final String TOKEN_INFO_CACHE = "tokenInfo";
+
     @Bean
     public CacheManager cacheManager(javax.cache.CacheManager jCacheManager) {
         return new JCacheCacheManager(jCacheManager);
@@ -59,7 +61,7 @@ public class CacheConfiguration {
 
     @Bean
     public Cache tokenInfoCache(javax.cache.CacheManager jCacheManager) {
-        javax.cache.Cache groupCache = jCacheManager.createCache("tokenInfo",
+        javax.cache.Cache groupCache = jCacheManager.createCache(TOKEN_INFO_CACHE,
                 ExtendedMutableConfiguration.of(new Cache2kBuilder<String, AuthDto>(){}
                         .entryCapacity(10000)
                         .expireAfterWrite(1, TimeUnit.MINUTES)));

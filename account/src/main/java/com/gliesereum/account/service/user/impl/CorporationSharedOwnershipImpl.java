@@ -11,6 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,19 @@ public class CorporationSharedOwnershipImpl extends DefaultServiceImpl<Corporati
             result = founded.stream()
                     .map(CorporationSharedOwnershipDto::getCorporationId)
                     .collect(Collectors.toList());
+        }
+        return result;
+    }
+
+    @Override
+    public Map<UUID, List<UUID>> getAllCorporationIdByUserIds(List<UUID> userIds) {
+        Map<UUID, List<UUID>> result = null;
+        List<CorporationSharedOwnershipDto> ownerships = getAllByUserIds(userIds);
+        if (CollectionUtils.isNotEmpty(ownerships)) {
+            result = ownerships.stream()
+                    .collect(Collectors.groupingBy(
+                            CorporationSharedOwnershipDto::getOwnerId,
+                            Collectors.mapping(CorporationSharedOwnershipDto::getCorporationId, Collectors.toList())));
         }
         return result;
     }

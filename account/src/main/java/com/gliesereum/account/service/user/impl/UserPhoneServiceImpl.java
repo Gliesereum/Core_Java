@@ -185,6 +185,18 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
         return result;
     }
 
+    @Override
+    public Map<UUID, String> getPhoneByUserIds(List<UUID> ids) {
+        Map<UUID, String> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<UserPhoneDto> phones = getByUserIds(ids);
+            if (CollectionUtils.isNotEmpty(phones)) {
+                result = phones.stream().collect(Collectors.toMap(UserPhoneDto::getUserId, UserPhoneDto::getPhone));
+            }
+        }
+        return result;
+    }
+
     private void checkIsPhone(String phone) {
         if (StringUtils.isEmpty(phone)) {
             throw new ClientException(PHONE_EMPTY);
