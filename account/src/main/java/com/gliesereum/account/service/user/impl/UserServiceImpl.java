@@ -18,6 +18,7 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -166,8 +167,12 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             Map<UUID, List<UUID>> corporationsIds = corporationSharedOwnershipService.getAllCorporationIdByUserIds(userIds);
             Map<UUID, String> phones = phoneService.getPhoneByUserIds(userIds);
             byIds.forEach(i -> {
-                        i.setPhone(phones.get(i.getId()));
-                        i.setCorporationIds(corporationsIds.get(i.getId()));
+                        if (MapUtils.isNotEmpty(phones)) {
+                            i.setPhone(phones.get(i.getId()));
+                        }
+                        if (MapUtils.isNotEmpty(corporationsIds)) {
+                            i.setCorporationIds(corporationsIds.get(i.getId()));
+                        }
                     }
             );
         }
