@@ -477,7 +477,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto.getPayType() == null) {
             dto.setPayType(PayType.CASH);
         }
-        dto.setClientId(SecurityUtil.getUserId());
+        //dto.setClientId(SecurityUtil.getUserId());
         dto.setBusinessCategoryId(business.getBusinessCategoryId());
         checkRecord(dto);
         dto.setId(null);
