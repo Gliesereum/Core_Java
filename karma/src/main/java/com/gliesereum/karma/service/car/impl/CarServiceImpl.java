@@ -182,8 +182,8 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     @Transactional
     public void addFilterAttribute(UUID idCar, UUID idAttribute) {
         checkCarExistInCurrentUser(idCar);
-        filterAttributeService.checkFilterAttributeExist(idAttribute);
-        checkCarFilterAttributeExist(idCar, idAttribute);
+        List<UUID> attributes = filterAttributeService.checkFilterAttributeExistAndGetAllIdsByFilterId(idAttribute);
+        carFilterAttributeService.deleteByCarIdAndFilterAttributeIds(idCar, attributes);
         carFilterAttributeService.create(new CarFilterAttributeDto(idCar,idAttribute));
     }
 
@@ -192,7 +192,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     public void removeFilterAttribute(UUID idCar, UUID idAttribute) {
         checkCarExistInCurrentUser(idCar);
         filterAttributeService.checkFilterAttributeExist(idAttribute);
-        carFilterAttributeService.deleteByCarIdAndFilterId(idCar, idAttribute);
+        carFilterAttributeService.deleteByCarIdAndFilterAttributeId(idCar, idAttribute);
     }
 
     @Override
@@ -234,8 +234,8 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
         }
     }
 
-    private void checkCarFilterAttributeExist(UUID carId, UUID filterId) {
-        if(carFilterAttributeService.existsByCarIdAndFilterAttributeId(carId, filterId)){
+    private void checkCarFilterAttributeExist(UUID carId, UUID filterAttributeId) {
+        if(carFilterAttributeService.existsByCarIdAndFilterAttributeId(carId, filterAttributeId)){
             throw new ClientException(PAR_CAR_ID_AND_FILTER_ATTRIBUTE_ID_EXIST);
         }
     }

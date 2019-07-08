@@ -4,6 +4,7 @@ import com.gliesereum.karma.model.entity.car.CarFilterAttributeEntity;
 import com.gliesereum.share.common.model.dto.karma.car.CarFilterAttributeDto;
 import com.gliesereum.share.common.service.DefaultService;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -12,7 +13,9 @@ import java.util.UUID;
  */
 public interface CarFilterAttributeService extends DefaultService<CarFilterAttributeDto, CarFilterAttributeEntity> {
 
-    void deleteByCarIdAndFilterId(UUID idCar, UUID filterId);
+    void deleteByCarIdAndFilterAttributeId(UUID idCar, UUID filterAttributeId);
+
+    void deleteByCarIdAndFilterAttributeIds(UUID idCar, List<UUID> filterAttributeIds);
 
     boolean existsByCarIdAndFilterAttributeId(UUID idCar, UUID filterAttributeId);
 

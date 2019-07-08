@@ -16,4 +16,6 @@ public interface FilterAttributeService extends DefaultService<FilterAttributeDt
     List<FilterAttributeDto> getByFilterId(UUID filterId);
 
     void checkFilterAttributeExist(UUID id);
+
+    List<UUID> checkFilterAttributeExistAndGetAllIdsByFilterId(UUID filterAttributeId);
 }
