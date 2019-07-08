@@ -16,6 +16,7 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -112,7 +113,29 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         return result;
     }
 
-    private void setUsers(List<WorkerDto> result) {
+    @Override
+    public List<WorkerDto> getByCorporationId(UUID corporationId) {
+        List<WorkerDto> result = new ArrayList<>();
+        if (corporationId != null) {
+            if (SecurityUtil.isAnonymous() || (!SecurityUtil.getUserCorporationIds().contains(corporationId) &&
+                    !baseBusinessService.currentUserHavePermissionToActionInCorporationLikeWorker(corporationId))) {
+                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+            }
+            List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(corporationId));
+            if (CollectionUtils.isNotEmpty(businessIds)) {
+                List<WorkerEntity> entities = workerRepository.findAllByBusinessIdIn(businessIds);
+                result = converter.convert(entities, dtoClass);
+                if (CollectionUtils.isNotEmpty(result)) {
+                    setUsers(result);
+                    result.sort(Comparator.comparing(WorkerDto::getBusinessId));
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void setUsers(List<WorkerDto> result) {
         Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(result.stream().map(WorkerDto::getUserId).collect(Collectors.toList()));
         if (MapUtils.isNotEmpty(users)) {
             result.forEach(f -> f.setUser(users.get(f.getUserId())));
@@ -196,7 +219,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (business != null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        List<WorkingSpaceDto> workingSpaces = workingSpaceService.getByBusinessId(dto.getBusinessId());
+        List<WorkingSpaceDto> workingSpaces = workingSpaceService.getByBusinessId(dto.getBusinessId(), false);
         if (CollectionUtils.isEmpty(workingSpaces)) {
             throw new ClientException(WORKING_SPACE_NOT_FOUND);
         }

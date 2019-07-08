@@ -29,7 +29,7 @@ public class WorkingSpaceController {
 
     @GetMapping("/{businessId}")
     public List<WorkingSpaceDto> getAll(@PathVariable("businessId") UUID businessId) {
-        return workingSpaceService.getByBusinessId(businessId);
+        return workingSpaceService.getByBusinessId(businessId, true);
     }
 
     @PostMapping
@@ -56,6 +56,11 @@ public class WorkingSpaceController {
     @GetMapping("worker/{workingSpaceId}")
     public List<WorkerDto> getAllWorker(@PathVariable("workingSpaceId") UUID workingSpaceId) {
         return workerService.getByWorkingSpaceId(workingSpaceId);
+    }
+
+    @GetMapping("workers")
+    public List<WorkerDto> getByCorporationId(@RequestParam("corporationId") UUID corporationId) {
+        return workerService.getByCorporationId(corporationId);
     }
 
     @PostMapping("/worker")
