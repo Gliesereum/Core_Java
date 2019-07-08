@@ -21,6 +21,8 @@ public interface CarService extends DefaultService<CarDto, CarEntity> {
 
     void checkCarExistInCurrentUser(UUID id);
 
+    CarDto checkAndGetCarExistInCurrentUser(UUID id);
+
     boolean carExistByIdAndUserId(UUID id, UUID userId);
 
     void addService(UUID idCar, UUID idService);

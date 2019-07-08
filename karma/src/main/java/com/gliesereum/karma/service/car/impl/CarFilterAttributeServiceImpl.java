@@ -8,10 +8,12 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.car.CarFilterAttributeDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
@@ -37,8 +39,16 @@ public class CarFilterAttributeServiceImpl extends DefaultServiceImpl<CarFilterA
 
     @Override
     @Transactional
-    public void deleteByCarIdAndFilterId(UUID idCar, UUID filterAttributeId) {
+    public void deleteByCarIdAndFilterAttributeId(UUID idCar, UUID filterAttributeId) {
         carFilterAttributeRepository.deleteByCarIdAndFilterAttributeId(idCar, filterAttributeId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByCarIdAndFilterAttributeIds(UUID idCar, List<UUID> filterAttributeIds) {
+        if ((idCar != null) && CollectionUtils.isNotEmpty(filterAttributeIds)) {
+            carFilterAttributeRepository.deleteAllByCarIdAndFilterAttributeIdIn(idCar, filterAttributeIds);
+        }
     }
 
     @Override
