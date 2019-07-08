@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,10 +31,12 @@ public class WorkingSpaceDto extends DefaultDto {
 
     private Integer indexNumber;
 
+    @NotNull
     private UUID businessId;
 
     private StatusSpace statusSpace;
 
+    @NotNull
     private UUID businessCategoryId;
 
     private List<WorkerDto> workers = new ArrayList<>();
