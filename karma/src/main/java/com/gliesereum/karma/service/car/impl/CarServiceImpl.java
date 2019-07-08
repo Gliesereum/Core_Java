@@ -96,9 +96,12 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
                 throw new ClientException(USER_IS_ANONYMOUS);
             }
             checkCarExistInCurrentUser(dto.getId());
+            CarDto existed = checkAndGetCarExistInCurrentUser(dto.getId());
+            if (dto.getFavorite() == null) {
+                dto.setFavorite(existed.getFavorite());
+            }
             dto.setUserId(userId);
             dto = super.update(dto);
-
         }
         return dto;
     }
@@ -131,6 +134,19 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
         if (!carRepository.existsByIdAndUserId(id, SecurityUtil.getUserId())) {
             throw new ClientException(CAR_NOT_FOUND);
         }
+    }
+
+    @Override
+    public CarDto checkAndGetCarExistInCurrentUser(UUID id) {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_NOT_AUTHENTICATION);
+        }
+        if (id == null) {
+            throw new ClientException(CAR_ID_EMPTY);
+        }
+        Optional<CarEntity> optional = carRepository.findByIdAndUserId(id, SecurityUtil.getUserId());
+        CarEntity entity = optional.orElseThrow(() -> new ClientException(CAR_NOT_FOUND));
+        return converter.convert(entity, dtoClass);
     }
 
     @Override
