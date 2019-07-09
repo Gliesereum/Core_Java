@@ -196,6 +196,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             }
             for (WorkingSpaceDto workingSpace : workingSpaces) {
                 workingSpace.setIndexNumber(lastIndex + 1);
+                lastIndex ++;
             }
         }
         return workingSpaces;
