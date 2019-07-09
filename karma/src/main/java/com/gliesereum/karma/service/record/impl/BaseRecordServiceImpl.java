@@ -412,6 +412,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    @RecordCreate
     public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto.getBusinessId() != null &&
