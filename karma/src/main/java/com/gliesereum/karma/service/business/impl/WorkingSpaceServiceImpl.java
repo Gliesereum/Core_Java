@@ -167,7 +167,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
         WorkingSpaceDto result = null;
         if (dto != null) {
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
-            dto = checkIndex(Arrays.asList(dto), dto.getBusinessId()).get(0);
+            dto.setIndexNumber(dto.getIndexNumber());
             result = super.update(dto);
             List<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
@@ -189,20 +189,14 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
 
     private List<WorkingSpaceDto> checkIndex(List<WorkingSpaceDto> workingSpaces, UUID businessId) {
         if (CollectionUtils.isNotEmpty(workingSpaces)) {
-            List<WorkingSpaceEntity> existed = workingSpaceRepository.findByBusinessIdOrderByIndexNumberAsc(businessId);
             int lastIndex = 0;
+            List<WorkingSpaceEntity> existed = workingSpaceRepository.findByBusinessId(businessId);
             if (CollectionUtils.isNotEmpty(existed)) {
-                lastIndex = existed.get(existed.size() - 1).getIndexNumber();
+                lastIndex = existed.size();
             }
-            workingSpaces = workingSpaces.stream().sorted(Comparator.comparingInt(WorkingSpaceDto::getIndexNumber)).collect(Collectors.toList());
             for (WorkingSpaceDto workingSpace : workingSpaces) {
-                if (workingSpace.getIndexNumber() == null) {
-                    workingSpace.setIndexNumber(lastIndex + 1);
-                }
-                if (workingSpace.getIndexNumber() <= lastIndex) {
-                    throw new ClientException(WORKING_SPACE_INDEX_NUMBER_EXIST);
-                }
-                lastIndex = workingSpace.getIndexNumber();
+                workingSpace.setIndexNumber(lastIndex + 1);
+                lastIndex ++;
             }
         }
         return workingSpaces;
