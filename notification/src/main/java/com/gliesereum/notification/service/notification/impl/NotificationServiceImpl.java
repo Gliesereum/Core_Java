@@ -121,7 +121,7 @@ public class NotificationServiceImpl implements NotificationService {
     private String getTitle(SubscribeDestination subscribeDestination, StatusRecord statusRecord) {
         String title;
         if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED)) {
-            title = messageSource.getMessage(subscribeDestination.toString() + '.' + statusRecord + '.' + "title", new Object[]{}, Locale.getDefault());
+            title = messageSource.getMessage(subscribeDestination.toString() + '.' + statusRecord.name() + '.' + "title", new Object[]{}, Locale.getDefault());
         } else {
             title = messageSource.getMessage(subscribeDestination.toString() + '.' + "title", new Object[]{}, Locale.getDefault());
         }
@@ -131,7 +131,7 @@ public class NotificationServiceImpl implements NotificationService {
     private String getBody(SubscribeDestination subscribeDestination, StatusRecord statusRecord) {
         String body;
         if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED)) {
-            body = messageSource.getMessage(subscribeDestination.toString() + '.' + statusRecord + '.' + "body", new Object[]{}, Locale.getDefault());
+            body = messageSource.getMessage(subscribeDestination.toString() + '.' + statusRecord.name() + '.' + "body", new Object[]{}, Locale.getDefault());
         } else {
             body = messageSource.getMessage(subscribeDestination.toString() + '.' + "body", new Object[]{}, Locale.getDefault());
         }
