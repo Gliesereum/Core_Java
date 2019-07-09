@@ -10,7 +10,7 @@ public interface RecordNotificationFacade {
 
     void recordBusinessNotification(BaseRecordDto record);
 
-    void recordUpdateNotification(BaseRecordDto record);
+    void recordClientNotification(BaseRecordDto record);
 
     void recordRemindNotification(BaseRecordDto record);
 }

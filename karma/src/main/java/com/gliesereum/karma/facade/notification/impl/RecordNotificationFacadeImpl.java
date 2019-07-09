@@ -45,7 +45,7 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
 
     @Override
     @Async
-    public void recordUpdateNotification(BaseRecordDto record) {
+    public void recordClientNotification(BaseRecordDto record) {
         if (record != null) {
             BaseRecordDto fullModel = baseRecordService.getFullModelById(record.getId());
             if (fullModel != null) {
