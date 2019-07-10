@@ -404,6 +404,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             dto.setClientId(user.getId());
             dto.setFirstName(user.getFirstName());
             dto.setLastName(user.getLastName());
+            dto.setMiddleName(user.getMiddleName());
             dto.setPhone(user.getPhone());
             result = createRecord(dto);
         }
@@ -425,6 +426,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 PublicUserDto user = users.get(0);
                 dto.setLastName(user.getLastName());
                 dto.setFirstName(user.getFirstName());
+                dto.setMiddleName(user.getMiddleName());
                 dto.setPhone(user.getPhone());
                 dto.setClientId(user.getId());
             }

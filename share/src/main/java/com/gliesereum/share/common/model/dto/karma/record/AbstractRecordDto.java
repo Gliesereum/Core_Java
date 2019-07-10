@@ -74,6 +74,8 @@ public class AbstractRecordDto extends DefaultDto {
 
     private String lastName;
 
+    private String middleName;
+
     private String phone;
 
     private List<ServicePriceDto> services = new ArrayList<>();
