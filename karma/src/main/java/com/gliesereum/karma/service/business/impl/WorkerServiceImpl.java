@@ -1,6 +1,6 @@
 package com.gliesereum.karma.service.business.impl;
 
-import com.gliesereum.karma.facade.GroupUserExchangeFacade;
+import com.gliesereum.karma.facade.group.GroupUserExchangeFacade;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkerRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;

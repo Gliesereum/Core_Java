@@ -1,4 +1,4 @@
-package com.gliesereum.karma.facade;
+package com.gliesereum.karma.facade.group;
 
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 
