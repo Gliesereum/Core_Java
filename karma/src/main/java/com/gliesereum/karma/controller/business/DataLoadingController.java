@@ -1,6 +1,7 @@
 package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.service.business.DataLoadingService;
+import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +30,11 @@ public class DataLoadingController {
     @GetMapping("/records")
     public void createRecords(@RequestParam("businessId") UUID businessId) {
         loadingService.createRecordsByBusinessId(businessId);
+    }
+
+    @GetMapping("/client")
+    public MapResponse indexClient() {
+        loadingService.loadClient();
+        return MapResponse.resultTrue();
     }
 }

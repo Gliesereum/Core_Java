@@ -13,4 +13,7 @@ public interface DataLoadingService {
     void createRecords();
 
     void createRecordsByBusinessId(UUID businessId);
+
+    void loadClient();
+
 }

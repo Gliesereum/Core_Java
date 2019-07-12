@@ -4,12 +4,15 @@ import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.*;
 import com.gliesereum.karma.service.car.CarService;
+import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.ServiceService;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.car.CarDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.*;
@@ -22,6 +25,7 @@ import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -33,7 +37,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,67 +48,53 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DataLoadingServiceImpl implements DataLoadingService {
 
-    private final String TOKEN = "sk.eyJ1IjoiZm9yZXN0eXVyYSIsImEiOiJjanZ6NmZlcDMwbGo0M3ptcmNjcTBrZzg1In0.dFxSaSFyDkgOGBDhNrv2bg";
-
-    private final RestTemplate restTemplate = new RestTemplate();
-
     private static Random random = new Random();
-
-    private int count = 1;
-
-    @Autowired
-    private WorkTimeService workTimeService;
-
-    @Autowired
-    private WorkingSpaceService workingSpaceService;
-
-    @Autowired
-    private BaseBusinessService businessService;
-
-    @Autowired
-    private BusinessCategoryService categoryService;
-
-    @Autowired
-    private PackageService packageService;
-
-    @Autowired
-    private ServicePriceService servicePriceService;
-
-    @Autowired
-    private ServiceService serviceService;
-
-    @Autowired
-    private MediaService mediaService;
-
-    @Autowired
-    private BaseRecordService recordService;
-
-    @Autowired
-    private CarService carService;
-
-    @Autowired
-    private BaseBusinessRepository businessRepository;
-
+    private final String TOKEN = "sk.eyJ1IjoiZm9yZXN0eXVyYSIsImEiOiJjanZ6NmZlcDMwbGo0M3ptcmNjcTBrZzg1In0.dFxSaSFyDkgOGBDhNrv2bg";
+    private final RestTemplate restTemplate = new RestTemplate();
     private final List<String> getNameOfPlace = Arrays.asList(
             "фора", "сильпо", "лоток", "магазин", "аптека", "сто", "мойка", "шиномнтаж", "остановка", "бар", "кафе", "street", "сервис");
-
     private final List<String> carServiceImage = Arrays.asList(
             "https://itechua.com/wp-content/uploads/2019/03/28_main.jpg",
             "https://autonews.ua/wp-content/uploads/2016/12/img_3773-1068x712.jpg",
             "https://www.avtovzglyad.ru/media/article/02_3Iqdtan.jpg.740x555_q85_box-132%2C0%2C1199%2C799_crop_detail_upscale.jpg",
             "https://p2.zoon.ru/preview/fyGvggO_PAFQWrcU98UYqw/520x270x85/1/c/5/original_59ee4193c8aca6013966c3b6_5a4bb81a1229c.jpg");
-
     private final List<String> carWashImage = Arrays.asList(
             "https://moikon.ru/images/mojki-samoobsluzhivaniya.jpg",
             "https://alterainvest.ru/upload/iblock/a75/a751850b141e5763f7efb95cecaedc38.jpg",
             "https://sochi-avto-remont.ru/wp-content/uploads/2015/03/avtomoyka-vyisokogo-davleniya-svoimi-rukami-1.jpg",
             "https://www.slivki.by/znijki-media/w522_322/default/1009921/1520932756_moyka-himchistka-polirovka-avto-minsk-skidka-agroavtotrans-1.jpg");
-
     private final List<String> tireFittingImage = Arrays.asList(
             "https://www.slivki.by/znijki-media/w522_322/default/1009921/1542738698_shinomontazh-minsk-skidka-shinaminskby-2.jpg",
             "https://www.slivki.by/znijki-media/w522_322/default/1009921/diagnostika-podveski-zamena-masla-besplatno-minsk-skidka-shinaminskby-1.jpg",
             "https://alterainvest.ru/upload/iblock/4eb/4ebbeb6a50ebedfbf6a76b9cd88640fd.jpg",
             "https://autonews.ua/wp-content/uploads/2017/10/shinomontagnoe-oborudovanie-dlya-montaga.jpg");
+    private int count = 1;
+    @Autowired
+    private WorkTimeService workTimeService;
+    @Autowired
+    private WorkingSpaceService workingSpaceService;
+    @Autowired
+    private BaseBusinessService businessService;
+    @Autowired
+    private BusinessCategoryService categoryService;
+    @Autowired
+    private PackageService packageService;
+    @Autowired
+    private ServicePriceService servicePriceService;
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private MediaService mediaService;
+    @Autowired
+    private BaseRecordService recordService;
+    @Autowired
+    private CarService carService;
+    @Autowired
+    private BaseBusinessRepository businessRepository;
+    @Autowired
+    private UserExchangeService userExchangeService;
+    @Autowired
+    private ClientEsService clientEsService;
 
     @Override
     @Transactional
@@ -308,6 +297,19 @@ public class DataLoadingServiceImpl implements DataLoadingService {
         }
     }
 
+    @Override
+    public void loadClient() {
+        List<BaseRecordDto> records = recordService.getAll();
+        if (CollectionUtils.isNotEmpty(records)) {
+            records = records.stream().filter(i -> ObjectUtils.allNotNull(i.getClientId(), i.getBusinessId())).collect(Collectors.toList());
+            Set<UUID> userIds = records.stream().map(BaseRecordDto::getClientId).collect(Collectors.toSet());
+            Map<UUID, UserDto> userMap = userExchangeService.findUserMapByIds(userIds);
+            records.forEach(record -> {
+                clientEsService.addNewClient(userMap.get(record.getClientId()), record.getBusinessId());
+            });
+        }
+    }
+
     private void createRecords(List<CarDto> cars, List<BusinessFullModel> listBusiness) {
         if (CollectionUtils.isNotEmpty(cars) && CollectionUtils.isNotEmpty(listBusiness)) {
             log.info("Start create record");
@@ -353,7 +355,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
                         }
                     } else {
                         recordPerDay = random.nextInt(5);
-                        from =  from.plusDays(1L);
+                        from = from.plusDays(1L);
                     }
                 }
             });
