@@ -1,7 +1,9 @@
 package com.gliesereum.karma.facade.business.impl;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.document.ClientDocument;
 import com.gliesereum.karma.service.business.WorkerService;
+import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
 /**
  * @author yvlasiuk
@@ -26,11 +28,20 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
     @Autowired
     private WorkerService workerService;
 
+    @Autowired
+    private ClientEsService clientEsService;
+
     @Override
     public void checkUserHavePermissionToClient(UUID corporationId, UUID clientId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
         if (ObjectUtils.allNotNull(corporationId, clientId, currentUserId)) {
             checkUserHavePermissionForWorkWithClient(corporationId, currentUserId, currentUserCorporationIds);
-            //TODO: check in ES client have record In Corporation;
+            ClientDocument client = clientEsService.getClientByUserId(clientId);
+            if (client == null) {
+                throw new ClientException(CLIENT_NOT_FOUND);
+            }
+            if (CollectionUtils.isEmpty(client.getCorporationIds()) || !client.getCorporationIds().contains(corporationId.toString())) {
+                throw new ClientException(USER_NOT_CLIENT_FOR_BUSINESS);
+            }
         }
     }
 
