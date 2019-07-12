@@ -348,9 +348,10 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public Page<ClientDocument> getCustomersByBusinessIds(List<UUID> ids, int page, int size) {
+    public Page<ClientDocument> getCustomersByBusinessIds(List<UUID> ids, Integer page, Integer size) {
         Page<ClientDocument> result = null;
-        if (size == 0) size = 100;
+        if (size == null) size = 100;
+        if (page == null) page = 0;
         if (CollectionUtils.isNotEmpty(ids)) {
             ids.forEach(f -> {
                 if (!currentUserHavePermissionToActionInBusinessLikeWorker(f) &&
@@ -364,9 +365,10 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public Page<ClientDocument> getAllCustomersByCorporationIds(List<UUID> ids, int page, int size, String query) {
+    public Page<ClientDocument> getAllCustomersByCorporationIds(List<UUID> ids, Integer page, Integer size, String query) {
         Page<ClientDocument> result = null;
-        if (size == 0) size = 100;
+        if (size == null) size = 100;
+        if (page == null) page = 0;
         if (CollectionUtils.isNotEmpty(ids)) {
             ids.forEach(f -> {
                 if (!SecurityUtil.getUserCorporationIds().containsAll(ids) && true) { //todo set check worker by permission

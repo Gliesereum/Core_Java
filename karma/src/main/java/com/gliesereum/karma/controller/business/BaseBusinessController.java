@@ -205,15 +205,15 @@ public class BaseBusinessController {
 
     @GetMapping("/customers")
     public Page<ClientDocument> getCustomersByBusinessIds(@RequestParam(value = "ids") List<UUID> ids,
-                                                          @RequestParam(value = "page", required = false) int page,
-                                                          @RequestParam(value = "size", required = false) int size) {
+                                                          @RequestParam(value = "page", required = false) Integer page,
+                                                          @RequestParam(value = "size", required = false) Integer size) {
         return baseBusinessService.getCustomersByBusinessIds(ids, page, size);
     }
 
     @GetMapping("/customers/by-corporation-ids")
     public Page<ClientDocument> getAllCustomersByCorporationIds(@RequestParam(value = "ids") List<UUID> ids,
-                                                                @RequestParam(value = "page", required = false) int page,
-                                                                @RequestParam(value = "size", required = false) int size,
+                                                                @RequestParam(value = "page", required = false) Integer page,
+                                                                @RequestParam(value = "size", required = false) Integer size,
                                                                 @RequestParam(value = "query", required = false) String query) {
         return baseBusinessService.getAllCustomersByCorporationIds(ids, page, size, query);
     }

@@ -14,9 +14,9 @@ import java.util.UUID;
  */
 public interface ClientEsService {
 
-    Page<ClientDocument> getClientsByBusinessIds(List<UUID> businessIds, int page, int size);
+    Page<ClientDocument> getClientsByBusinessIds(List<UUID> businessIds, Integer page, Integer size);
 
-    Page<ClientDocument> getClientsByCorporationIdsAndAutocompleteQuery(String query, List<UUID> corporationIds, int page, int size);
+    Page<ClientDocument> getClientsByCorporationIdsAndAutocompleteQuery(String query, List<UUID> corporationIds, Integer page, Integer size);
 
     void addNewClient(PublicUserDto user, UUID businessId);
 

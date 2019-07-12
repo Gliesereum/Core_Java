@@ -49,10 +49,10 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     List<UUID> searchClient(RecordsSearchDto search);
 
-    Page<ClientDocument> getCustomersByBusinessIds(List<UUID> ids, int page, int size);
+    Page<ClientDocument> getCustomersByBusinessIds(List<UUID> ids, Integer page, Integer size);
 
     List<UUID> getIdsByCorporationIds(List<UUID> corporationIds);
 
-    Page<ClientDocument> getAllCustomersByCorporationIds(List<UUID> ids, int page, int size, String query);
+    Page<ClientDocument> getAllCustomersByCorporationIds(List<UUID> ids, Integer page, Integer size, String query);
 }
 
