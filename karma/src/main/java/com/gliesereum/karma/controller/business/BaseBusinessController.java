@@ -1,13 +1,13 @@
 package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.model.document.BusinessDocument;
+import com.gliesereum.karma.model.document.ClientDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
@@ -19,6 +19,7 @@ import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -104,7 +105,7 @@ public class BaseBusinessController {
     }
 
     @DeleteMapping("/by-corporation-id/{id}")
-    public MapResponse deleteByCorporationId(@PathVariable("id") UUID id){
+    public MapResponse deleteByCorporationId(@PathVariable("id") UUID id) {
         baseBusinessService.deleteByCorporationIdCheckPermission(id);
         return new MapResponse("true");
     }
@@ -203,8 +204,18 @@ public class BaseBusinessController {
     }
 
     @GetMapping("/customers")
-    public List<PublicUserDto> getCustomersByBusinessIds(@RequestParam("ids") List<UUID> ids){
-        return baseBusinessService.getCustomersByBusinessIds(ids);
+    public Page<ClientDocument> getCustomersByBusinessIds(@RequestParam(value = "ids") List<UUID> ids,
+                                                          @RequestParam(value = "page", required = false) int page,
+                                                          @RequestParam(value = "size", required = false) int size) {
+        return baseBusinessService.getCustomersByBusinessIds(ids, page, size);
+    }
+
+    @GetMapping("/customers/by-corporation-ids")
+    public Page<ClientDocument> getAllCustomersByCorporationIds(@RequestParam(value = "ids") List<UUID> ids,
+                                                                @RequestParam(value = "page", required = false) int page,
+                                                                @RequestParam(value = "size", required = false) int size,
+                                                                @RequestParam(value = "query", required = false) String query) {
+        return baseBusinessService.getAllCustomersByCorporationIds(ids, page, size, query);
     }
 
 }
