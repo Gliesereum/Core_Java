@@ -1,0 +1,1 @@
+ALTER TABLE karma.worker ADD COLUMN corporation_id uuid;

@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.car.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.entity.car.CarEntity;
 import com.gliesereum.karma.model.entity.filter.FilterAttributeEntity;
 import com.gliesereum.karma.model.entity.service.ServiceClassEntity;
@@ -17,6 +18,7 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +56,9 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
 
     @Autowired
     private ServiceClassService serviceClassService;
+
+    @Autowired
+    private BusinessPermissionFacade businessPermissionFacade;
 
     public CarServiceImpl(CarRepository carRepository, DefaultConverter defaultConverter) {
         super(carRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -242,6 +247,17 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     public List<LiteCarDto> getCarByBrandIds(List<UUID> brandsIds) {
         List<CarEntity> entities = carRepository.getAllByBrandIdIn(brandsIds);
         return converter.convert(entities, LiteCarDto.class);
+    }
+
+    @Override
+    public List<CarDto> getAsWorker(UUID clientId, UUID corporationId) {
+        List<CarDto> result = null;
+        if (ObjectUtils.allNotNull(clientId, corporationId)) {
+            businessPermissionFacade.checkCurrentUserHavePermissionToClient(corporationId, clientId);
+            List<CarEntity> entities = carRepository.getAllByUserId(clientId);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
     }
 
     private void checkServiceExist(UUID id) {

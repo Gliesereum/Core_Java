@@ -1,6 +1,6 @@
-package com.gliesereum.karma.facade.impl;
+package com.gliesereum.karma.facade.group.impl;
 
-import com.gliesereum.karma.facade.GroupUserExchangeFacade;
+import com.gliesereum.karma.facade.group.GroupUserExchangeFacade;
 import com.gliesereum.share.common.exchange.service.permission.GroupUserExchangeService;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import org.apache.commons.lang3.ObjectUtils;

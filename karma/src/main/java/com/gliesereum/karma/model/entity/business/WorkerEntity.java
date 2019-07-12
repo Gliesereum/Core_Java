@@ -33,6 +33,9 @@ public class WorkerEntity extends DefaultEntity {
     @Column(name = "business_id")
     private UUID businessId;
 
+    @Column(name = "corporation_id")
+    private UUID corporationId;
+
     @OneToMany
     @JoinColumn(name = "object_id", insertable = false, updatable = false)
     private Set<WorkTimeEntity> workTimes = new HashSet<>();

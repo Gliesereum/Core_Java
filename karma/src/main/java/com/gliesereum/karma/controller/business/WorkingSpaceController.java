@@ -53,12 +53,12 @@ public class WorkingSpaceController {
         return new MapResponse("true");
     }
 
-    @GetMapping("worker/{workingSpaceId}")
+    @GetMapping("/worker/{workingSpaceId}")
     public List<WorkerDto> getAllWorker(@PathVariable("workingSpaceId") UUID workingSpaceId) {
         return workerService.getByWorkingSpaceId(workingSpaceId);
     }
 
-    @GetMapping("workers")
+    @GetMapping("/workers")
     public List<WorkerDto> getByCorporationId(@RequestParam("corporationId") UUID corporationId) {
         return workerService.getByCorporationId(corporationId);
     }
