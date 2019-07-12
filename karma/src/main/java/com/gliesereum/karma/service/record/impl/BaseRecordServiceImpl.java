@@ -10,6 +10,7 @@ import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.car.CarService;
+import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.record.OrderService;
 import com.gliesereum.karma.service.record.RecordServiceService;
@@ -88,6 +89,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Autowired
     private UserExchangeService exchangeService;
+
+    @Autowired
+    private ClientEsService clientEsService;
 
     @Autowired
     public BaseRecordServiceImpl(BaseRecordRepository baseRecordRepository, DefaultConverter defaultConverter) {
@@ -406,6 +410,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             dto.setLastName(user.getLastName());
             dto.setPhone(user.getPhone());
             result = createRecord(dto);
+            clientEsService.addNewClient(user, dto.getBusinessId());
         }
         return result;
     }
@@ -426,6 +431,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 dto.setFirstName(user.getFirstName());
                 dto.setPhone(user.getPhone());
                 dto.setClientId(user.getId());
+                clientEsService.addNewClient(user, dto.getBusinessId());
             }
         }
         return createRecord(dto);

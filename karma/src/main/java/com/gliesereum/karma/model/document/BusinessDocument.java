@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 @Data
 @NoArgsConstructor
-@Document(indexName = "karma", type = "business")
+@Document(indexName = "karma-business", type = "business")
 public class BusinessDocument {
 
     @Id
