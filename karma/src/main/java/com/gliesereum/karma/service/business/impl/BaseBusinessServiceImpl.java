@@ -376,18 +376,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     @Override
     public Page<ClientDocument> getAllCustomersByCorporationIds(List<UUID> ids, Integer page, Integer size, String query) {
-        Page<ClientDocument> result = null;
         if (size == null) size = 100;
         if (page == null) page = 0;
-        if (CollectionUtils.isNotEmpty(ids)) {
-            ids.forEach(f -> {
-                if (!SecurityUtil.getUserCorporationIds().containsAll(ids) && true) { //todo set check worker by permission
-                    throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-                }
-            });
-            result = clientEsService.getClientsByCorporationIdsAndAutocompleteQuery(query, ids, page, size);
-        }
-        return result;
+        return clientEsService.getClientsByCorporationIdsAndAutocompleteQuery(query, ids, page, size);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.gliesereum.karma.controller.business;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.document.BusinessDocument;
 import com.gliesereum.karma.model.document.ClientDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -18,6 +19,7 @@ import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +54,9 @@ public class BaseBusinessController {
 
     @Autowired
     private BusinessEsService businessEsService;
+
+    @Autowired
+    private BusinessPermissionFacade permissionFacade;
 
     @GetMapping
     public List<BaseBusinessDto> getAll() {
@@ -215,6 +220,9 @@ public class BaseBusinessController {
                                                                 @RequestParam(value = "page", required = false) Integer page,
                                                                 @RequestParam(value = "size", required = false) Integer size,
                                                                 @RequestParam(value = "query", required = false) String query) {
+        if (CollectionUtils.isNotEmpty(ids)) {
+            ids.forEach(f -> permissionFacade.checkCurrentUserHavePermissionForWorkWithClient(f));
+        }
         return baseBusinessService.getAllCustomersByCorporationIds(ids, page, size, query);
     }
 
