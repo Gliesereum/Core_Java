@@ -1,6 +1,6 @@
 package com.gliesereum.karma.service.business.impl;
 
-import com.gliesereum.karma.facade.GroupUserExchangeFacade;
+import com.gliesereum.karma.facade.group.GroupUserExchangeFacade;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkerRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -20,6 +20,7 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -140,6 +141,15 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (MapUtils.isNotEmpty(users)) {
             result.forEach(f -> f.setUser(users.get(f.getUserId())));
         }
+    }
+
+    @Override
+    public boolean existByUserIdAndCorporationId(UUID userId, UUID corporationId) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(userId, corporationId)) {
+            result = workerRepository.existsByUserIdAndCorporationId(userId, corporationId);
+        }
+        return result;
     }
 
     @Override

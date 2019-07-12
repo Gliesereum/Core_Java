@@ -23,6 +23,8 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     List<LiteBusinessDto> getAllLite();
 
+    LiteBusinessDto getLiteById(UUID businessId);
+
     boolean existByIdAndCorporationIds(UUID id, List<UUID> corporationIds);
 
     boolean currentUserHavePermissionToActionInBusinessLikeOwner(UUID businessId);

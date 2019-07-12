@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @MappedSuperclass
+@EqualsAndHashCode(callSuper = true)
 public class AbstractRecordEntity extends DefaultEntity {
 
     @Column(name = "client_id")
