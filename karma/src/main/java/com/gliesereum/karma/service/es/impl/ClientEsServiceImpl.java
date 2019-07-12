@@ -9,7 +9,6 @@ import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -23,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -43,8 +43,6 @@ public class ClientEsServiceImpl implements ClientEsService {
     private final String BUSINESS_IDS = "businessIds";
 
     private final String CORPORATION_IDS = "corporationIds";
-
-    private final String CLIENT_ID = "clientId";
 
     private final String FIRST_NAME = "firstName";
 
@@ -69,11 +67,11 @@ public class ClientEsServiceImpl implements ClientEsService {
         Page<ClientDocument> result = null;
         if (CollectionUtils.isNotEmpty(corporationIds)) {
             BoolQueryBuilder bq = QueryBuilders.boolQuery();
-            bq.must(QueryBuilders.termsQuery(CORPORATION_IDS, corporationIds.stream().map(UUID::toString).collect(Collectors.toList())));
+            List<String> ids = corporationIds.stream().map(UUID::toString).collect(Collectors.toList());
+            bq.must(QueryBuilders.termsQuery(CORPORATION_IDS, ids));
+
             if (query != null && query.length() >= 3) {
-                bq.should(QueryBuilders.termQuery(FIRST_NAME, query));
-                bq.should(QueryBuilders.termQuery(LAST_NAME, query));
-                bq.should(QueryBuilders.termQuery(PHONE, query));
+                bq.must(QueryBuilders.multiMatchQuery(query, FIRST_NAME, LAST_NAME, PHONE).boost(2.0F));
             }
             result = clientEsRepository.search(bq, PageRequest.of(page, size, Sort.by(FIRST_NAME, LAST_NAME)));
         }
@@ -93,7 +91,7 @@ public class ClientEsServiceImpl implements ClientEsService {
                 client.setAvatarUrl(user.getAvatarUrl());
                 client.setFirstName(user.getFirstName());
                 client.setLastName(user.getLastName());
-                client.setClientId(user.getId().toString());
+                client.setId(user.getId().toString());
                 client.setMiddleName(user.getMiddleName());
                 client.setEmail(user.getEmail());
                 client.setPhone(user.getPhone());
@@ -112,7 +110,7 @@ public class ClientEsServiceImpl implements ClientEsService {
                 ClientDocument client = new ClientDocument();
                 client.setBusinessIds(Arrays.asList(businessId.toString()));
                 client.setCorporationIds((Arrays.asList(business.getCorporationId().toString())));
-                client.setClientId(user.getId().toString());
+                client.setId(user.getId().toString());
                 client.setFirstName(user.getFirstName());
                 client.setLastName(user.getLastName());
                 client.setMiddleName(user.getMiddleName());
@@ -125,32 +123,23 @@ public class ClientEsServiceImpl implements ClientEsService {
 
     @Override
     public ClientDocument getClientByUserId(UUID userId) {
-        ClientDocument result = null;
-        BoolQueryBuilder bq = QueryBuilders.boolQuery();
-        bq.must(QueryBuilders.termQuery(CLIENT_ID, userId));
-        Iterable<ClientDocument> clients = clientEsRepository.search(bq);
-        if(!IterableUtils.isEmpty(clients)){
-           result = clients.iterator().next();
-        }
-        return result;
+        return clientEsRepository.findById(userId.toString()).get();
     }
 
 
     private void addNewClient(ClientDocument client) {
-        BoolQueryBuilder bq = QueryBuilders.boolQuery();
-        bq.must(QueryBuilders.termQuery(CLIENT_ID, client.getClientId()));
-        Iterable<ClientDocument> clients = clientEsRepository.search(bq);
+        final Optional<ClientDocument> byId = clientEsRepository.findById(client.getId());
         ClientDocument exist = null;
-        if (IterableUtils.isEmpty(clients)) {
-            exist = client;
-        } else {
-            exist = clients.iterator().next();
+        if (byId.isPresent()) {
+            exist = byId.get();
             if (!exist.getBusinessIds().contains(client.getBusinessIds().get(0))) {
                 exist.getBusinessIds().add(client.getBusinessIds().get(0));
             }
             if (!exist.getCorporationIds().contains(client.getCorporationIds().get(0))) {
                 exist.getCorporationIds().add(client.getCorporationIds().get(0));
             }
+        } else {
+            exist = client;
         }
         clientEsRepository.save(exist);
     }

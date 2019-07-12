@@ -22,43 +22,27 @@ public class ClientDocument {
     private String id;
 
     @Field(type = FieldType.Keyword)
-    private String clientId;
-
-    @Field(type = FieldType.Keyword)
     private List<String> corporationIds;
 
     @Field(type = FieldType.Keyword)
     private List<String> businessIds;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String firstName;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String lastName;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String middleName;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String phone;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String email;
 
     @Field(type = FieldType.Keyword)
     private String avatarUrl;
 
-    public ClientDocument(String clientId, List<String> corporationIds, List<String> businessIds,
-                          String firstName, String lastName, String middleName, String phone,
-                          String email, String avatarUrl) {
-        this.clientId = clientId;
-        this.corporationIds = corporationIds;
-        this.businessIds = businessIds;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleName = middleName;
-        this.phone = phone;
-        this.email = email;
-        this.avatarUrl = avatarUrl;
-    }
 }
