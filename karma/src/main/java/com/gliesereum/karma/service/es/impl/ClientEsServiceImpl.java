@@ -20,10 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -69,9 +66,12 @@ public class ClientEsServiceImpl implements ClientEsService {
             BoolQueryBuilder bq = QueryBuilders.boolQuery();
             List<String> ids = corporationIds.stream().map(UUID::toString).collect(Collectors.toList());
             bq.must(QueryBuilders.termsQuery(CORPORATION_IDS, ids));
-
             if (query != null && query.length() >= 3) {
-                bq.must(QueryBuilders.multiMatchQuery(query, FIRST_NAME, LAST_NAME, PHONE).boost(2.0F));
+                Map<String, Float> fields = new HashMap<>();
+                fields.put(FIRST_NAME, 2.0F);
+                fields.put(LAST_NAME, 2.0F);
+                fields.put(PHONE, 2.0F);
+                bq.must(QueryBuilders.queryStringQuery("*" + query + "*").fields(fields));
             }
             result = clientEsRepository.search(bq, PageRequest.of(page, size, Sort.by(FIRST_NAME, LAST_NAME)));
         }
