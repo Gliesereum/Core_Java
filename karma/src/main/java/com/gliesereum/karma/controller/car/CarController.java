@@ -60,6 +60,11 @@ public class CarController {
         return ListUtils.emptyIfNull(carService.getAllByUserId(userId));
     }
 
+    @GetMapping("/user/as-worker")
+    public List<CarDto> getCarAsBusiness(@RequestParam("clientId") UUID clientId, @RequestParam("corporationId") UUID corporationId) {
+        return carService.getAsWorker(clientId, corporationId);
+    }
+
     @PostMapping
     public CarDto create(@RequestBody @Valid  CarDto car) {
         return carService.create(car);

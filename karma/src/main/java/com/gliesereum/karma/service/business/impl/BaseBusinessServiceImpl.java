@@ -141,6 +141,16 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    public LiteBusinessDto getLiteById(UUID businessId) {
+        LiteBusinessDto result = null;
+        if (businessId != null) {
+            BaseBusinessEntity entity = baseBusinessRepository.findByIdAndObjectState(businessId, ObjectState.ACTIVE);
+            result = converter.convert(entity, LiteBusinessDto.class);
+        }
+        return result;
+    }
+
+    @Override
     public BaseBusinessDto getById(UUID id) {
         BaseBusinessEntity entity = baseBusinessRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entity, dtoClass);

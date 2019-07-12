@@ -31,4 +31,6 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
     List<WorkerDto> getByCorporationId(UUID corporationId);
 
     void setUsers(List<WorkerDto> result);
+
+    boolean existByUserIdAndCorporationId(UUID userId, UUID corporationId);
 }
