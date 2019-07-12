@@ -27,10 +27,10 @@ public class ClientDocument {
     @Field(type = FieldType.Keyword)
     private List<String> businessIds;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, fielddata = true)
     private String firstName;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, fielddata = true)
     private String lastName;
 
     @Field(type = FieldType.Text)
