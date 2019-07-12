@@ -216,9 +216,10 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
         BaseBusinessDto business = baseBusinessService.getById(dto.getBusinessId());
-        if (business != null) {
+        if (business == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
+        dto.setCorporationId(business.getCorporationId());
         List<WorkingSpaceDto> workingSpaces = workingSpaceService.getByBusinessId(dto.getBusinessId(), false);
         if (CollectionUtils.isEmpty(workingSpaces)) {
             throw new ClientException(WORKING_SPACE_NOT_FOUND);

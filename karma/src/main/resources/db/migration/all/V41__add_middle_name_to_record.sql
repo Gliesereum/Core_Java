@@ -1,0 +1,1 @@
+ALTER TABLE karma.record ADD COLUMN middle_name character varying;

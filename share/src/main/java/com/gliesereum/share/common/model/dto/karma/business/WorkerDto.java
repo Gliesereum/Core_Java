@@ -27,6 +27,8 @@ public class WorkerDto extends DefaultDto {
 
     private UUID businessId;
 
+    private UUID corporationId;
+
     private UserDto user;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();

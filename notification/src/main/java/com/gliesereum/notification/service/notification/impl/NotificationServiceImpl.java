@@ -8,6 +8,7 @@ import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.chat.ChatMessageDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
@@ -47,7 +48,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void processRecordNotification(NotificationDto<BaseRecordDto> recordNotification) {
-        processNotification(recordNotification);
+        if (recordNotification != null) {
+            SubscribeDestination subscribeDestination = recordNotification.getSubscribeDestination();
+            String routingKey = NotificationUtil.routingKey(subscribeDestination.toString(), recordNotification.getObjectId());
+            BaseRecordDto data = recordNotification.getData();
+            StatusRecord statusRecord = data.getStatusRecord();
+            firebaseService.sendNotificationToTopic(routingKey, getTitle(subscribeDestination, statusRecord), getBody(subscribeDestination, statusRecord), data.getId(), subscribeDestination);
+
+        }
     }
 
     @Override
@@ -108,6 +116,26 @@ public class NotificationServiceImpl implements NotificationService {
                 }
             }
         }
+    }
+
+    private String getTitle(SubscribeDestination subscribeDestination, StatusRecord statusRecord) {
+        String title;
+        if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED)) {
+            title = messageSource.getMessage(subscribeDestination.toString() + '.' + statusRecord.name() + '.' + "title", new Object[]{}, Locale.getDefault());
+        } else {
+            title = messageSource.getMessage(subscribeDestination.toString() + '.' + "title", new Object[]{}, Locale.getDefault());
+        }
+        return title;
+    }
+
+    private String getBody(SubscribeDestination subscribeDestination, StatusRecord statusRecord) {
+        String body;
+        if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED)) {
+            body = messageSource.getMessage(subscribeDestination.toString() + '.' + statusRecord.name() + '.' + "body", new Object[]{}, Locale.getDefault());
+        } else {
+            body = messageSource.getMessage(subscribeDestination.toString() + '.' + "body", new Object[]{}, Locale.getDefault());
+        }
+        return body;
     }
 
     private String getTitle(SubscribeDestination subscribeDestination) {

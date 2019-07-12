@@ -408,6 +408,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             dto.setClientId(user.getId());
             dto.setFirstName(user.getFirstName());
             dto.setLastName(user.getLastName());
+            dto.setMiddleName(user.getMiddleName());
             dto.setPhone(user.getPhone());
             result = createRecord(dto);
             clientEsService.addNewClient(user, dto.getBusinessId());
@@ -417,6 +418,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     @Transactional
+    @RecordCreate
     public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto.getBusinessId() != null &&
@@ -429,6 +431,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 PublicUserDto user = users.get(0);
                 dto.setLastName(user.getLastName());
                 dto.setFirstName(user.getFirstName());
+                dto.setMiddleName(user.getMiddleName());
                 dto.setPhone(user.getPhone());
                 dto.setClientId(user.getId());
                 clientEsService.addNewClient(user, dto.getBusinessId());

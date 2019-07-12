@@ -28,7 +28,7 @@ public class RecordChangeAspect {
             if ((statusRecord != null) && statusRecord.equals(StatusRecord.CANCELED) && retVal.getClientId().equals(SecurityUtil.getUserId())) {
                 recordNotificationFacade.recordBusinessNotification(retVal);
             } else {
-                recordNotificationFacade.recordUpdateNotification(retVal);
+                recordNotificationFacade.recordClientNotification(retVal);
             }
         }
 
@@ -36,7 +36,11 @@ public class RecordChangeAspect {
 
     @AfterReturning(pointcut = "@annotation(com.gliesereum.karma.aspect.annotation.RecordCreate)", returning = "retVal")
     public void recordCreateEvent(BaseRecordDto retVal) {
-        recordNotificationFacade.recordBusinessNotification(retVal);
+        if (retVal.getClientId().equals(SecurityUtil.getUserId())) {
+            recordNotificationFacade.recordBusinessNotification(retVal);
+        } else {
+            recordNotificationFacade.recordClientNotification(retVal);
+        }
     }
 
 }
