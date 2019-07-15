@@ -254,7 +254,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
         if (businessCategoryService.checkAndGetType(search.getBusinessCategoryId()).equals(BusinessType.CAR)) {
             search.getTargetIds().forEach(carService::checkCarExistInCurrentUser);
-        } else return Collections.emptyList(); //todo when add new service type need to add logic
+        } else return Collections.emptyList(); //todo when add new business type need to add logic
         setSearch(search);
         List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
                 search.getStatus(), search.getProcesses(), search.getTargetIds(), search.getFrom(), search.getTo());
