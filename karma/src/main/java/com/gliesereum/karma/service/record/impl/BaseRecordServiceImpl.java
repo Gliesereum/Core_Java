@@ -2,6 +2,7 @@ package com.gliesereum.karma.service.record.impl;
 
 import com.gliesereum.karma.aspect.annotation.RecordCreate;
 import com.gliesereum.karma.aspect.annotation.RecordUpdate;
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.entity.record.BaseRecordPageEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
@@ -37,6 +38,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,6 +96,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Autowired
     private ClientEsService clientEsService;
+
+    @Autowired
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     public BaseRecordServiceImpl(BaseRecordRepository baseRecordRepository, DefaultConverter defaultConverter) {
@@ -175,6 +182,23 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                     putToMapIfKeyNotNull(result, f.getWorkingSpaceID(), f);
                 }
             });
+        }
+        return result;
+    }
+
+    @Override
+    public Page<BaseRecordDto> getByClientForBusiness(List<UUID> corporationIds, UUID clientId, Integer page, Integer size) {
+        corporationIds.forEach(f-> businessPermissionFacade.checkCurrentUserHavePermissionForWorkWithClient(f));
+        Page<BaseRecordDto> result = null;
+        List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(corporationIds);
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            if (page == null) page = 0;
+            if (size == null) size = 50;
+            Page<BaseRecordEntity> entities = baseRecordRepository.findAllByBusinessIdInAndClientIdOrderByBegin(businessIds, clientId, PageRequest.of(page, size));
+            if (entities != null && CollectionUtils.isNotEmpty(entities.getContent())) {
+                List<BaseRecordDto> dtos = converter.convert(entities.getContent(), dtoClass);
+                result = new PageImpl<>(dtos, entities.getPageable(), entities.getTotalElements());
+            }
         }
         return result;
     }

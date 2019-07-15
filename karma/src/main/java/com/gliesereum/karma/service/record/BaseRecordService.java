@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.service.DefaultService;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,4 +66,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     LiteRecordPageDto getLiteByParamsForBusiness(RecordsSearchDto search);
 
     Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, Long from, UUID packageId, List<UUID> serviceIds);
+
+    Page<BaseRecordDto> getByClientForBusiness(List<UUID> corporationIds, UUID clientId, Integer page, Integer size);
 }
