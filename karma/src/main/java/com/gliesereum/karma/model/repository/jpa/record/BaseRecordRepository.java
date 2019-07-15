@@ -4,6 +4,8 @@ import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.repository.refreshable.RefreshableRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,6 +34,8 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
     List<BaseRecordEntity> findByBusinessIdAndStatusRecordAndBeginBetweenAndNotificationSend(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to, boolean notificationSend);
 
     List<BaseRecordEntity> findAllByClientId(UUID id);
+
+    Page<BaseRecordEntity> findAllByBusinessIdInAndClientIdOrderByBegin(List<UUID> businessIds, UUID clientId, Pageable pageable);
 
     long countByBusinessIdAndBeginBetween(UUID businessId, LocalDateTime from, LocalDateTime to);
 

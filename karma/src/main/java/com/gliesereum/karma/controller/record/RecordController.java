@@ -7,6 +7,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -58,30 +59,26 @@ public class RecordController {
     }
 
     @PutMapping("/time/record")
-    public BaseRecordDto updateTimeRecord(
-            @RequestParam("idRecord") UUID idRecord,
-            @RequestParam("beginTime") Long beginTime) {
+    public BaseRecordDto updateTimeRecord(@RequestParam("idRecord") UUID idRecord,
+                                          @RequestParam("beginTime") Long beginTime) {
         return service.updateTimeRecord(idRecord, beginTime);
     }
 
     @PutMapping("/status/process")
-    public BaseRecordDto updateStatusProcess(
-            @RequestParam("idRecord") UUID idRecord,
-            @RequestParam("status") StatusProcess status) {
+    public BaseRecordDto updateStatusProcess(@RequestParam("idRecord") UUID idRecord,
+                                             @RequestParam("status") StatusProcess status) {
         return service.updateStatusProgress(idRecord, status);
     }
 
     @PutMapping("/status/pay")
-    public BaseRecordDto updateStatusPay(
-            @RequestParam("idRecord") UUID idRecord,
-            @RequestParam("status") StatusPay status) {
+    public BaseRecordDto updateStatusPay(@RequestParam("idRecord") UUID idRecord,
+                                         @RequestParam("status") StatusPay status) {
         return service.updateStatusPay(idRecord, status);
     }
 
     @PutMapping("/working/space")
-    public BaseRecordDto updateWorkingSpace(
-            @RequestParam("idRecord") UUID idRecord,
-            @RequestParam("workingSpaceId") UUID workingSpaceId) {
+    public BaseRecordDto updateWorkingSpace(@RequestParam("idRecord") UUID idRecord,
+                                            @RequestParam("workingSpaceId") UUID workingSpaceId) {
         return service.updateWorkingSpace(idRecord, workingSpaceId);
     }
 
@@ -112,6 +109,14 @@ public class RecordController {
     @PostMapping("/business/params")
     public List<BaseRecordDto> getByParamsForBusiness(@RequestBody RecordsSearchDto search) {
         return service.getByParamsForBusiness(search);
+    }
+
+    @GetMapping("/business/by-client")
+    public Page<BaseRecordDto> getByClientForBusiness(@RequestParam("corporationIds") List<UUID> corporationIds,
+                                                      @RequestParam("clientId") UUID clientId,
+                                                      @RequestParam(value = "page", required = false) Integer page,
+                                                      @RequestParam(value = "size", required = false) Integer size) {
+        return service.getByClientForBusiness(corporationIds, clientId, page, size);
     }
 
     @PostMapping("/business/params/lite")
