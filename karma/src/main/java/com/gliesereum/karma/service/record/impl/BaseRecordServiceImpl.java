@@ -194,9 +194,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (CollectionUtils.isNotEmpty(businessIds)) {
             if (page == null) page = 0;
             if (size == null) size = 50;
-            Page<BaseRecordEntity> entities = baseRecordRepository.findAllByBusinessIdInAndClientIdOrderByBegin(businessIds, clientId, PageRequest.of(page, size));
+            Page<BaseRecordEntity> entities = baseRecordRepository.findAllByBusinessIdInAndClientIdOrderByBeginDesc(businessIds, clientId, PageRequest.of(page, size));
             if (entities != null && CollectionUtils.isNotEmpty(entities.getContent())) {
                 List<BaseRecordDto> dtos = converter.convert(entities.getContent(), dtoClass);
+                setFullModelRecord(dtos);
+                setServicePrice(dtos);
                 result = new PageImpl<>(dtos, entities.getPageable(), entities.getTotalElements());
             }
         }

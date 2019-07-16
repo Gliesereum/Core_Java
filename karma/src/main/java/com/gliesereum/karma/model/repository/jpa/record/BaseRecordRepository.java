@@ -35,7 +35,7 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
 
     List<BaseRecordEntity> findAllByClientId(UUID id);
 
-    Page<BaseRecordEntity> findAllByBusinessIdInAndClientIdOrderByBegin(List<UUID> businessIds, UUID clientId, Pageable pageable);
+    Page<BaseRecordEntity> findAllByBusinessIdInAndClientIdOrderByBeginDesc(List<UUID> businessIds, UUID clientId, Pageable pageable);
 
     long countByBusinessIdAndBeginBetween(UUID businessId, LocalDateTime from, LocalDateTime to);
 
