@@ -483,6 +483,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (byId != null) {
             List<BaseRecordDto> list = Arrays.asList(byId);
             setFullModelRecord(list);
+            setClients(list);
             result = list.get(0);
         }
         setServicePrice(Arrays.asList(result));

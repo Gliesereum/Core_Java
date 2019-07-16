@@ -47,12 +47,12 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
     @Async
     public void recordClientNotification(BaseRecordDto record) {
         if (record != null) {
-            BaseRecordDto fullModel = baseRecordService.getFullModelById(record.getId());
-            if (fullModel != null) {
-                UUID id = fullModel.getClientId();
+            BaseRecordDto foundedRecord = baseRecordService.getById(record.getId());
+            if (foundedRecord != null) {
+                UUID id = foundedRecord.getClientId();
                 if (id != null) {
                     NotificationDto<BaseRecordDto> notification = new NotificationDto<>();
-                    notification.setData(fullModel);
+                    notification.setData(foundedRecord);
                     notification.setSubscribeDestination(SubscribeDestination.KARMA_USER_RECORD);
                     notification.setObjectId(id);
                     rabbitTemplate.convertAndSend(notificationRecordQueue, notification);
