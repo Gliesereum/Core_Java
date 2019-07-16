@@ -122,6 +122,21 @@ public class ClientEsServiceImpl implements ClientEsService {
     }
 
     @Override
+    @Async
+    public void updateClientInfo(UserDto user) {
+        if (user != null) {
+            ClientDocument client = getClientByUserId(user.getId());
+            if (client != null) {
+                client.setMiddleName(user.getMiddleName());
+                client.setLastName(user.getLastName());
+                client.setFirstName(user.getFirstName());
+                client.setAvatarUrl(user.getAvatarUrl());
+                clientEsRepository.save(client);
+            }
+        }
+    }
+
+    @Override
     public ClientDocument getClientByUserId(UUID userId) {
         return clientEsRepository.findById(userId.toString()).get();
     }

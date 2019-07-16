@@ -66,3 +66,6 @@ system-notification:
   signup-with-code:
     exchange-name: system-notification-signup-with-code
     queue-name: signup-with-code-${spring.application.name}-queue
+  update-client-info:
+    exchange-name: system-notification-update-client-info
+    queue-name: update-client-info-${spring.application.name}-queue

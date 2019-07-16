@@ -32,4 +32,10 @@ public class RabbitMQConfiguration {
                                                          String updateAuthInfoExchangeName) {
         return new FanoutExchange(updateAuthInfoExchangeName);
     }
+
+    @Bean
+    public FanoutExchange updateClientInfoExchange(@Value("${system-notification.update-client-info.exchange-name}")
+                                                         String updateClientInfoExchange) {
+        return new FanoutExchange(updateClientInfoExchange);
+    }
 }

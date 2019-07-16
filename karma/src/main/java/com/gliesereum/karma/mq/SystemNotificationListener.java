@@ -2,8 +2,10 @@ package com.gliesereum.karma.mq;
 
 import com.gliesereum.karma.facade.bonus.BonusScoreFacade;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.share.common.model.dto.account.referral.ReferralCodeUserDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.notification.notification.SystemNotificationDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -28,6 +30,9 @@ public class SystemNotificationListener {
     @Autowired
     private BonusScoreFacade bonusScoreFacade;
 
+    @Autowired
+    private ClientEsService clientEsService;
+
     @RabbitListener(bindings = @QueueBinding(value = @Queue, exchange = @Exchange(
             value = "${system-notification.corporation-delete.exchange-name}",
             ignoreDeclarationExceptions = "true", type = ExchangeTypes.FANOUT)))
@@ -51,6 +56,19 @@ public class SystemNotificationListener {
             }
         } catch (Exception e) {
             log.warn("Error while process signup with code notification", e);
+        }
+    }
+
+    @RabbitListener(bindings = @QueueBinding(value = @Queue("${system-notification.update-client-info.queue-name}"), exchange = @Exchange(
+            value = "${system-notification.update-client-info.exchange-name}",
+            ignoreDeclarationExceptions = "true", type = ExchangeTypes.FANOUT)))
+    public void updateClientInfo(SystemNotificationDto<UserDto> userSystemNotification) {
+        try {
+            if ((userSystemNotification != null) && (userSystemNotification.getObject() != null)) {
+                clientEsService.updateClientInfo(userSystemNotification.getObject());
+            }
+        } catch (Exception e) {
+            log.warn("Error while process update client notification", e);
         }
     }
 }

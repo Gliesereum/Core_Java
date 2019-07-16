@@ -1,11 +1,12 @@
 package com.gliesereum.account.facade.auth.impl;
 
-import com.gliesereum.account.facade.auth.AuthFacade;
+import com.gliesereum.account.facade.auth.UserUpdateFacade;
 import com.gliesereum.account.facade.notification.SystemNotificationFacade;
 import com.gliesereum.account.model.domain.TokenStoreDomain;
 import com.gliesereum.account.service.auth.AuthService;
 import com.gliesereum.account.service.token.TokenService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.util.UUID;
  */
 
 @Service
-public class AuthFacadeImpl implements AuthFacade {
+public class UserUpdateFacadeImpl implements UserUpdateFacade {
 
     @Autowired
     private TokenService tokenService;
@@ -43,6 +44,14 @@ public class AuthFacadeImpl implements AuthFacade {
                 systemNotificationFacade.sendUpdateAuthInfoNotification(authModel);
             }
 
+        }
+    }
+
+    @Override
+    @Async
+    public void updateClientInfo(UserDto user) {
+        if(user != null){
+            systemNotificationFacade.updateClientInfo(user);
         }
     }
 }

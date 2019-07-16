@@ -1,6 +1,6 @@
 package com.gliesereum.account.service.user.impl;
 
-import com.gliesereum.account.facade.auth.AuthFacade;
+import com.gliesereum.account.facade.auth.UserUpdateFacade;
 import com.gliesereum.account.facade.referral.ReferralFacade;
 import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.account.model.repository.jpa.user.UserRepository;
@@ -61,7 +61,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     private ReferralFacade referralFacade;
 
     @Autowired
-    private AuthFacade authFacade;
+    private UserUpdateFacade userUpdateFacade;
 
     public UserServiceImpl(UserRepository userRepository, DefaultConverter defaultConverter) {
         super(userRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -124,7 +124,8 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             dto.setLastSignIn(byId.getLastSignIn());
             dto.setCreateDate(byId.getCreateDate());
             result = super.update(dto);
-            authFacade.tokenInfoUpdateEvent(Arrays.asList(result.getId()));
+            userUpdateFacade.tokenInfoUpdateEvent(Arrays.asList(result.getId()));
+            userUpdateFacade.updateClientInfo(result);
         }
         return result;
     }
@@ -146,7 +147,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         }
         user.setBanStatus(status);
         super.update(user);
-        authFacade.tokenInfoUpdateEvent(Arrays.asList(user.getId()));
+        userUpdateFacade.tokenInfoUpdateEvent(Arrays.asList(user.getId()));
     }
 
     @Override
@@ -187,7 +188,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         }
         user.setKycApproved(true);
         super.update(user);
-        authFacade.tokenInfoUpdateEvent(Arrays.asList(user.getId()));
+        userUpdateFacade.tokenInfoUpdateEvent(Arrays.asList(user.getId()));
     }
 
     @Override
