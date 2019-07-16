@@ -1,6 +1,6 @@
 package com.gliesereum.account.service.user.impl;
 
-import com.gliesereum.account.facade.auth.AuthFacade;
+import com.gliesereum.account.facade.auth.UserUpdateFacade;
 import com.gliesereum.account.facade.notification.SystemNotificationFacade;
 import com.gliesereum.account.model.entity.CorporationEntity;
 import com.gliesereum.account.model.repository.jpa.user.CorporationRepository;
@@ -62,7 +62,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     private SystemNotificationFacade systemNotificationFacade;
 
     @Autowired
-    private AuthFacade authFacade;
+    private UserUpdateFacade userUpdateFacade;
 
     @Autowired
     public CorporationServiceImpl(CorporationRepository corporationRepository, DefaultConverter converter) {
@@ -87,10 +87,10 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                     throw new ClientException(SUM_SHARE_MORE_THEN_100);
                 }
                 List<UUID> userIds = dto.getCorporationSharedOwnerships().stream().map(sharedOwnershipService::create).map(CorporationSharedOwnershipDto::getOwnerId).collect(Collectors.toList());
-                authFacade.tokenInfoUpdateEvent(userIds);
+                userUpdateFacade.tokenInfoUpdateEvent(userIds);
             } else {
                 sharedOwnershipService.create(new CorporationSharedOwnershipDto(100, SecurityUtil.getUserId(), null, result.getId()));
-                authFacade.tokenInfoUpdateEvent(Arrays.asList(SecurityUtil.getUserId()));
+                userUpdateFacade.tokenInfoUpdateEvent(Arrays.asList(SecurityUtil.getUserId()));
             }
         }
         return result;
@@ -137,7 +137,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     public void addOwnerCorporation(CorporationSharedOwnershipDto dto) {
         checkCorporationSharedOwnerships(dto);
         CorporationSharedOwnershipDto owner = sharedOwnershipService.create(dto);
-        authFacade.tokenInfoUpdateEvent(Arrays.asList(owner.getOwnerId()));
+        userUpdateFacade.tokenInfoUpdateEvent(Arrays.asList(owner.getOwnerId()));
     }
 
     @Override

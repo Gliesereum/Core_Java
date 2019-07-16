@@ -4,6 +4,7 @@ import com.gliesereum.account.facade.notification.SystemNotificationFacade;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.model.dto.account.referral.ReferralCodeUserDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.notification.notification.SystemNotificationDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.amqp.core.FanoutExchange;
@@ -33,6 +34,9 @@ public class SystemNotificationFacadeImpl implements SystemNotificationFacade {
 
     @Autowired
     private FanoutExchange updateAuthInfoExchange;
+
+    @Autowired
+    private FanoutExchange updateClientInfoExchange;
 
     @Async
     @Override
@@ -64,6 +68,17 @@ public class SystemNotificationFacadeImpl implements SystemNotificationFacade {
             notification.setObject(authInfos);
             notification.setObjectId(null);
             rabbitTemplate.convertAndSend(updateAuthInfoExchange.getName(), "", notification);
+        }
+    }
+
+    @Override
+    @Async
+    public void updateClientInfo(UserDto user) {
+        if(user != null){
+            SystemNotificationDto<UserDto> notification = new SystemNotificationDto<>();
+            notification.setObjectId(user.getId());
+            notification.setObject(user);
+            rabbitTemplate.convertAndSend(updateClientInfoExchange.getName(), "", notification);
         }
     }
 }

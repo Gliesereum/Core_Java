@@ -22,5 +22,7 @@ public interface ClientEsService {
 
     void addNewClient(UserDto user, UUID businessId);
 
+    void updateClientInfo(UserDto user);
+
     ClientDocument getClientByUserId(UUID userId);
 }
