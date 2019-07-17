@@ -6,8 +6,7 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceServicePriceDto;
 import com.gliesereum.share.common.service.DefaultService;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author vitalij
@@ -20,4 +19,8 @@ public interface WorkingSpaceService extends DefaultService<WorkingSpaceDto, Wor
     List<LiteWorkingSpaceDto> getLiteWorkingSpaceByBusinessId(UUID id);
 
     List<WorkingSpaceServicePriceDto> addServicePrice(List<WorkingSpaceServicePriceDto> dtos);
+
+    LiteWorkingSpaceDto getLiteWorkingSpaceById(UUID workingSpaceId);
+
+    Map<UUID, LiteWorkingSpaceDto> getLiteWorkingSpaceMapByIds(Collection<UUID> collect);
 }

@@ -9,8 +9,7 @@ import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author vitalij
@@ -56,5 +55,9 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
     List<UUID> getIdsByCorporationIds(List<UUID> corporationIds);
 
     Page<ClientDocument> getAllCustomersByCorporationIds(List<UUID> ids, Integer page, Integer size, String query);
+
+    Map<UUID, LiteBusinessDto> getLiteBusinessMapByIds(Collection<UUID> collect);
+
+    List<LiteBusinessDto> getLiteBusinessByIds(List<UUID> ids);
 }
 

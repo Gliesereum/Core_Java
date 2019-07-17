@@ -5,8 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.service.DefaultService;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author vitalij
@@ -35,4 +34,8 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
     void setUsers(List<WorkerDto> result);
 
     boolean existByUserIdAndCorporationId(UUID userId, UUID corporationId);
+
+    LiteWorkerDto getLiteWorkerById(UUID workerId);
+
+    Map<UUID, LiteWorkerDto> getLiteWorkerMapByIds(Collection<UUID> collect);
 }

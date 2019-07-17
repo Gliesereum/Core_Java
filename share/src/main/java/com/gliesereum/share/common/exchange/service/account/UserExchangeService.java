@@ -25,6 +25,8 @@ public interface UserExchangeService {
 
     List<PublicUserDto> findPublicUserByIds(Collection<UUID> ids);
 
+    Map<UUID, PublicUserDto> findPublicUserMapByIds(Collection<UUID> ids);
+
     Map<UUID, UserDto> findUserMapByIds(Collection<UUID> ids);
 
     UserDto getByPhone(String phone);

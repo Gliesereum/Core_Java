@@ -164,6 +164,22 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    public LiteWorkerDto getLiteWorkerById(UUID workerId) {
+        WorkerEntity entity = repository.getOne(workerId);
+        return converter.convert(entity, LiteWorkerDto.class);
+    }
+
+    @Override
+    public Map<UUID, LiteWorkerDto> getLiteWorkerMapByIds(Collection<UUID> collect) {
+        Map<UUID, LiteWorkerDto> result = new HashMap<>();
+        List<LiteWorkerDto> list = getLiteWorkerByIds(new ArrayList<>(collect));
+        if(CollectionUtils.isNotEmpty(list)){
+            result = list.stream().collect(Collectors.toMap(LiteWorkerDto::getId, i -> i));
+        }
+        return result;
+    }
+
+    @Override
     public WorkerDto findByUserIdAndBusinessId(UUID userId, UUID businessId) {
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
