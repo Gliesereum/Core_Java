@@ -92,4 +92,6 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage CLIENT_NOT_FOUND = new ExceptionMessage(1481, 400, "Client not found");
 
     public static final ExceptionMessage USER_NOT_CLIENT_FOR_BUSINESS = new ExceptionMessage(1482, 400, "Client not client for business");
+
+    public static final ExceptionMessage BUSINESS_IDS_OR_CORPORATION_IDS_SHOUT_BE_FULL = new ExceptionMessage(1483, 400, "Business ids or corporation ids shout be full");
 }
