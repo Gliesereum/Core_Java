@@ -19,18 +19,23 @@ import java.util.UUID;
 public class FeedBackUserController {
 
     @Autowired
-    private FeedBackUserService service;
+    private FeedBackUserService feedBackUserService;
 
     @PostMapping("/params")
     public List<FeedBackUserDto> getAllBySearch(@RequestBody FeedBackSearchDto search) {
-        return service.getAllBySearch(search);
+        return feedBackUserService.getAllBySearch(search);
     }
 
     @PostMapping("/create/record-feedback")
     public MapResponse recordFeedback(@RequestParam("recordId") UUID recordId,
                                       @RequestParam(value = "comment", required = false) String comment,
                                       @RequestParam("mark") Integer mark) {
-        service.recordFeedback(recordId, comment, mark);
+        feedBackUserService.recordFeedback(recordId, comment, mark);
         return new MapResponse("true");
+    }
+
+    @GetMapping("/by-record")
+    public FeedBackUserDto getByRecord(@RequestParam("recordId") UUID recordId) {
+        return feedBackUserService.getByRecord(recordId);
     }
 }    

@@ -1,6 +1,7 @@
 package com.gliesereum.proxy.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gliesereum.share.common.security.application.filter.ApplicationFilter;
 import com.gliesereum.share.common.security.bearer.filter.BearerAuthenticationFilter;
 import com.gliesereum.share.common.security.handler.ExceptionHandlerFilter;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
@@ -22,7 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
  * @version 1.0
  */
 @Configuration
-@Import(BearerAuthenticationFilter.class)
+@Import({BearerAuthenticationFilter.class, ApplicationFilter.class})
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -33,6 +34,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private CorsConfigurationSource defaultCorsConfigurationSource;
+
+    @Autowired
+    private ApplicationFilter applicationFilter;
 
     @Bean
     public JwtTokenFactory jwtTokenFactory(SecurityProperties securityProperties, ObjectMapper objectMapper) {
@@ -50,7 +54,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .and()
                 .addFilterBefore(bearerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new ExceptionHandlerFilter(), BearerAuthenticationFilter.class)
+                .addFilterBefore(applicationFilter, BearerAuthenticationFilter.class)
+                .addFilterBefore(new ExceptionHandlerFilter(), ApplicationFilter.class)
                 .cors().configurationSource(defaultCorsConfigurationSource);
     }
 }

@@ -24,6 +24,9 @@ public class BaseRecordEntity extends AbstractRecordEntity {
     @Column(name = "working_space_id")
     private UUID workingSpaceId;
 
+    @Column(name = "specified_working_space")
+    private boolean specifiedWorkingSpace;
+
     @Column(name = "worker_id")
     private UUID workerId;
 }

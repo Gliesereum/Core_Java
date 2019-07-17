@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
-import static com.gliesereum.share.common.exception.messages.GroupExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.PermissionExceptionMessage.*;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_FOUND;
 
 /**
@@ -109,7 +109,7 @@ public class GroupUserServiceImpl extends DefaultServiceImpl<GroupUserDto, Group
     }
 
     @Override
-    public List<GroupDto> getGroupByUser(UserDto user) {
+    public List<GroupDto> getGroupByUser(UserDto user, UUID applicationId) {
         List<GroupDto> result;
         UUID userId = user.getId();
         if (userId == null) {
@@ -118,7 +118,8 @@ public class GroupUserServiceImpl extends DefaultServiceImpl<GroupUserDto, Group
         if (!userExchangeService.userIsExist(userId)) {
             throw new ClientException(USER_NOT_FOUND);
         }
-        result = new ArrayList<>(groupService.getDefaultGroup(user));
+        result = groupService.getDefaultGroup(user, applicationId);
+        result = (result == null) ? new ArrayList<>() : result;
 
         List<GroupUserEntity> groupUser = groupUserRepository.findByUserId(userId);
         if (CollectionUtils.isNotEmpty(groupUser)) {

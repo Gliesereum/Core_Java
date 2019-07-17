@@ -23,7 +23,7 @@ import java.util.UUID;
 public class FeedBackUserEntity extends DefaultEntity {
 
     @Column(name = "object_id")
-    private UUID object_id;
+    private UUID objectId;
 
     @Column(name = "client_id")
     private UUID clientId;

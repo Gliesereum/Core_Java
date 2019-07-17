@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfiguration {
 
     public static final String TOKEN_INFO_CACHE = "tokenInfo";
+    public static final String APPLICATION_INFO_CACHE = "applicationInfo";
 
     @Bean
     public CacheManager cacheManager(javax.cache.CacheManager jCacheManager) {
@@ -51,21 +52,31 @@ public class CacheConfiguration {
 
     @Bean
     public Cache userGroupCache(javax.cache.CacheManager jCacheManager) {
-        javax.cache.Cache groupCache = jCacheManager.createCache("userGroup",
+        javax.cache.Cache userGroupCache = jCacheManager.createCache("userGroup",
                 ExtendedMutableConfiguration.of(new Cache2kBuilder<String, List<GroupDto>>(){}
                         .entryCapacity(10000)
                         .expireAfterWrite(5, TimeUnit.MINUTES)));
-        return new JCacheCache(groupCache);
+        return new JCacheCache(userGroupCache);
 
     }
 
     @Bean
     public Cache tokenInfoCache(javax.cache.CacheManager jCacheManager) {
-        javax.cache.Cache groupCache = jCacheManager.createCache(TOKEN_INFO_CACHE,
+        javax.cache.Cache tokenInfoCache = jCacheManager.createCache(TOKEN_INFO_CACHE,
                 ExtendedMutableConfiguration.of(new Cache2kBuilder<String, AuthDto>(){}
                         .entryCapacity(10000)
                         .expireAfterWrite(1, TimeUnit.MINUTES)));
-        return new JCacheCache(groupCache);
+        return new JCacheCache(tokenInfoCache);
+
+    }
+
+    @Bean
+    public Cache applicationInfoCache(javax.cache.CacheManager jCacheManager) {
+        javax.cache.Cache applicationInfoCache = jCacheManager.createCache(APPLICATION_INFO_CACHE,
+                ExtendedMutableConfiguration.of(new Cache2kBuilder<String, AuthDto>(){}
+                        .entryCapacity(10000)
+                        .expireAfterWrite(3, TimeUnit.MINUTES)));
+        return new JCacheCache(applicationInfoCache);
 
     }
 }

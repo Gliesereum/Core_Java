@@ -10,6 +10,10 @@ import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.feedback.FeedBackSearchDto;
 import com.gliesereum.share.common.model.dto.karma.feedback.FeedBackUserDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
@@ -23,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
 
@@ -71,6 +76,9 @@ public class FeedBackUserServiceImpl extends DefaultServiceImpl<FeedBackUserDto,
         if (!record.getClientId().equals(SecurityUtil.getUserId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
+        if (feedBackUserRepository.findByObjectId(recordId) != null) {
+            throw new ClientException(FEEDBACK_FOR_RECORD_EXIST);
+        }
         FeedBackUserDto feedBack = new FeedBackUserDto();
         feedBack.setBusinessId(record.getBusinessId());
         feedBack.setClientId(record.getClientId());
@@ -91,24 +99,36 @@ public class FeedBackUserServiceImpl extends DefaultServiceImpl<FeedBackUserDto,
         List<FeedBackUserEntity> entities = feedBackUserRepository.getBySearch(search);
         if (CollectionUtils.isNotEmpty(entities)) {
             result = converter.convert(entities, dtoClass);
-           // setFullModel(result);
+            setFullModel(result);
         }
         return result;
     }
 
-    /*private void setFullModel(List<FeedBackUserDto> result) {
-        Map<UUID, PublicUserDto> clients = new HashMap<>();
-        Map<UUID, LiteWorkerDto> workers = new HashMap<>();
-        Map<UUID, LiteWorkingSpaceDto> workerSpaces = new HashMap<>();
-        Map<UUID, LiteBusinessDto> businesses = new HashMap<>();
-        result.forEach(f->{
-            LiteBusinessDto business = businesses.get(f.getBusinessId());
-            if(business == null){
-              business =
+    @Override
+    public FeedBackUserDto getByRecord(UUID recordId) {
+        FeedBackUserDto result = null;
+        if (recordId != null) {
+            FeedBackUserEntity entity = feedBackUserRepository.findByObjectId(recordId);
+            if ((entity != null) && !entity.getClientId().equals(SecurityUtil.getUserId())) {
+                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
             }
-            f.setBusiness(business);
+            result = converter.convert(entity, dtoClass);
+        }
+        return result;
+    }
+
+    private void setFullModel(List<FeedBackUserDto> result) {
+        Map<UUID, PublicUserDto> clients = userExchangeService.findPublicUserMapByIds(result.stream().map(m->m.getClientId()).collect(Collectors.toSet()));
+        Map<UUID, LiteWorkerDto> workers = workerService.getLiteWorkerMapByIds(result.stream().map(m->m.getWorkerId()).collect(Collectors.toSet()));
+        Map<UUID, LiteWorkingSpaceDto> workerSpaces = workingSpaceService.getLiteWorkingSpaceMapByIds(result.stream().map(m->m.getWorkingSpaceId()).collect(Collectors.toSet()));
+        Map<UUID, LiteBusinessDto> businesses = businessService.getLiteBusinessMapByIds(result.stream().map(m->m.getBusinessId()).collect(Collectors.toSet()));
+        result.forEach(f -> {
+            f.setWorkerDto(workers.get(f.getWorkerId()));
+            f.setWorkingSpaceDto(workerSpaces.get(f.getWorkingSpaceId()));
+            f.setClient(clients.get(f.getClientId()));
+            f.setBusiness(businesses.get(f.getBusinessId()));
         });
-    }*/
+    }
 
     private void checkPermission(FeedBackSearchDto search) {
         if (CollectionUtils.isEmpty(search.getBusinessIds()) &&

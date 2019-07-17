@@ -43,6 +43,9 @@ public class GroupEntity extends DefaultEntity {
     @Column(name = "parent_group_id")
     private UUID parentGroupId;
 
+    @Column(name = "application_id")
+    private UUID applicationId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_group_id", insertable = false, updatable = false)
     private GroupEntity parentGroup;

@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
-import static com.gliesereum.share.common.exception.messages.GroupExceptionMessage.GROUP_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.PermissionExceptionMessage.GROUP_NOT_FOUND;
 
 /**
  * @author yvlasiuk
@@ -45,7 +45,7 @@ public class GroupServiceImpl extends DefaultServiceImpl<GroupDto, GroupEntity> 
     }
 
     @Override
-    public List<GroupDto> getDefaultGroup(UserDto user) {
+    public List<GroupDto> getDefaultGroup(UserDto user, UUID applicationId) {
         List<GroupPurpose> groupPurposes = new ArrayList<>();
         if (user.getBanStatus().equals(BanStatus.BAN)) {
             groupPurposes.add(GroupPurpose.BANNED);
@@ -59,12 +59,22 @@ public class GroupServiceImpl extends DefaultServiceImpl<GroupDto, GroupEntity> 
                 groupPurposes.add(GroupPurpose.CORPORATION_USER);
             }
         }
-        return getByPurposes(groupPurposes);
+        return getByPurposesAndApplicationId(groupPurposes, applicationId);
     }
 
     @Override
-    public List<GroupDto> getForAnonymous() {
-        return getByPurposes(Arrays.asList(GroupPurpose.ANONYMOUS));
+    public List<GroupDto> getForAnonymous(UUID applicationId) {
+        return getByPurposesAndApplicationId(Arrays.asList(GroupPurpose.ANONYMOUS), applicationId);
+    }
+
+    @Override
+    public List<GroupDto> getByPurposesAndApplicationId(List<GroupPurpose> purposes, UUID applicationId) {
+        List<GroupDto> result = null;
+        if (CollectionUtils.isNotEmpty(purposes)) {
+            List<GroupEntity> entities = groupRepository.findByPurposeInAndApplicationId(purposes, applicationId);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
     }
 
     @Override

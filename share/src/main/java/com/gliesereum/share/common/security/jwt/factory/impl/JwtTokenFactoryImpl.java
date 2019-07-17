@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.permission.application.ApplicationDto;
 import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
 import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import com.gliesereum.share.common.security.model.UserAuthentication;
@@ -29,6 +30,7 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
     private static final String IS_ANONYMOUS = "isAnonymous";
     private static final String USER = "user";
     private static final String TOKEN = "token";
+    private static final String APPLICATION = "application";
 
     private JwtSecurityProperties jwtSecurityProperties;
 
@@ -71,6 +73,10 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
             result.put(USER, objectMapper.convertValue(userAuthentication.getUser(), new TypeReference<HashMap<String, Object>>(){}));
             result.put(TOKEN, objectMapper.convertValue(userAuthentication.getTokenInfo(), new TypeReference<HashMap<String, Object>>(){}));
         }
+        ApplicationDto application = userAuthentication.getApplication();
+        if (application != null) {
+            result.put(APPLICATION, objectMapper.convertValue(application, new TypeReference<HashMap<String, Object>>(){}));
+        }
         return result;
     }
 
@@ -82,6 +88,10 @@ public class JwtTokenFactoryImpl implements JwtTokenFactory {
             UserDto user = objectMapper.convertValue(claims.get(USER), new TypeReference<UserDto>(){});
             TokenInfoDto tokenInfo = objectMapper.convertValue(claims.get(TOKEN), new TypeReference<TokenInfoDto>(){});
             userAuthentication = new UserAuthentication(user, tokenInfo);
+        }
+        Object applicationClaims = claims.get(APPLICATION);
+        if (applicationClaims != null) {
+            userAuthentication.setApplication(objectMapper.convertValue(applicationClaims, new TypeReference<ApplicationDto>(){}));
         }
         return userAuthentication;
     }

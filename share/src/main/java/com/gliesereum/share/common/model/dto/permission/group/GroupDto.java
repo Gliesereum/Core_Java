@@ -32,6 +32,8 @@ public class GroupDto extends DefaultDto {
 
     private UUID parentGroupId;
 
+    private UUID applicationId;
+
     private GroupDto parentGroup;
 
     private List<EndpointDto> endpoints = new ArrayList<>();

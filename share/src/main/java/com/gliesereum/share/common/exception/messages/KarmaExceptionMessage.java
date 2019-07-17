@@ -94,4 +94,8 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage USER_NOT_CLIENT_FOR_BUSINESS = new ExceptionMessage(1482, 400, "Client not client for business");
 
     public static final ExceptionMessage BUSINESS_IDS_OR_CORPORATION_IDS_SHOUT_BE_FULL = new ExceptionMessage(1483, 400, "Business ids or corporation ids shout be full");
+
+    public static final ExceptionMessage FEEDBACK_FOR_RECORD_EXIST = new ExceptionMessage(1484, 400, "Feedback for record exist");
+
+
 }

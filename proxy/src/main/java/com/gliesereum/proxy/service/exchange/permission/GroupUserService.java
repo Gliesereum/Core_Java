@@ -11,5 +11,5 @@ import java.util.UUID;
  */
 public interface GroupUserService {
 
-    List<GroupDto> getUserGroups(UUID id, String jwt);
+    List<GroupDto> getUserGroups(UUID userId, UUID applicationId, String jwt);
 }
