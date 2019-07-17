@@ -26,6 +26,8 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
 
     List<LiteWorkerDto> getLiteWorkerByBusinessId(UUID id);
 
+    List<LiteWorkerDto> getLiteWorkerByIds(List<UUID> ids);
+
     List<WorkerDto> findByUserIdAndCorporationId(UUID userId, UUID corporationId);
 
     List<WorkerDto> getByCorporationId(UUID corporationId);

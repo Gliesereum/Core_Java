@@ -88,13 +88,24 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public List<LiteWorkerDto> getLiteWorkerByBusinessId(UUID id) {
         List<WorkerEntity> entities = workerRepository.findAllByBusinessId(id);
         List<LiteWorkerDto> result = converter.convert(entities, LiteWorkerDto.class);
-        if (CollectionUtils.isNotEmpty(result)) {
-            Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(result.stream().map(LiteWorkerDto::getUserId).collect(Collectors.toList()));
+        return setUsersInLiteModels(result);
+    }
+
+    @Override
+    public List<LiteWorkerDto> getLiteWorkerByIds(List<UUID> ids) {
+        List<WorkerEntity> entities = workerRepository.findAllById(ids);
+        List<LiteWorkerDto> result = converter.convert(entities, LiteWorkerDto.class);
+        return setUsersInLiteModels(result);
+    }
+
+    private List<LiteWorkerDto> setUsersInLiteModels(List<LiteWorkerDto> list){
+        if (CollectionUtils.isNotEmpty(list)) {
+            Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(list.stream().map(LiteWorkerDto::getUserId).collect(Collectors.toList()));
             if (MapUtils.isNotEmpty(users)) {
-                result.forEach(f -> f.setUser(users.get(f.getUserId())));
+                list.forEach(f -> f.setUser(users.get(f.getUserId())));
             }
         }
-        return result;
+        return list;
     }
 
     @Override

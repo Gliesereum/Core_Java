@@ -174,7 +174,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
         Long duration = getDurationByRecord(serviceIds, packageId);
         finish = begin.plusMinutes(duration);
-        List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business);
+        List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business, null);
         if (CollectionUtils.isNotEmpty(freeTimes)) {
             LocalDateTime finalBegin = begin;
             freeTimes.forEach(f -> {
@@ -188,7 +188,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public Page<BaseRecordDto> getByClientForBusiness(List<UUID> corporationIds, UUID clientId, Integer page, Integer size) {
-        corporationIds.forEach(f-> businessPermissionFacade.checkCurrentUserHavePermissionForWorkWithClient(f));
+        corporationIds.forEach(f -> businessPermissionFacade.checkCurrentUserHavePermissionForWorkWithClient(f));
         Page<BaseRecordDto> result = null;
         List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(corporationIds);
         if (CollectionUtils.isNotEmpty(businessIds)) {
@@ -559,7 +559,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
             Long duration = getDurationByRecord(dto.getServicesIds(), dto.getPackageId());
             dto.setFinish(dto.getBegin().plusMinutes(duration));
-            List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(dto.getBegin(), dto.getFinish(), business);
+            List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(dto.getBegin(), dto.getFinish(), business, dto.getWorkingSpaceId());
             if (CollectionUtils.isNotEmpty(freeTimes)) {
                 RecordFreeTime freeTime = getNearest(freeTimes, dto.getBegin(), duration);
                 if (freeTime != null) {
@@ -618,11 +618,10 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     private void checkWorkingSpaceByOpportunityRecordToTime(LocalDateTime begin, LocalDateTime finish, UUID workingSpaceId, BaseBusinessDto business) {
-        List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business);
+        List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business, workingSpaceId);
         if (CollectionUtils.isNotEmpty(freeTimes)) {
             RecordFreeTime freeTime = freeTimes.stream()
-                    .filter(f -> f.getWorkingSpaceID().equals(workingSpaceId) &&
-                            begin.plusMinutes(1L).isAfter(f.getBegin()) &&
+                    .filter(f -> begin.plusMinutes(1L).isAfter(f.getBegin()) &&
                             finish.minusMinutes(1L).isBefore(f.getFinish()))
                     .findFirst().orElse(null);
             if (freeTime == null) {
@@ -760,17 +759,21 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setBusinessCategoryId(business.getBusinessCategoryId());
     }
 
-    private List<RecordFreeTime> getFreeTimesByBusinessAndCheckWorkingTime(LocalDateTime begin, LocalDateTime finish, BaseBusinessDto business) {
+    private List<RecordFreeTime> getFreeTimesByBusinessAndCheckWorkingTime(LocalDateTime begin, LocalDateTime finish, BaseBusinessDto business, UUID workingSpaceId) {
         WorkTimeDto workTime = getWorkTimeByBusiness(begin, business);
         checkTimeWorking(workTime, begin, finish);
-        return getFreeTimesByBusiness(business, begin.toLocalDate().atTime(workTime.getFrom()), begin.toLocalDate().atTime(workTime.getTo()));
+        return getFreeTimesByBusiness(business, workingSpaceId, begin.toLocalDate().atTime(workTime.getFrom()), begin.toLocalDate().atTime(workTime.getTo()));
     }
 
-    private List<RecordFreeTime> getFreeTimesByBusiness(BaseBusinessDto business, LocalDateTime startTimeWork, LocalDateTime endTimeWork) {
+    private List<RecordFreeTime> getFreeTimesByBusiness(BaseBusinessDto business, UUID workingSpaceId, LocalDateTime startTimeWork, LocalDateTime endTimeWork) {
         List<RecordFreeTime> result = new ArrayList();
         if (business != null && CollectionUtils.isNotEmpty(business.getSpaces())) {
             List<BaseRecordEntity> records = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetween(business.getId(), StatusRecord.CREATED, startTimeWork, endTimeWork);
-            business.getSpaces().forEach(b -> {
+            List<WorkingSpaceDto> spaces = business.getSpaces();
+            if (workingSpaceId != null) {
+                spaces = spaces.stream().filter(f -> f.getId().equals(workingSpaceId)).collect(Collectors.toList());
+            }
+            spaces.forEach(b -> {
                 UUID currentId = b.getId();
                 if (CollectionUtils.isNotEmpty(records)) {
                     List<BaseRecordEntity> recordsBySpace = records.stream().filter(f -> f.getWorkingSpaceId().equals(currentId)).collect(Collectors.toList());
