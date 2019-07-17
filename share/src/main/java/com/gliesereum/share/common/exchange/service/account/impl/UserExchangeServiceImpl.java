@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -136,6 +133,16 @@ public class UserExchangeServiceImpl implements UserExchangeService {
             if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
                 result = response.getBody();
             }
+        }
+        return result;
+    }
+
+    @Override
+    public Map<UUID, PublicUserDto> findPublicUserMapByIds(Collection<UUID> ids) {
+        Map<UUID, PublicUserDto> result = new HashMap<>();
+        List<PublicUserDto> users = findPublicUserByIds(ids);
+        if(CollectionUtils.isNotEmpty(users)){
+            result = users.stream().collect(Collectors.toMap(PublicUserDto::getId, i -> i));
         }
         return result;
     }

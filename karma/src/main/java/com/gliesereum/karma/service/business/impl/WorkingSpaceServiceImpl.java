@@ -130,6 +130,27 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     }
 
     @Override
+    public LiteWorkingSpaceDto getLiteWorkingSpaceById(UUID workingSpaceId) {
+        WorkingSpaceEntity entity = repository.getOne(workingSpaceId);
+        return converter.convert(entity, LiteWorkingSpaceDto.class);
+    }
+
+    @Override
+    public Map<UUID, LiteWorkingSpaceDto> getLiteWorkingSpaceMapByIds(Collection<UUID> collect) {
+        Map<UUID, LiteWorkingSpaceDto> result = new HashMap<>();
+        List<LiteWorkingSpaceDto> list = getLiteWorkingSpaceByIds(new ArrayList<>(collect));
+        if (CollectionUtils.isNotEmpty(list)) {
+            result = list.stream().collect(Collectors.toMap(LiteWorkingSpaceDto::getId, i -> i));
+        }
+        return result;
+    }
+
+    private List<LiteWorkingSpaceDto> getLiteWorkingSpaceByIds(List<UUID> ids) {
+        List<WorkingSpaceEntity> entities = repository.findAllById(ids);
+        return converter.convert(entities, LiteWorkingSpaceDto.class);
+    }
+
+    @Override
     public WorkingSpaceDto create(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
@@ -196,7 +217,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             }
             for (WorkingSpaceDto workingSpace : workingSpaces) {
                 workingSpace.setIndexNumber(lastIndex + 1);
-                lastIndex ++;
+                lastIndex++;
             }
         }
         return workingSpaces;

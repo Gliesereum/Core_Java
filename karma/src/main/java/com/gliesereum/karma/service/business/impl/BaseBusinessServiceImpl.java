@@ -15,10 +15,7 @@ import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
-import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
@@ -379,6 +376,22 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (size == null) size = 100;
         if (page == null) page = 0;
         return clientEsService.getClientsByCorporationIdsAndAutocompleteQuery(query, ids, page, size);
+    }
+
+    @Override
+    public Map<UUID, LiteBusinessDto> getLiteBusinessMapByIds(Collection<UUID> collect) {
+        Map<UUID, LiteBusinessDto> result = new HashMap<>();
+        List<LiteBusinessDto> list = getLiteBusinessByIds(new ArrayList<>(collect));
+        if (CollectionUtils.isNotEmpty(list)) {
+            result = list.stream().collect(Collectors.toMap(LiteBusinessDto::getId, i -> i));
+        }
+        return result;
+    }
+
+    @Override
+    public List<LiteBusinessDto> getLiteBusinessByIds(List<UUID> ids) {
+        List<BaseBusinessEntity> entities = repository.findAllById(ids);
+        return converter.convert(entities, LiteBusinessDto.class);
     }
 
     @Override
