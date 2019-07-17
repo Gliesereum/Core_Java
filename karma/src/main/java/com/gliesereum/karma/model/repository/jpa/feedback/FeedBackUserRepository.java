@@ -10,4 +10,6 @@ import java.util.UUID;
  * @version 1.0
  */
 public interface FeedBackUserRepository extends JpaRepository<FeedBackUserEntity, UUID>, FeedBackSearchRepository {
+
+    FeedBackUserEntity findByObjectId(UUID objectId);
 }

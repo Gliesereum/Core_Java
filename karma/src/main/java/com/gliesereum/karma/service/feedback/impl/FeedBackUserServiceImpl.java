@@ -71,6 +71,9 @@ public class FeedBackUserServiceImpl extends DefaultServiceImpl<FeedBackUserDto,
         if (!record.getClientId().equals(SecurityUtil.getUserId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
+        if (feedBackUserRepository.findByObjectId(recordId) != null) {
+            throw new ClientException(FEEDBACK_FOR_RECORD_EXIST);
+        }
         FeedBackUserDto feedBack = new FeedBackUserDto();
         feedBack.setBusinessId(record.getBusinessId());
         feedBack.setClientId(record.getClientId());
@@ -92,6 +95,19 @@ public class FeedBackUserServiceImpl extends DefaultServiceImpl<FeedBackUserDto,
         if (CollectionUtils.isNotEmpty(entities)) {
             result = converter.convert(entities, dtoClass);
            // setFullModel(result);
+        }
+        return result;
+    }
+
+    @Override
+    public FeedBackUserDto getByRecord(UUID recordId) {
+        FeedBackUserDto result = null;
+        if (recordId != null) {
+            FeedBackUserEntity entity = feedBackUserRepository.findByObjectId(recordId);
+            if ((entity != null) && !entity.getClientId().equals(SecurityUtil.getUserId())) {
+                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
+            }
+            result = converter.convert(entity, dtoClass);
         }
         return result;
     }

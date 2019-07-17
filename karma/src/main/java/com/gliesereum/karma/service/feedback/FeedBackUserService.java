@@ -17,4 +17,6 @@ public interface FeedBackUserService extends DefaultService<FeedBackUserDto, Fee
     void recordFeedback(UUID recordId, String comment, Integer mark);
 
     List<FeedBackUserDto> getAllBySearch(FeedBackSearchDto search);
+
+    FeedBackUserDto getByRecord(UUID recordId);
 }
