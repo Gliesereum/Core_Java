@@ -19,6 +19,8 @@ public class BaseRecordDto extends AbstractRecordDto {
 
     private UUID workingSpaceId;
 
+    private boolean specifiedWorkingSpace;
+
     private UUID workerId;
 
     private UserDto client;
