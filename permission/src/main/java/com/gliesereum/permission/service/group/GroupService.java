@@ -17,9 +17,11 @@ import java.util.UUID;
  */
 public interface GroupService extends DefaultService<GroupDto, GroupEntity> {
 
-    List<GroupDto> getDefaultGroup(UserDto user);
+    List<GroupDto> getDefaultGroup(UserDto user, UUID applicationId);
 
-    List<GroupDto> getForAnonymous();
+    List<GroupDto> getForAnonymous(UUID applicationId);
+
+    List<GroupDto> getByPurposesAndApplicationId(List<GroupPurpose> purposes, UUID applicationId);
 
     List<GroupDto> getByPurposes(List<GroupPurpose> purposes);
 

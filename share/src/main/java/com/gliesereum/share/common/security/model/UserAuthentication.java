@@ -2,6 +2,7 @@ package com.gliesereum.share.common.security.model;
 
 import com.gliesereum.share.common.model.dto.account.auth.TokenInfoDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.permission.application.ApplicationDto;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +24,8 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
     private String jwtToken;
 
     private boolean isAnonymous = false;
+
+    private ApplicationDto application;
 
     public UserAuthentication(UserDto user, TokenInfoDto tokenInfo) {
         super(user, null, AUTHENTICATED_AUTHORITY);
@@ -55,5 +58,13 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
 
     public boolean isAnonymous() {
         return isAnonymous;
+    }
+
+    public ApplicationDto getApplication() {
+        return application;
+    }
+
+    public void setApplication(ApplicationDto application) {
+        this.application = application;
     }
 }

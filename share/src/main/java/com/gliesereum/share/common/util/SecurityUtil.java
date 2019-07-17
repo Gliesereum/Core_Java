@@ -73,6 +73,15 @@ public class SecurityUtil {
         return (user == null) || user.isAnonymous();
     }
 
+    public static UUID getApplicationId() {
+        UUID result = null;
+        UserAuthentication user = getUser();
+        if ((user != null) && (user.getApplication() != null)) {
+            result = user.getApplication().getId();
+        }
+        return result;
+    }
+
     public static String getJwtToken() {
         UserAuthentication user = getUser();
         return (user != null) ? user.getJwtToken() : null;

@@ -25,8 +25,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.*;
-import static com.gliesereum.share.common.exception.messages.GroupExceptionMessage.GROUP_NOT_ACTIVE;
-import static com.gliesereum.share.common.exception.messages.GroupExceptionMessage.GROUP_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.PermissionExceptionMessage.GROUP_NOT_ACTIVE;
+import static com.gliesereum.share.common.exception.messages.PermissionExceptionMessage.GROUP_NOT_FOUND;
 
 /**
  * @author yvlasiuk
@@ -97,7 +97,7 @@ public class EndpointKeeperServiceImpl implements EndpointKeeperService {
 
     private Map<String, PermissionMapValue> getPermissionMap(String currentJwt) {
         UUID userIdToCache = SecurityUtil.getUserId() != null ? SecurityUtil.getUserId() : SecurityUtil.getAnonymousId();
-        List<GroupDto> userGroup = groupUserService.getUserGroups(userIdToCache, currentJwt);
+        List<GroupDto> userGroup = groupUserService.getUserGroups(userIdToCache, SecurityUtil.getApplicationId(), currentJwt);
         if (CollectionUtils.isEmpty(userGroup)) {
             throw new ClientException(GROUP_NOT_FOUND);
         }

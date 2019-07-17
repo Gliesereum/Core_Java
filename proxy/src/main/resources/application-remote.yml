@@ -10,7 +10,10 @@ spring:
 
 security:
   properties:
+    checkApplicationId: http://permission-service/application/check
     checkAccessUrl: http://account-service/auth/check
+    applicationIdHeader: Application-Id
+    applicationIdHeaderRequired: false
     bearerHeader: Authorization
     bearerPrefix: Bearer
     jwtHeader: Service-Authorization

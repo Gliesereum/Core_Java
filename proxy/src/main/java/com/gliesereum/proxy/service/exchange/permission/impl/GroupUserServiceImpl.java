@@ -35,8 +35,8 @@ public class GroupUserServiceImpl implements GroupUserService {
     private RestTemplate restTemplate;
 
     @Override
-    @Cacheable(value = "userGroup", key = "#id", unless = "#result == null")
-    public List<GroupDto> getUserGroups(UUID id, String jwt) {
+    @Cacheable(value = "userGroup", key = "{#userId, #applicationId}", unless = "#result == null")
+    public List<GroupDto> getUserGroups(UUID userId, UUID applicationId, String jwt) {
         List<GroupDto> result = null;
         try {
             if (StringUtils.isNotEmpty(jwt)) {

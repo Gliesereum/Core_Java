@@ -12,8 +12,10 @@ import java.util.UUID;
  * @author yvlasiuk
  * @version 1.0
  */
-@Repository
+
 public interface GroupRepository extends JpaRepository<GroupEntity, UUID> {
 
     List<GroupEntity> findByPurposeIn(List<GroupPurpose> purposes);
+
+    List<GroupEntity> findByPurposeInAndApplicationId(List<GroupPurpose> purposes, UUID applicationId);
 }

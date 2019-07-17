@@ -52,9 +52,9 @@ public class GroupUserController {
         List<GroupDto> result;
         UserAuthentication authentication = SecurityUtil.getUser();
         if (authentication.isAnonymous()) {
-            result = groupService.getForAnonymous();
+            result = groupService.getForAnonymous(SecurityUtil.getApplicationId());
         } else {
-            result = groupUserService.getGroupByUser(authentication.getUser());
+            result = groupUserService.getGroupByUser(authentication.getUser(), SecurityUtil.getApplicationId());
         }
         return result;
     }

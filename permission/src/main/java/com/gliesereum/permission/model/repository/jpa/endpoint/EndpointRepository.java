@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author yvlasiuk
  * @version 1.0
  */
-@Repository
+
 public interface EndpointRepository extends JpaRepository<EndpointEntity, UUID> {
 
     EndpointEntity findByUrlAndModuleId(String url, UUID moduleId);

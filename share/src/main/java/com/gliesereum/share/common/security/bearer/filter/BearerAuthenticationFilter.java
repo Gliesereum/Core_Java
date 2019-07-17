@@ -2,6 +2,8 @@ package com.gliesereum.share.common.security.bearer.filter;
 
 import com.gliesereum.share.common.exchange.service.auth.AuthExchangeService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
+import com.gliesereum.share.common.model.dto.permission.application.ApplicationDto;
+import com.gliesereum.share.common.security.application.filter.ApplicationStore;
 import com.gliesereum.share.common.security.model.UserAuthentication;
 import com.gliesereum.share.common.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -31,20 +33,29 @@ public class BearerAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private AuthExchangeService authService;
 
+    @Autowired
+    private ApplicationStore applicationStore;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        UserAuthentication userAuthentication = null;
         String header = request.getHeader(securityProperties.getBearerHeader());
         String bearerToken = StringUtils.removeStart(header, securityProperties.getBearerPrefix());
         if (StringUtils.startsWith(header, securityProperties.getBearerPrefix()) && StringUtils.isNotBlank(bearerToken)) {
             bearerToken = bearerToken.trim();
             AuthDto auth = authService.checkAccessToken(bearerToken);
             if (auth != null) {
-                SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(auth.getUser(), auth.getTokenInfo()));
-                filterChain.doFilter(request, response);
-                return;
+                userAuthentication = new UserAuthentication(auth.getUser(), auth.getTokenInfo());
             }
         }
-        SecurityContextHolder.getContext().setAuthentication(new UserAuthentication());
+        if (userAuthentication == null) {
+            userAuthentication = new UserAuthentication();
+        }
+        ApplicationDto application = applicationStore.getApplication();
+        if (application != null) {
+            userAuthentication.setApplication(application);
+        }
+        SecurityContextHolder.getContext().setAuthentication(userAuthentication);
         filterChain.doFilter(request, response);
     }
 }

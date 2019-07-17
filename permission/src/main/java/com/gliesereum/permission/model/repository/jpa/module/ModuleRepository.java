@@ -10,7 +10,7 @@ import java.util.UUID;
  * @author yvlasiuk
  * @version 1.0
  */
-@Repository
+
 public interface ModuleRepository extends JpaRepository<ModuleEntity, UUID> {
 
 

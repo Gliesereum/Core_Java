@@ -4,6 +4,7 @@ import com.gliesereum.share.common.exchange.service.auth.impl.AuthExchangeServic
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
 import com.gliesereum.share.common.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +20,7 @@ import static com.gliesereum.proxy.config.CacheConfiguration.TOKEN_INFO_CACHE;
 @Service
 public class CacheAuthExchangeServiceImpl extends AuthExchangeServiceImpl {
 
+    @Autowired
     public CacheAuthExchangeServiceImpl(RestTemplate restTemplate, SecurityProperties securityProperties) {
         super(restTemplate, securityProperties);
     }

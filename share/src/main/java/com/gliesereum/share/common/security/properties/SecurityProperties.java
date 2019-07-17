@@ -30,6 +30,12 @@ public class SecurityProperties extends JwtSecurityProperties {
     @NotBlank
     private String bearerPrefix;
 
+    @NotBlank
+    private String applicationIdHeader;
+
+    @NotBlank
+    private Boolean applicationIdHeaderRequired;
+
     @NotNull
     private Boolean endpointKeeperEnable;
 
@@ -38,4 +44,7 @@ public class SecurityProperties extends JwtSecurityProperties {
 
     @NotBlank
     private String getPermissionMapUrl;
+
+    @NotBlank
+    private String checkApplicationId;
 }
