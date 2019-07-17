@@ -63,6 +63,11 @@ public class WorkingSpaceController {
         return workerService.getByCorporationId(corporationId);
     }
 
+    @GetMapping("/workers/by-business")
+    public List<WorkerDto> getByBusinessId(@RequestParam("businessId") UUID businessId) {
+        return workerService.getByBusinessId(businessId);
+    }
+
     @PostMapping("/worker")
     public WorkerDto createWorker(@RequestBody @Valid WorkerDto worker) {
         return workerService.create(worker);
