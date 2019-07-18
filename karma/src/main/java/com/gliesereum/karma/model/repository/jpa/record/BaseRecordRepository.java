@@ -33,7 +33,7 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
 
     List<BaseRecordEntity> findByBusinessIdAndStatusRecordAndBeginBetweenAndNotificationSend(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to, boolean notificationSend);
 
-    List<BaseRecordEntity> findAllByClientId(UUID id);
+    Page<BaseRecordEntity> findAllByClientId(UUID id, Pageable pageable);
 
     Page<BaseRecordEntity> findAllByBusinessIdInAndClientIdOrderByBeginDesc(List<UUID> businessIds, UUID clientId, Pageable pageable);
 
