@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS karma.user_pin_code
 (
     id                 uuid NOT NULL DEFAULT uuid_generate_v4(),
     user_id uuid,
-    pin_code integer,
+    pin_code character varying,
     CONSTRAINT user_pin_code_pk PRIMARY KEY (id)
 );
