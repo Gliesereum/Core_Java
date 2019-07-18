@@ -43,7 +43,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     BaseRecordDto superCreateRecord(BaseRecordDto dto);
 
-    List<BaseRecordDto> getAllByUser();
+    Page<BaseRecordDto> getAllByUser(Integer page, Integer size);
 
     BaseRecordDto createFromBusiness(BaseRecordDto dto);
 

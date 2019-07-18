@@ -26,5 +26,5 @@ public class UserPinCodeEntity extends DefaultEntity {
     private UUID userId;
 
     @Column(name = "pin_code")
-    private Integer pinCode;
+    private String pinCode;
 }

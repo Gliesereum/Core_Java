@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -589,14 +590,17 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<BaseRecordDto> getAllByUser() {
+    public Page<BaseRecordDto> getAllByUser(Integer page, Integer size) {
         SecurityUtil.checkUserByBanStatus();
-        List<BaseRecordEntity> entities = baseRecordRepository.findAllByClientId(SecurityUtil.getUserId());
-        List<BaseRecordDto> result = converter.convert(entities, dtoClass);
-        setFullModelRecord(result);
-        setServicePrice(result);
-        if (CollectionUtils.isNotEmpty(result)) {
-            result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
+        if (page == null) page = 0;
+        if (size == null) size = 20;
+        Page<BaseRecordDto> result = null;
+        Page<BaseRecordEntity> entities = baseRecordRepository.findAllByClientId(SecurityUtil.getUserId(), PageRequest.of(page, size, Sort.by("begin").descending()));
+        if (entities != null && CollectionUtils.isNotEmpty(entities.getContent())) {
+            List<BaseRecordDto> dtos = converter.convert(entities.getContent(), dtoClass);
+            setServicePrice(dtos);
+            setFullModelRecord(dtos);
+            result = new PageImpl<>(dtos, entities.getPageable(), entities.getTotalElements());
         }
         return result;
     }

@@ -174,7 +174,7 @@ public class BaseBusinessController {
         if (!baseBusinessService.isExist(id)) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        return commentService.addComment(id, userId, comment);
+        return baseBusinessService.addComment(id, userId, comment);
     }
 
     @PutMapping("/comment")
@@ -183,7 +183,7 @@ public class BaseBusinessController {
         if (userId == null) {
             throw new ClientException(ANONYMOUS_CANT_COMMENT);
         }
-        return commentService.updateComment(userId, comment);
+        return baseBusinessService.updateComment(userId, comment);
     }
 
     @DeleteMapping("/comment/{commentId}")
@@ -192,7 +192,7 @@ public class BaseBusinessController {
         if (userId == null) {
             throw new ClientException(ANONYMOUS_CANT_COMMENT);
         }
-        commentService.deleteComment(commentId, userId);
+        baseBusinessService.deleteComment(commentId, userId);
         return new MapResponse("true");
     }
 

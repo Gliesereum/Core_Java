@@ -78,3 +78,18 @@ eureka:
 system-notification:
   update-auth-info:
     exchange-name: system-notification-update-auth-info
+
+security:
+  properties:
+    checkApplicationId: http://permission-service/application/check
+    checkAccessUrl: http://account-service/auth/check
+    applicationIdHeader: Application-Id
+    applicationIdHeaderRequired: true
+    bearerHeader: Authorization
+    bearerPrefix: Bearer
+    jwtHeader: Service-Authorization
+    jwtPrefix: JWT
+    jwtSecret: CnfxFqbCKHLqzT9LGruE
+    endpointKeeperEnable: false
+    getUserGroupUrl: http://permission-service/group-user/my-group
+    getPermissionMapUrl: http://permission-service/group/permission-map/by-group

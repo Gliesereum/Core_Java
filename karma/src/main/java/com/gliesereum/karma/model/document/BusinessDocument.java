@@ -55,6 +55,12 @@ public class BusinessDocument {
     @Field(type = FieldType.Keyword)
     private Integer timeZone;
 
+    @Field(type = FieldType.Double)
+    private Double rating;
+
+    @Field(type = FieldType.Integer)
+    private Integer ratingCount;
+
     @GeoPointField
     private GeoPoint geoPoint;
 
