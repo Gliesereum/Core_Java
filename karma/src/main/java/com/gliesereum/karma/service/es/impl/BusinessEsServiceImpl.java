@@ -126,6 +126,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAsync(UUID businessId) {
+        log.info("Get data for index Business to ElasticSearch");
         BaseBusinessDto business = baseBusinessService.getByIdIgnoreState(businessId);
         List<BusinessDocument> businessDocuments = collectData(Arrays.asList(business));
         index(businessDocuments);
@@ -136,6 +137,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAsync(List<UUID> businessIds) {
+        log.info("Get data for index Business to ElasticSearch");
         List<BaseBusinessDto> business = baseBusinessService.getByIds(businessIds);
         List<BusinessDocument> businessDocuments = collectData(business);
         index(businessDocuments);
@@ -144,6 +146,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Override
     @Transactional
     public void indexAll() {
+        log.info("Get data for index Business to ElasticSearch");
         List<BaseBusinessDto> businessList = baseBusinessService.getAllIgnoreState();
         List<BusinessDocument> businessDocuments = collectData(businessList);
         index(businessDocuments);
