@@ -4,7 +4,11 @@ import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizationInterceptor;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.exchange.service.account.UserPhoneExchangeService;
 import com.gliesereum.share.common.exchange.service.account.impl.UserExchangeServiceImpl;
+import com.gliesereum.share.common.exchange.service.account.impl.UserPhoneExchangeServiceImpl;
+import com.gliesereum.share.common.exchange.service.mail.MailExchangeService;
+import com.gliesereum.share.common.exchange.service.mail.impl.MailExchangeServiceImpl;
 import com.gliesereum.share.common.exchange.service.permission.GroupUserExchangeService;
 import com.gliesereum.share.common.exchange.service.permission.impl.GroupUserExchangeServiceImpl;
 import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
@@ -59,5 +63,15 @@ public class ExchangeConfiguration {
     @Bean
     public GroupUserExchangeService groupUserExchangeService(RestTemplate restTemplate, ExchangeProperties exchangeProperties) {
         return new GroupUserExchangeServiceImpl(restTemplate, exchangeProperties);
+    }
+
+    @Bean
+    public UserPhoneExchangeService userPhoneExchangeService(RestTemplate restTemplateLoadBalanced, ExchangeProperties exchangeProperties) {
+        return new UserPhoneExchangeServiceImpl(restTemplateLoadBalanced, exchangeProperties);
+    }
+
+    @Bean
+    public MailExchangeService mailExchangeService(RestTemplate restTemplateLoadBalanced, ExchangeProperties exchangeProperties) {
+        return new MailExchangeServiceImpl(restTemplateLoadBalanced, exchangeProperties);
     }
 }
