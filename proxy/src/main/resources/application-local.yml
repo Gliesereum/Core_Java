@@ -5,18 +5,3 @@ spring:
     password: guest
     username: guest
     queue-logstash: logstash
-
-security:
-  properties:
-    checkApplicationId: http://permission-service/application/check
-    checkAccessUrl: http://account-service/auth/check
-    applicationIdHeader: Application-Id
-    applicationIdHeaderRequired: false
-    bearerHeader: Authorization
-    bearerPrefix: Bearer
-    jwtHeader: Service-Authorization
-    jwtPrefix: JWT
-    jwtSecret: CnfxFqbCKHLqzT9LGruE
-    endpointKeeperEnable: false
-    getUserGroupUrl: http://permission-service/group-user/my-group
-    getPermissionMapUrl: http://permission-service/group/permission-map/by-group
