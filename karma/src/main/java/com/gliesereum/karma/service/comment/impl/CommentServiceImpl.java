@@ -140,6 +140,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
             List<CommentEntity> entities = commentRepository.findAllByObjectIdIn(objectIds);
             if (CollectionUtils.isNotEmpty(entities)) {
                 Map<UUID, List<CommentEntity>> map = entities.stream().collect(Collectors.groupingBy(CommentEntity::getObjectId));
+                objectIds.forEach(i -> map.putIfAbsent(i, new ArrayList<>()));
                 result = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> getRating(i.getValue())));
             }
         }
