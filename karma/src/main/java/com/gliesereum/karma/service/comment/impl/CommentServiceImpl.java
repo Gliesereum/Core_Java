@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -150,7 +151,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
         if (CollectionUtils.isNotEmpty(comments)) {
             int count = comments.size();
             int ratingSum = comments.stream().mapToInt(CommentEntity::getRating).sum();
-            BigDecimal ratingAvg = new BigDecimal(ratingSum).divide(new BigDecimal(count), 2, BigDecimal.ROUND_HALF_DOWN);
+            BigDecimal ratingAvg = new BigDecimal(ratingSum).divide(new BigDecimal(count), 2, RoundingMode.HALF_DOWN);
             rating.setCount(count);
             rating.setRating(ratingAvg);
         } else {
