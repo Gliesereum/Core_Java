@@ -97,5 +97,7 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage FEEDBACK_FOR_RECORD_EXIST = new ExceptionMessage(1484, 400, "Feedback for record exist");
 
+    public static final ExceptionMessage PIN_DOES_NOT_FOUNT = new ExceptionMessage(1485, 400, "Pin doesn't fount");
+
 
 }

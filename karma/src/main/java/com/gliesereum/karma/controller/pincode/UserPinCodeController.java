@@ -2,11 +2,13 @@ package com.gliesereum.karma.controller.pincode;
 
 import com.gliesereum.karma.service.pincode.UserPinCodeService;
 import com.gliesereum.share.common.model.dto.karma.pincode.UserPinCodeDto;
+import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -30,5 +32,12 @@ public class UserPinCodeController {
         SecurityUtil.checkUserByBanStatus();
         userPinCode.setUserId(SecurityUtil.getUserId());
         return userPinCodeService.save(userPinCode);
+    }
+
+    @PostMapping("/remind-me")
+    public MapResponse remindMe() {
+        SecurityUtil.checkUserByBanStatus();
+        userPinCodeService.remindMe();
+        return new MapResponse("true");
     }
 }
