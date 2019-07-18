@@ -197,10 +197,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             if (size == null) size = 50;
             Page<BaseRecordEntity> entities = baseRecordRepository.findAllByBusinessIdInAndClientIdOrderByBeginDesc(businessIds, clientId, PageRequest.of(page, size));
             if (entities != null && CollectionUtils.isNotEmpty(entities.getContent())) {
-                List<BaseRecordDto> dtos = converter.convert(entities.getContent(), dtoClass);
-                setFullModelRecord(dtos);
-                setServicePrice(dtos);
-                result = new PageImpl<>(dtos, entities.getPageable(), entities.getTotalElements());
+                result = converter.convert(entities, dtoClass);
+                setServicePrice(result.getContent());
+                setFullModelRecord(result.getContent());
             }
         }
         return result;
@@ -597,10 +596,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         Page<BaseRecordDto> result = null;
         Page<BaseRecordEntity> entities = baseRecordRepository.findAllByClientId(SecurityUtil.getUserId(), PageRequest.of(page, size, Sort.by("begin").descending()));
         if (entities != null && CollectionUtils.isNotEmpty(entities.getContent())) {
-            List<BaseRecordDto> dtos = converter.convert(entities.getContent(), dtoClass);
-            setServicePrice(dtos);
-            setFullModelRecord(dtos);
-            result = new PageImpl<>(dtos, entities.getPageable(), entities.getTotalElements());
+            result = converter.convert(entities, dtoClass);
+            setServicePrice(result.getContent());
+            setFullModelRecord(result.getContent());
         }
         return result;
     }
