@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.comment.impl;
 import com.gliesereum.karma.model.entity.comment.CommentEntity;
 import com.gliesereum.karma.model.repository.jpa.comment.CommentRepository;
 import com.gliesereum.karma.service.comment.CommentService;
+import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
@@ -114,19 +115,38 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
     }
 
     @Override
-    public void deleteComment(UUID commentId, UUID userId) {
+    public CommentDto deleteComment(UUID commentId, UUID userId) {
         Optional<CommentEntity> commentOptional = commentRepository.findById(commentId);
         CommentEntity existed = commentOptional.orElseThrow(() -> new ClientException(COMMENT_NOT_FOUND));
         if (!existed.getOwnerId().equals(userId)) {
             throw new ClientException(CURRENT_USER_CANT_EDIT_THIS_COMMENT);
         }
+        CommentDto result = converter.convert(existed, dtoClass);
         commentRepository.delete(existed);
+        return result;
     }
 
     @Override
     public RatingDto getRating(UUID objectId) {
-        RatingDto rating = new RatingDto();
         List<CommentEntity> comments = commentRepository.findByObjectId(objectId);
+        return getRating(comments);
+    }
+
+    @Override
+    public Map<UUID, RatingDto> getRatings(List<UUID> objectIds) {
+        Map<UUID, RatingDto> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(objectIds)) {
+            List<CommentEntity> entities = commentRepository.findAllByObjectIdIn(objectIds);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                Map<UUID, List<CommentEntity>> map = entities.stream().collect(Collectors.groupingBy(CommentEntity::getObjectId));
+                result = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> getRating(i.getValue())));
+            }
+        }
+        return result;
+    }
+
+    private RatingDto getRating(List<CommentEntity> comments) {
+        RatingDto rating = new RatingDto();
         if (CollectionUtils.isNotEmpty(comments)) {
             int count = comments.size();
             int ratingSum = comments.stream().mapToInt(CommentEntity::getRating).sum();

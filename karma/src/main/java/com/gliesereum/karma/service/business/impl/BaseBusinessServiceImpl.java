@@ -17,6 +17,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
@@ -400,6 +401,32 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
         return baseBusinessRepository.getIdsByCorporationIdIn(corporationIds);
+    }
+
+    @Override
+    public CommentDto addComment(UUID objectId, UUID userId, CommentDto comment) {
+        CommentDto result = commentService.addComment(objectId, userId, comment);
+        if (result != null) {
+            businessEsService.indexAsync(result.getObjectId());
+        }
+        return result;
+    }
+
+    @Override
+    public CommentDto updateComment(UUID userId, CommentDto comment) {
+        CommentDto result = commentService.updateComment(userId, comment);
+        if (result != null) {
+            businessEsService.indexAsync(result.getObjectId());
+        }
+        return result;
+    }
+
+    @Override
+    public void deleteComment(UUID commentId, UUID userId) {
+        CommentDto deletedComment = commentService.deleteComment(commentId, userId);
+        if (deletedComment != null) {
+            businessEsService.indexAsync(deletedComment.getObjectId());
+        }
     }
 
     private void checkCorporationId(BaseBusinessDto business) {

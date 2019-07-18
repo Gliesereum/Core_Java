@@ -7,6 +7,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -25,7 +26,9 @@ public interface CommentService extends DefaultService<CommentDto, CommentEntity
 
     CommentDto updateComment(UUID userId, CommentDto comment);
 
-    void deleteComment(UUID commentId, UUID userId);
+    CommentDto deleteComment(UUID commentId, UUID userId);
 
     RatingDto getRating(UUID objectId);
+
+    Map<UUID, RatingDto> getRatings(List<UUID> objectIds);
 }

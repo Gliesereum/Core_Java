@@ -5,6 +5,7 @@ import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
 import org.springframework.data.domain.Page;
@@ -59,5 +60,11 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
     Map<UUID, LiteBusinessDto> getLiteBusinessMapByIds(Collection<UUID> collect);
 
     List<LiteBusinessDto> getLiteBusinessByIds(List<UUID> ids);
+
+    CommentDto addComment(UUID objectId, UUID userId, CommentDto comment);
+
+    CommentDto updateComment(UUID userId, CommentDto comment);
+
+    void deleteComment(UUID commentId, UUID userId);
 }
 

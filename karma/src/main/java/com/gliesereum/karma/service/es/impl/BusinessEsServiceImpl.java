@@ -6,6 +6,7 @@ import com.gliesereum.karma.model.repository.es.CarWashEsRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.karma.service.car.CarService;
+import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.preference.ClientPreferenceService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
@@ -14,6 +15,7 @@ import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.preference.ClientPreferenceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -77,6 +79,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     @Autowired
     private ClientPreferenceService clientPreferenceService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
@@ -156,12 +161,15 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         List<BusinessDocument> result = null;
         if (CollectionUtils.isNotEmpty(businessList)) {
             result = new ArrayList<>();
-            Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessList);
+            List<UUID> businessIds = businessList.stream().map(BaseBusinessDto::getId).collect(Collectors.toList());
+            Map<UUID, RatingDto> ratingMap = commentService.getRatings(businessIds);
+            Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessIds);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
                 if (document != null) {
                     insertGeoPoint(document, business);
                     insertServices(document, serviceMap.get(business.getId()));
+                    insertRating(document, ratingMap.get(business.getId()));
                     if (CollectionUtils.isNotEmpty(business.getSpaces())) {
                         document.setCountBox(business.getSpaces().size());
                     }
@@ -172,13 +180,19 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         return result;
     }
 
-    private Map<UUID, List<ServicePriceDto>> getServiceMap(List<BaseBusinessDto> business) {
+    private Map<UUID, List<ServicePriceDto>> getServiceMap(List<UUID> businessIds) {
         Map<UUID, List<ServicePriceDto>> result = new HashMap<>();
-        if (CollectionUtils.isNotEmpty(business)) {
-            List<UUID> businessIds = business.stream().map(BaseBusinessDto::getId).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(businessIds)) {
             result = servicePriceService.getMapByBusinessIds(businessIds);
         }
         return result;
+    }
+
+    private void insertRating(BusinessDocument target, RatingDto rating) {
+        if (ObjectUtils.allNotNull(target, rating)) {
+            target.setRating(rating.getRating().doubleValue());
+            target.setRatingCount(rating.getCount());
+        }
     }
 
     private BusinessDocument insertServices(BusinessDocument target, List<ServicePriceDto> servicePrices) {
