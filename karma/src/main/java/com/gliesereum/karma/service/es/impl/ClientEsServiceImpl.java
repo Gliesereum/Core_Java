@@ -138,7 +138,7 @@ public class ClientEsServiceImpl implements ClientEsService {
 
     @Override
     public ClientDocument getClientByUserId(UUID userId) {
-        return clientEsRepository.findById(userId.toString()).get();
+        return clientEsRepository.findById(userId.toString()).orElse(null);
     }
 
 
