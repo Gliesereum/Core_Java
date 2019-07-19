@@ -41,7 +41,7 @@ public class BusinessCategoryController {
 
     @GetMapping("/business-type")
     public List<BusinessType> getBusinessTypes() {
-        return Arrays.asList(BusinessType.CAR);
+        return Arrays.asList(BusinessType.values());
     }
 
     @GetMapping("/by-code")
