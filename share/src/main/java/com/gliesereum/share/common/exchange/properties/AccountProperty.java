@@ -25,4 +25,6 @@ public class AccountProperty {
     private String findUserPhonesByUserIds;
 
     private String findPublicUserByUserIds;
+
+    private String createOrGetPublicUser;
 }

@@ -30,4 +30,6 @@ public interface UserExchangeService {
     Map<UUID, UserDto> findUserMapByIds(Collection<UUID> ids);
 
     UserDto getByPhone(String phone);
+
+    PublicUserDto createOrGetPublicUser(PublicUserDto user);
 }

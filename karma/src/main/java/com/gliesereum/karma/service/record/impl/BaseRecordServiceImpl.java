@@ -393,7 +393,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             if (worker == null) {
                 throw new ClientException(WORKER_NOT_FOUND);
             }
-            dto.setWorkerId(worker.getId());
+            //dto.setWorkerId(worker.getId());
         }
         if (status.equals(StatusProcess.CANCELED)) {
             dto.setStatusRecord(StatusRecord.CANCELED);

@@ -49,9 +49,9 @@ public class UserController {
         return userService.getAll();
     }
 
-    @PostMapping
-    public UserDto create(@RequestBody UserDto user) {
-        return userService.create(user);
+    @PostMapping("/public/create-or-get")
+    public PublicUserDto createOrGetPublicUser(@RequestBody PublicUserDto user) {
+        return userService.createOrGetPublicUser(user);
     }
 
     @PutMapping

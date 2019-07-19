@@ -38,4 +38,6 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
     LiteWorkerDto getLiteWorkerById(UUID workerId);
 
     Map<UUID, LiteWorkerDto> getLiteWorkerMapByIds(Collection<UUID> collect);
+
+    WorkerDto createWorkerWithUser(WorkerDto worker);
 }

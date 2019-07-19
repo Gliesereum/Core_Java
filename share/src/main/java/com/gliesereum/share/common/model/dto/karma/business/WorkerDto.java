@@ -1,7 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -29,7 +29,7 @@ public class WorkerDto extends DefaultDto {
 
     private UUID corporationId;
 
-    private UserDto user;
+    private PublicUserDto user;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 
