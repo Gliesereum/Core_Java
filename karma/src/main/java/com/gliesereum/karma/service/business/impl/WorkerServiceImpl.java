@@ -164,6 +164,15 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    public boolean existByUserIdAndBusinessId(UUID userId, UUID businessId) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(userId, businessId)) {
+            result = workerRepository.existsByUserIdAndAndBusinessId(userId, businessId);
+        }
+        return result;
+    }
+
+    @Override
     public LiteWorkerDto getLiteWorkerById(UUID workerId) {
         WorkerEntity entity = repository.getOne(workerId);
         return converter.convert(entity, LiteWorkerDto.class);

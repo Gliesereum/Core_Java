@@ -70,14 +70,6 @@ public class AbstractRecordDto extends DefaultDto {
 
     private Integer recordNumber;
 
-    private String firstName;
-
-    private String lastName;
-
-    private String middleName;
-
-    private String phone;
-
     private List<ServicePriceDto> services = new ArrayList<>();
 
     private List<UUID> servicesIds = new ArrayList<>();

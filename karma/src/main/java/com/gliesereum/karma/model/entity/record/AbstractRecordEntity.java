@@ -78,15 +78,4 @@ public class AbstractRecordEntity extends DefaultEntity {
     @Column(name = "record_number")
     private Integer recordNumber;
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
-    @Column(name = "middle_name")
-    private String middleName;
-
-    @Column(name = "phone")
-    private String phone;
 }

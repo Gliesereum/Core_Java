@@ -1,6 +1,5 @@
 package com.gliesereum.karma.service.business.impl;
 
-import com.gliesereum.karma.model.document.ClientDocument;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -15,7 +14,10 @@ import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.business.*;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
+import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
@@ -28,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -244,6 +245,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         return baseBusinessRepository.existsByIdAndCorporationIdInAndObjectState(id, corporationIds, ObjectState.ACTIVE);
     }
 
+    //TODO: MOVE TO PERMISSION FACADE
     @Override
     public boolean currentUserHavePermissionToActionInBusinessLikeOwner(UUID businessId) {
         if (SecurityUtil.isAnonymous()) {
@@ -257,6 +259,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         return result;
     }
 
+    //TODO: MOVE TO PERMISSION FACADE
     @Override
     public boolean currentUserHavePermissionToActionInBusinessLikeWorker(UUID businessId) {
         if (SecurityUtil.isAnonymous()) {
@@ -268,6 +271,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         return workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), businessId) != null;
     }
 
+    //TODO: MOVE TO PERMISSION FACADE
     @Override
     public boolean currentUserHavePermissionToActionInCorporationLikeWorker(UUID corporationId) {
         if (SecurityUtil.isAnonymous()) {
@@ -356,30 +360,6 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public Page<ClientDocument> getCustomersByBusinessIds(List<UUID> ids, Integer page, Integer size) {
-        Page<ClientDocument> result = null;
-        if (size == null) size = 100;
-        if (page == null) page = 0;
-        if (CollectionUtils.isNotEmpty(ids)) {
-            ids.forEach(f -> {
-                if (!currentUserHavePermissionToActionInBusinessLikeWorker(f) &&
-                        !currentUserHavePermissionToActionInBusinessLikeOwner(f)) {
-                    throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-                }
-            });
-            result = clientEsService.getClientsByBusinessIds(ids, page, size);
-        }
-        return result;
-    }
-
-    @Override
-    public Page<ClientDocument> getAllCustomersByCorporationIds(List<UUID> ids, Integer page, Integer size, String query) {
-        if (size == null) size = 100;
-        if (page == null) page = 0;
-        return clientEsService.getClientsByCorporationIdsAndAutocompleteQuery(query, ids, page, size);
-    }
-
-    @Override
     public Map<UUID, LiteBusinessDto> getLiteBusinessMapByIds(Collection<UUID> collect) {
         Map<UUID, LiteBusinessDto> result = new HashMap<>();
         List<LiteBusinessDto> list = getLiteBusinessByIds(new ArrayList<>(collect));
@@ -390,7 +370,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public List<LiteBusinessDto> getLiteBusinessByIds(List<UUID> ids) {
+    public List<LiteBusinessDto> getLiteBusinessByIds(Collection<UUID> ids) {
         List<BaseBusinessEntity> entities = repository.findAllById(ids);
         return converter.convert(entities, LiteBusinessDto.class);
     }

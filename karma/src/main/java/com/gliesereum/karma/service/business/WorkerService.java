@@ -35,6 +35,8 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
 
     boolean existByUserIdAndCorporationId(UUID userId, UUID corporationId);
 
+    boolean existByUserIdAndBusinessId(UUID userId, UUID businessId);
+
     LiteWorkerDto getLiteWorkerById(UUID workerId);
 
     Map<UUID, LiteWorkerDto> getLiteWorkerMapByIds(Collection<UUID> collect);
