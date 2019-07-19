@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.record.impl;
 import com.gliesereum.karma.aspect.annotation.RecordCreate;
 import com.gliesereum.karma.aspect.annotation.RecordUpdate;
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.entity.record.BaseRecordPageEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
@@ -26,6 +27,7 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
@@ -39,7 +41,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -97,6 +98,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Autowired
     private ClientEsService clientEsService;
+
+    @Autowired
+    private ClientFacade clientFacade;
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
@@ -197,10 +201,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             if (size == null) size = 50;
             Page<BaseRecordEntity> entities = baseRecordRepository.findAllByBusinessIdInAndClientIdOrderByBeginDesc(businessIds, clientId, PageRequest.of(page, size));
             if (entities != null && CollectionUtils.isNotEmpty(entities.getContent())) {
-                List<BaseRecordDto> dtos = converter.convert(entities.getContent(), dtoClass);
-                setFullModelRecord(dtos);
-                setServicePrice(dtos);
-                result = new PageImpl<>(dtos, entities.getPageable(), entities.getTotalElements());
+                result = converter.convert(entities, dtoClass);
+                setServicePrice(result.getContent());
+                setFullModelRecord(result.getContent());
             }
         }
         return result;
@@ -269,10 +272,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private void setClients(List<BaseRecordDto> result) {
         if (CollectionUtils.isNotEmpty(result)) {
             Set<UUID> clientIds = result.stream().map(BaseRecordDto::getClientId).collect(Collectors.toSet());
-            Map<UUID, UserDto> clients = exchangeService.findUserMapByIds(clientIds);
+            Set<UUID> businessIds = result.stream().map(BaseRecordDto::getBusinessId).collect(Collectors.toSet());
+            Map<UUID, ClientDto> clientMap = clientFacade.getClientMapByIds(clientIds, businessIds);
             result.forEach(r -> {
                 if (r.getClientId() != null) {
-                    r.setClient(clients.get(r.getClientId()));
+                    r.setClient(clientMap.get(r.getClientId()));
                 }
             });
         }
@@ -433,10 +437,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             }
             UserDto user = SecurityUtil.getUser().getUser();
             dto.setClientId(user.getId());
-            dto.setFirstName(user.getFirstName());
-            dto.setLastName(user.getLastName());
-            dto.setMiddleName(user.getMiddleName());
-            dto.setPhone(user.getPhone());
             result = createRecord(dto);
             clientEsService.addNewClient(user, dto.getBusinessId());
         }
@@ -456,15 +456,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             List<PublicUserDto> users = exchangeService.findPublicUserByIds(Arrays.asList(dto.getClientId()));
             if (CollectionUtils.isNotEmpty(users)) {
                 PublicUserDto user = users.get(0);
-                dto.setLastName(user.getLastName());
-                dto.setFirstName(user.getFirstName());
-                dto.setMiddleName(user.getMiddleName());
-                dto.setPhone(user.getPhone());
                 dto.setClientId(user.getId());
                 clientEsService.addNewClient(user, dto.getBusinessId());
             }
         }
-        return createRecord(dto);
+        BaseRecordDto record = createRecord(dto);
+        setClients(Arrays.asList(record));
+        return record;
     }
 
     @Override
@@ -597,10 +595,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         Page<BaseRecordDto> result = null;
         Page<BaseRecordEntity> entities = baseRecordRepository.findAllByClientId(SecurityUtil.getUserId(), PageRequest.of(page, size, Sort.by("begin").descending()));
         if (entities != null && CollectionUtils.isNotEmpty(entities.getContent())) {
-            List<BaseRecordDto> dtos = converter.convert(entities.getContent(), dtoClass);
-            setServicePrice(dtos);
-            setFullModelRecord(dtos);
-            result = new PageImpl<>(dtos, entities.getPageable(), entities.getTotalElements());
+            result = converter.convert(entities, dtoClass);
+            setServicePrice(result.getContent());
+            setFullModelRecord(result.getContent());
         }
         return result;
     }

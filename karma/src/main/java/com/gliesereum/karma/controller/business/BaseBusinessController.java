@@ -1,8 +1,7 @@
 package com.gliesereum.karma.controller.business;
 
-import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.model.document.BusinessDocument;
-import com.gliesereum.karma.model.document.ClientDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.comment.CommentService;
@@ -12,6 +11,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
+import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
@@ -19,7 +19,6 @@ import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +55,7 @@ public class BaseBusinessController {
     private BusinessEsService businessEsService;
 
     @Autowired
-    private BusinessPermissionFacade permissionFacade;
+    private ClientFacade clientFacade;
 
     @GetMapping
     public List<BaseBusinessDto> getAll() {
@@ -209,21 +208,18 @@ public class BaseBusinessController {
     }
 
     @GetMapping("/customers")
-    public Page<ClientDocument> getCustomersByBusinessIds(@RequestParam(value = "ids") List<UUID> ids,
-                                                          @RequestParam(value = "page", required = false) Integer page,
-                                                          @RequestParam(value = "size", required = false) Integer size) {
-        return baseBusinessService.getCustomersByBusinessIds(ids, page, size);
+    public Page<ClientDto> getCustomersByBusinessIds(@RequestParam(value = "ids") List<UUID> ids,
+                                                     @RequestParam(value = "page", required = false) Integer page,
+                                                     @RequestParam(value = "size", required = false) Integer size) {
+        return clientFacade.getCustomersByBusinessIds(ids, page, size);
     }
 
-    @GetMapping("/customers/by-corporation-ids")
-    public Page<ClientDocument> getAllCustomersByCorporationIds(@RequestParam(value = "ids") List<UUID> ids,
+    @GetMapping("/customers/by-corporation-id")
+    public Page<ClientDto> getAllCustomersByCorporationIds(@RequestParam(value = "id") UUID id,
                                                                 @RequestParam(value = "page", required = false) Integer page,
                                                                 @RequestParam(value = "size", required = false) Integer size,
                                                                 @RequestParam(value = "query", required = false) String query) {
-        if (CollectionUtils.isNotEmpty(ids)) {
-            ids.forEach(f -> permissionFacade.checkCurrentUserHavePermissionForWorkWithClient(f));
-        }
-        return baseBusinessService.getAllCustomersByCorporationIds(ids, page, size, query);
+        return clientFacade.getAllCustomersByCorporationId(id, page, size, query);
     }
 
 }
