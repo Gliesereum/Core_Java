@@ -3,6 +3,8 @@ package com.gliesereum.share.common.converter.imp;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,6 +52,16 @@ public class DefaultConverterImp implements DefaultConverter {
             for (E object : objects) {
                 result.add(convert(object, resultClass));
             }
+        }
+        return result;
+    }
+
+    @Override
+    public <E, T> Page<T> convert(Page<E> page, Class<T> resultClass) {
+        Page<T> result = null;
+        if (page != null) {
+            List<T> content = convert(page.getContent(), resultClass);
+            result = new PageImpl<>(content, page.getPageable(), page.getTotalElements());
         }
         return result;
     }

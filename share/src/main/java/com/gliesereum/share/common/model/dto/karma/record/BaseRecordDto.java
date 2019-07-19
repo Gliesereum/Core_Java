@@ -1,6 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.record;
 
-import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -23,6 +23,6 @@ public class BaseRecordDto extends AbstractRecordDto {
 
     private UUID workerId;
 
-    private UserDto client;
+    private ClientDto client;
 
 }

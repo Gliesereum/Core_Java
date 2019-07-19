@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.facade.group.GroupUserExchangeFacade;
+import com.gliesereum.karma.facade.worker.WorkerFacade;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkerRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -56,6 +57,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Autowired
     private GroupUserExchangeFacade groupUserExchangeFacade;
+
+    @Autowired
+    private WorkerFacade workerFacade;
 
     @Autowired
     public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
@@ -165,6 +169,15 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    public boolean existByUserIdAndBusinessId(UUID userId, UUID businessId) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(userId, businessId)) {
+            result = workerRepository.existsByUserIdAndAndBusinessId(userId, businessId);
+        }
+        return result;
+    }
+
+    @Override
     public LiteWorkerDto getLiteWorkerById(UUID workerId) {
         WorkerEntity entity = repository.getOne(workerId);
         return converter.convert(entity, LiteWorkerDto.class);
@@ -188,6 +201,8 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             if(user != null){
                 worker.setUserId(user.getId());
                 result = create(worker);
+                result.setUser(user);
+                workerFacade.sendMessageToWorkerAfterCreate(result);
             }
         }
         return result;
