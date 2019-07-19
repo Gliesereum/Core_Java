@@ -429,11 +429,19 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
             setType(dto);
-            if (businessCategoryService.checkAndGetType(dto.getBusinessCategoryId()).equals(BusinessType.CAR)) {
-                if (dto.getTargetId() == null) {
-                    throw new ClientException(TARGET_ID_IS_EMPTY);
+            BusinessType businessType = businessCategoryService.checkAndGetType(dto.getBusinessCategoryId());
+            switch (businessType) {
+                case CAR: {
+                    if (dto.getTargetId() == null) {
+                        throw new ClientException(TARGET_ID_IS_EMPTY);
+                    }
+                    carService.checkCarExistInCurrentUser(dto.getTargetId());
+                    break;
                 }
-                carService.checkCarExistInCurrentUser(dto.getTargetId());
+                case HUMAN: {
+                    dto.setTargetId(SecurityUtil.getUserId());
+                    break;
+                }
             }
             UserDto user = SecurityUtil.getUser().getUser();
             dto.setClientId(user.getId());

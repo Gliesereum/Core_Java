@@ -46,6 +46,7 @@ public class BusinessCategoryFacadeImpl implements BusinessCategoryFacade {
         boolean result = false;
         if (businessCategoryId != null) {
             switch (businessCategoryService.checkAndGetType(businessCategoryId)) {
+                case HUMAN:
                 case CAR:
                     result = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(businessId);
                     break;
