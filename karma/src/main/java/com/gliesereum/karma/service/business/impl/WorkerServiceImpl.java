@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.facade.group.GroupUserExchangeFacade;
+import com.gliesereum.karma.facade.worker.WorkerFacade;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkerRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -56,6 +57,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Autowired
     private GroupUserExchangeFacade groupUserExchangeFacade;
+
+    @Autowired
+    private WorkerFacade workerFacade;
 
     @Autowired
     public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
@@ -187,7 +191,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             PublicUserDto user = userExchangeService.createOrGetPublicUser(worker.getUser());
             if(user != null){
                 worker.setUserId(user.getId());
-                result = create(worker);
+                result = super.create(worker); //todo super.create -> simple create
+                result.setUser(user);
+                workerFacade.sendMessageToWorkerAfterCreate(result);
             }
         }
         return result;

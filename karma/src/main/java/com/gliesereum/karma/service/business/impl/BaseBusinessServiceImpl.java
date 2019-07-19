@@ -293,9 +293,6 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public List<BaseBusinessDto> getByCorporationId(UUID corporationId) {
         List<BaseBusinessDto> result = null;
         if (corporationId != null) {
-            if (!SecurityUtil.userHavePermissionToCorporation(corporationId)) {
-                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-            }
             List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationIdAndObjectState(corporationId, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
