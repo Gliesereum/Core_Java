@@ -52,6 +52,11 @@ exchange:
       getByPhone: http://account-service/user/by-phone
       findPublicUserByUserIds: http://account-service/user/public/by-ids
       createOrGetPublicUser: http://account-service/user/public/create-or-get
+    mail:
+      emailVerification: http://mail-service/email/verification
+      sentEmail: http://mail-service/email/single
+      phoneVerification: http://mail-service/phone/single
+      sendPhone: http://mail-service/phone/single
 
 notification:
   record:

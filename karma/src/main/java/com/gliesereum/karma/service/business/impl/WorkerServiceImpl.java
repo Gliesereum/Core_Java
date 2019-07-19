@@ -200,7 +200,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             PublicUserDto user = userExchangeService.createOrGetPublicUser(worker.getUser());
             if(user != null){
                 worker.setUserId(user.getId());
-                result = super.create(worker); //todo super.create -> simple create
+                result = create(worker);
                 result.setUser(user);
                 workerFacade.sendMessageToWorkerAfterCreate(result);
             }
