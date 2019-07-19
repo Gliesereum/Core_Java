@@ -11,7 +11,7 @@ import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
-import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
@@ -81,7 +81,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
                     }
                 });
                 if (CollectionUtils.isNotEmpty(userIds)) {
-                    Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(userIds);
+                    Map<UUID, PublicUserDto> users = userExchangeService.findPublicUserMapByIds(userIds);
                     if (MapUtils.isNotEmpty(users)) {
                         result.forEach(f -> {
                             List<WorkerDto> workers = f.getWorkers();

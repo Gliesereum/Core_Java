@@ -11,9 +11,11 @@ import com.gliesereum.account.service.user.UserService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,6 +33,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.BODY_INVALID;
+import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.NOT_PHONE_BY_REGEX;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.*;
 
 /**
@@ -99,6 +103,41 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
         }
         return result;
     }
+
+    @Override
+    @Transactional
+    public PublicUserDto createOrGetPublicUser(PublicUserDto publicUser) {
+        PublicUserDto result = null;
+        if (publicUser == null) {
+            throw new ClientException(BODY_INVALID);
+        }
+        if (publicUser.getPhone() == null || !RegexUtil.phoneIsValid(publicUser.getPhone())) {
+            throw new ClientException(NOT_PHONE_BY_REGEX);
+        }
+        UserDto user = getByPhone(publicUser.getPhone());
+        if (user == null) {
+            UserDto newUser = new UserDto();
+            newUser.setFirstName(publicUser.getFirstName());
+            newUser.setLastName(publicUser.getLastName());
+            newUser.setMiddleName(publicUser.getMiddleName());
+            newUser.setAvatarUrl(publicUser.getAvatarUrl());
+            newUser = create(newUser);
+            if (newUser != null && newUser.getId() != null) {
+                UserPhoneDto phone = new UserPhoneDto();
+                phone.setPhone(publicUser.getPhone());
+                phone.setUserId(newUser.getId());
+                phone = phoneService.create(phone);
+                if (phone != null && phone.getId() != null) {
+                    result = converter.convert(newUser, PublicUserDto.class);
+                    result.setPhone(phone.getPhone());
+                }
+            }
+        } else {
+            result = converter.convert(user, PublicUserDto.class);
+        }
+        return result;
+    }
+
 
     @Override
     @Transactional

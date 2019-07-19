@@ -1,6 +1,7 @@
 package com.gliesereum.account.service.user;
 
 import com.gliesereum.account.model.entity.UserEntity;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.service.DefaultService;
 
@@ -26,4 +27,5 @@ public interface UserService extends DefaultService<UserDto, UserEntity> {
 
     UserDto create(UserDto user, String referralCode);
 
+    PublicUserDto createOrGetPublicUser(PublicUserDto user);
 }

@@ -73,6 +73,11 @@ public class WorkingSpaceController {
         return workerService.create(worker);
     }
 
+    @PostMapping("/worker-with-user")
+    public WorkerDto createWorkerWithUser(@RequestBody @Valid WorkerDto worker) {
+        return workerService.createWorkerWithUser(worker);
+    }
+
     @PutMapping("/worker")
     public WorkerDto updateWorker(@RequestBody @Valid WorkerDto worker) {
         return workerService.update(worker);

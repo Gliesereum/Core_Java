@@ -141,7 +141,7 @@ public class UserExchangeServiceImpl implements UserExchangeService {
     public Map<UUID, PublicUserDto> findPublicUserMapByIds(Collection<UUID> ids) {
         Map<UUID, PublicUserDto> result = new HashMap<>();
         List<PublicUserDto> users = findPublicUserByIds(ids);
-        if(CollectionUtils.isNotEmpty(users)){
+        if (CollectionUtils.isNotEmpty(users)) {
             result = users.stream().collect(Collectors.toMap(PublicUserDto::getId, i -> i));
         }
         return result;
@@ -171,6 +171,25 @@ public class UserExchangeServiceImpl implements UserExchangeService {
                     HttpMethod.GET,
                     HttpEntity.EMPTY,
                     UserDto.class);
+            if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
+                result = response.getBody();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public PublicUserDto createOrGetPublicUser(PublicUserDto user) {
+        PublicUserDto result = null;
+        if (user != null && user.getPhone() != null) {
+            String uri = exchangeProperties.getAccount().getCreateOrGetPublicUser();
+
+            ResponseEntity<PublicUserDto> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.POST,
+                    new HttpEntity<>(user),
+                    new ParameterizedTypeReference<PublicUserDto>() {
+                    });
             if ((response.getStatusCode().is2xxSuccessful()) && (response.hasBody())) {
                 result = response.getBody();
             }

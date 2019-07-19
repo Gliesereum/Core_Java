@@ -51,6 +51,7 @@ exchange:
       findByIds: http://account-service/user/by-ids
       getByPhone: http://account-service/user/by-phone
       findPublicUserByUserIds: http://account-service/user/public/by-ids
+      createOrGetPublicUser: http://account-service/user/public/create-or-get
 
 notification:
   record:
