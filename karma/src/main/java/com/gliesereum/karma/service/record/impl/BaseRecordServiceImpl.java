@@ -748,8 +748,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     private void checkTimeWorking(WorkTimeDto workTime, LocalDateTime begin, LocalDateTime finish) {
         if (!(workTime.getFrom().equals(LocalTime.MIN) && workTime.getTo().equals(LocalTime.MAX))) {
-            if (begin.toLocalTime().minusMinutes(1L).isBefore(workTime.getFrom()) || finish.toLocalTime().plusMinutes(1L).isAfter(workTime.getTo())) {
+            if (workTime.getTo().isBefore(begin.toLocalTime()) || workTime.getFrom().isAfter(begin.toLocalTime())) {
                 throw new ClientException(BUSINESS_NOT_WORK_THIS_TIME);
+            }
+            if (workTime.getTo().isBefore(finish.toLocalTime())) {
+                throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
             }
         }
     }
