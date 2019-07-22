@@ -137,7 +137,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     private void checkPermission(WorkTimeType type, UUID categoryId, UUID objectId) {
         switch (type) {
             case WORKER: {
-                //todo add facade for check worker time in business
+                //todo add facade for check worker time in business (now this check in worker service)
                 break;
             }
             case BUSINESS: {
