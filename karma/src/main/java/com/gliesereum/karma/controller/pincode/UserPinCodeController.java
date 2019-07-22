@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -32,6 +31,13 @@ public class UserPinCodeController {
         SecurityUtil.checkUserByBanStatus();
         userPinCode.setUserId(SecurityUtil.getUserId());
         return userPinCodeService.save(userPinCode);
+    }
+
+    @DeleteMapping
+    public MapResponse deleteByUser() {
+        SecurityUtil.checkUserByBanStatus();
+        userPinCodeService.deleteByUserId(SecurityUtil.getUserId());
+        return MapResponse.resultTrue();
     }
 
     @PostMapping("/remind-me")

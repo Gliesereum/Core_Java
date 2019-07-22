@@ -18,4 +18,6 @@ public interface UserPinCodeService extends DefaultService<UserPinCodeDto, UserP
     UserPinCodeDto save(UserPinCodeDto userPinCode);
 
     void remindMe();
+
+    void deleteByUserId(UUID userId);
 }
