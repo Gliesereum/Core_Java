@@ -255,12 +255,21 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public List<BaseRecordDto> getByParamsForClient(RecordsSearchDto search) {
+        SecurityUtil.checkUserByBanStatus();
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
             throw new ClientException(TARGET_ID_IS_EMPTY);
         }
-        if (businessCategoryService.checkAndGetType(search.getBusinessCategoryId()).equals(BusinessType.CAR)) {
-            search.getTargetIds().forEach(carService::checkCarExistInCurrentUser);
-        } else return Collections.emptyList(); //todo when add new business type need to add logic
+        BusinessType businessType = businessCategoryService.checkAndGetType(search.getBusinessCategoryId());
+        switch (businessType) {
+            case CAR: {
+                search.getTargetIds().forEach(carService::checkCarExistInCurrentUser);
+                break;
+            }
+            case HUMAN: {
+                search.setTargetIds(Arrays.asList(SecurityUtil.getUserId()));
+                break;
+            }
+        }
         setSearch(search);
         List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
                 search.getStatus(), search.getProcesses(), search.getTargetIds(), search.getFrom(), search.getTo());
@@ -562,6 +571,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto) {
         if (dto != null) {
             BaseBusinessDto business = getBusinessByRecord(dto);
+            if (dto.getBegin() != null) {
+                int mod = 10 - (dto.getBegin().getMinute() % 10);
+                if (mod < 5) {
+                    mod = mod + 5;
+                }
+                dto.setBegin(dto.getBegin().plusMinutes(mod).withSecond(0));
+            }
             checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
             Long duration = getDurationByRecord(dto.getServicesIds(), dto.getPackageId());
             dto.setFinish(dto.getBegin().plusMinutes(duration));
@@ -756,8 +772,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     private void checkTimeWorking(WorkTimeDto workTime, LocalDateTime begin, LocalDateTime finish) {
         if (!(workTime.getFrom().equals(LocalTime.MIN) && workTime.getTo().equals(LocalTime.MAX))) {
-            if (begin.toLocalTime().minusMinutes(1L).isBefore(workTime.getFrom()) || finish.toLocalTime().plusMinutes(1L).isAfter(workTime.getTo())) {
+            if (workTime.getTo().isBefore(begin.toLocalTime()) || workTime.getFrom().isAfter(begin.toLocalTime())) {
                 throw new ClientException(BUSINESS_NOT_WORK_THIS_TIME);
+            }
+            if (workTime.getTo().isBefore(finish.toLocalTime())) {
+                throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
             }
         }
     }

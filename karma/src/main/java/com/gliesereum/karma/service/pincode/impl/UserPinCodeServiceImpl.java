@@ -87,4 +87,12 @@ public class UserPinCodeServiceImpl extends DefaultServiceImpl<UserPinCodeDto, U
             mailExchangeService.sendMessagePhone(phones.get(0).getPhone(), pinString);
         }
     }
+
+    @Override
+    public void deleteByUserId(UUID userId) {
+        UserPinCodeDto userPinCode = getByUserId(userId);
+        if (userPinCode != null) {
+            userPinCodeRepository.deleteById(userPinCode.getId());
+        }
+    }
 }

@@ -188,7 +188,8 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
         WorkingSpaceDto result = null;
         if (dto != null) {
             businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
-            dto.setIndexNumber(dto.getIndexNumber());
+            WorkingSpaceDto saved = getById(dto.getId());
+            dto.setIndexNumber(saved.getIndexNumber());
             result = super.update(dto);
             List<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
@@ -216,8 +217,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
                 lastIndex = existed.size();
             }
             for (WorkingSpaceDto workingSpace : workingSpaces) {
-                workingSpace.setIndexNumber(lastIndex + 1);
-                lastIndex++;
+                workingSpace.setIndexNumber(lastIndex += 1);
             }
         }
         return workingSpaces;
