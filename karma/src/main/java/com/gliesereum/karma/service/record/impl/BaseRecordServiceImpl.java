@@ -255,12 +255,21 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public List<BaseRecordDto> getByParamsForClient(RecordsSearchDto search) {
+        SecurityUtil.checkUserByBanStatus();
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
             throw new ClientException(TARGET_ID_IS_EMPTY);
         }
-        if (businessCategoryService.checkAndGetType(search.getBusinessCategoryId()).equals(BusinessType.CAR)) {
-            search.getTargetIds().forEach(carService::checkCarExistInCurrentUser);
-        } else return Collections.emptyList(); //todo when add new business type need to add logic
+        BusinessType businessType = businessCategoryService.checkAndGetType(search.getBusinessCategoryId());
+        switch (businessType) {
+            case CAR: {
+                search.getTargetIds().forEach(carService::checkCarExistInCurrentUser);
+                break;
+            }
+            case HUMAN: {
+                search.setTargetIds(Arrays.asList(SecurityUtil.getUserId()));
+                break;
+            }
+        }
         setSearch(search);
         List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndTargetIdInAndBeginBetweenOrderByBeginDesc(
                 search.getStatus(), search.getProcesses(), search.getTargetIds(), search.getFrom(), search.getTo());
