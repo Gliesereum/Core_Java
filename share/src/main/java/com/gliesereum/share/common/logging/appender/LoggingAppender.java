@@ -69,7 +69,7 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> implements Appl
             eventMap.put("level", event.getLevel());
             eventMap.put("thread", event.getThreadName());
             eventMap.put("logger", event.getLoggerName());
-            eventMap.put("massage", event.getFormattedMessage());
+            eventMap.put("message", event.getFormattedMessage());
             eventMap.put("mdc", event.getMDCPropertyMap());
             putError(eventMap, event);
             if (LoggingAppender.publisherEnable) {

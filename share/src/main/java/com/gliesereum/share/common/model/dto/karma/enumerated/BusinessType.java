@@ -6,5 +6,5 @@ package com.gliesereum.share.common.model.dto.karma.enumerated;
  */
 public enum BusinessType {
 
-    CAR;
+    CAR, HUMAN;
 }
