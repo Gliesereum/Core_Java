@@ -205,7 +205,6 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
                 worker.setUserId(user.getId());
                 result = create(worker);
                 result.setUser(user);
-                createWorkTimes(result);
                 workerFacade.sendMessageToWorkerAfterCreate(result);
             }
         }

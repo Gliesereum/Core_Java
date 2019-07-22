@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -40,4 +41,6 @@ public class WorkTimeDto extends DefaultDto {
     private UUID businessCategoryId;
 
     private DayOfWeek dayOfWeek;
+
+    private WorkTimeType type;
 }
