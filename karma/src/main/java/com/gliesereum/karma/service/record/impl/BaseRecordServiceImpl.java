@@ -571,6 +571,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto) {
         if (dto != null) {
             BaseBusinessDto business = getBusinessByRecord(dto);
+            if (dto.getBegin() != null) {
+                int mod = 10 - (dto.getBegin().getMinute() % 10);
+                if (mod < 5) {
+                    mod = mod + 5;
+                }
+                dto.setBegin(dto.getBegin().plusMinutes(mod).withSecond(0));
+            }
             checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
             Long duration = getDurationByRecord(dto.getServicesIds(), dto.getPackageId());
             dto.setFinish(dto.getBegin().plusMinutes(duration));

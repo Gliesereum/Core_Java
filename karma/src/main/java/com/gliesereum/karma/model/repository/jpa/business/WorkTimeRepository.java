@@ -16,4 +16,6 @@ public interface WorkTimeRepository extends JpaRepository<WorkTimeEntity, UUID> 
     List<WorkTimeEntity> findByObjectId(UUID objectId);
 
     boolean existsByObjectIdAndDayOfWeek(UUID objectId, DayOfWeek dayOfWeek);
+
+    void deleteAllByObjectId(UUID objectId);
 }

@@ -16,4 +16,6 @@ public interface WorkTimeService extends DefaultService<WorkTimeDto, WorkTimeEnt
     List<WorkTimeDto> getByObjectId(UUID businessId);
 
     void delete(UUID id, UUID businessCategoryId);
+
+    void deleteByObjectId(UUID id);
 }

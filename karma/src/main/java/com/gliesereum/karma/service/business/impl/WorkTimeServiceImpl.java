@@ -128,6 +128,11 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         }
     }
 
+    @Override
+    public void deleteByObjectId(UUID id){
+        workTimeRepository.deleteAllByObjectId(id);
+    }
+
     private void checkDayExist(WorkTimeDto dto) {
         if (workTimeRepository.existsByObjectIdAndDayOfWeek(dto.getObjectId(), dto.getDayOfWeek())) {
             throw new ClientException(WORKING_TIME_EXIST_IN_THIS_BUSINESS);

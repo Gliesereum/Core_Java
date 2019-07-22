@@ -5,6 +5,7 @@ import com.gliesereum.karma.facade.worker.WorkerFacade;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkerRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.business.WorkTimeService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
@@ -12,10 +13,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -26,6 +24,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,6 +59,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Autowired
     private WorkerFacade workerFacade;
+
+    @Autowired
+    private WorkTimeService workTimeService;
 
     @Autowired
     public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
@@ -103,7 +105,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         return setUsersInLiteModels(result);
     }
 
-    private List<LiteWorkerDto> setUsersInLiteModels(List<LiteWorkerDto> list){
+    private List<LiteWorkerDto> setUsersInLiteModels(List<LiteWorkerDto> list) {
         if (CollectionUtils.isNotEmpty(list)) {
             Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(list.stream().map(LiteWorkerDto::getUserId).collect(Collectors.toList()));
             if (MapUtils.isNotEmpty(users)) {
@@ -187,21 +189,23 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public Map<UUID, LiteWorkerDto> getLiteWorkerMapByIds(Collection<UUID> collect) {
         Map<UUID, LiteWorkerDto> result = new HashMap<>();
         List<LiteWorkerDto> list = getLiteWorkerByIds(new ArrayList<>(collect));
-        if(CollectionUtils.isNotEmpty(list)){
+        if (CollectionUtils.isNotEmpty(list)) {
             result = list.stream().collect(Collectors.toMap(LiteWorkerDto::getId, i -> i));
         }
         return result;
     }
 
     @Override
+    @Transactional
     public WorkerDto createWorkerWithUser(WorkerDto worker) {
         WorkerDto result = null;
-        if(worker != null && worker.getUser() != null) {
+        if (worker != null && worker.getUser() != null) {
             PublicUserDto user = userExchangeService.createOrGetPublicUser(worker.getUser());
-            if(user != null){
+            if (user != null) {
                 worker.setUserId(user.getId());
                 result = create(worker);
                 result.setUser(user);
+                createWorkTimes(result);
                 workerFacade.sendMessageToWorkerAfterCreate(result);
             }
         }
@@ -230,19 +234,32 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    @Transactional
     public WorkerDto create(WorkerDto dto) {
         checkWorker(dto.getUserId());
         checkWorkingSpace(dto);
         dto = super.create(dto);
+        createWorkTimes(dto);
         groupUserExchangeFacade.addUserByGroupPurposeAsync(dto.getUserId(), GroupPurpose.KARMA_WORKER);
         return dto;
     }
 
     @Override
+    @Transactional
     public WorkerDto update(WorkerDto dto) {
         checkWorker(dto.getUserId());
         checkWorkingSpace(dto);
+        workTimeService.deleteByObjectId(dto.getId());
+        createWorkTimes(dto);
         return super.update(dto);
+    }
+
+    private void createWorkTimes(WorkerDto dto) {
+        if (CollectionUtils.isNotEmpty(dto.getWorkTimes())) {
+            dto.getWorkTimes().forEach(f -> f.setObjectId(dto.getId()));
+            List<WorkTimeDto> workTimes = workTimeService.create(dto.getWorkTimes());
+            dto.setWorkTimes(workTimes);
+        }
     }
 
     @Override
