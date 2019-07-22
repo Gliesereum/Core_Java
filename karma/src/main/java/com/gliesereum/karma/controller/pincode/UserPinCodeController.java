@@ -34,6 +34,13 @@ public class UserPinCodeController {
         return userPinCodeService.save(userPinCode);
     }
 
+    @DeleteMapping
+    public MapResponse deleteByUser() {
+        SecurityUtil.checkUserByBanStatus();
+        userPinCodeService.deleteByUserId(SecurityUtil.getUserId());
+        return MapResponse.resultTrue();
+    }
+
     @PostMapping("/remind-me")
     public MapResponse remindMe() {
         SecurityUtil.checkUserByBanStatus();
