@@ -253,7 +253,7 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
     public List<CarDto> getAsWorker(UUID clientId, UUID corporationId) {
         List<CarDto> result = null;
         if (ObjectUtils.allNotNull(clientId, corporationId)) {
-            businessPermissionFacade.checkCurrentUserHavePermissionToClient(corporationId, clientId);
+            businessPermissionFacade.checkCurrentUserPermissionToClient(corporationId, clientId);
             List<CarEntity> entities = carRepository.getAllByUserId(clientId);
             result = converter.convert(entities, dtoClass);
         }

@@ -38,11 +38,110 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
     @Autowired
     private BaseBusinessService baseBusinessService;
 
+    @Override
+    public boolean currentUserIsOwnerBusiness(Collection<UUID> businessIds) {
+        SecurityUtil.checkUserByBanStatus();
+        return isOwnerBusiness(businessIds, SecurityUtil.getUserId(), SecurityUtil.getUserCorporationIds());
+    }
 
     @Override
-    public void checkUserHavePermissionToClient(UUID corporationId, UUID clientId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+    public boolean isOwnerBusiness(Collection<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+        UUID corporationId = getCorporationIdAndCheckEqual(businessIds);
+        return isOwner(corporationId, currentUserId, currentUserCorporationIds);
+    }
+
+    @Override
+    public boolean currentUserIsOwnerBusiness(UUID businessId) {
+        SecurityUtil.checkUserByBanStatus();
+        return isOwnerBusiness(businessId, SecurityUtil.getUserId(), SecurityUtil.getUserCorporationIds());
+    }
+
+    @Override
+    public void checkCurrentUserIsOwnerBusiness(UUID businessId) {
+        if (!currentUserIsOwnerBusiness(businessId)) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+        }
+    }
+
+    @Override
+    public boolean isOwnerBusiness(UUID businessId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(businessId, currentUserId, currentUserCorporationIds)) {
+            result = baseBusinessService.existByIdAndCorporationIds(businessId, currentUserCorporationIds);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean isOwner(UUID corporationId, UUID currentUserId, Collection<UUID> currentUserCorporationIds) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(corporationId, currentUserId, currentUserCorporationIds)) {
+            result = CollectionUtils.isNotEmpty(currentUserCorporationIds) && currentUserCorporationIds.contains(corporationId);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean isWorkerBusiness(UUID businessId, UUID userId) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(businessId, userId)) {
+            result = workerService.existByUserIdAndBusinessId(userId, businessId);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean currentUserIsWorkerBusiness(UUID businessId) {
+        SecurityUtil.checkUserByBanStatus();
+        return isWorkerBusiness(businessId, SecurityUtil.getUserId());
+    }
+
+    @Override
+    public boolean isWorker(UUID corporationId, UUID currentUserId) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(corporationId, currentUserId)) {
+            result = workerService.existByUserIdAndCorporationId(currentUserId, corporationId);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean currentUserIsWorker(UUID corporationId) {
+        SecurityUtil.checkUserByBanStatus();
+        return isWorker(corporationId, SecurityUtil.getUserId());
+    }
+
+    @Override
+    public void checkPermissionToBusinessInfo(UUID businessId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+        if (!isOwnerBusiness(businessId, currentUserId, currentUserCorporationIds) && !isWorkerBusiness(businessId, currentUserId)) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+        }
+    }
+
+    @Override
+    public void checkCurrentUserPermissionToBusinessInfo(UUID businessId) {
+        SecurityUtil.checkUserByBanStatus();
+        checkPermissionToBusinessInfo(businessId, SecurityUtil.getUserId(), SecurityUtil.getUserCorporationIds());
+    }
+
+    @Override
+    public void checkPermissionToBusinessInfo(List<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+        UUID corporationId = getCorporationIdAndCheckEqual(businessIds);
+        if (!isOwner(corporationId, currentUserId, currentUserCorporationIds) && !isWorker(corporationId, currentUserId)) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
+        }
+    }
+
+    @Override
+    public void checkCurrentUserPermissionToBusinessInfo(List<UUID> businessIds) {
+        SecurityUtil.checkUserByBanStatus();
+        checkPermissionToBusinessInfo(businessIds, SecurityUtil.getUserId(), SecurityUtil.getUserCorporationIds());
+    }
+
+    @Override
+    public void checkPermissionToClient(UUID corporationId, UUID clientId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
         if (ObjectUtils.allNotNull(corporationId, clientId, currentUserId)) {
-            checkUserHavePermissionForWorkWithClient(corporationId, currentUserId, currentUserCorporationIds);
+            checkPermissionWorkWithClient(corporationId, currentUserId, currentUserCorporationIds);
             ClientDto client = clientEsService.getClientByUserId(clientId);
             if (client == null) {
                 throw new ClientException(CLIENT_NOT_FOUND);
@@ -54,76 +153,64 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
     }
 
     @Override
-    public void checkCurrentUserHavePermissionToClient(UUID corporationId, UUID clientId) {
+    public void checkCurrentUserPermissionToClient(UUID corporationId, UUID clientId) {
         SecurityUtil.checkUserByBanStatus();
         UserDto user = SecurityUtil.getUserModel();
-        checkUserHavePermissionToClient(corporationId, clientId, user.getId(), user.getCorporationIds());
+        checkPermissionToClient(corporationId, clientId, user.getId(), user.getCorporationIds());
     }
 
     @Override
-    public void checkUserHavePermissionForWorkWithClient(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
-        if (ObjectUtils.allNotNull(corporationId, currentUserId)) {
-            if (CollectionUtils.isEmpty(currentUserCorporationIds) || !currentUserCorporationIds.contains(corporationId)) {
-                if (!workerService.existByUserIdAndCorporationId(currentUserId, corporationId)) {
-                    throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-                }
-            }
+    public void checkPermissionWorkWithClient(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+        if (!isOwner(corporationId, currentUserId, currentUserCorporationIds) && !isWorker(corporationId, currentUserId)) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
         }
     }
 
     @Override
-    public void checkCurrentUserHavePermissionForWorkWithClient(UUID corporationId) {
+    public void checkCurrentUserPermissionWorkWithClient(UUID corporationId) {
         SecurityUtil.checkUserByBanStatus();
         UserDto user = SecurityUtil.getUserModel();
-        checkUserHavePermissionForWorkWithClient(corporationId, user.getId(), user.getCorporationIds());
+        checkPermissionWorkWithClient(corporationId, user.getId(), user.getCorporationIds());
     }
 
     @Override
-    public void checkUserHavePermissionForWorkWithBusinessClient(List<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+    public void checkPermissionWorkWithClientByBusiness(List<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds) {
         if (CollectionUtils.isNotEmpty(businessIds) && (currentUserId != null)) {
             UUID corporationId = getCorporationIdAndCheckEqual(businessIds);
-            checkUserHavePermissionForWorkWithClient(corporationId, currentUserId, currentUserCorporationIds);
+            checkPermissionWorkWithClient(corporationId, currentUserId, currentUserCorporationIds);
         }
     }
 
     @Override
-    public void checkCurrentUserHavePermissionForWorkWithBusinessClient(List<UUID> businessIds) {
+    public void checkCurrentUserPermissionWorkWithClientByBusiness(List<UUID> businessIds) {
         SecurityUtil.checkUserByBanStatus();
         UserDto user = SecurityUtil.getUserModel();
-        checkUserHavePermissionForWorkWithBusinessClient(businessIds, user.getId(), user.getCorporationIds());
+        checkPermissionWorkWithClientByBusiness(businessIds, user.getId(), user.getCorporationIds());
     }
 
     @Override
-    public boolean checkUserHavePermissionToViewClientPhone(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
-        boolean result = false;
-        if (ObjectUtils.allNotNull(corporationId, currentUserId)) {
-            result = CollectionUtils.isNotEmpty(currentUserCorporationIds) && currentUserCorporationIds.contains(corporationId);
-        }
-        return result;
+    public boolean checkPermissionViewClientPhone(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+        return isOwner(corporationId, currentUserId, currentUserCorporationIds);
     }
 
     @Override
-    public boolean checkCurrentUserHavePermissionToViewClientPhone(UUID corporationId) {
+    public boolean checkCurrentUserPermissionViewClientPhone(UUID corporationId) {
         SecurityUtil.checkUserByBanStatus();
         UserDto user = SecurityUtil.getUserModel();
-        return checkUserHavePermissionToViewClientPhone(corporationId, user.getId(), user.getCorporationIds());
+        return checkPermissionViewClientPhone(corporationId, user.getId(), user.getCorporationIds());
     }
 
     @Override
-    public boolean checkUserHavePermissionToViewBusinessClientPhone(Collection<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds) {
-        boolean result = false;
-        if (CollectionUtils.isNotEmpty(businessIds) && (currentUserId != null)) {
-            UUID corporationId = getCorporationIdAndCheckEqual(businessIds);
-            result = checkUserHavePermissionToViewClientPhone(corporationId, currentUserId, currentUserCorporationIds);
-        }
-        return result;
+    public boolean checkPermissionViewClientPhoneByBusiness(Collection<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds) {
+        UUID corporationId = getCorporationIdAndCheckEqual(businessIds);
+        return checkPermissionViewClientPhone(corporationId, currentUserId, currentUserCorporationIds);
     }
 
     @Override
-    public boolean checkCurrentUserHavePermissionToBusinessViewClientPhone(Collection<UUID> businessIds) {
+    public boolean checkCurrentUserPermissionViewClientPhoneByBusiness(Collection<UUID> businessIds) {
         SecurityUtil.checkUserByBanStatus();
         UserDto user = SecurityUtil.getUserModel();
-        return checkUserHavePermissionToViewBusinessClientPhone(businessIds, user.getId(), user.getCorporationIds());
+        return checkPermissionViewClientPhoneByBusiness(businessIds, user.getId(), user.getCorporationIds());
     }
 
     private UUID getCorporationIdAndCheckEqual(Collection<UUID> businessIds) {

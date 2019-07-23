@@ -193,7 +193,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public Page<BaseRecordDto> getByClientForBusiness(List<UUID> corporationIds, UUID clientId, Integer page, Integer size) {
-        corporationIds.forEach(f -> businessPermissionFacade.checkCurrentUserHavePermissionForWorkWithClient(f));
+        corporationIds.forEach(f -> businessPermissionFacade.checkCurrentUserPermissionWorkWithClient(f));
         Page<BaseRecordDto> result = null;
         List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(corporationIds);
         if (CollectionUtils.isNotEmpty(businessIds)) {
@@ -228,7 +228,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(businessId)) {
+        if (!businessPermissionFacade.currentUserIsOwnerBusiness(businessId)) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
         }
         LocalDateTime fromDate;
@@ -297,12 +297,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (CollectionUtils.isEmpty(search.getBusinessIds())) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        search.getBusinessIds().forEach(f -> {
-            if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(f) &&
-                    !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(f)) {
-                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-            }
-        });
+        businessPermissionFacade.checkCurrentUserPermissionToBusinessInfo(search.getBusinessIds());
         setSearch(search);
         List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
                 search.getStatus(), search.getProcesses(), search.getBusinessIds(), search.getFrom(), search.getTo());
@@ -466,7 +461,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto.getBusinessId() != null &&
-                !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId())) {
+                !businessPermissionFacade.currentUserIsWorkerBusiness(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
         if (dto.getClientId() != null) {
@@ -719,8 +714,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private void checkPermissionToUpdate(BaseRecordDto dto) {
         if (SecurityUtil.isAnonymous()) throw new ClientException(USER_NOT_AUTHENTICATION);
         if (dto == null) throw new ClientException(RECORD_NOT_FOUND);
-        boolean ownerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId());
-        boolean workerPermission = baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(dto.getBusinessId());
+        boolean ownerPermission = businessPermissionFacade.currentUserIsOwnerBusiness(dto.getBusinessId());
+        boolean workerPermission = businessPermissionFacade.currentUserIsWorkerBusiness(dto.getBusinessId());
         boolean userPermission = false;
         if (dto.getClientId().equals(SecurityUtil.getUserId())) {
             userPermission = true;

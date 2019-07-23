@@ -1,8 +1,8 @@
 package com.gliesereum.karma.service.chat.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.entity.chat.ChatEntity;
 import com.gliesereum.karma.model.repository.jpa.chat.ChatRepository;
-import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.chat.ChatService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.BUSINESS_ID_EMPTY;
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS;
 
 /**
  * @author vitalij
@@ -32,7 +31,7 @@ public class ChatServiceImpl extends DefaultServiceImpl<ChatDto, ChatEntity> imp
     private final ChatRepository chatRepository;
 
     @Autowired
-    private BaseBusinessService businessService;
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     public ChatServiceImpl(ChatRepository chatRepository, DefaultConverter defaultConverter) {
@@ -57,9 +56,7 @@ public class ChatServiceImpl extends DefaultServiceImpl<ChatDto, ChatEntity> imp
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        if (!businessService.currentUserHavePermissionToActionInBusinessLikeOwner(businessId)) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-        }
+        businessPermissionFacade.checkCurrentUserPermissionToBusinessInfo(businessId);
         List<ChatEntity> entities = chatRepository.getAllByBusinessId(businessId);
         return converter.convert(entities, dtoClass);
     }

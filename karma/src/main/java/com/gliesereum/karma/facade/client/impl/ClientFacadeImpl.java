@@ -32,7 +32,7 @@ public class ClientFacadeImpl implements ClientFacade {
     @Override
     public Map<UUID, ClientDto> getClientMapByIds(Collection<UUID> ids, Collection<UUID> businessIds) {
         Map<UUID, ClientDto> result = clientEsService.getClientMapByIds(ids);
-        if (MapUtils.isNotEmpty(result) && businessPermissionFacade.checkCurrentUserHavePermissionToBusinessViewClientPhone(businessIds)) {
+        if (MapUtils.isNotEmpty(result) && businessPermissionFacade.checkCurrentUserPermissionViewClientPhoneByBusiness(businessIds)) {
             hidePhone(result.values());
         }
         return result;
@@ -44,9 +44,9 @@ public class ClientFacadeImpl implements ClientFacade {
         if (size == null) size = 100;
         if (page == null) page = 0;
         if (CollectionUtils.isNotEmpty(ids)) {
-            businessPermissionFacade.checkCurrentUserHavePermissionForWorkWithBusinessClient(ids);
+            businessPermissionFacade.checkCurrentUserPermissionWorkWithClientByBusiness(ids);
             result = clientEsService.getClientsByBusinessIds(ids, page, size);
-            if ((result != null) && !businessPermissionFacade.checkCurrentUserHavePermissionToBusinessViewClientPhone(ids)) {
+            if ((result != null) && !businessPermissionFacade.checkCurrentUserPermissionViewClientPhoneByBusiness(ids)) {
                 hidePhone(result.getContent());
             }
         }
@@ -57,11 +57,11 @@ public class ClientFacadeImpl implements ClientFacade {
     public Page<ClientDto> getAllCustomersByCorporationId(UUID id, Integer page, Integer size, String query) {
         Page<ClientDto> result = null;
         if (id != null) {
-            businessPermissionFacade.checkCurrentUserHavePermissionForWorkWithClient(id);
+            businessPermissionFacade.checkCurrentUserPermissionWorkWithClient(id);
             if (size == null) size = 100;
             if (page == null) page = 0;
             result = clientEsService.getClientsByCorporationIdAndAutocompleteQuery(query, id, page, size);
-            if ((result != null) && !businessPermissionFacade.checkCurrentUserHavePermissionToViewClientPhone(id)) {
+            if ((result != null) && !businessPermissionFacade.checkCurrentUserPermissionViewClientPhone(id)) {
                 hidePhone(result.getContent());
             }
         }

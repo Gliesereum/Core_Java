@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.analytics.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.analytics.AnalyticsService;
@@ -60,6 +61,9 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Autowired
     private WorkingSpaceService workingSpaceService;
+
+    @Autowired
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Override
     public AnalyticDto getAnalyticByFilter(AnalyticFilterDto filter) {
@@ -196,7 +200,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         if (filter.getBusinessId() == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(filter.getBusinessId())) {
+        if (!businessPermissionFacade.currentUserIsOwnerBusiness(filter.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
         }
         if (filter.getFrom() != null && filter.getTo() != null && filter.getFrom().isAfter(filter.getTo())) {

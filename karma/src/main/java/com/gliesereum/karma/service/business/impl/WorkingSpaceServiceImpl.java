@@ -1,9 +1,9 @@
 package com.gliesereum.karma.service.business.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.entity.business.WorkingSpaceEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkingSpaceRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
-import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.business.WorkingSpaceServicePriceService;
 import com.gliesereum.karma.service.business.descriptions.WorkingSpaceDescriptionService;
@@ -43,7 +43,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     private final WorkingSpaceRepository workingSpaceRepository;
 
     @Autowired
-    private BusinessCategoryFacade businessCategoryFacade;
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     private WorkingSpaceDescriptionService workingSpaceDescriptionService;
@@ -114,9 +114,8 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
                     throw new ClientException(TRY_CHANGE_DIFFERENT_BUSINESS);
                 }
                 UUID businessId = businessIds.iterator().next();
-                if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeWorker(businessId) ||
-                        !baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(businessId)) {
-                    throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
+                if (!businessPermissionFacade.currentUserIsOwnerBusiness(businessId)) {
+                    throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
                 }
                 Set<UUID> servicePriceIds = dtos.stream().map(m -> m.getPriceId()).collect(Collectors.toSet());
                 int count = servicePriceService.getCountByBusinessIdAndServicePriceIds(businessId, new ArrayList<>(servicePriceIds));
@@ -154,7 +153,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public WorkingSpaceDto create(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
-            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
+            businessPermissionFacade.checkCurrentUserIsOwnerBusiness(dto.getBusinessId());
             dto = checkIndex(Arrays.asList(dto), dto.getBusinessId()).get(0);
             result = super.create(dto);
             List<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.create(dto.getDescriptions(), result.getId());
@@ -173,7 +172,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
                 throw new ClientException(DIFFERENT_BUSINESS_OR_CATEGORY_OF_BUSINESS);
             }
             dtos = checkIndex(dtos, dtos.get(0).getBusinessId());
-            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
+            businessPermissionFacade.checkCurrentUserIsOwnerBusiness(dto.getBusinessId());
             result = super.create(dtos);
             for (int i = 0; i < result.size(); i++) {
                 List<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.create(dtos.get(i).getDescriptions(), result.get(0).getId());
@@ -187,7 +186,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
     public WorkingSpaceDto update(WorkingSpaceDto dto) {
         WorkingSpaceDto result = null;
         if (dto != null) {
-            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getBusinessId());
+            businessPermissionFacade.checkCurrentUserIsOwnerBusiness(dto.getBusinessId());
             WorkingSpaceDto saved = getById(dto.getId());
             dto.setIndexNumber(saved.getIndexNumber());
             result = super.update(dto);
@@ -202,7 +201,7 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
         if (id != null) {
             Optional<WorkingSpaceEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(i.getBusinessCategoryId(), i.getBusinessId());
+                businessPermissionFacade.checkCurrentUserIsOwnerBusiness(i.getBusinessId());
                 repository.delete(i);
             });
 

@@ -10,20 +10,37 @@ import java.util.UUID;
  */
 public interface BusinessPermissionFacade {
 
-    void checkUserHavePermissionToClient(UUID corporationId, UUID clientId,
-                                         UUID currentUserId, List<UUID> currentUserCorporationIds);
-    void checkCurrentUserHavePermissionToClient(UUID corporationId, UUID clientId);
+    boolean currentUserIsOwnerBusiness(Collection<UUID> businessIds);
+    boolean isOwnerBusiness(Collection<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    boolean currentUserIsOwnerBusiness(UUID businessId);
+    void checkCurrentUserIsOwnerBusiness(UUID businessId);
+    boolean isOwnerBusiness(UUID businessId, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    boolean isOwner(UUID corporationId, UUID currentUserId, Collection<UUID> currentUserCorporationIds);
 
-    void checkUserHavePermissionForWorkWithClient(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds);
-    void checkCurrentUserHavePermissionForWorkWithClient(UUID corporationId);
+    boolean isWorkerBusiness(UUID businessId, UUID userId);
+    boolean currentUserIsWorkerBusiness(UUID businessId);
+    boolean isWorker(UUID corporationId, UUID currentUserId);
+    boolean currentUserIsWorker(UUID corporationId);
 
-    void checkUserHavePermissionForWorkWithBusinessClient(List<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds);
-    void checkCurrentUserHavePermissionForWorkWithBusinessClient(List<UUID> businessIds);
+    void checkPermissionToBusinessInfo(UUID businessId, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    void checkCurrentUserPermissionToBusinessInfo(UUID businessId);
 
-    boolean checkUserHavePermissionToViewClientPhone(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds);
-    boolean checkCurrentUserHavePermissionToViewClientPhone(UUID corporationId);
+    void checkPermissionToBusinessInfo(List<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    void checkCurrentUserPermissionToBusinessInfo(List<UUID> businessIds);
 
-    boolean checkUserHavePermissionToViewBusinessClientPhone(Collection<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds);
-    boolean checkCurrentUserHavePermissionToBusinessViewClientPhone(Collection<UUID> businessIds);
+    void checkPermissionToClient(UUID corporationId, UUID clientId, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    void checkCurrentUserPermissionToClient(UUID corporationId, UUID clientId);
+
+    void checkPermissionWorkWithClient(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    void checkCurrentUserPermissionWorkWithClient(UUID corporationId);
+
+    void checkPermissionWorkWithClientByBusiness(List<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    void checkCurrentUserPermissionWorkWithClientByBusiness(List<UUID> businessIds);
+
+    boolean checkPermissionViewClientPhone(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    boolean checkCurrentUserPermissionViewClientPhone(UUID corporationId);
+
+    boolean checkPermissionViewClientPhoneByBusiness(Collection<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds);
+    boolean checkCurrentUserPermissionViewClientPhoneByBusiness(Collection<UUID> businessIds);
 
 }

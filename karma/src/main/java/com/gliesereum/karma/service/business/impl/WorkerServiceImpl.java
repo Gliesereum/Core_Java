@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.business.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.group.GroupUserExchangeFacade;
 import com.gliesereum.karma.facade.worker.WorkerFacade;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
@@ -63,6 +64,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Autowired
     private WorkTimeService workTimeService;
+
+    @Autowired
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
@@ -138,7 +142,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         List<WorkerDto> result = new ArrayList<>();
         if (corporationId != null) {
             if (SecurityUtil.isAnonymous() || (!SecurityUtil.getUserCorporationIds().contains(corporationId) &&
-                    !baseBusinessService.currentUserHavePermissionToActionInCorporationLikeWorker(corporationId))) {
+                    !businessPermissionFacade.currentUserIsWorker(corporationId))) {
                 throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
             }
             List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(corporationId));
@@ -310,7 +314,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (CollectionUtils.isEmpty(workingSpaces)) {
             throw new ClientException(WORKING_SPACE_NOT_FOUND);
         }
-        if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId())) {
+        if (!businessPermissionFacade.currentUserIsOwnerBusiness(dto.getBusinessId())) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
         }
     }

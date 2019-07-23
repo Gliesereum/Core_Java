@@ -1,9 +1,9 @@
 package com.gliesereum.karma.controller.business;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.model.document.BusinessDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
-import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
@@ -46,9 +46,6 @@ public class BaseBusinessController {
     private MediaService mediaService;
 
     @Autowired
-    private BusinessCategoryFacade businessCategoryFacade;
-
-    @Autowired
     private CommentService commentService;
 
     @Autowired
@@ -56,6 +53,9 @@ public class BaseBusinessController {
 
     @Autowired
     private ClientFacade clientFacade;
+
+    @Autowired
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @GetMapping
     public List<BaseBusinessDto> getAll() {
@@ -131,19 +131,19 @@ public class BaseBusinessController {
 
     @PostMapping("/media")
     public MediaDto create(@RequestBody @Valid MediaDto media) {
-        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(media.getObjectId());
+        businessPermissionFacade.checkCurrentUserIsOwnerBusiness(media.getObjectId());
         return mediaService.create(media);
     }
 
     @PutMapping("/media")
     public MediaDto update(@RequestBody @Valid MediaDto media) {
-        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(media.getObjectId());
+        businessPermissionFacade.checkCurrentUserIsOwnerBusiness(media.getObjectId());
         return mediaService.update(media);
     }
 
     @DeleteMapping("/{id}/media/{mediaId}")
     public MapResponse delete(@PathVariable("id") UUID businessId, @PathVariable("mediaId") UUID mediaId) {
-        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(businessId);
+        businessPermissionFacade.checkCurrentUserIsOwnerBusiness(businessId);
         mediaService.delete(mediaId, businessId);
         return new MapResponse("true");
     }

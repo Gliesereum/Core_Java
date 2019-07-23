@@ -1,8 +1,8 @@
 package com.gliesereum.karma.service.chat.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.entity.chat.ChatSupportEntity;
 import com.gliesereum.karma.model.repository.jpa.chat.ChatSupportRepository;
-import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.chat.ChatSupportService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.ALL_OBJECT_ID_NOT_EQUALS;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.BUSINESS_ID_EMPTY;
 
 /**
  * @author vitalij
@@ -34,7 +35,7 @@ public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, C
     private final ChatSupportRepository chatSupportRepository;
 
     @Autowired
-    private BaseBusinessService businessService;
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     public ChatSupportServiceImpl(ChatSupportRepository chatSupportRepository, DefaultConverter defaultConverter) {
@@ -98,8 +99,6 @@ public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, C
         if (dto == null || dto.getBusinessId() == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        if (!businessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-        }
+        businessPermissionFacade.checkCurrentUserPermissionToBusinessInfo(dto.getBusinessId());
     }
 }
