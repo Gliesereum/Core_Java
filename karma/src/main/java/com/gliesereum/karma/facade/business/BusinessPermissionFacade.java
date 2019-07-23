@@ -1,7 +1,8 @@
 package com.gliesereum.karma.facade.business;
 
+import com.gliesereum.karma.model.common.BusinessPermission;
+
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,20 +11,21 @@ import java.util.UUID;
  */
 public interface BusinessPermissionFacade {
 
-    void checkUserHavePermissionToClient(UUID corporationId, UUID clientId,
-                                         UUID currentUserId, List<UUID> currentUserCorporationIds);
-    void checkCurrentUserHavePermissionToClient(UUID corporationId, UUID clientId);
+    void checkPermissionByBusiness(UUID businessId, BusinessPermission businessPermission);
+    boolean isHavePermissionByBusiness(UUID businessId, BusinessPermission businessPermission);
 
-    void checkUserHavePermissionForWorkWithClient(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds);
-    void checkCurrentUserHavePermissionForWorkWithClient(UUID corporationId);
+    void checkPermissionByBusiness(Collection<UUID> businessIds, BusinessPermission businessPermission);
+    boolean isHavePermissionByBusiness(Collection<UUID> businessIds, BusinessPermission businessPermission);
 
-    void checkUserHavePermissionForWorkWithBusinessClient(List<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds);
-    void checkCurrentUserHavePermissionForWorkWithBusinessClient(List<UUID> businessIds);
+    void checkPermissionByCorporation(UUID corporationId, BusinessPermission businessPermission);
+    boolean isHavePermissionByCorporation(UUID corporationId, BusinessPermission businessPermission);
 
-    boolean checkUserHavePermissionToViewClientPhone(UUID corporationId, UUID currentUserId, List<UUID> currentUserCorporationIds);
-    boolean checkCurrentUserHavePermissionToViewClientPhone(UUID corporationId);
+    boolean currentUserIsOwnerBusiness(UUID businessId);
+    boolean currentUserIsWorkerBusiness(UUID businessId);
 
-    boolean checkUserHavePermissionToViewBusinessClientPhone(Collection<UUID> businessIds, UUID currentUserId, List<UUID> currentUserCorporationIds);
-    boolean checkCurrentUserHavePermissionToBusinessViewClientPhone(Collection<UUID> businessIds);
 
+    boolean isOwner(UUID corporationId, UUID currentUserId, Collection<UUID> currentUserCorporationIds);
+    boolean isWorker(UUID corporationId, UUID currentUserId);
+
+    void checkCurrentUserPermissionToClient(UUID corporationId, UUID clientId);
 }

@@ -1,8 +1,9 @@
 package com.gliesereum.karma.service.service.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.service.ServiceClassPriceEntity;
 import com.gliesereum.karma.model.repository.jpa.service.ServiceClassPriceRepository;
-import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.service.ServiceClassPriceService;
 import com.gliesereum.karma.service.service.ServiceClassService;
@@ -40,7 +41,7 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
     private final ServiceClassPriceRepository serviceClassPriceRepository;
 
     @Autowired
-    private BusinessCategoryFacade businessCategoryFacade;
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     private ServicePriceService servicePriceService;
@@ -187,7 +188,7 @@ public class ServiceClassPriceServiceImpl extends DefaultServiceImpl<ServiceClas
         if (price == null) {
             throw new ClientException(SERVICE_PRICE_NOT_FOUND);
         }
-        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(price.getBusinessId());
+        businessPermissionFacade.checkPermissionByBusiness(price.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
     }
 
     private void checkPriceServiceExist(UUID priceId, UUID serviceClassId) {
