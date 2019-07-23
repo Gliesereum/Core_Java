@@ -3,6 +3,7 @@ package com.gliesereum.file.model.entity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class UserFileEntity extends DefaultEntity {
 
     @Column(name = "filename")
