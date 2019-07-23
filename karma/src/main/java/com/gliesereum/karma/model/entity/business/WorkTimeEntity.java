@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.business;
 
+import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,5 +40,9 @@ public class WorkTimeEntity extends DefaultEntity {
     @Column(name = "day_of_week")
     @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private WorkTimeType type;
 
 }

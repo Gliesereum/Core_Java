@@ -14,6 +14,7 @@ import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.business.*;
+import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -205,7 +206,6 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
                 worker.setUserId(user.getId());
                 result = create(worker);
                 result.setUser(user);
-                createWorkTimes(result);
                 workerFacade.sendMessageToWorkerAfterCreate(result);
             }
         }
@@ -256,7 +256,10 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     private void createWorkTimes(WorkerDto dto) {
         if (CollectionUtils.isNotEmpty(dto.getWorkTimes())) {
-            dto.getWorkTimes().forEach(f -> f.setObjectId(dto.getId()));
+            dto.getWorkTimes().forEach(f -> {
+                f.setObjectId(dto.getId());
+                f.setType(WorkTimeType.WORKER);
+            });
             List<WorkTimeDto> workTimes = workTimeService.create(dto.getWorkTimes());
             dto.setWorkTimes(workTimes);
         }

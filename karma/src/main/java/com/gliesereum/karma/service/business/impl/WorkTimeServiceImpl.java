@@ -8,6 +8,7 @@ import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -60,9 +61,9 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         WorkTimeDto result = null;
         if (dto != null) {
             checkDayExist(dto);
-            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getObjectId());
+            checkPermission(dto.getType(), dto.getBusinessCategoryId(), dto.getObjectId());
             result = super.create(dto);
-            businessEsService.indexAsync(result.getObjectId());
+            indexAsync(dto.getType(), result.getObjectId());
         }
         return result;
     }
@@ -71,14 +72,14 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     public List<WorkTimeDto> create(List<WorkTimeDto> list) {
         List<WorkTimeDto> result = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(list)) {
-            WorkTimeDto workTime = list.get(0);
-            if (list.stream().anyMatch(i -> !i.getObjectId().equals(workTime.getObjectId()))) {
+            WorkTimeDto dto = list.get(0);
+            if (list.stream().anyMatch(i -> !i.getObjectId().equals(dto.getObjectId()))) {
                 throw new ClientException(ALL_OBJECT_ID_NOT_EQUALS);
             }
-            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(workTime.getBusinessCategoryId(), workTime.getObjectId());
+            checkPermission(dto.getType(), dto.getBusinessCategoryId(), dto.getObjectId());
             list.forEach(this::checkDayExist);
             result = super.create(list);
-            businessEsService.indexAsync(workTime.getObjectId());
+            indexAsync(dto.getType(), dto.getObjectId());
         }
         return result;
     }
@@ -87,13 +88,13 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     public List<WorkTimeDto> update(List<WorkTimeDto> list) {
         List<WorkTimeDto> result = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(list)) {
-            WorkTimeDto workTime = list.get(0);
-            if (list.stream().anyMatch(i -> !i.getObjectId().equals(workTime.getObjectId()))) {
+            WorkTimeDto dto = list.get(0);
+            if (list.stream().anyMatch(i -> !i.getObjectId().equals(dto.getObjectId()))) {
                 throw new ClientException(ALL_OBJECT_ID_NOT_EQUALS);
             }
-            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(workTime.getBusinessCategoryId(), workTime.getObjectId());
+            checkPermission(dto.getType(), dto.getBusinessCategoryId(), dto.getObjectId());
             result = super.update(list);
-            businessEsService.indexAsync(workTime.getObjectId());
+            indexAsync(dto.getType(), dto.getObjectId());
         }
         return result;
     }
@@ -109,28 +110,53 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             if (!dto.getDayOfWeek().equals(time.getDayOfWeek())) {
                 checkDayExist(dto);
             }
-            businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(dto.getBusinessCategoryId(), dto.getObjectId());
+            checkPermission(dto.getType(), dto.getBusinessCategoryId(), dto.getObjectId());
             result = super.update(dto);
-            businessEsService.indexAsync(result.getObjectId());
+            indexAsync(dto.getType(), result.getObjectId());
         }
         return result;
     }
 
     @Override
-    public void delete(UUID id, UUID businessCategoryId) {
+    public void delete(UUID id, UUID businessCategoryId, WorkTimeType type) {
         if ((id != null) && (businessCategoryId != null)) {
             Optional<WorkTimeEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(businessCategoryId, i.getObjectId());
+                checkPermission(type, businessCategoryId, i.getObjectId());
                 repository.delete(i);
-                businessEsService.indexAsync(i.getObjectId());
+                indexAsync(type, i.getObjectId());
             });
         }
     }
 
     @Override
-    public void deleteByObjectId(UUID id){
+    public void deleteByObjectId(UUID id) {
         workTimeRepository.deleteAllByObjectId(id);
+    }
+
+    private void checkPermission(WorkTimeType type, UUID categoryId, UUID objectId) {
+        switch (type) {
+            case WORKER: {
+                //todo add facade for check worker time in business (now this check in worker service)
+                break;
+            }
+            case BUSINESS: {
+                businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(categoryId, objectId);
+                break;
+            }
+        }
+    }
+
+    private void indexAsync(WorkTimeType type, UUID objectId) {
+        switch (type) {
+            case WORKER: {
+                break;
+            }
+            case BUSINESS: {
+                businessEsService.indexAsync(objectId);
+                break;
+            }
+        }
     }
 
     private void checkDayExist(WorkTimeDto dto) {
