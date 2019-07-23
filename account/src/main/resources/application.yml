@@ -58,3 +58,11 @@ system-notification:
     exchange-name: system-notification-update-auth-info
   update-client-info:
     exchange-name: system-notification-update-client-info
+
+image-url:
+  user:
+    avatar: https://glcdn.sgp1.digitaloceanspaces.com/coupler/Avatar.png
+    cover: https://glcdn.sgp1.digitaloceanspaces.com/coupler/Cover.png
+  corporation:
+    logo: https://glcdn.sgp1.digitaloceanspaces.com/coupler/Avatar.png
+    cover: https://glcdn.sgp1.digitaloceanspaces.com/coupler/Cover.png

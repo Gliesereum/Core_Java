@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +51,9 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Slf4j
 @Service
 public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto, BaseBusinessEntity> implements BaseBusinessService {
+
+    @Value("${image-url.business.logo}")
+    private String defaultBusinessLogo;
 
     private static final Class<BaseBusinessDto> DTO_CLASS = BaseBusinessDto.class;
     private static final Class<BaseBusinessEntity> ENTITY_CLASS = BaseBusinessEntity.class;
@@ -93,6 +97,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public BaseBusinessDto create(BaseBusinessDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
+            setLogoIfNull(dto);
             checkBusinessCategory(dto);
             checkCorporationId(dto);
             dto.setObjectState(ObjectState.ACTIVE);
@@ -111,6 +116,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public BaseBusinessDto update(BaseBusinessDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
+            setLogoIfNull(dto);
             checkBusinessCategory(dto);
             if (dto.getId() == null) {
                 throw new ClientException(ID_NOT_SPECIFIED);
@@ -419,6 +425,14 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     private void checkBusinessCategory(BaseBusinessDto dto) {
         if (dto.getBusinessCategoryId() == null) {
             throw new ClientException(BUSINESS_CATEGORY_ID_EMPTY);
+        }
+    }
+
+    private void setLogoIfNull(BaseBusinessDto business) {
+        if (business != null) {
+            if (business.getLogoUrl() == null) {
+                business.setLogoUrl(defaultBusinessLogo);
+            }
         }
     }
 }

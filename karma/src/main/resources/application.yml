@@ -76,3 +76,8 @@ system-notification:
   update-client-info:
     exchange-name: system-notification-update-client-info
     queue-name: update-client-info-${spring.application.name}-queue
+
+
+image-url:
+  business:
+    logo: https://glcdn.sgp1.digitaloceanspaces.com/coupler/Avatar.png

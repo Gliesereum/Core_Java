@@ -24,6 +24,7 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,12 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Slf4j
 @Service
 public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, CorporationEntity> implements CorporationService {
+
+    @Value("${image-url.corporation.logo}")
+    private String defaultCorporationLogo;
+
+    @Value("${image-url.corporation.cover}")
+    private String defaultCorporationCover;
 
     private static final Class<CorporationDto> DTO_CLASS = CorporationDto.class;
     private static final Class<CorporationEntity> ENTITY_CLASS = CorporationEntity.class;
@@ -77,6 +84,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         SecurityUtil.checkUserByBanStatus();
         dto.setKycApproved(false);
         dto.setObjectState(ObjectState.ACTIVE);
+        setLogoIfNull(dto);
         result = super.create(dto);
         if (result != null) {
             userCorporationService.create(new UserCorporationDto(SecurityUtil.getUserId(), result.getId())); //todo in a future remove user-corporation
@@ -108,6 +116,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             if (dto.getId() == null) {
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
+            setLogoIfNull(dto);
             checkCurrentUserForPermissionActionThisCorporation(dto.getId());
             CorporationEntity byId = corporationRepository.findByIdAndObjectState(dto.getId(), ObjectState.ACTIVE);
             if (byId == null) {
@@ -251,5 +260,16 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
             }
         }
         return result;
+    }
+
+    private void setLogoIfNull(CorporationDto corporation) {
+        if (corporation != null) {
+            if (corporation.getLogoUrl() == null) {
+                corporation.setLogoUrl(defaultCorporationLogo);
+            }
+            if (corporation.getCoverUrl() == null) {
+                corporation.setCoverUrl(defaultCorporationCover);
+            }
+        }
     }
 }
