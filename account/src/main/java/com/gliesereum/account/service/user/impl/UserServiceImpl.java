@@ -23,6 +23,7 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,12 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Slf4j
 @Service
 public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> implements UserService {
+
+    @Value("${image-url.user.avatar}")
+    private String defaultUserAvatar;
+
+    @Value("${image-url.user.cover}")
+    private String defaultUserCover;
 
     private static final String URL_PATTERN = "^(https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
     private static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
@@ -87,6 +94,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     public UserDto create(UserDto dto) {
         UserDto result = null;
         if (dto != null) {
+            setLogoIfNull(dto);
             dto.setBanStatus(BanStatus.UNBAN);
             dto.setKycApproved(false);
             result = super.create(dto);
@@ -97,6 +105,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Override
     @Transactional
     public UserDto create(UserDto user, String referralCode) {
+        setLogoIfNull(user);
         UserDto result = create(user);
         if ((result != null) && (StringUtils.isNotEmpty(referralCode))) {
             referralFacade.signUpWithCode(result.getId(), referralCode);
@@ -162,6 +171,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             dto.setLastActivity(byId.getLastActivity());
             dto.setLastSignIn(byId.getLastSignIn());
             dto.setCreateDate(byId.getCreateDate());
+            setLogoIfNull(dto);
             result = super.update(dto);
             userUpdateFacade.tokenInfoUpdateEvent(Arrays.asList(result.getId()));
             userUpdateFacade.updateClientInfo(result);
@@ -244,5 +254,16 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
     @Async
     public void updateAsync(UserDto user) {
         this.update(user);
+    }
+
+    private void setLogoIfNull(UserDto user) {
+        if (user != null) {
+            if (user.getAvatarUrl() == null) {
+                user.setAvatarUrl(defaultUserAvatar);
+            }
+            if (user.getCoverUrl() == null) {
+                user.setCoverUrl(defaultUserCover);
+            }
+        }
     }
 }

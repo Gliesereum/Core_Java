@@ -1,5 +1,7 @@
 package com.gliesereum.karma.service.business.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -30,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +53,9 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Slf4j
 @Service
 public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto, BaseBusinessEntity> implements BaseBusinessService {
+
+    @Value("${image-url.business.logo}")
+    private String defaultBusinessLogo;
 
     private static final Class<BaseBusinessDto> DTO_CLASS = BaseBusinessDto.class;
     private static final Class<BaseBusinessEntity> ENTITY_CLASS = BaseBusinessEntity.class;
@@ -78,10 +84,10 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     private BusinessEsService businessEsService;
 
     @Autowired
-    private ClientEsService clientEsService;
+    private BusinessDescriptionService businessDescriptionService;
 
     @Autowired
-    private BusinessDescriptionService businessDescriptionService;
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
@@ -93,6 +99,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public BaseBusinessDto create(BaseBusinessDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
+            setLogoIfNull(dto);
             checkBusinessCategory(dto);
             checkCorporationId(dto);
             dto.setObjectState(ObjectState.ACTIVE);
@@ -111,11 +118,12 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public BaseBusinessDto update(BaseBusinessDto dto) {
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
+            setLogoIfNull(dto);
             checkBusinessCategory(dto);
             if (dto.getId() == null) {
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
-            this.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getId());
+            businessPermissionFacade.checkPermissionByBusiness(dto.getId(), BusinessPermission.BUSINESS_ADMINISTRATION);
             checkCorporationId(dto);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
@@ -245,44 +253,6 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         return baseBusinessRepository.existsByIdAndCorporationIdInAndObjectState(id, corporationIds, ObjectState.ACTIVE);
     }
 
-    //TODO: MOVE TO PERMISSION FACADE
-    @Override
-    public boolean currentUserHavePermissionToActionInBusinessLikeOwner(UUID businessId) {
-        if (SecurityUtil.isAnonymous()) {
-            throw new ClientException(USER_NOT_AUTHENTICATION);
-        }
-        boolean result = false;
-        List<UUID> userCorporationIds = SecurityUtil.getUserCorporationIds();
-        if (CollectionUtils.isNotEmpty(userCorporationIds)) {
-            result = existByIdAndCorporationIds(businessId, userCorporationIds);
-        }
-        return result;
-    }
-
-    //TODO: MOVE TO PERMISSION FACADE
-    @Override
-    public boolean currentUserHavePermissionToActionInBusinessLikeWorker(UUID businessId) {
-        if (SecurityUtil.isAnonymous()) {
-            throw new ClientException(USER_NOT_AUTHENTICATION);
-        }
-        if (businessId == null) {
-            throw new ClientException(BUSINESS_ID_EMPTY);
-        }
-        return workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), businessId) != null;
-    }
-
-    //TODO: MOVE TO PERMISSION FACADE
-    @Override
-    public boolean currentUserHavePermissionToActionInCorporationLikeWorker(UUID corporationId) {
-        if (SecurityUtil.isAnonymous()) {
-            throw new ClientException(USER_NOT_AUTHENTICATION);
-        }
-        if (corporationId == null) {
-            throw new ClientException(CORPORATION_ID_IS_EMPTY);
-        }
-        return CollectionUtils.isNotEmpty(workerService.findByUserIdAndCorporationId(SecurityUtil.getUserId(), corporationId));
-    }
-
     @Override
     public List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds) {
         List<BaseBusinessDto> result = null;
@@ -330,7 +300,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (id == null) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
-        this.currentUserHavePermissionToActionInBusinessLikeOwner(id);
+        businessPermissionFacade.checkPermissionByBusiness(id, BusinessPermission.BUSINESS_ADMINISTRATION);
         BaseBusinessDto dto = getById(id);
         if (dto == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
@@ -368,8 +338,12 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     @Override
     public List<LiteBusinessDto> getLiteBusinessByIds(Collection<UUID> ids) {
-        List<BaseBusinessEntity> entities = repository.findAllById(ids);
-        return converter.convert(entities, LiteBusinessDto.class);
+        List<LiteBusinessDto> result = null;
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<BaseBusinessEntity> entities = repository.findAllById(ids);
+            result = converter.convert(entities, LiteBusinessDto.class);
+        }
+        return result;
     }
 
     @Override
@@ -419,6 +393,14 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     private void checkBusinessCategory(BaseBusinessDto dto) {
         if (dto.getBusinessCategoryId() == null) {
             throw new ClientException(BUSINESS_CATEGORY_ID_EMPTY);
+        }
+    }
+
+    private void setLogoIfNull(BaseBusinessDto business) {
+        if (business != null) {
+            if (business.getLogoUrl() == null) {
+                business.setLogoUrl(defaultBusinessLogo);
+            }
         }
     }
 }

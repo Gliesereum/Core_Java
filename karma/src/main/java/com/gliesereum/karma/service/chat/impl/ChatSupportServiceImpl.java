@@ -1,8 +1,9 @@
 package com.gliesereum.karma.service.chat.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.chat.ChatSupportEntity;
 import com.gliesereum.karma.model.repository.jpa.chat.ChatSupportRepository;
-import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.chat.ChatSupportService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
@@ -18,7 +19,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.ALL_OBJECT_ID_NOT_EQUALS;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.BUSINESS_ID_EMPTY;
 
 /**
  * @author vitalij
@@ -34,7 +36,7 @@ public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, C
     private final ChatSupportRepository chatSupportRepository;
 
     @Autowired
-    private BaseBusinessService businessService;
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     public ChatSupportServiceImpl(ChatSupportRepository chatSupportRepository, DefaultConverter defaultConverter) {
@@ -47,7 +49,7 @@ public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, C
     public ChatSupportDto create(ChatSupportDto dto) {
         ChatSupportDto result = null;
         checkPermission(dto);
-        if (dto != null && !chatSupportRepository.existsByBusinessIdAndUserId(dto.getBusinessId(), dto.getUserId())) {
+        if ((dto != null) && !chatSupportRepository.existsByBusinessIdAndUserId(dto.getBusinessId(), dto.getUserId())) {
             result = super.create(dto);
         }
         return result;
@@ -95,11 +97,9 @@ public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, C
     }
 
     private void checkPermission(ChatSupportDto dto) {
-        if (dto == null || dto.getBusinessId() == null) {
+        if ((dto == null) || (dto.getBusinessId() == null)) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        if (!businessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-        }
+        businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
     }
 }

@@ -1,7 +1,9 @@
 package com.gliesereum.karma.service.business.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.group.GroupUserExchangeFacade;
 import com.gliesereum.karma.facade.worker.WorkerFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkerRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -17,7 +19,6 @@ import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
-import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -63,6 +64,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Autowired
     private WorkTimeService workTimeService;
+
+    @Autowired
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
@@ -137,10 +141,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public List<WorkerDto> getByCorporationId(UUID corporationId) {
         List<WorkerDto> result = new ArrayList<>();
         if (corporationId != null) {
-            if (SecurityUtil.isAnonymous() || (!SecurityUtil.getUserCorporationIds().contains(corporationId) &&
-                    !baseBusinessService.currentUserHavePermissionToActionInCorporationLikeWorker(corporationId))) {
-                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-            }
+            businessPermissionFacade.checkPermissionByCorporation(corporationId, BusinessPermission.VIEW_BUSINESS_INFO);
             List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(corporationId));
             if (CollectionUtils.isNotEmpty(businessIds)) {
                 List<WorkerEntity> entities = workerRepository.findAllByBusinessIdIn(businessIds);
@@ -310,9 +311,8 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (CollectionUtils.isEmpty(workingSpaces)) {
             throw new ClientException(WORKING_SPACE_NOT_FOUND);
         }
-        if (!baseBusinessService.currentUserHavePermissionToActionInBusinessLikeOwner(dto.getBusinessId())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-        }
+        businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
+
     }
 
 }

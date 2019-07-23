@@ -3,6 +3,7 @@ package com.gliesereum.karma.model.entity.business;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @MappedSuperclass
+@EqualsAndHashCode(callSuper = true)
 public class AbstractBusinessEntity extends DefaultEntity {
 
     @Column(name = "corporation_id")

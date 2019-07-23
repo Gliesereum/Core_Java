@@ -1,8 +1,9 @@
 package com.gliesereum.karma.service.service.impl;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
 import com.gliesereum.karma.model.repository.jpa.service.ServicePriceRepository;
-import com.gliesereum.karma.service.business.BusinessCategoryFacade;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.filter.FilterAttributeService;
 import com.gliesereum.karma.service.filter.FilterService;
@@ -56,7 +57,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     private ServiceService serviceService;
 
     @Autowired
-    private BusinessCategoryFacade businessCategoryFacade;
+    private BusinessPermissionFacade businessPermissionFacade;
 
     @Autowired
     private PriceFilterAttributeService priceFilterAttributeService;
@@ -247,8 +248,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         if (dto.getBusinessId() == null) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
-        ServiceDto serviceDto = getServiceById(dto.getServiceId());
-        businessCategoryFacade.throwExceptionIfUserDontHavePermissionToAction(serviceDto.getBusinessCategoryId(), dto.getBusinessId());
+        businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
     }
 
     private ServiceDto getServiceById(UUID serviceId) {
