@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.chat.impl;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.chat.ChatEntity;
 import com.gliesereum.karma.model.repository.jpa.chat.ChatRepository;
 import com.gliesereum.karma.service.chat.ChatService;
@@ -56,7 +57,7 @@ public class ChatServiceImpl extends DefaultServiceImpl<ChatDto, ChatEntity> imp
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        businessPermissionFacade.checkCurrentUserPermissionToBusinessInfo(businessId);
+        businessPermissionFacade.checkPermissionByBusiness(businessId, BusinessPermission.WORK_WITH_CHAT);
         List<ChatEntity> entities = chatRepository.getAllByBusinessId(businessId);
         return converter.convert(entities, dtoClass);
     }

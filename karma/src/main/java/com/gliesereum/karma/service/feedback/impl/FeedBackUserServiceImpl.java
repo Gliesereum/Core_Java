@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.feedback.impl;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.feedback.FeedBackUserEntity;
 import com.gliesereum.karma.model.repository.jpa.feedback.FeedBackUserRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -147,10 +148,7 @@ public class FeedBackUserServiceImpl extends DefaultServiceImpl<FeedBackUserDto,
             businessIds.addAll(businessService.getIdsByCorporationIds(search.getCorporationIds()));
         }
         search.setBusinessIds(new ArrayList<>(businessIds));
-        if (!businessPermissionFacade.currentUserIsOwnerBusiness(businessIds)) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-        }
-
+        businessPermissionFacade.checkPermissionByBusiness(businessIds, BusinessPermission.BUSINESS_ADMINISTRATION);
     }
 
 }

@@ -4,6 +4,7 @@ import com.gliesereum.karma.aspect.annotation.RecordCreate;
 import com.gliesereum.karma.aspect.annotation.RecordUpdate;
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.entity.record.BaseRecordPageEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
@@ -193,7 +194,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public Page<BaseRecordDto> getByClientForBusiness(List<UUID> corporationIds, UUID clientId, Integer page, Integer size) {
-        corporationIds.forEach(f -> businessPermissionFacade.checkCurrentUserPermissionWorkWithClient(f));
+        corporationIds.forEach(f -> businessPermissionFacade.checkPermissionByCorporation(f, BusinessPermission.VIEW_BUSINESS_INFO));
         Page<BaseRecordDto> result = null;
         List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(corporationIds);
         if (CollectionUtils.isNotEmpty(businessIds)) {
@@ -228,9 +229,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        if (!businessPermissionFacade.currentUserIsOwnerBusiness(businessId)) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-        }
+        businessPermissionFacade.checkPermissionByBusiness(businessId, BusinessPermission.VIEW_BUSINESS_INFO);
+
         LocalDateTime fromDate;
         LocalDateTime toDate;
         if (CollectionUtils.isEmpty(statuses)) {
@@ -297,7 +297,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (CollectionUtils.isEmpty(search.getBusinessIds())) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        businessPermissionFacade.checkCurrentUserPermissionToBusinessInfo(search.getBusinessIds());
+
+        businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds(), BusinessPermission.VIEW_BUSINESS_INFO);
         setSearch(search);
         List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
                 search.getStatus(), search.getProcesses(), search.getBusinessIds(), search.getFrom(), search.getTo());
@@ -459,11 +460,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Transactional
     @RecordCreate
     public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
-        SecurityUtil.checkUserByBanStatus();
-        if (dto.getBusinessId() != null &&
-                !businessPermissionFacade.currentUserIsWorkerBusiness(dto.getBusinessId())) {
-            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
-        }
+        businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.WORK_WITH_RECORD);
         if (dto.getClientId() != null) {
             List<PublicUserDto> users = exchangeService.findPublicUserByIds(Arrays.asList(dto.getClientId()));
             if (CollectionUtils.isNotEmpty(users)) {
@@ -714,13 +711,12 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private void checkPermissionToUpdate(BaseRecordDto dto) {
         if (SecurityUtil.isAnonymous()) throw new ClientException(USER_NOT_AUTHENTICATION);
         if (dto == null) throw new ClientException(RECORD_NOT_FOUND);
-        boolean ownerPermission = businessPermissionFacade.currentUserIsOwnerBusiness(dto.getBusinessId());
-        boolean workerPermission = businessPermissionFacade.currentUserIsWorkerBusiness(dto.getBusinessId());
+        boolean workerPermission = businessPermissionFacade.isHavePermissionByBusiness(dto.getBusinessId(), BusinessPermission.WORK_WITH_RECORD);
         boolean userPermission = false;
         if (dto.getClientId().equals(SecurityUtil.getUserId())) {
             userPermission = true;
         }
-        if (!BooleanUtils.or(new Boolean[]{ownerPermission, workerPermission, userPermission})) {
+        if (!BooleanUtils.or(new Boolean[]{workerPermission, userPermission})) {
             throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_RECORD);
         }
     }

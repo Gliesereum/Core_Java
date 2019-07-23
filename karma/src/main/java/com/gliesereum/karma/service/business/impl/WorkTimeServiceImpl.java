@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.WorkTimeEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkTimeRepository;
 import com.gliesereum.karma.service.business.WorkTimeService;
@@ -141,7 +142,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                 break;
             }
             case BUSINESS: {
-                businessPermissionFacade.checkCurrentUserIsOwnerBusiness(objectId);
+                businessPermissionFacade.checkPermissionByBusiness(objectId, BusinessPermission.BUSINESS_ADMINISTRATION);
                 break;
             }
         }

@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.business.impl;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -79,9 +80,6 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     private BusinessEsService businessEsService;
 
     @Autowired
-    private ClientEsService clientEsService;
-
-    @Autowired
     private BusinessDescriptionService businessDescriptionService;
 
     @Autowired
@@ -119,8 +117,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             if (dto.getId() == null) {
                 throw new ClientException(ID_NOT_SPECIFIED);
             }
-
-            businessPermissionFacade.currentUserIsOwnerBusiness(dto.getId());
+            businessPermissionFacade.checkPermissionByBusiness(dto.getId(), BusinessPermission.BUSINESS_ADMINISTRATION);
             checkCorporationId(dto);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
@@ -297,7 +294,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (id == null) {
             throw new ClientException(ID_NOT_SPECIFIED);
         }
-        businessPermissionFacade.currentUserIsOwnerBusiness(id);
+        businessPermissionFacade.checkPermissionByBusiness(id, BusinessPermission.BUSINESS_ADMINISTRATION);
         BaseBusinessDto dto = getById(id);
         if (dto == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);

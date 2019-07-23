@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.service.impl;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.service.PackageEntity;
 import com.gliesereum.karma.model.repository.jpa.service.PackageRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
@@ -212,6 +213,6 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         if (business == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        businessPermissionFacade.checkCurrentUserIsOwnerBusiness(dto.getBusinessId());
+        businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
     }
 }

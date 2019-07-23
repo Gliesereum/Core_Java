@@ -1,6 +1,7 @@
 package com.gliesereum.karma.service.chat.impl;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.chat.ChatSupportEntity;
 import com.gliesereum.karma.model.repository.jpa.chat.ChatSupportRepository;
 import com.gliesereum.karma.service.chat.ChatSupportService;
@@ -48,7 +49,7 @@ public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, C
     public ChatSupportDto create(ChatSupportDto dto) {
         ChatSupportDto result = null;
         checkPermission(dto);
-        if (dto != null && !chatSupportRepository.existsByBusinessIdAndUserId(dto.getBusinessId(), dto.getUserId())) {
+        if ((dto != null) && !chatSupportRepository.existsByBusinessIdAndUserId(dto.getBusinessId(), dto.getUserId())) {
             result = super.create(dto);
         }
         return result;
@@ -96,9 +97,9 @@ public class ChatSupportServiceImpl extends DefaultServiceImpl<ChatSupportDto, C
     }
 
     private void checkPermission(ChatSupportDto dto) {
-        if (dto == null || dto.getBusinessId() == null) {
+        if ((dto == null) || (dto.getBusinessId() == null)) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        businessPermissionFacade.checkCurrentUserPermissionToBusinessInfo(dto.getBusinessId());
+        businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
     }
 }

@@ -2,6 +2,7 @@ package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.document.BusinessDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
@@ -131,19 +132,19 @@ public class BaseBusinessController {
 
     @PostMapping("/media")
     public MediaDto create(@RequestBody @Valid MediaDto media) {
-        businessPermissionFacade.checkCurrentUserIsOwnerBusiness(media.getObjectId());
+        businessPermissionFacade.checkPermissionByBusiness(media.getObjectId(), BusinessPermission.BUSINESS_ADMINISTRATION);
         return mediaService.create(media);
     }
 
     @PutMapping("/media")
     public MediaDto update(@RequestBody @Valid MediaDto media) {
-        businessPermissionFacade.checkCurrentUserIsOwnerBusiness(media.getObjectId());
+        businessPermissionFacade.checkPermissionByBusiness(media.getObjectId(), BusinessPermission.BUSINESS_ADMINISTRATION);
         return mediaService.update(media);
     }
 
     @DeleteMapping("/{id}/media/{mediaId}")
     public MapResponse delete(@PathVariable("id") UUID businessId, @PathVariable("mediaId") UUID mediaId) {
-        businessPermissionFacade.checkCurrentUserIsOwnerBusiness(businessId);
+        businessPermissionFacade.checkPermissionByBusiness(businessId, BusinessPermission.BUSINESS_ADMINISTRATION);
         mediaService.delete(mediaId, businessId);
         return new MapResponse("true");
     }
