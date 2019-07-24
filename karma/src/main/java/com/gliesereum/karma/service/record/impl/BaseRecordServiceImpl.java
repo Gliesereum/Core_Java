@@ -219,13 +219,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<LiteRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities) {
-        List<LiteRecordDto> result = converter.convert(entities, LiteRecordDto.class);
+    public List<BaseRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities) {
+        List<BaseRecordDto> result = converter.convert(entities, BaseRecordDto.class);
         return setServicePriceIds(result);
     }
 
     @Override
-    public List<LiteRecordDto> getLiteRecordDtoByBusiness(UUID businessId, List<StatusRecord> statuses, Long from, Long to) {
+    public List<BaseRecordDto> getLiteRecordDtoByBusiness(UUID businessId, List<StatusRecord> statuses, Long from, Long to) {
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
@@ -250,7 +250,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             throw new ClientException(TIME_IS_NOT_CORRECT);
         }
         List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordInAndBeginBetween(businessId, statuses, fromDate, toDate);
-        return converter.convert(entities, LiteRecordDto.class);
+        return converter.convert(entities, BaseRecordDto.class);
     }
 
     @Override
@@ -356,6 +356,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         BaseRecordDto dto = getById(idRecord);
         checkPermissionToUpdate(dto);
         dto.setBegin(begin);
+        setServicePriceIds(Arrays.asList(dto));
         LocalDateTime finish = begin.plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId()));
         dto.setFinish(finish);
         checkRecord(dto);
@@ -836,10 +837,10 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 Map<UUID, List<ServicePriceDto>> recordServices = recordServiceService.getServicePriceMap(recordIds);
                 if (MapUtils.isNotEmpty(recordServices)) {
                     records.forEach(record -> {
+                        record.setServices(recordServices.get(record.getId()));
                         if (record.getServices() == null) {
                             record.setServices(new ArrayList<>());
                         }
-                        record.setServices(recordServices.get(record.getId()));
 
                     });
                 }
@@ -848,9 +849,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return records;
     }
 
-    private List<LiteRecordDto> setServicePriceIds(List<LiteRecordDto> records) {
+    private List<BaseRecordDto> setServicePriceIds(List<BaseRecordDto> records) {
         if (CollectionUtils.isNotEmpty(records)) {
-            Map<UUID, List<UUID>> mapIds = recordServiceService.getServicePriceIds(records.stream().map(LiteRecordDto::getId).collect(Collectors.toList()));
+            Map<UUID, List<UUID>> mapIds = recordServiceService.getServicePriceIds(records.stream().map(BaseRecordDto::getId).collect(Collectors.toList()));
             records.forEach(r -> r.setServicesIds(mapIds.get(r.getId())));
         }
         return records;

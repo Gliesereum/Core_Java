@@ -1,7 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.analytics;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,5 +27,5 @@ public class CountAnalyticItemDto<T extends DefaultDto> {
 
     private Double usagePercent;
 
-    private Set<LiteRecordDto> records;
+    private Set<BaseRecordDto> records;
 }

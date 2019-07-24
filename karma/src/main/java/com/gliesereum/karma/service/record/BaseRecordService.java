@@ -53,9 +53,9 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     BaseRecordDto updateStatusPay(UUID idRecord, StatusPay status);
 
-    List<LiteRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities);
+    List<BaseRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities);
 
-    List<LiteRecordDto> getLiteRecordDtoByBusiness(UUID businessId, List<StatusRecord> statuses, Long from, Long to);
+    List<BaseRecordDto> getLiteRecordDtoByBusiness(UUID businessId, List<StatusRecord> statuses, Long from, Long to);
 
     void setFullModelRecord(List<BaseRecordDto> list);
 
