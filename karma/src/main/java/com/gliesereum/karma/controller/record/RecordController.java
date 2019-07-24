@@ -95,7 +95,7 @@ public class RecordController {
     }
 
     @GetMapping("/lite/by-business")
-    public List<LiteRecordDto> getAllByBusinessId(@RequestParam("businessId") UUID businessId,
+    public List<BaseRecordDto> getAllByBusinessId(@RequestParam("businessId") UUID businessId,
                                                   @RequestParam("statuses") List<StatusRecord> statuses,
                                                   @RequestParam("from") Long from,
                                                   @RequestParam("to") Long to) {

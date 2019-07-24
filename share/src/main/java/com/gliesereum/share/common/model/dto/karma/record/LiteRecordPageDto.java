@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class LiteRecordPageDto {
 
-   private List<LiteRecordDto> records = new ArrayList<>();
+   private List<BaseRecordDto> records = new ArrayList<>();
 
    private int count = 0;
 }

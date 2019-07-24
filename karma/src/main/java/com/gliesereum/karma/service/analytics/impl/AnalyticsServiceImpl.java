@@ -5,7 +5,6 @@ import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.analytics.AnalyticsService;
-import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.record.BaseRecordService;
@@ -17,7 +16,7 @@ import com.gliesereum.share.common.model.dto.karma.analytics.*;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteWorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -66,7 +65,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     @Override
     public AnalyticDto getAnalyticByFilter(AnalyticFilterDto filter) {
         AnalyticDto result = new AnalyticDto();
-        List<LiteRecordDto> records = getRecords(filter);
+        List<BaseRecordDto> records = getRecords(filter);
         FullAnalyticDto dataToAnalytic = getDataToAnalytic(records, filter);
         mapToAnalyticModel(result, dataToAnalytic.getPackages(), AnalyticDto::setPackages);
         mapToAnalyticModel(result, dataToAnalytic.getServices(), AnalyticDto::setServices);
@@ -79,7 +78,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     @Override
     public CountAnalyticDto getCountAnalyticByFilter(AnalyticFilterDto filter, boolean includeRecord) {
         CountAnalyticDto result = new CountAnalyticDto();
-        List<LiteRecordDto> records = getRecords(filter);
+        List<BaseRecordDto> records = getRecords(filter);
         FullAnalyticDto dataToAnalytic = getDataToAnalytic(records, filter);
         mapToCountAnalyticModel(result, dataToAnalytic.getPackages(), CountAnalyticDto::setPackages, includeRecord);
         mapToCountAnalyticModel(result, dataToAnalytic.getServices(), CountAnalyticDto::setServices, includeRecord);
@@ -117,15 +116,15 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     private <T extends DefaultDto> void mapToAnalyticModel(AnalyticDto target, Map<String, FullAnalyticItemDto<T>> source,
-                                                           BiConsumer<AnalyticDto, Map<String, Set<LiteRecordDto>>> valueMapper) {
+                                                           BiConsumer<AnalyticDto, Map<String, Set<BaseRecordDto>>> valueMapper) {
         if (MapUtils.isNotEmpty(source)) {
-            Map<String, Set<LiteRecordDto>> value = source.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> i.getValue().getRecords()));
+            Map<String, Set<BaseRecordDto>> value = source.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> i.getValue().getRecords()));
             valueMapper.accept(target, value);
         }
     }
 
-    private List<LiteRecordDto> getRecords(AnalyticFilterDto filter) {
-        List<LiteRecordDto> records = null;
+    private List<BaseRecordDto> getRecords(AnalyticFilterDto filter) {
+        List<BaseRecordDto> records = null;
         checkFilter(filter);
         List<BaseRecordEntity> entities = baseRecordRepository.getRecordsByFilter(filter);
         if (CollectionUtils.isNotEmpty(entities)) {
@@ -134,13 +133,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         return records;
     }
 
-    private FullAnalyticDto getDataToAnalytic(List<LiteRecordDto> records, AnalyticFilterDto filter) {
+    private FullAnalyticDto getDataToAnalytic(List<BaseRecordDto> records, AnalyticFilterDto filter) {
         FullAnalyticDto result = new FullAnalyticDto();
 
-        Map<UUID, Set<LiteRecordDto>> services = new HashMap<>();
-        Map<UUID, Set<LiteRecordDto>> packages = new HashMap<>();
-        Map<UUID, Set<LiteRecordDto>> workers = new HashMap<>();
-        Map<UUID, Set<LiteRecordDto>> spaces = new HashMap<>();
+        Map<UUID, Set<BaseRecordDto>> services = new HashMap<>();
+        Map<UUID, Set<BaseRecordDto>> packages = new HashMap<>();
+        Map<UUID, Set<BaseRecordDto>> workers = new HashMap<>();
+        Map<UUID, Set<BaseRecordDto>> spaces = new HashMap<>();
 
         if (CollectionUtils.isNotEmpty(records)) {
             records.forEach(record -> {
@@ -183,7 +182,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         return result;
     }
 
-    private <T extends DefaultDto> FullAnalyticItemDto<T> getAnalyticItem(T object, Set<LiteRecordDto> records) {
+    private <T extends DefaultDto> FullAnalyticItemDto<T> getAnalyticItem(T object, Set<BaseRecordDto> records) {
         FullAnalyticItemDto<T> analyticItem = new FullAnalyticItemDto<>();
         analyticItem.setObject(object);
         analyticItem.setRecords((records != null) ? records : new HashSet<>());
@@ -216,13 +215,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         return map;
     }
 
-    private Set<LiteRecordDto> getNewRecordTreeSet() {
-        return new TreeSet<>(Comparator.comparing(LiteRecordDto::getBegin));
+    private Set<BaseRecordDto> getNewRecordTreeSet() {
+        return new TreeSet<>(Comparator.comparing(BaseRecordDto::getBegin));
     }
 
-    private void putToMapIfKeyNotNull(Map<UUID, Set<LiteRecordDto>> map, UUID key, LiteRecordDto record) {
+    private void putToMapIfKeyNotNull(Map<UUID, Set<BaseRecordDto>> map, UUID key, BaseRecordDto record) {
         if (key != null) {
-            Set<LiteRecordDto> value = map.getOrDefault(key, getNewRecordTreeSet());
+            Set<BaseRecordDto> value = map.getOrDefault(key, getNewRecordTreeSet());
             value.add(record);
             map.put(key, value);
         }
