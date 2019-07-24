@@ -46,18 +46,18 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Service
 public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> implements UserService {
 
-    @Value("${image-url.user.avatar}")
-    private String defaultUserAvatar;
-
-    @Value("${image-url.user.cover}")
-    private String defaultUserCover;
-
     private static final String URL_PATTERN = "^(https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
     private static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
     private static final Class<UserDto> DTO_CLASS = UserDto.class;
     private static final Class<UserEntity> ENTITY_CLASS = UserEntity.class;
 
     private final UserRepository userRepository;
+
+    @Value("${image-url.user.avatar}")
+    private String defaultUserAvatar;
+
+    @Value("${image-url.user.cover}")
+    private String defaultUserCover;
 
     @Autowired
     private UserEmailService emailService;

@@ -42,16 +42,16 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Service
 public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, CorporationEntity> implements CorporationService {
 
+    private static final Class<CorporationDto> DTO_CLASS = CorporationDto.class;
+    private static final Class<CorporationEntity> ENTITY_CLASS = CorporationEntity.class;
+
+    private final CorporationRepository corporationRepository;
+
     @Value("${image-url.corporation.logo}")
     private String defaultCorporationLogo;
 
     @Value("${image-url.corporation.cover}")
     private String defaultCorporationCover;
-
-    private static final Class<CorporationDto> DTO_CLASS = CorporationDto.class;
-    private static final Class<CorporationEntity> ENTITY_CLASS = CorporationEntity.class;
-
-    private final CorporationRepository corporationRepository;
 
     @Autowired
     private UserCorporationService userCorporationService;
