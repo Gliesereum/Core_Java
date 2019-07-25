@@ -62,8 +62,12 @@ public class AbstractBusinessDto extends DefaultDto {
 
     private ObjectState objectState;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime createDate;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime updateDate;
 
 }

@@ -65,8 +65,12 @@ public class CorporationDto extends DefaultDto {
 
     private ObjectState objectState;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime createDate;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime updateDate;
 
     private List<CorporationSharedOwnershipDto> corporationSharedOwnerships;
