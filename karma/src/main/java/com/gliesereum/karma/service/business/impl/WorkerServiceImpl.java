@@ -180,7 +180,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public boolean existByUserIdAndBusinessId(UUID userId, UUID businessId) {
         boolean result = false;
         if (ObjectUtils.allNotNull(userId, businessId)) {
-            result = workerRepository.existsByUserIdAndAndBusinessId(userId, businessId);
+            result = workerRepository.existsByUserIdAndBusinessId(userId, businessId);
         }
         return result;
     }
@@ -241,7 +241,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     @Override
     @Transactional
     public WorkerDto create(WorkerDto dto) {
-        checkWorker(dto.getUserId());
+        checkWorker(dto);
         checkWorkingSpace(dto);
         dto = super.create(dto);
         createWorkTimes(dto);
@@ -252,7 +252,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     @Override
     @Transactional
     public WorkerDto update(WorkerDto dto) {
-        checkWorker(dto.getUserId());
+        checkWorker(dto);
         checkWorkingSpace(dto);
         workTimeService.deleteByObjectId(dto.getId());
         createWorkTimes(dto);
@@ -265,6 +265,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
                 f.setObjectId(dto.getId());
                 f.setType(WorkTimeType.WORKER);
             });
+            workTimeService.checkWorkTimesByBusyTime(dto.getWorkTimes(), dto);
             List<WorkTimeDto> workTimes = workTimeService.create(dto.getWorkTimes());
             dto.setWorkTimes(workTimes);
         }
@@ -292,11 +293,14 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         return result;
     }
 
-    private void checkWorker(UUID userId) {
-        if (userId == null) {
+    private void checkWorker(WorkerDto dto) {
+        if (dto.getUserId() == null) {
             throw new ClientException(USER_ID_IS_EMPTY);
         }
-        if (!userExchangeService.userIsExist(userId)) {
+        if (existByUserIdAndBusinessId(dto.getUserId(), dto.getBusinessId())) {
+            throw new ClientException(USER_ALREADY_EXIST_LIKE_WORKER_IN_BUSINESS);
+        }
+        if (!userExchangeService.userIsExist(dto.getUserId())) {
             throw new ClientException(USER_NOT_FOUND);
         }
     }
@@ -308,15 +312,14 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (dto.getBusinessId() == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
+        if (!workingSpaceService.isExistByIdAndBusinessId(dto.getWorkingSpaceId(), dto.getBusinessId())) {
+            throw new ClientException(WORKING_SPACE_NOT_FOUND_IN_THIS_BUSINESS);
+        }
         BaseBusinessDto business = baseBusinessService.getById(dto.getBusinessId());
         if (business == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
         dto.setCorporationId(business.getCorporationId());
-        List<WorkingSpaceDto> workingSpaces = workingSpaceService.getByBusinessId(dto.getBusinessId(), false);
-        if (CollectionUtils.isEmpty(workingSpaces)) {
-            throw new ClientException(WORKING_SPACE_NOT_FOUND);
-        }
         businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
 
     }

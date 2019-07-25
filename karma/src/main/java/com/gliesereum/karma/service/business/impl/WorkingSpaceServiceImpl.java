@@ -4,7 +4,6 @@ import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.WorkingSpaceEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkingSpaceRepository;
-import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.business.WorkingSpaceServicePriceService;
 import com.gliesereum.karma.service.business.descriptions.WorkingSpaceDescriptionService;
@@ -138,6 +137,11 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             result = list.stream().collect(Collectors.toMap(LiteWorkingSpaceDto::getId, i -> i));
         }
         return result;
+    }
+
+    @Override
+    public boolean isExistByIdAndBusinessId(UUID id, UUID businessId) {
+        return workingSpaceRepository.existsByIdAndBusinessId(id, businessId);
     }
 
     private List<LiteWorkingSpaceDto> getLiteWorkingSpaceByIds(List<UUID> ids) {
