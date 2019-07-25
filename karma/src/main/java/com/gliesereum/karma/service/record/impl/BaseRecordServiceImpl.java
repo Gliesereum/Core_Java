@@ -280,7 +280,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     private void setClients(List<BaseRecordDto> result) {
         if (CollectionUtils.isNotEmpty(result)) {
-            Set<UUID> clientIds = result.stream().map(BaseRecordDto::getClientId).collect(Collectors.toSet());
+            Set<UUID> clientIds = result.stream().filter(i -> i.getClientId() != null).map(BaseRecordDto::getClientId).collect(Collectors.toSet());
             Set<UUID> businessIds = result.stream().map(BaseRecordDto::getBusinessId).collect(Collectors.toSet());
             Map<UUID, ClientDto> clientMap = clientFacade.getClientMapByIds(clientIds, businessIds);
             result.forEach(r -> {
