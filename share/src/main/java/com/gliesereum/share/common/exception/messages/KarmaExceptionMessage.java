@@ -14,23 +14,23 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS = new ExceptionMessage(1420, 401, "You don't have permission to action this business");
     public static final ExceptionMessage BUSINESS_NOT_FOUND = new ExceptionMessage(1421, 404, "Business not found");
     public static final ExceptionMessage BUSINESS_ID_EMPTY = new ExceptionMessage(1422, 404, "Business id is empty");
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_CREATE_BUSINESS = new ExceptionMessage(1423, 401, "You don't have permission to create business");
+    public static final ExceptionMessage BUSINESS_NOT_HAVE_WORKING_TIME = new ExceptionMessage(1423, 401, "Business does not have work time");
 
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_SERVICE = new ExceptionMessage(1424, 401, "You don't have permission to action this service");
+    public static final ExceptionMessage WORKING_TIME_BUSY = new ExceptionMessage(1424, 403, "This time is busy other worker");
 
     public static final ExceptionMessage SERVICE_NOT_FOUND = new ExceptionMessage(1425, 400, "Service not found");
     public static final ExceptionMessage SERVICE_NOT_CHOOSE = new ExceptionMessage(1426, 400, "Service not choose");
     public static final ExceptionMessage PACKAGE_NOT_FOUND = new ExceptionMessage(1427, 400, "Package not found ");
 
-    public static final ExceptionMessage WORKING_SPACE_NOT_FOUND_IN_THIS_BUSINESS = new ExceptionMessage(1428, 404, "Business don't have this working space ");
+    public static final ExceptionMessage WORKING_SPACE_NOT_FOUND_IN_THIS_BUSINESS = new ExceptionMessage(1428, 404, "Business does not have this working space ");
     public static final ExceptionMessage WORKING_SPACE_ID_EMPTY = new ExceptionMessage(1429, 400, "Working space id is null ");
     public static final ExceptionMessage NOT_ENOUGH_TIME_FOR_RECORD = new ExceptionMessage(1430, 400, "Not enough time for create record, choose another time");
     public static final ExceptionMessage RECORD_NOT_FOUND = new ExceptionMessage(1431, 404, "Record not found");
 
     public static final ExceptionMessage TIME_BEGIN_EMPTY = new ExceptionMessage(1432, 400, "Time begin is empty");
     public static final ExceptionMessage WORKING_SPACE_NOT_FOUND = new ExceptionMessage(1433, 404, "Working space not found");
-    public static final ExceptionMessage BUSINESS_NOT_WORK_THIS_DAY = new ExceptionMessage(1434, 400, "Business don't work this day");
-    public static final ExceptionMessage BUSINESS_NOT_WORK_THIS_TIME = new ExceptionMessage(1435, 400, "Business don't work this time");
+    public static final ExceptionMessage BUSINESS_NOT_WORK_THIS_DAY = new ExceptionMessage(1434, 400, "Business does not work this day");
+    public static final ExceptionMessage BUSINESS_NOT_WORK_THIS_TIME = new ExceptionMessage(1435, 400, "Business does not work this time");
 
     public static final ExceptionMessage WORKING_TIME_EXIST_IN_THIS_BUSINESS = new ExceptionMessage(1436, 400, "Time working already exist in this business");
     public static final ExceptionMessage WORKING_TIME_NOT_FOUND = new ExceptionMessage(1437, 401, "Time working not found");
@@ -62,7 +62,7 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage SERVICE_ID_IS_EMPTY = new ExceptionMessage(1460, 400, "Service id is empty");
     public static final ExceptionMessage WORKING_SPACE_ID_IS_EMPTY = new ExceptionMessage(1461, 400, "Working space id is empty");
-    public static final ExceptionMessage WORKER_ID_IS_EMPTY = new ExceptionMessage(1462, 400, "Worker id is empty");
+    public static final ExceptionMessage USER_ALREADY_EXIST_LIKE_WORKER_IN_BUSINESS = new ExceptionMessage(1462, 400, "User already exist like worker in this business");
     public static final ExceptionMessage WORKER_NOT_FOUND = new ExceptionMessage(1463, 400, "Worker not found");
 
     public static final ExceptionMessage SERVICE_CLASS_ID_IS_EMPTY = new ExceptionMessage(1464, 400, "Service class id is empty");
@@ -101,5 +101,10 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage BUSINESS_MUST_BE_FROM_ONE_CORPORATION = new ExceptionMessage(1486, 400, "Business must be from one business");
 
+    public static final ExceptionMessage ALL_TYPE_NOT_EQUALS = new ExceptionMessage(1487, 400, "All type must be equals");
+
+    public static final ExceptionMessage DAYS_OF_WEEK_REPEATED = new ExceptionMessage(1488, 400, "Days can't be repeated");
+
+    public static final ExceptionMessage TYPE_IS_NULL = new ExceptionMessage(1489, 400, "Type is null");
 
 }

@@ -23,4 +23,6 @@ public interface WorkingSpaceService extends DefaultService<WorkingSpaceDto, Wor
     LiteWorkingSpaceDto getLiteWorkingSpaceById(UUID workingSpaceId);
 
     Map<UUID, LiteWorkingSpaceDto> getLiteWorkingSpaceMapByIds(Collection<UUID> collect);
+
+    boolean isExistByIdAndBusinessId(UUID id, UUID businessId);
 }
