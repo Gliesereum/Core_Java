@@ -22,16 +22,6 @@ public class BusinessAdministratorController {
     @Autowired
     private BusinessAdministratorService businessAdministratorService;
 
-    @GetMapping("/by-corporation")
-    public List<DetailedBusinessAdministratorDto> getByCorporation(@RequestParam("id") UUID id) {
-        return businessAdministratorService.getByCorporationId(id);
-    }
-
-    @GetMapping("/by-business")
-    public List<DetailedBusinessAdministratorDto> getByBusiness(@RequestParam("id") UUID id) {
-        return businessAdministratorService.getByBusinessId(id);
-    }
-
     @PostMapping
     private DetailedBusinessAdministratorDto create(@RequestParam("businessId") UUID businessId,
                                                     @RequestParam("userId") UUID userId) {
@@ -43,6 +33,16 @@ public class BusinessAdministratorController {
                                @RequestParam("userId") UUID userId) {
         businessAdministratorService.delete(userId, businessId);
         return MapResponse.resultTrue();
+    }
+
+    @GetMapping("/by-corporation")
+    public List<DetailedBusinessAdministratorDto> getByCorporation(@RequestParam("id") UUID id) {
+        return businessAdministratorService.getByCorporationId(id);
+    }
+
+    @GetMapping("/by-business")
+    public List<DetailedBusinessAdministratorDto> getByBusiness(@RequestParam("id") UUID id) {
+        return businessAdministratorService.getByBusinessId(id);
     }
 
     @GetMapping("/for-business")
