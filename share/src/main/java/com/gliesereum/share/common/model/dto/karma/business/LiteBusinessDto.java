@@ -40,7 +40,11 @@ public class LiteBusinessDto extends DefaultDto {
 
     private UUID businessCategoryId;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime createDate;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime updateDate;
 }

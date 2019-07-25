@@ -57,8 +57,12 @@ public class BusinessFullModel extends DefaultDto {
 
     private BusinessCategoryDto businessCategory;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime createDate;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime updateDate;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
