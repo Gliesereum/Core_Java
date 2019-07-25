@@ -108,6 +108,15 @@ public class BusinessAdministratorServiceImpl extends DefaultServiceImpl<Busines
     }
 
     @Override
+    public boolean existByUserId(UUID userId) {
+        boolean result = false;
+        if (userId != null) {
+            result = businessAdministratorRepository.existsByUserId(userId);
+        }
+        return result;
+    }
+
+    @Override
     public List<DetailedBusinessAdministratorDto> getByBusinessId(UUID businessId) {
         List<DetailedBusinessAdministratorDto> result = null;
         if (businessId != null) {

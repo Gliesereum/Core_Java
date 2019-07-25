@@ -17,6 +17,8 @@ public interface BusinessAdministratorRepository extends JpaRepository<BusinessA
 
     boolean existsByUserIdAndCorporationId(UUID userId, UUID corporationId);
 
+    boolean existsByUserId(UUID userId);
+
     void deleteByUserIdAndBusinessId(UUID userId, UUID corporationId);
 
     List<BusinessAdministratorEntity> findAllByBusinessId(UUID businessId);

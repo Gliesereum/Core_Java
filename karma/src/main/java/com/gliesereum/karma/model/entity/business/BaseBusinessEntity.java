@@ -4,11 +4,9 @@ import com.gliesereum.karma.model.entity.business.descriptions.BusinessDescripti
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +20,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "business")
+@EntityListeners(AuditingEntityListener.class)
 public class BaseBusinessEntity extends AbstractBusinessEntity {
 
     @OneToMany

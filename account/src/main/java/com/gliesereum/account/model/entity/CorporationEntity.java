@@ -5,6 +5,9 @@ import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,6 +22,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "corporation")
+@EntityListeners(AuditingEntityListener.class)
 public class CorporationEntity extends DefaultEntity {
 
     @Column(name = "name")
@@ -78,6 +82,14 @@ public class CorporationEntity extends DefaultEntity {
     @Column(name = "object_state")
     @Enumerated(EnumType.STRING)
     private ObjectState objectState;
+
+    @Column(name = "create_date")
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    @Column(name = "update_date")
+    @LastModifiedDate
+    private LocalDateTime updateDate;
 
     @OneToMany
     @JoinColumn(name = "corporation_id", insertable = false, updatable = false)

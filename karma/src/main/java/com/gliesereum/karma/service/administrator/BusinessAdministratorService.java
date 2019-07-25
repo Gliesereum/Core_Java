@@ -23,6 +23,8 @@ public interface BusinessAdministratorService extends DefaultService<BusinessAdm
 
     boolean existByUserIdCorporationId(UUID corporationId, UUID userId);
 
+    boolean existByUserId(UUID userId);
+
     List<DetailedBusinessAdministratorDto> getByBusinessId(UUID businessId);
 
     List<DetailedBusinessAdministratorDto> getByCorporationId(UUID corporationId);

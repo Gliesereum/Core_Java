@@ -5,8 +5,11 @@ import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -59,4 +62,12 @@ public class AbstractBusinessEntity extends DefaultEntity {
     @Column(name = "object_state")
     @Enumerated(EnumType.STRING)
     private ObjectState objectState;
+
+    @Column(name = "create_date")
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    @Column(name = "update_date")
+    @LastModifiedDate
+    private LocalDateTime updateDate;
 }

@@ -6,6 +6,7 @@ import com.gliesereum.karma.facade.worker.WorkerFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkerRepository;
+import com.gliesereum.karma.service.administrator.BusinessAdministratorService;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkTimeService;
 import com.gliesereum.karma.service.business.WorkerService;
@@ -67,6 +68,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
+
+    @Autowired
+    private BusinessAdministratorService businessAdministratorService;
 
     @Autowired
     public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
@@ -275,6 +279,8 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             if (user != null) {
                 List<WorkerDto> worker = findByUserId(user.getId());
                 if (CollectionUtils.isNotEmpty(worker)) {
+                    result = true;
+                } else if (businessAdministratorService.existByUserId(user.getId())) {
                     result = true;
                 } else {
                     List<BaseBusinessDto> business = baseBusinessService.getByCorporationIds(user.getCorporationIds());
