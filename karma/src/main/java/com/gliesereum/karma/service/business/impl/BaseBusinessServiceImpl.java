@@ -54,13 +54,13 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
 @Service
 public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto, BaseBusinessEntity> implements BaseBusinessService {
 
-    @Value("${image-url.business.logo}")
-    private String defaultBusinessLogo;
-
     private static final Class<BaseBusinessDto> DTO_CLASS = BaseBusinessDto.class;
     private static final Class<BaseBusinessEntity> ENTITY_CLASS = BaseBusinessEntity.class;
 
     private final BaseBusinessRepository baseBusinessRepository;
+
+    @Value("${image-url.business.logo}")
+    private String defaultBusinessLogo;
 
     @Autowired
     private ServicePriceService servicePriceService;

@@ -1,7 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.analytics;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.karma.record.LiteRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,5 +19,5 @@ public class FullAnalyticItemDto<T extends DefaultDto> {
 
     private T object;
 
-    private Set<LiteRecordDto> records = new HashSet<>();
+    private Set<BaseRecordDto> records = new HashSet<>();
 }
