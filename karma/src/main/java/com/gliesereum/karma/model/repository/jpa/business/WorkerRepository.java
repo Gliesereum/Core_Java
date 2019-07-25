@@ -26,5 +26,5 @@ public interface WorkerRepository extends JpaRepository<WorkerEntity, UUID> {
 
     boolean existsByUserIdAndCorporationId(UUID userId, UUID corporationId);
 
-    boolean existsByUserIdAndAndBusinessId(UUID userId, UUID businessId);
+    boolean existsByUserIdAndBusinessId(UUID userId, UUID businessId);
 }

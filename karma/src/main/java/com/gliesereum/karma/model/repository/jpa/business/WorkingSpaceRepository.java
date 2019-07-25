@@ -15,4 +15,6 @@ public interface WorkingSpaceRepository extends JpaRepository<WorkingSpaceEntity
     List<WorkingSpaceEntity> findByBusinessId(UUID businessId);
 
     List<WorkingSpaceEntity> findByBusinessIdOrderByIndexNumberAsc(UUID businessId);
+
+    boolean existsByIdAndBusinessId(UUID id, UUID businessId);
 }
