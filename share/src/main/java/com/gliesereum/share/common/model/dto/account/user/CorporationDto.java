@@ -65,6 +65,10 @@ public class CorporationDto extends DefaultDto {
 
     private ObjectState objectState;
 
+    private LocalDateTime createDate;
+
+    private LocalDateTime updateDate;
+
     private List<CorporationSharedOwnershipDto> corporationSharedOwnerships;
 
     private List<CorporationEmployeeDto> corporationEmployees;

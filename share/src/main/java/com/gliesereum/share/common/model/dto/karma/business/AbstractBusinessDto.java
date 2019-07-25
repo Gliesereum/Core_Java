@@ -5,8 +5,11 @@ import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.Column;
 import javax.validation.constraints.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -58,5 +61,9 @@ public class AbstractBusinessDto extends DefaultDto {
     private BusinessCategoryDto businessCategory;
 
     private ObjectState objectState;
+
+    private LocalDateTime createDate;
+
+    private LocalDateTime updateDate;
 
 }

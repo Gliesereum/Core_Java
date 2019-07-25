@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -55,6 +56,10 @@ public class BusinessFullModel extends DefaultDto {
     private UUID businessCategoryId;
 
     private BusinessCategoryDto businessCategory;
+
+    private LocalDateTime createDate;
+
+    private LocalDateTime updateDate;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 

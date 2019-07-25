@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -38,4 +39,8 @@ public class LiteBusinessDto extends DefaultDto {
     private Integer timeZone;
 
     private UUID businessCategoryId;
+
+    private LocalDateTime createDate;
+
+    private LocalDateTime updateDate;
 }
