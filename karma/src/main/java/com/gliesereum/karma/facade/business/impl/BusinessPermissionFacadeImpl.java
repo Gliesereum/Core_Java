@@ -2,6 +2,7 @@ package com.gliesereum.karma.facade.business.impl;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
+import com.gliesereum.karma.service.administrator.BusinessAdministratorService;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.es.ClientEsService;
@@ -38,6 +39,9 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
     @Autowired
     private BaseBusinessService baseBusinessService;
 
+    @Autowired
+    private BusinessAdministratorService businessAdministratorService;
+
     @Override
     public void checkPermissionByBusiness(UUID businessId, BusinessPermission businessPermission) {
         if (!isHavePermissionByBusiness(businessId, businessPermission)) {
@@ -56,13 +60,11 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
                     break;
                 case WORK_WITH_CHAT:
                 case VIEW_BUSINESS_INFO:
-                    havePermission = currentUserIsOwnerBusiness(businessId) || currentUserIsWorkerBusiness(businessId);
+                case WORK_WITH_RECORD:
+                    havePermission = currentUserIsOwnerBusiness(businessId) || currentUserIdAdminBusiness(businessId) || currentUserIsWorkerBusiness(businessId);
                     break;
                 case VIEW_PHONE:
-                    havePermission = currentUserIsOwnerBusiness(businessId);
-                    break;
-                case WORK_WITH_RECORD:
-                    havePermission = currentUserIsOwnerBusiness(businessId) || currentUserIsWorkerBusiness(businessId);
+                    havePermission = currentUserIsOwnerBusiness(businessId) || currentUserIdAdminBusiness(businessId);
                     break;
             }
         }
@@ -102,14 +104,12 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
                     havePermission = isOwner(corporationId, userId, userCorporationIds);
                     break;
                 case WORK_WITH_CHAT:
+                case WORK_WITH_RECORD:
                 case VIEW_BUSINESS_INFO:
-                    havePermission = isOwner(corporationId, userId, userCorporationIds) || isWorker(corporationId, userId);
+                    havePermission = isOwner(corporationId, userId, userCorporationIds) || isAdmin(corporationId, userId) || isWorker(corporationId, userId);
                     break;
                 case VIEW_PHONE:
-                    havePermission = isOwner(corporationId, userId, userCorporationIds);
-                    break;
-                case WORK_WITH_RECORD:
-                    havePermission = isOwner(corporationId, userId, userCorporationIds) || isWorker(corporationId, userId);
+                    havePermission = isOwner(corporationId, userId, userCorporationIds) || isAdmin(corporationId, userId);
                     break;
             }
         }
@@ -126,14 +126,7 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
         return result;
     }
 
-    @Override
-    public boolean isOwner(UUID corporationId, UUID currentUserId, Collection<UUID> currentUserCorporationIds) {
-        boolean result = false;
-        if (ObjectUtils.allNotNull(corporationId, currentUserId, currentUserCorporationIds)) {
-            result = CollectionUtils.isNotEmpty(currentUserCorporationIds) && currentUserCorporationIds.contains(corporationId);
-        }
-        return result;
-    }
+
 
     @Override
     public boolean currentUserIsWorkerBusiness(UUID businessId) {
@@ -146,10 +139,38 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
     }
 
     @Override
+    public boolean currentUserIdAdminBusiness(UUID businessId) {
+        SecurityUtil.checkUserByBanStatus();
+        boolean result = false;
+        if (businessId != null) {
+            result = businessAdministratorService.existByUserIdBusinessId(SecurityUtil.getUserId(), businessId);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean isOwner(UUID corporationId, UUID currentUserId, Collection<UUID> currentUserCorporationIds) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(corporationId, currentUserId, currentUserCorporationIds)) {
+            result = CollectionUtils.isNotEmpty(currentUserCorporationIds) && currentUserCorporationIds.contains(corporationId);
+        }
+        return result;
+    }
+
+    @Override
     public boolean isWorker(UUID corporationId, UUID currentUserId) {
         boolean result = false;
         if (ObjectUtils.allNotNull(corporationId, currentUserId)) {
             result = workerService.existByUserIdAndCorporationId(currentUserId, corporationId);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean isAdmin(UUID corporationId, UUID currentUserId) {
+        boolean result = false;
+        if (ObjectUtils.allNotNull(corporationId, currentUserId)) {
+            result = businessAdministratorService.existByUserIdCorporationId(corporationId, currentUserId);
         }
         return result;
     }

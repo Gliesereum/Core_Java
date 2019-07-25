@@ -23,9 +23,12 @@ public interface BusinessPermissionFacade {
     boolean currentUserIsOwnerBusiness(UUID businessId);
     boolean currentUserIsWorkerBusiness(UUID businessId);
 
+    boolean currentUserIdAdminBusiness(UUID businessId);
+
 
     boolean isOwner(UUID corporationId, UUID currentUserId, Collection<UUID> currentUserCorporationIds);
     boolean isWorker(UUID corporationId, UUID currentUserId);
+    boolean isAdmin(UUID corporationId, UUID currentUserId);
 
     void checkCurrentUserPermissionToClient(UUID corporationId, UUID clientId);
 }
