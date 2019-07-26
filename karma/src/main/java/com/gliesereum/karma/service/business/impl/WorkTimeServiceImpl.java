@@ -9,11 +9,13 @@ import com.gliesereum.karma.service.business.WorkTimeService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.AdditionalClientException;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
+import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -182,9 +184,14 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                             if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
                                     ((f.getFrom().plusMinutes(1).isAfter(workerTimeWork.getFrom()) && f.getFrom().minusMinutes(1).isBefore(workerTimeWork.getTo())) || (
                                             f.getTo().minusMinutes(1).isBefore(workerTimeWork.getTo()) && f.getTo().plusMinutes(1).isAfter(workerTimeWork.getFrom())))) {
-                                throw new ClientException("This time is busy other worker on: ".concat(f.getDayOfWeek().toString())
-                                        .concat(" from: ").concat(workerTimeWork.getFrom().toString())
-                                        .concat(" to: ").concat(workerTimeWork.getTo().toString()), 1424, 403);
+                                throw new AdditionalClientException(
+                                        WORKING_TIME_BUSY,
+                                        new MapResponse().builder()
+                                                .put("day", f.getDayOfWeek().toString())
+                                                .put("from", workerTimeWork.getFrom().toString())
+                                                .put("to", workerTimeWork.getTo().toString())
+                                                .build());
+
                             }
                         });
                     }

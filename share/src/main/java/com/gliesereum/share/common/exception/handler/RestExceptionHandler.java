@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.exception.handler;
 
 import com.gliesereum.share.common.exception.CustomException;
+import com.gliesereum.share.common.exception.client.AdditionalClientException;
 import com.gliesereum.share.common.exception.response.ErrorResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +40,17 @@ import static com.gliesereum.share.common.exception.messages.MediaExceptionMessa
 public class RestExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestExceptionHandler.class);
+
+    @ExceptionHandler(AdditionalClientException.class)
+    public ResponseEntity<ErrorResponse> handleAdditionalClientException(AdditionalClientException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setCode(ex.getErrorCode());
+        errorResponse.setMessage(ex.getMessage());
+        errorResponse.setHttpCode(ex.getHttpCode());
+        errorResponse.setPath(ex.getOriginalPath());
+        errorResponse.setAdditional(ex.getAdditional());
+        return buildResponse(errorResponse, ex);
+    }
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex, WebRequest request) {
