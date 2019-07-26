@@ -242,18 +242,20 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     private void checkOpportunityForCreateWorkTime(List<WorkTimeDto> list) {
         if (CollectionUtils.isNotEmpty(list)) {
             WorkTimeDto dto = list.get(0);
-            switch (dto.getType()) {
-                case BUSINESS: {
-                    checkWorkTimesCorrect(list);
-                    break;
-                }
-                case WORKER: {
-                    WorkerDto worker = workerService.getById(dto.getObjectId());
-                    if (worker == null) {
-                        throw new ClientException(WORKER_NOT_FOUND);
+            if (dto.getType() != null) {
+                switch (dto.getType()) {
+                    case BUSINESS: {
+                        checkWorkTimesCorrect(list);
+                        break;
                     }
-                    checkWorkTimesByBusyTime(list, worker);
-                    break;
+                    case WORKER: {
+                        WorkerDto worker = workerService.getById(dto.getObjectId());
+                        if (worker == null) {
+                            throw new ClientException(WORKER_NOT_FOUND);
+                        }
+                        checkWorkTimesByBusyTime(list, worker);
+                        break;
+                    }
                 }
             }
         }

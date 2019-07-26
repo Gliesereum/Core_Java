@@ -297,7 +297,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (dto.getUserId() == null) {
             throw new ClientException(USER_ID_IS_EMPTY);
         }
-        if (existByUserIdAndBusinessId(dto.getUserId(), dto.getBusinessId())) {
+        if (dto.getId() == null && existByUserIdAndBusinessId(dto.getUserId(), dto.getBusinessId())) {
             throw new ClientException(USER_ALREADY_EXIST_LIKE_WORKER_IN_BUSINESS);
         }
         if (!userExchangeService.userIsExist(dto.getUserId())) {
