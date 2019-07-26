@@ -11,7 +11,6 @@ import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.AdditionalClientException;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.exception.messages.ExceptionMessage;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
@@ -182,8 +181,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                 }
             });
             if (MapUtils.isNotEmpty(mapBusinessTimeException)) {
-                throw new AdditionalClientException(
-                        new ExceptionMessage(1435, 403, "These days business hours are only"), mapBusinessTimeException);
+                throw new AdditionalClientException(BUSINESS_TIME_ONLY, mapBusinessTimeException);
             }
             List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
             if (workers.size() > 1) {

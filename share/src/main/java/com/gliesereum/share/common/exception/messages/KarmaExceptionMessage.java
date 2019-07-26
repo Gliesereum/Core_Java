@@ -107,4 +107,6 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage TYPE_IS_NULL = new ExceptionMessage(1489, 400, "Type is null");
 
+    public static final ExceptionMessage BUSINESS_TIME_ONLY = new ExceptionMessage(1490, 403, "These days business hours are only");
+
 }
