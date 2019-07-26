@@ -9,6 +9,7 @@ import com.gliesereum.karma.service.business.WorkTimeService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.exception.client.AdditionalClientException;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
@@ -17,6 +18,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,34 +161,47 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                 throw new ClientException(BUSINESS_NOT_HAVE_WORKING_TIME);
             }
             Map<DayOfWeek, WorkTimeDto> mapBusinessWorkTime = business.getWorkTimes().stream().collect(Collectors.toMap(WorkTimeDto::getDayOfWeek, w -> w));
+            Map<String, Object> mapBusinessDayException = new HashMap<>();
             list.forEach(f -> {
                 WorkTimeDto businessTimeWork = mapBusinessWorkTime.get(f.getDayOfWeek());
                 if (businessTimeWork == null || !businessTimeWork.getIsWork() && f.getIsWork()) {
-                    throw new ClientException("Business does not work in this day: ".concat(f.getDayOfWeek().toString()), 1434, 400);
-                }
-                if (f.getIsWork() && (businessTimeWork.getFrom().isAfter(f.getFrom()) ||
-                        businessTimeWork.getTo().isBefore(f.getTo()))) {
-                    throw new ClientException("Business work this day: ".concat(f.getDayOfWeek().toString())
-                            .concat(" only from: ").concat(businessTimeWork.getFrom().toString())
-                            .concat(" to: ").concat(businessTimeWork.getTo().toString()), 1435, 400);
+                    mapBusinessDayException.put(f.getDayOfWeek().name(), false);
                 }
             });
+            if (MapUtils.isNotEmpty(mapBusinessDayException)) {
+                throw new AdditionalClientException(BUSINESS_NOT_WORK_THIS_DAY, mapBusinessDayException);
+            }
+            Map<String, Object> mapBusinessTimeException = new HashMap<>();
+            list.forEach(f -> {
+                WorkTimeDto businessTimeWork = mapBusinessWorkTime.get(f.getDayOfWeek());
+                if (f.getIsWork() && (businessTimeWork.getFrom().isAfter(f.getFrom()) ||
+                        businessTimeWork.getTo().isBefore(f.getTo()))) {
+                    mapBusinessTimeException.put(f.getDayOfWeek().name(),
+                            Map.of("from", businessTimeWork.getFrom().toString(), "to", businessTimeWork.getTo().toString()));
+                }
+            });
+            if (MapUtils.isNotEmpty(mapBusinessTimeException)) {
+                throw new AdditionalClientException(BUSINESS_TIME_ONLY, mapBusinessTimeException);
+            }
             List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
             if (workers.size() > 1) {
                 workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).forEach(otherWorker -> {
                     List<WorkTimeDto> workTimes = otherWorker.getWorkTimes();
                     if (CollectionUtils.isNotEmpty(workTimes)) {
                         Map<DayOfWeek, WorkTimeDto> mapWorkerWorkTime = workTimes.stream().collect(Collectors.toMap(WorkTimeDto::getDayOfWeek, w -> w));
+                        Map<String, Object> mapWorkerTimeException = new HashMap<>();
                         list.forEach(f -> {
                             WorkTimeDto workerTimeWork = mapWorkerWorkTime.get(f.getDayOfWeek());
                             if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
                                     ((f.getFrom().plusMinutes(1).isAfter(workerTimeWork.getFrom()) && f.getFrom().minusMinutes(1).isBefore(workerTimeWork.getTo())) || (
                                             f.getTo().minusMinutes(1).isBefore(workerTimeWork.getTo()) && f.getTo().plusMinutes(1).isAfter(workerTimeWork.getFrom())))) {
-                                throw new ClientException("This time is busy other worker on: ".concat(f.getDayOfWeek().toString())
-                                        .concat(" from: ").concat(workerTimeWork.getFrom().toString())
-                                        .concat(" to: ").concat(workerTimeWork.getTo().toString()), 1424, 403);
+                                mapWorkerTimeException.put(f.getDayOfWeek().name(),
+                                        Map.of("from", workerTimeWork.getFrom().toString(), "to", workerTimeWork.getTo().toString()));
                             }
                         });
+                        if (MapUtils.isNotEmpty(mapWorkerTimeException)) {
+                            throw new AdditionalClientException(WORKING_TIME_BUSY, mapWorkerTimeException);
+                        }
                     }
                 });
             }
