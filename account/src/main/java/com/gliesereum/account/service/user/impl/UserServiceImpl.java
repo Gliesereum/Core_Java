@@ -130,6 +130,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             newUser.setLastName(publicUser.getLastName());
             newUser.setMiddleName(publicUser.getMiddleName());
             newUser.setAvatarUrl(publicUser.getAvatarUrl());
+            newUser.setGender(publicUser.getGender());
             newUser = create(newUser);
             if (newUser != null && newUser.getId() != null) {
                 UserPhoneDto phone = new UserPhoneDto();

@@ -12,6 +12,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.AdditionalClientException;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
@@ -77,7 +78,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         if (dto != null) {
             checkOpportunityForCreateWorkTime(Arrays.asList(dto));
             checkDayExist(dto);
-            checkPermission(dto.getType(), dto.getBusinessCategoryId(), dto.getObjectId());
+            checkPermission(dto.getType(), dto.getObjectId());
             result = super.create(dto);
             indexAsync(dto.getType(), result.getObjectId());
         }
@@ -91,7 +92,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         if (CollectionUtils.isNotEmpty(list)) {
             checkOpportunityForCreateWorkTime(list);
             WorkTimeDto dto = list.get(0);
-            checkPermission(dto.getType(), dto.getBusinessCategoryId(), dto.getObjectId());
+            checkPermission(dto.getType(), dto.getObjectId());
             list.forEach(this::checkDayExist);
             result = super.create(list);
             indexAsync(dto.getType(), dto.getObjectId());
@@ -106,7 +107,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         if (CollectionUtils.isNotEmpty(list)) {
             checkOpportunityForCreateWorkTime(list);
             WorkTimeDto dto = list.get(0);
-            checkPermission(dto.getType(), dto.getBusinessCategoryId(), dto.getObjectId());
+            checkPermission(dto.getType(), dto.getObjectId());
             result = super.update(list);
             indexAsync(dto.getType(), dto.getObjectId());
         }
@@ -125,7 +126,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             if (!dto.getDayOfWeek().equals(time.getDayOfWeek())) {
                 checkDayExist(dto);
             }
-            checkPermission(dto.getType(), dto.getBusinessCategoryId(), dto.getObjectId());
+            checkPermission(dto.getType(), dto.getObjectId());
             result = super.update(dto);
             indexAsync(dto.getType(), result.getObjectId());
         }
@@ -137,7 +138,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         if ((id != null) && (businessCategoryId != null)) {
             Optional<WorkTimeEntity> entity = repository.findById(id);
             entity.ifPresent(i -> {
-                checkPermission(type, businessCategoryId, i.getObjectId());
+                checkPermission(type, i.getObjectId());
                 repository.delete(i);
                 indexAsync(type, i.getObjectId());
             });
@@ -208,10 +209,13 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         }
     }
 
-    private void checkPermission(WorkTimeType type, UUID categoryId, UUID objectId) {
+    private void checkPermission(WorkTimeType type, UUID objectId) {
         switch (type) {
             case WORKER: {
-                //todo add facade for check worker time in business (now this check in worker service)
+                LiteWorkerDto worker = workerService.getLiteWorkerById(objectId);
+                if(worker != null){
+                    businessPermissionFacade.checkPermissionByBusiness(worker.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
+                }
                 break;
             }
             case BUSINESS: {

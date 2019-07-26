@@ -306,13 +306,10 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     private void checkWorkingSpace(WorkerDto dto) {
-        if (dto.getWorkingSpaceId() == null) {
-            throw new ClientException(WORKING_SPACE_ID_IS_EMPTY);
-        }
         if (dto.getBusinessId() == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        if (!workingSpaceService.isExistByIdAndBusinessId(dto.getWorkingSpaceId(), dto.getBusinessId())) {
+        if (dto.getWorkingSpaceId() != null && !workingSpaceService.isExistByIdAndBusinessId(dto.getWorkingSpaceId(), dto.getBusinessId())) {
             throw new ClientException(WORKING_SPACE_NOT_FOUND_IN_THIS_BUSINESS);
         }
         BaseBusinessDto business = baseBusinessService.getById(dto.getBusinessId());
