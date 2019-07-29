@@ -184,27 +184,29 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             if (MapUtils.isNotEmpty(mapBusinessTimeException)) {
                 throw new AdditionalClientException(BUSINESS_TIME_ONLY, mapBusinessTimeException);
             }
-            List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
-            if (workers.size() > 1) {
-                workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).forEach(otherWorker -> {
-                    List<WorkTimeDto> workTimes = otherWorker.getWorkTimes();
-                    if (CollectionUtils.isNotEmpty(workTimes)) {
-                        Map<DayOfWeek, WorkTimeDto> mapWorkerWorkTime = workTimes.stream().collect(Collectors.toMap(WorkTimeDto::getDayOfWeek, w -> w));
-                        Map<String, Object> mapWorkerTimeException = new HashMap<>();
-                        list.forEach(f -> {
-                            WorkTimeDto workerTimeWork = mapWorkerWorkTime.get(f.getDayOfWeek());
-                            if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
-                                    ((f.getFrom().plusMinutes(1).isAfter(workerTimeWork.getFrom()) && f.getFrom().minusMinutes(1).isBefore(workerTimeWork.getTo())) || (
-                                            f.getTo().minusMinutes(1).isBefore(workerTimeWork.getTo()) && f.getTo().plusMinutes(1).isAfter(workerTimeWork.getFrom())))) {
-                                mapWorkerTimeException.put(f.getDayOfWeek().name(),
-                                        Map.of("from", workerTimeWork.getFrom().toString(), "to", workerTimeWork.getTo().toString()));
+            if (worker.getWorkingSpaceId() != null) {
+                List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
+                if (workers.size() > 1) {
+                    workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).forEach(otherWorker -> {
+                        List<WorkTimeDto> workTimes = otherWorker.getWorkTimes();
+                        if (CollectionUtils.isNotEmpty(workTimes)) {
+                            Map<DayOfWeek, WorkTimeDto> mapWorkerWorkTime = workTimes.stream().collect(Collectors.toMap(WorkTimeDto::getDayOfWeek, w -> w));
+                            Map<String, Object> mapWorkerTimeException = new HashMap<>();
+                            list.forEach(f -> {
+                                WorkTimeDto workerTimeWork = mapWorkerWorkTime.get(f.getDayOfWeek());
+                                if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
+                                        ((f.getFrom().plusMinutes(1).isAfter(workerTimeWork.getFrom()) && f.getFrom().minusMinutes(1).isBefore(workerTimeWork.getTo())) || (
+                                                f.getTo().minusMinutes(1).isBefore(workerTimeWork.getTo()) && f.getTo().plusMinutes(1).isAfter(workerTimeWork.getFrom())))) {
+                                    mapWorkerTimeException.put(f.getDayOfWeek().name(),
+                                            Map.of("from", workerTimeWork.getFrom().toString(), "to", workerTimeWork.getTo().toString()));
+                                }
+                            });
+                            if (MapUtils.isNotEmpty(mapWorkerTimeException)) {
+                                throw new AdditionalClientException(WORKING_TIME_BUSY, mapWorkerTimeException);
                             }
-                        });
-                        if (MapUtils.isNotEmpty(mapWorkerTimeException)) {
-                            throw new AdditionalClientException(WORKING_TIME_BUSY, mapWorkerTimeException);
                         }
-                    }
-                });
+                    });
+                }
             }
         }
     }
@@ -213,7 +215,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
         switch (type) {
             case WORKER: {
                 LiteWorkerDto worker = workerService.getLiteWorkerById(objectId);
-                if(worker != null){
+                if (worker != null) {
                     businessPermissionFacade.checkPermissionByBusiness(worker.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
                 }
                 break;
