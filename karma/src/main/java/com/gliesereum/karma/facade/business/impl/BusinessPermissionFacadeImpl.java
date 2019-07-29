@@ -120,7 +120,7 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
     public boolean currentUserIsOwnerBusiness(UUID businessId) {
         SecurityUtil.checkUserByBanStatus();
         boolean result = false;
-        if (businessId != null) {
+        if (businessId != null && CollectionUtils.isNotEmpty(SecurityUtil.getUserCorporationIds())) {
             result = baseBusinessService.existByIdAndCorporationIds(businessId, SecurityUtil.getUserCorporationIds());
         }
         return result;
