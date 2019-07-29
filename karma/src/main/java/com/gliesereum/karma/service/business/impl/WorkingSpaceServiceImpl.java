@@ -190,6 +190,15 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
             WorkingSpaceDto saved = getById(dto.getId());
             dto.setIndexNumber(saved.getIndexNumber());
             result = super.update(dto);
+            if (result != null && CollectionUtils.isNotEmpty(result.getWorkers())) {
+                Set<UUID> userIds = result.getWorkers().stream().map(m -> m.getUserId()).collect(Collectors.toSet());
+                if (CollectionUtils.isNotEmpty(userIds)) {
+                    Map<UUID, PublicUserDto> users = userExchangeService.findPublicUserMapByIds(userIds);
+                    if (MapUtils.isNotEmpty(users)) {
+                        result.getWorkers().forEach(w -> w.setUser(users.get(w.getUserId())));
+                    }
+                }
+            }
             List<WorkingSpaceDescriptionDto> descriptions = workingSpaceDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
         }
