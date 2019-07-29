@@ -186,7 +186,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             }
             if (worker.getWorkingSpaceId() != null) {
                 List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
-                if (workers.size() > 1) {
+                if (workers != null && workers.size() > 1) {
                     workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).forEach(otherWorker -> {
                         List<WorkTimeDto> workTimes = otherWorker.getWorkTimes();
                         if (CollectionUtils.isNotEmpty(workTimes)) {
