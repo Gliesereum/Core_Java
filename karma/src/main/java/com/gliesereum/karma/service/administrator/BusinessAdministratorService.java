@@ -19,7 +19,7 @@ public interface BusinessAdministratorService extends DefaultService<BusinessAdm
 
     void delete(UUID userId, UUID businessId);
 
-    boolean existByUserIdBusinessId(UUID businessId, UUID userId);
+    boolean existByUserIdBusinessId(UUID userId, UUID businessId);
 
     boolean existByUserIdCorporationId(UUID corporationId, UUID userId);
 
@@ -28,4 +28,6 @@ public interface BusinessAdministratorService extends DefaultService<BusinessAdm
     List<DetailedBusinessAdministratorDto> getByBusinessId(UUID businessId);
 
     List<DetailedBusinessAdministratorDto> getByCorporationId(UUID corporationId);
+
+    List<BusinessAdministratorDto> getByUserId(UUID userId);
 }

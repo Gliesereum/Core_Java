@@ -48,6 +48,6 @@ public class BusinessAdministratorController {
     @GetMapping("/for-business")
     private MapResponse checkCurrentUserAdmin(@RequestParam("businessId") UUID businessId) {
         SecurityUtil.checkUserByBanStatus();
-        return new MapResponse(businessAdministratorService.existByUserIdBusinessId(businessId, SecurityUtil.getUserId()));
+        return new MapResponse(businessAdministratorService.existByUserIdBusinessId(SecurityUtil.getUserId(), businessId));
     }
 }

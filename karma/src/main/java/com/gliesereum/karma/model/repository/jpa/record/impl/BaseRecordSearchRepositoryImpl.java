@@ -51,20 +51,19 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
         return result;
     }
 
+    //TODO: use clientEs for lastname, phone, firstname
     @Override
     public BaseRecordPageEntity getRecordsBySearchDto(RecordsSearchDto search) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<BaseRecordEntity> query = builder.createQuery(BaseRecordEntity.class);
         Root<BaseRecordEntity> root = query.from(BaseRecordEntity.class);
         List<Predicate> predicates = new ArrayList<>();
-        createEqIfNotNull(builder, predicates, root.get("phone"), search.getPhone());
         createEqIfNotNull(builder, predicates, root.get("recordNumber"), search.getRecordNumber());
         createBetweenDate(builder, predicates, root.get("begin"), search.getFrom(), search.getTo());
-        createLikeIfNotNull(builder, predicates, root.get("lastName"), search.getLastName());
-        createLikeIfNotNull(builder, predicates, root.get("firstName"), search.getFirstName());
-        createLikeIfNotNull(builder, predicates, root.get("phone"), search.getPhone());
         createInIfNotEmpty(predicates, root.get("statusRecord"), search.getStatus());
+        createInIfNotEmpty(predicates, root.get("statusProcess"), search.getProcesses());
         createInIfNotEmpty(predicates, root.get("businessId"), search.getBusinessIds());
+        createInIfNotEmpty(predicates, root.get("workingSpaceId"), search.getWorkingSpaceIds());
 
         if (search.getRegistrationNumber() != null) {
             Subquery<UUID> subQuery = query.subquery(UUID.class);

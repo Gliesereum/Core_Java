@@ -4,6 +4,7 @@ import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
+import com.gliesereum.karma.service.administrator.BusinessAdministratorService;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.descriptions.BusinessDescriptionService;
@@ -16,6 +17,7 @@ import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.karma.administrator.BusinessAdministratorDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
@@ -88,6 +90,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
+
+    @Autowired
+    private BusinessAdministratorService businessAdministratorService;
 
     @Autowired
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
@@ -175,30 +180,35 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    @Transactional
     public List<BaseBusinessDto> getAllBusinessByCurrentUser() {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_NOT_AUTHENTICATION);
         }
-        Set<BaseBusinessDto> set = new HashSet<>();
+        List<BaseBusinessDto> result = new ArrayList<>();
+        Set<UUID> businessIds = new HashSet<>();
         if (CollectionUtils.isNotEmpty(SecurityUtil.getUserCorporationIds())) {
-            List<BaseBusinessDto> byCorporationIds = getByCorporationIds(SecurityUtil.getUserCorporationIds());
-            if (CollectionUtils.isNotEmpty(byCorporationIds)) {
-                set.addAll(byCorporationIds);
+            List<UUID> businessByCorporation = baseBusinessRepository.getIdsByCorporationIdIn(SecurityUtil.getUserCorporationIds());
+            if (CollectionUtils.isNotEmpty(businessByCorporation)) {
+                businessIds.addAll(businessByCorporation);
             }
         }
         List<WorkerDto> workers = workerService.findByUserId(SecurityUtil.getUserId());
         if (CollectionUtils.isNotEmpty(workers)) {
-            workers.forEach(f -> {
-                BaseBusinessDto business = getById(f.getBusinessId());
-                if (business != null) {
-                    set.add(business);
-                }
-            });
+            businessIds.addAll(workers.stream().map(WorkerDto::getBusinessId).collect(Collectors.toList()));
         }
-        return new ArrayList<>(set);
+        List<BusinessAdministratorDto> administrator = businessAdministratorService.getByUserId(SecurityUtil.getUserId());
+        if (CollectionUtils.isNotEmpty(administrator)) {
+            businessIds.addAll(administrator.stream().map(BusinessAdministratorDto::getBusinessId).collect(Collectors.toList()));
+        }
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            result = getByIds(businessIds);
+        }
+        return result;
     }
 
     @Override
+    @Transactional
     public List<BusinessFullModel> getAllFullBusinessByCurrentUser() {
         List<BusinessFullModel> result = new ArrayList<>();
         List<BaseBusinessDto> list = getAllBusinessByCurrentUser();

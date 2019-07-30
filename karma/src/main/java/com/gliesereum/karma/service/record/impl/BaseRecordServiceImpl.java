@@ -299,10 +299,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
 
         businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds(), BusinessPermission.VIEW_BUSINESS_INFO);
+        UUID workingSpaceId = getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(search.getBusinessIds().get(0));
         setSearch(search);
-        List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
-                search.getStatus(), search.getProcesses(), search.getBusinessIds(), search.getFrom(), search.getTo());
-        result = converter.convert(entities, dtoClass);
+        if (workingSpaceId != null) {
+            search.setWorkingSpaceIds(Arrays.asList(workingSpaceId));
+        }
+        BaseRecordPageEntity searchResult = baseRecordRepository.getRecordsBySearchDto(search);
+        result = converter.convert(searchResult.getRecords(), dtoClass);
         setClients(result);
         setFullModelRecord(result);
         setServicePrice(result);
@@ -399,11 +402,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setStatusProcess(status);
         if (status.equals(StatusProcess.COMPLETED)) {
             dto.setStatusRecord(StatusRecord.COMPLETED);
-            WorkerDto worker = workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), dto.getBusinessId());
-            if (worker == null) {
-                throw new ClientException(WORKER_NOT_FOUND);
-            }
-            //dto.setWorkerId(worker.getId());
+
         }
         if (status.equals(StatusProcess.CANCELED)) {
             dto.setStatusRecord(StatusRecord.CANCELED);
@@ -714,7 +713,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto == null) throw new ClientException(RECORD_NOT_FOUND);
         boolean workerPermission = businessPermissionFacade.isHavePermissionByBusiness(dto.getBusinessId(), BusinessPermission.WORK_WITH_RECORD);
         boolean userPermission = false;
-        if (dto.getClientId().equals(SecurityUtil.getUserId())) {
+        if ((dto.getClientId() != null) && dto.getClientId().equals(SecurityUtil.getUserId())) {
             userPermission = true;
         }
         if (!BooleanUtils.or(new Boolean[]{workerPermission, userPermission})) {
@@ -882,5 +881,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (search.getTo() == null) {
             search.setTo(search.getFrom().plusYears(1L));
         }
+    }
+
+    private UUID getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(UUID businessId) {
+        SecurityUtil.checkUserByBanStatus();
+        WorkerDto worker = workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), businessId);
+        UUID result = null;
+        if ((worker == null) || ((result = worker.getWorkingSpaceId()) == null)) {
+            businessPermissionFacade.checkPermissionByBusiness(businessId, BusinessPermission.VIEW_ALL_RECORD);
+        }
+        return result;
     }
 }
