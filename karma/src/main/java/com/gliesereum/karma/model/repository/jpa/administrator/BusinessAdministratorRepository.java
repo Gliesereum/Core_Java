@@ -24,4 +24,6 @@ public interface BusinessAdministratorRepository extends JpaRepository<BusinessA
     List<BusinessAdministratorEntity> findAllByBusinessId(UUID businessId);
 
     List<BusinessAdministratorEntity> findAllByCorporationId(UUID corporationId);
+
+    List<BusinessAdministratorEntity> findAllByUserId(UUID userId);
 }

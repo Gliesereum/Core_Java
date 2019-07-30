@@ -402,11 +402,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         dto.setStatusProcess(status);
         if (status.equals(StatusProcess.COMPLETED)) {
             dto.setStatusRecord(StatusRecord.COMPLETED);
-            WorkerDto worker = workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), dto.getBusinessId());
-            if (worker == null) {
-                throw new ClientException(WORKER_NOT_FOUND);
-            }
-            //dto.setWorkerId(worker.getId());
+
         }
         if (status.equals(StatusProcess.CANCELED)) {
             dto.setStatusRecord(StatusRecord.CANCELED);
@@ -717,7 +713,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (dto == null) throw new ClientException(RECORD_NOT_FOUND);
         boolean workerPermission = businessPermissionFacade.isHavePermissionByBusiness(dto.getBusinessId(), BusinessPermission.WORK_WITH_RECORD);
         boolean userPermission = false;
-        if (dto.getClientId().equals(SecurityUtil.getUserId())) {
+        if ((dto.getClientId() != null) && dto.getClientId().equals(SecurityUtil.getUserId())) {
             userPermission = true;
         }
         if (!BooleanUtils.or(new Boolean[]{workerPermission, userPermission})) {
