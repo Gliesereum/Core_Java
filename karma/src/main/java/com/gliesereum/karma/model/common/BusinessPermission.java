@@ -9,5 +9,6 @@ public enum BusinessPermission {
     VIEW_BUSINESS_INFO,
     WORK_WITH_CHAT,
     WORK_WITH_RECORD,
+    VIEW_ALL_RECORD,
     VIEW_PHONE;
 }

@@ -299,10 +299,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
 
         businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds(), BusinessPermission.VIEW_BUSINESS_INFO);
+        UUID workingSpaceId = getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(search.getBusinessIds().get(0));
         setSearch(search);
-        List<BaseRecordEntity> entities = baseRecordRepository.findByStatusRecordInAndStatusProcessInAndBusinessIdInAndBeginBetweenOrderByBegin(
-                search.getStatus(), search.getProcesses(), search.getBusinessIds(), search.getFrom(), search.getTo());
-        result = converter.convert(entities, dtoClass);
+        if (workingSpaceId != null) {
+            search.setWorkingSpaceIds(Arrays.asList(workingSpaceId));
+        }
+        BaseRecordPageEntity searchResult = baseRecordRepository.getRecordsBySearchDto(search);
+        result = converter.convert(searchResult.getRecords(), dtoClass);
         setClients(result);
         setFullModelRecord(result);
         setServicePrice(result);
@@ -882,5 +885,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (search.getTo() == null) {
             search.setTo(search.getFrom().plusYears(1L));
         }
+    }
+
+    private UUID getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(UUID businessId) {
+        SecurityUtil.checkUserByBanStatus();
+        WorkerDto worker = workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), businessId);
+        UUID result = null;
+        if ((worker == null) || ((result = worker.getWorkingSpaceId()) == null)) {
+            businessPermissionFacade.checkPermissionByBusiness(businessId, BusinessPermission.VIEW_ALL_RECORD);
+        }
+        return result;
     }
 }

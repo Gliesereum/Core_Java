@@ -64,6 +64,7 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
         createLikeIfNotNull(builder, predicates, root.get("firstName"), search.getFirstName());
         createLikeIfNotNull(builder, predicates, root.get("phone"), search.getPhone());
         createInIfNotEmpty(predicates, root.get("statusRecord"), search.getStatus());
+        createInIfNotEmpty(predicates, root.get("statusProcess"), search.getProcesses());
         createInIfNotEmpty(predicates, root.get("businessId"), search.getBusinessIds());
 
         if (search.getRegistrationNumber() != null) {
