@@ -64,6 +64,7 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
                     havePermission = currentUserIsOwnerBusiness(businessId) || currentUserIdAdminBusiness(businessId) || currentUserIsWorkerBusiness(businessId);
                     break;
                 case VIEW_PHONE:
+                case VIEW_ALL_RECORD:
                     havePermission = currentUserIsOwnerBusiness(businessId) || currentUserIdAdminBusiness(businessId);
                     break;
             }
@@ -109,6 +110,7 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
                     havePermission = isOwner(corporationId, userId, userCorporationIds) || isAdmin(corporationId, userId) || isWorker(corporationId, userId);
                     break;
                 case VIEW_PHONE:
+                case VIEW_ALL_RECORD:
                     havePermission = isOwner(corporationId, userId, userCorporationIds) || isAdmin(corporationId, userId);
                     break;
             }

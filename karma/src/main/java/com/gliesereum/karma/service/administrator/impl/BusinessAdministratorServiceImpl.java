@@ -90,7 +90,7 @@ public class BusinessAdministratorServiceImpl extends DefaultServiceImpl<Busines
     }
 
     @Override
-    public boolean existByUserIdBusinessId(UUID businessId, UUID userId) {
+    public boolean existByUserIdBusinessId(UUID userId, UUID businessId) {
         boolean result = false;
         if (ObjectUtils.allNotNull(businessId, userId)) {
             result = businessAdministratorRepository.existsByUserIdAndBusinessId(userId, businessId);
@@ -134,6 +134,16 @@ public class BusinessAdministratorServiceImpl extends DefaultServiceImpl<Busines
             List<BusinessAdministratorEntity> entities = businessAdministratorRepository.findAllByCorporationId(corporationId);
             result = converter.convert(entities, DetailedBusinessAdministratorDto.class);
             setUsers(result);
+        }
+        return result;
+    }
+
+    @Override
+    public List<BusinessAdministratorDto> getByUserId(UUID userId) {
+        List<BusinessAdministratorDto> result = null;
+        if (userId != null) {
+            List<BusinessAdministratorEntity> entities = businessAdministratorRepository.findAllByUserId(userId);
+            result = converter.convert(entities, dtoClass);
         }
         return result;
     }
