@@ -59,11 +59,9 @@ public class DefaultConverterImp implements DefaultConverter {
     @Override
     public <E, T> Page<T> convert(Page<E> page, Class<T> resultClass) {
         Page<T> result = null;
-        if (page != null) {
-            if (CollectionUtils.isNotEmpty(page.getContent())) {
-                List<T> content = convert(page.getContent(), resultClass);
-                result = new PageImpl<>(content, page.getPageable(), page.getTotalElements());
-            }
+        if ((page != null) && CollectionUtils.isNotEmpty(page.getContent())) {
+            List<T> content = convert(page.getContent(), resultClass);
+            result = new PageImpl<>(content, page.getPageable(), page.getTotalElements());
         }
         return result;
     }
