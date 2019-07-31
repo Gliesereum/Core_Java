@@ -181,11 +181,7 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
     public void checkCurrentUserPermissionToClient(UUID corporationId, UUID clientId) {
         SecurityUtil.checkUserByBanStatus();
         if (corporationId != null) {
-            UUID userId = SecurityUtil.getUserId();
-            List<UUID> userCorporationIds = SecurityUtil.getUserCorporationIds();
-            if (!isOwner(corporationId, userId, userCorporationIds) && !isWorker(corporationId, userId)) {
-                throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
-            }
+            checkPermissionByCorporation(corporationId, BusinessPermission.VIEW_BUSINESS_INFO);
             ClientDto client = clientEsService.getClientByUserId(clientId);
             if (client == null) {
                 throw new ClientException(CLIENT_NOT_FOUND);
