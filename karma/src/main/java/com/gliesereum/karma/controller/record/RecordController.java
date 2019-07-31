@@ -76,12 +76,6 @@ public class RecordController {
         return service.updateStatusPay(idRecord, status);
     }
 
-    @PutMapping("/working/space")
-    public BaseRecordDto updateWorkingSpace(@RequestParam("idRecord") UUID idRecord,
-                                            @RequestParam("workingSpaceId") UUID workingSpaceId) {
-        return service.updateWorkingSpace(idRecord, workingSpaceId);
-    }
-
     @DeleteMapping("/{id}")
     public MapResponse delete(@PathVariable("id") UUID id) {
         service.delete(id);
@@ -134,7 +128,8 @@ public class RecordController {
     public Map<UUID, Set<RecordFreeTime>> getFreeTimes(@RequestParam("businessId") UUID businessId,
                                                        @RequestParam(value = "from", required = false) Long from,
                                                        @RequestParam(value = "packageId", required = false) UUID packageId,
+                                                       @RequestParam(value = "workerId", required = false) UUID workerId,
                                                        @RequestParam(value = "serviceIds", required = false) List<UUID> serviceIds) {
-        return service.getFreeTimes(businessId, from, packageId, serviceIds);
+        return service.getFreeTimes(businessId, workerId, from, packageId, serviceIds);
     }
 }

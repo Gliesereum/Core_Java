@@ -65,7 +65,7 @@ public class WorkingSpaceController {
 
     @GetMapping("/workers/by-business")
     public List<WorkerDto> getByBusinessId(@RequestParam("businessId") UUID businessId) {
-        return workerService.getByBusinessId(businessId);
+        return workerService.getByBusinessId(businessId, true);
     }
 
     @PostMapping("/worker")
