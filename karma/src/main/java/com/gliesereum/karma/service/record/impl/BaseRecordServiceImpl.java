@@ -763,7 +763,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
     }
 
-    private void checkTimeWorking(WorkTimeDto workTime, LocalDateTime begin, LocalDateTime finish) {
+    private void checkBusinessTimeWorking(WorkTimeDto workTime, LocalDateTime begin, LocalDateTime finish) {
         if (!(workTime.getFrom().equals(LocalTime.MIN) && workTime.getTo().equals(LocalTime.MAX))) {
             if (workTime.getTo().isBefore(begin.toLocalTime()) || workTime.getFrom().isAfter(begin.toLocalTime())) {
                 throw new ClientException(BUSINESS_NOT_WORK_THIS_TIME);
@@ -774,6 +774,12 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
     }
 
+    private void checkWorkerTimeWorking(WorkTimeDto workTime, LocalDateTime begin) {
+        if (workTime == null || (workTime.getTo().isBefore(begin.toLocalTime()) || workTime.getFrom().isAfter(begin.toLocalTime()))) {
+            throw new ClientException(WORKER_NOT_WORK_THIS_TIME);
+        }
+    }
+
     private void setType(BaseRecordDto dto) {
         BaseBusinessDto business = getBusinessByRecord(dto);
         dto.setBusinessCategoryId(business.getBusinessCategoryId());
@@ -781,14 +787,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     private List<RecordFreeTime> getFreeTimesByBusinessAndCheckWorkingTime(LocalDateTime begin, LocalDateTime finish, BaseBusinessDto business, UUID workerId) {
         WorkTimeDto workTime = getWorkTimeByBusiness(begin, business);
-        checkTimeWorking(workTime, begin, finish);
+        checkBusinessTimeWorking(workTime, begin, finish);
         return getFreeTimesByBusiness(business.getId(), workerId, begin.toLocalDate().atTime(workTime.getFrom()), begin.toLocalDate().atTime(workTime.getTo()), begin);
     }
 
-
     private List<RecordFreeTime> getFreeTimesByBusiness(UUID businessId, UUID workerId, LocalDateTime startTimeWork, LocalDateTime endTimeWork, LocalDateTime beginRecord) {
         List<RecordFreeTime> result = new ArrayList();
-        List<BaseRecordEntity> records = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetween(businessId, StatusRecord.CREATED, startTimeWork, endTimeWork);
+        List<BaseRecordEntity> businessRecords = baseRecordRepository.findByBusinessIdAndStatusRecordAndBeginBetween(businessId, StatusRecord.CREATED, startTimeWork, endTimeWork);
         List<WorkerDto> workers = workerService.getByBusinessId(businessId, false);
         if (CollectionUtils.isEmpty(workers) || workers.stream().allMatch(m -> m.getWorkingSpaceId() == null)) {
             throw new ClientException(BUSINESS_DOES_NOT_ANY_WORKER);
@@ -798,57 +803,36 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             workers = workers.stream().filter(f -> f.getId().equals(workerId)).collect(Collectors.toList());
         }
         workers.forEach(worker -> {
-            LocalDateTime beginWorkTimeWorker = null;
-            LocalDateTime endWorkTimeWorker = null;
             WorkTimeDto workTime = getWorkTimeByWorker(worker, beginRecord);
-            if ((workTime == null && workerId != null && worker.getId().equals(workerId))) {
-                throw new ClientException(WORKER_NOT_WORK_THIS_TIME);
+            if (worker.getId().equals(workerId)) {
+                checkWorkerTimeWorking(workTime, beginRecord);
             }
             if (workTime != null) {
-                beginWorkTimeWorker = beginRecord.toLocalDate().atTime(workTime.getFrom());
-                endWorkTimeWorker = beginRecord.toLocalDate().atTime(workTime.getTo());
-                if (CollectionUtils.isNotEmpty(records)) {
-                    List<BaseRecordEntity> recordsByWorker = records.stream().filter(f -> f.getWorkerId().equals(worker.getId())).collect(Collectors.toList());
-                    if (CollectionUtils.isNotEmpty(recordsByWorker)) {
-                        recordsByWorker.sort(Comparator.comparing(BaseRecordEntity::getBegin));
-
-
-                        for (int i = 0; i < recordsByWorker.size(); i++) {
-
-
-
-
+                LocalDateTime beginWorkerTime = beginRecord.toLocalDate().atTime(workTime.getFrom());
+                LocalDateTime endWorkerTime = beginRecord.toLocalDate().atTime(workTime.getTo());
+                if (CollectionUtils.isNotEmpty(businessRecords)) {
+                    List<BaseRecordEntity> records = businessRecords.stream().filter(f -> f.getWorkerId().equals(worker.getId())).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(records)) {
+                        records.sort(Comparator.comparing(BaseRecordEntity::getBegin));
+                        for (int i = 0; i < records.size(); i++) {
                             if (i == 0) {
-                                result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), beginWorkTimeWorker, recordsByWorker.get(i).getBegin()));
+                                result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), beginWorkerTime, records.get(i).getBegin()));
                             }
-
-
-
-                            if(recordsByWorker.size() > 1 && i != 0){
-                              if(recordsByWorker.size() == 2 || i != recordsByWorker.size() - 1 ){
-                                  result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), recordsByWorker.get(i - 1).getFinish(), recordsByWorker.get(i).getBegin()));
-                              }
+                            if (i > 0 && records.size() > 1) {
+                                result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), records.get(i - 1).getFinish(), records.get(i).getBegin()));
                             }
-
-
-
-                            if (i == recordsByWorker.size() - 1 || recordsByWorker.size() == 1) {
-                                result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), recordsByWorker.get(i).getFinish(), endWorkTimeWorker));
+                            if (i == records.size() - 1) {
+                                result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), records.get(i).getFinish(), endWorkerTime));
                             }
-
-
-
-
-
                         }
                     } else {
-                        if (ObjectUtils.allNotNull(beginWorkTimeWorker, endWorkTimeWorker)) {
-                            result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), beginWorkTimeWorker, endWorkTimeWorker));
+                        if (ObjectUtils.allNotNull(beginWorkerTime, endWorkerTime)) {
+                            result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), beginWorkerTime, endWorkerTime));
                         }
                     }
                 } else {
-                    if (ObjectUtils.allNotNull(beginWorkTimeWorker, endWorkTimeWorker)) {
-                        result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), beginWorkTimeWorker, endWorkTimeWorker));
+                    if (ObjectUtils.allNotNull(beginWorkerTime, endWorkerTime)) {
+                        result.add(new RecordFreeTime(worker.getWorkingSpaceId(), worker.getId(), beginWorkerTime, endWorkerTime));
                     }
                 }
             }
