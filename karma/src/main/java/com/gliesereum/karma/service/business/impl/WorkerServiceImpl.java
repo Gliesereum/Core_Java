@@ -88,13 +88,13 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
-    public List<WorkerDto> getByBusinessId(UUID businessId) {
+    public List<WorkerDto> getByBusinessId(UUID businessId, boolean setUsers) {
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
         List<WorkerEntity> entities = workerRepository.findAllByBusinessId(businessId);
         List<WorkerDto> result = converter.convert(entities, dtoClass);
-        if (CollectionUtils.isNotEmpty(result)) {
+        if (setUsers && CollectionUtils.isNotEmpty(result)) {
             setUsers(result);
         }
         return result;

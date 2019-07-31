@@ -31,7 +31,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
 
-    BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId);
+   // BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId);
 
     BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status);
 
@@ -65,7 +65,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     LiteRecordPageDto getLiteByParamsForBusiness(RecordsSearchDto search);
 
-    Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, Long from, UUID packageId, List<UUID> serviceIds);
+    Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, UUID workerId, Long from, UUID packageId, List<UUID> serviceIds);
 
     Page<BaseRecordDto> getByClientForBusiness(List<UUID> corporationIds, UUID clientId, Integer page, Integer size);
 }

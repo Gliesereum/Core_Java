@@ -17,6 +17,8 @@ public class RecordFreeTime {
 
     private UUID workingSpaceID;
 
+    private UUID workerID;
+
     private LocalDateTime begin;
 
     private LocalDateTime finish;
@@ -25,6 +27,13 @@ public class RecordFreeTime {
 
     public RecordFreeTime(UUID workingSpaceID, LocalDateTime begin, LocalDateTime finish) {
         this.workingSpaceID = workingSpaceID;
+        this.begin = begin;
+        this.finish = finish;
+    }
+
+    public RecordFreeTime(UUID workingSpaceID, UUID workerID, LocalDateTime begin, LocalDateTime finish) {
+        this.workingSpaceID = workingSpaceID;
+        this.workerID = workerID;
         this.begin = begin;
         this.finish = finish;
     }

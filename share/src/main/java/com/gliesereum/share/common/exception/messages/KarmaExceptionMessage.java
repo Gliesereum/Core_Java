@@ -109,4 +109,7 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage BUSINESS_TIME_ONLY = new ExceptionMessage(1490, 403, "These days business hours are only");
 
+    public static final ExceptionMessage WORKER_NOT_WORK_THIS_TIME = new ExceptionMessage(1491, 403, "Worker does not work this time");
+    public static final ExceptionMessage BUSINESS_DOES_NOT_ANY_WORKER = new ExceptionMessage(1492, 403, "Business does not any worker");
+    public static final ExceptionMessage NOT_ENOUGH_TIME_CREATE_RECORD_FOR_THIS_WORKER = new ExceptionMessage(1493, 404, "Not enough time for create record from this worker, choose another time");
 }
