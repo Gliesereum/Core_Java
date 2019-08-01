@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author yvlasiuk
@@ -35,6 +36,8 @@ public class SecurityProperties extends JwtSecurityProperties {
 
     @NotBlank
     private Boolean applicationIdHeaderRequired;
+
+    private List<String> notRequiredApplicationIdHosts;
 
     @NotNull
     private Boolean endpointKeeperEnable;

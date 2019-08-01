@@ -85,6 +85,7 @@ security:
     checkAccessUrl: http://account-service/auth/check
     applicationIdHeader: Application-Id
     applicationIdHeaderRequired: true
+    notRequiredApplicationIdHosts: status, swagger-ui.html.*, .*/api-docs, .*\/springfox-swagger-ui\/.*, swagger-resources.*
     bearerHeader: Authorization
     bearerPrefix: Bearer
     jwtHeader: Service-Authorization
