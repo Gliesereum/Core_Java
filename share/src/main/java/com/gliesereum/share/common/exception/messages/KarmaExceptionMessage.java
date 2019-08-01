@@ -13,7 +13,7 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage SERVICE_PRICE_NOT_FOUND = new ExceptionMessage(1411, 400, "Service price not found");
     public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS = new ExceptionMessage(1420, 401, "You don't have permission to action this business");
     public static final ExceptionMessage BUSINESS_NOT_FOUND = new ExceptionMessage(1421, 404, "Business not found");
-    public static final ExceptionMessage BUSINESS_ID_EMPTY = new ExceptionMessage(1422, 404, "Business id is empty");
+    public static final ExceptionMessage BUSINESS_ID_EMPTY = new ExceptionMessage(1422, 400, "Business id is empty");
     public static final ExceptionMessage BUSINESS_NOT_HAVE_WORKING_TIME = new ExceptionMessage(1423, 401, "Business does not have work time");
 
     public static final ExceptionMessage WORKING_TIME_BUSY = new ExceptionMessage(1424, 403, "This time is busy other worker");
@@ -33,9 +33,9 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage BUSINESS_NOT_WORK_THIS_TIME = new ExceptionMessage(1435, 400, "Business does not work this time");
 
     public static final ExceptionMessage WORKING_TIME_EXIST_IN_THIS_BUSINESS = new ExceptionMessage(1436, 400, "Time working already exist in this business");
-    public static final ExceptionMessage WORKING_TIME_NOT_FOUND = new ExceptionMessage(1437, 401, "Time working not found");
+    public static final ExceptionMessage WORKING_TIME_NOT_FOUND = new ExceptionMessage(1437, 404, "Time working not found");
 
-    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_RECORD = new ExceptionMessage(1438, 404, "You don't have permission to action this record");
+    public static final ExceptionMessage DONT_HAVE_PERMISSION_TO_ACTION_RECORD = new ExceptionMessage(1438, 400, "You don't have permission to action this record");
 
     public static final ExceptionMessage TIME_BEGIN_PAST = new ExceptionMessage(1439, 400, "Try to choose past time");
 
@@ -51,7 +51,7 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage CORPORATION_ID_REQUIRED_FOR_THIS_ACTION = new ExceptionMessage(1452, 400, "Corporation id required for this action");
 
-    public static final ExceptionMessage CAR_ID_EMPTY = new ExceptionMessage(1453, 404, "Car id is empty");
+    public static final ExceptionMessage CAR_ID_EMPTY = new ExceptionMessage(1453, 400, "Car id is empty");
     public static final ExceptionMessage SERVICE_PRICE_NOT_FOUND_IN_BUSINESS = new ExceptionMessage(1454, 404, "Service price not found in this business");
     public static final ExceptionMessage TARGET_ID_IS_EMPTY = new ExceptionMessage(1455, 400, "Target id is empty");
     public static final ExceptionMessage STATUS_TYPE_IS_EMPTY = new ExceptionMessage(1456, 400, "Status type is empty");
@@ -87,7 +87,7 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage CHAT_NOT_FOUND = new ExceptionMessage(1478, 404, "Chat not found");
     public static final ExceptionMessage NOT_PERMISSION_TO_CHAT = new ExceptionMessage(1479, 400, "You don't have permission to this chat");
 
-    public static final ExceptionMessage TRY_CHANGE_DIFFERENT_BUSINESS = new ExceptionMessage(1480, 401, "You try to change different business");
+    public static final ExceptionMessage TRY_CHANGE_DIFFERENT_BUSINESS = new ExceptionMessage(1480, 400, "You try to change different business");
 
     public static final ExceptionMessage CLIENT_NOT_FOUND = new ExceptionMessage(1481, 400, "Client not found");
 
@@ -107,10 +107,10 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage TYPE_IS_NULL = new ExceptionMessage(1489, 400, "Type is null");
 
-    public static final ExceptionMessage BUSINESS_TIME_ONLY = new ExceptionMessage(1490, 403, "These days business hours are only");
+    public static final ExceptionMessage BUSINESS_TIME_ONLY = new ExceptionMessage(1490, 400, "These days business hours are only");
 
-    public static final ExceptionMessage WORKER_NOT_WORK_THIS_TIME = new ExceptionMessage(1491, 403, "Worker does not work this time");
-    public static final ExceptionMessage BUSINESS_DOES_NOT_ANY_WORKER = new ExceptionMessage(1492, 403, "Business does not any worker");
-    public static final ExceptionMessage NOT_ENOUGH_TIME_CREATE_RECORD_FOR_THIS_WORKER = new ExceptionMessage(1493, 404, "Not enough time for create record from this worker, choose another time");
-    public static final ExceptionMessage WORKER_ID_EMPTY = new ExceptionMessage(1494, 404, "Worker id is empty");
+    public static final ExceptionMessage WORKER_NOT_WORK_THIS_TIME = new ExceptionMessage(1491, 400, "Worker does not work this time");
+    public static final ExceptionMessage BUSINESS_DOES_NOT_ANY_WORKER = new ExceptionMessage(1492, 400, "Business does not any worker");
+    public static final ExceptionMessage NOT_ENOUGH_TIME_CREATE_RECORD_FOR_THIS_WORKER = new ExceptionMessage(1493, 400, "Not enough time for create record from this worker, choose another time");
+    public static final ExceptionMessage WORKER_ID_EMPTY = new ExceptionMessage(1494, 400, "Worker id is empty");
 }
