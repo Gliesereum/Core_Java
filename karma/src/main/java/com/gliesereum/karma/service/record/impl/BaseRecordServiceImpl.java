@@ -627,6 +627,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             if (dto.getWorkingSpaceId() == null) {
                 throw new ClientException(WORKING_SPACE_ID_EMPTY);
             }
+            if (dto.getWorkerId() == null) {
+                throw new ClientException(WORKER_ID_EMPTY);
+            }
             WorkingSpaceDto workingSpace = business.getSpaces().stream().filter(ws -> ws.getId().equals(dto.getWorkingSpaceId())).findFirst().orElse(null);
             if (workingSpace == null) {
                 throw new ClientException(WORKING_SPACE_NOT_FOUND_IN_THIS_BUSINESS);
