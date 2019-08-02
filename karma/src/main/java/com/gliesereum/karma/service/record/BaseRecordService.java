@@ -4,7 +4,9 @@ import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.record.*;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
+import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
 import org.springframework.data.domain.Page;
 
@@ -31,13 +33,11 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
 
-   // BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workingSpaceId);
-
     BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status);
 
     BaseRecordDto canceledRecord(UUID idRecord, String message);
 
-    BaseRecordDto updateTimeRecord(UUID idRecord, Long beginTime);
+    BaseRecordDto updateRecordTime(UUID idRecord, Long beginTime);
 
     BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto);
 
@@ -45,7 +45,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     Page<BaseRecordDto> getAllByUser(Integer page, Integer size);
 
-    BaseRecordDto createFromBusiness(BaseRecordDto dto);
+    BaseRecordDto createForBusiness(BaseRecordDto dto);
 
     BaseRecordDto getFullModelById(UUID id);
 
@@ -55,17 +55,11 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities);
 
-    List<BaseRecordDto> getLiteRecordDtoByBusiness(UUID businessId, List<StatusRecord> statuses, Long from, Long to);
-
     void setFullModelRecord(List<BaseRecordDto> list);
 
     void setNotificationSend(UUID recordId);
 
-    List<UUID> getCustomerIdsByBusinessIds(List<UUID> ids);
-
-    LiteRecordPageDto getLiteByParamsForBusiness(RecordsSearchDto search);
-
     Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, UUID workerId, Long from, UUID packageId, List<UUID> serviceIds);
 
-    Page<BaseRecordDto> getByClientForBusiness(List<UUID> corporationIds, UUID clientId, Integer page, Integer size);
+    Page<BaseRecordDto> getByClientForCorporation(List<UUID> corporationIds, UUID clientId, Integer page, Integer size);
 }

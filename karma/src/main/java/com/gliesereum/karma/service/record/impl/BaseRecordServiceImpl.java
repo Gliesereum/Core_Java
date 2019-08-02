@@ -140,26 +140,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
     }
 
-    @Override
-    public List<UUID> getCustomerIdsByBusinessIds(List<UUID> ids) {
-        return baseRecordRepository.getCustomerIdsByBusinessIds(ids);
-    }
-
-    @Override
-    public LiteRecordPageDto getLiteByParamsForBusiness(RecordsSearchDto search) {
-        List<UUID> businessIds = null;
-        LiteRecordPageDto result = new LiteRecordPageDto();
-        if (CollectionUtils.isNotEmpty(search.getCorporationIds())) {
-            businessIds = baseBusinessService.getIdsByCorporationIds(search.getCorporationIds());
-        }
-        if (CollectionUtils.isNotEmpty(businessIds) || CollectionUtils.isNotEmpty(search.getBusinessIds())) {
-            search.getBusinessIds().addAll(businessIds);
-            BaseRecordPageEntity entity = baseRecordRepository.getRecordsBySearchDto(search);
-            result.setCount(entity.getCount());
-            result.setRecords(convertToLiteRecordDto(entity.getRecords()));
-        }
-        return result;
-    }
 
     @Override
     public Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, UUID workerId, Long from, UUID packageId, List<UUID> serviceIds) {
@@ -190,7 +170,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public Page<BaseRecordDto> getByClientForBusiness(List<UUID> corporationIds, UUID clientId, Integer page, Integer size) {
+    public Page<BaseRecordDto> getByClientForCorporation(List<UUID> corporationIds, UUID clientId, Integer page, Integer size) {
         corporationIds.forEach(f -> businessPermissionFacade.checkPermissionByCorporation(f, BusinessPermission.VIEW_BUSINESS_INFO));
         Page<BaseRecordDto> result = null;
         List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(corporationIds);
@@ -219,35 +199,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public List<BaseRecordDto> convertToLiteRecordDto(List<BaseRecordEntity> entities) {
         List<BaseRecordDto> result = converter.convert(entities, BaseRecordDto.class);
         return setServicePriceIds(result);
-    }
-
-    @Override
-    public List<BaseRecordDto> getLiteRecordDtoByBusiness(UUID businessId, List<StatusRecord> statuses, Long from, Long to) {
-        if (businessId == null) {
-            throw new ClientException(BUSINESS_ID_EMPTY);
-        }
-        businessPermissionFacade.checkPermissionByBusiness(businessId, BusinessPermission.VIEW_BUSINESS_INFO);
-
-        LocalDateTime fromDate;
-        LocalDateTime toDate;
-        if (CollectionUtils.isEmpty(statuses)) {
-            statuses = Arrays.asList(StatusRecord.values());
-        }
-        if (from != null) {
-            fromDate = Instant.ofEpochMilli(from).atZone(ZoneId.of("UTC")).toLocalDateTime();
-        } else {
-            fromDate = LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay();
-        }
-        if (to != null) {
-            toDate = Instant.ofEpochMilli(to).atZone(ZoneId.of("UTC")).toLocalDateTime();
-        } else {
-            toDate = fromDate.plusDays(1L);
-        }
-        if (fromDate.isAfter(toDate)) {
-            throw new ClientException(TIME_IS_NOT_CORRECT);
-        }
-        List<BaseRecordEntity> entities = baseRecordRepository.findByBusinessIdAndStatusRecordInAndBeginBetween(businessId, statuses, fromDate, toDate);
-        return converter.convert(entities, BaseRecordDto.class);
     }
 
     @Override
@@ -348,7 +299,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Override
     @Transactional
     @RecordUpdate
-    public BaseRecordDto updateTimeRecord(UUID idRecord, Long beginTime) {
+    public BaseRecordDto updateRecordTime(UUID idRecord, Long beginTime) {
 
         LocalDateTime begin = LocalDateTime.ofInstant(Instant.ofEpochMilli(beginTime),
                 TimeZone.getDefault().toZoneId());
@@ -435,7 +386,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Override
     @Transactional
     @RecordCreate
-    public BaseRecordDto createFromBusiness(BaseRecordDto dto) {
+    public BaseRecordDto createForBusiness(BaseRecordDto dto) {
         businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.WORK_WITH_RECORD);
         if (dto.getClientId() != null) {
             List<PublicUserDto> users = exchangeService.findPublicUserByIds(Arrays.asList(dto.getClientId()));

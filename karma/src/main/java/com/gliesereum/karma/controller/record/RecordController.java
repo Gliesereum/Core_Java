@@ -3,8 +3,9 @@ package com.gliesereum.karma.controller.record;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
-import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.record.*;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
+import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,11 +29,6 @@ public class RecordController {
     @Autowired
     private BaseRecordService service;
 
-    @GetMapping
-    public List<BaseRecordDto> getAll() {
-        return service.getAll();
-    }
-
     @GetMapping("/{id}")
     public BaseRecordDto getById(@PathVariable("id") UUID id) {
         return service.getFullModelByIdWithPermission(id);
@@ -47,76 +43,63 @@ public class RecordController {
         return baseRecordDto;
     }
 
-    @PostMapping("/create/from-business")
-    public BaseRecordDto createFromBusiness(@Valid @RequestBody BaseRecordDto dto) {
-        return service.createFromBusiness(dto);
-    }
-
-    @PutMapping("/record/canceled")
-    public BaseRecordDto canceledRecord(@RequestParam("idRecord") UUID idRecord,
-                                        @RequestParam("message") String message) {
-        return service.canceledRecord(idRecord, message);
-    }
-
-    @PutMapping("/time/record")
-    public BaseRecordDto updateTimeRecord(@RequestParam("idRecord") UUID idRecord,
-                                          @RequestParam("beginTime") Long beginTime) {
-        return service.updateTimeRecord(idRecord, beginTime);
-    }
-
-    @PutMapping("/status/process")
-    public BaseRecordDto updateStatusProcess(@RequestParam("idRecord") UUID idRecord,
-                                             @RequestParam("status") StatusProcess status) {
-        return service.updateStatusProgress(idRecord, status);
-    }
-
-    @PutMapping("/status/pay")
-    public BaseRecordDto updateStatusPay(@RequestParam("idRecord") UUID idRecord,
-                                         @RequestParam("status") StatusPay status) {
-        return service.updateStatusPay(idRecord, status);
-    }
-
     @DeleteMapping("/{id}")
     public MapResponse delete(@PathVariable("id") UUID id) {
         service.delete(id);
         return new MapResponse("true");
     }
 
-    @GetMapping("/client/all")
-    public Page<BaseRecordDto> getAllByUser( @RequestParam(value = "page", required = false) Integer page,
-                                             @RequestParam(value = "size", required = false) Integer size) {
+    @PostMapping("/create-for-business")
+    public BaseRecordDto createForBusiness(@Valid @RequestBody BaseRecordDto dto) {
+        return service.createForBusiness(dto);
+    }
+
+    @PutMapping("/canceled-record")
+    public BaseRecordDto canceledRecord(@RequestParam("idRecord") UUID idRecord,
+                                        @RequestParam("message") String message) {
+        return service.canceledRecord(idRecord, message);
+    }
+
+    @PutMapping("/update-time")
+    public BaseRecordDto updateRecordTime(@RequestParam("idRecord") UUID idRecord,
+                                          @RequestParam("beginTime") Long beginTime) {
+        return service.updateRecordTime(idRecord, beginTime);
+    }
+
+    @PutMapping("/update-status-process")
+    public BaseRecordDto updateStatusProcess(@RequestParam("idRecord") UUID idRecord,
+                                             @RequestParam("status") StatusProcess status) {
+        return service.updateStatusProgress(idRecord, status);
+    }
+
+    @PutMapping("/update-status-pay")
+    public BaseRecordDto updateStatusPay(@RequestParam("idRecord") UUID idRecord,
+                                         @RequestParam("status") StatusPay status) {
+        return service.updateStatusPay(idRecord, status);
+    }
+
+    @GetMapping("/by-current-user")
+    public Page<BaseRecordDto> getAllByCurrentUser(@RequestParam(value = "page", required = false) Integer page,
+                                                   @RequestParam(value = "size", required = false) Integer size) {
         return service.getAllByUser(page, size);
     }
 
-    @GetMapping("/lite/by-business")
-    public List<BaseRecordDto> getAllByBusinessId(@RequestParam("businessId") UUID businessId,
-                                                  @RequestParam("statuses") List<StatusRecord> statuses,
-                                                  @RequestParam("from") Long from,
-                                                  @RequestParam("to") Long to) {
-        return service.getLiteRecordDtoByBusiness(businessId, statuses, from, to);
-    }
-
-    @PostMapping("/client/params")
-    public List<BaseRecordDto> getByParamsForClient(@RequestBody RecordsSearchDto search) {
+    @PostMapping("/by-params-for-current-user")
+    public List<BaseRecordDto> getByParamsForCurrentClient(@RequestBody RecordsSearchDto search) {
         return service.getByParamsForClient(search);
     }
 
-    @PostMapping("/business/params")
+    @PostMapping("/by-params-for-business")
     public List<BaseRecordDto> getByParamsForBusiness(@RequestBody RecordsSearchDto search) {
         return service.getByParamsForBusiness(search);
     }
 
-    @GetMapping("/business/by-client")
-    public Page<BaseRecordDto> getByClientForBusiness(@RequestParam("corporationIds") List<UUID> corporationIds,
-                                                      @RequestParam("clientId") UUID clientId,
-                                                      @RequestParam(value = "page", required = false) Integer page,
-                                                      @RequestParam(value = "size", required = false) Integer size) {
-        return service.getByClientForBusiness(corporationIds, clientId, page, size);
-    }
-
-    @PostMapping("/business/params/lite")
-    public LiteRecordPageDto getLiteByParamsForBusiness(@RequestBody RecordsSearchDto search) {
-        return service.getLiteByParamsForBusiness(search);
+    @GetMapping("/by-client-for-corporation")
+    public Page<BaseRecordDto> getByClientForCorporation(@RequestParam("corporationIds") List<UUID> corporationIds,
+                                                         @RequestParam("clientId") UUID clientId,
+                                                         @RequestParam(value = "page", required = false) Integer page,
+                                                         @RequestParam(value = "size", required = false) Integer size) {
+        return service.getByClientForCorporation(corporationIds, clientId, page, size);
     }
 
     @PostMapping("/free-time")
