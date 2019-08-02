@@ -13,6 +13,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -151,11 +152,10 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
         Map<UUID, RatingDto> result = new HashMap<>();
         if (CollectionUtils.isNotEmpty(objectIds)) {
             List<CommentEntity> entities = commentRepository.findAllByObjectIdIn(objectIds);
-            if (CollectionUtils.isNotEmpty(entities)) {
-                Map<UUID, List<CommentEntity>> map = entities.stream().collect(Collectors.groupingBy(CommentEntity::getObjectId));
-                objectIds.forEach(i -> map.putIfAbsent(i, new ArrayList<>()));
-                result = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> getRating(i.getValue())));
-            }
+            Map<UUID, List<CommentEntity>> map = ListUtils.defaultIfNull(entities, new ArrayList<>()).stream().collect(Collectors.groupingBy(CommentEntity::getObjectId));
+            objectIds.forEach(i -> map.putIfAbsent(i, new ArrayList<>()));
+            result = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> getRating(i.getValue())));
+
         }
         return result;
     }
