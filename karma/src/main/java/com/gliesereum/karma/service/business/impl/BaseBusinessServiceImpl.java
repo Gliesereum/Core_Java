@@ -10,7 +10,6 @@ import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.descriptions.BusinessDescriptionService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
-import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
@@ -24,9 +23,14 @@ import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -298,16 +302,26 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (CollectionUtils.isEmpty(entities)) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        return entities.stream().map(i -> {
-            BusinessFullModel result = converter.convert(i, BusinessFullModel.class);
-            result.setRating(commentService.getRating(i.getId()));
-            result.setBusinessId(i.getId());
-            result.setServicePrices(ListUtils.emptyIfNull(servicePriceService.getByBusinessId(i.getId())));
-            result.setPackages(ListUtils.emptyIfNull(packageService.getByBusinessId(i.getId())));
-            result.setMedia(ListUtils.emptyIfNull(mediaService.getByObjectId(i.getId())));
-            result.setComments(ListUtils.emptyIfNull(commentService.findFullByObjectId(i.getId())));
-            return result;
-        }).collect(Collectors.toList());
+        Map<UUID, List<WorkerDto>> workers = workerService.getWorkerMapByBusinessIds(ids);
+        Map<UUID, RatingDto> ratings = commentService.getRatings(ids);
+        Map<UUID, List<ServicePriceDto>> servicePrices = servicePriceService.getMapByBusinessIds(ids);
+        Map<UUID, List<PackageDto>> packages = packageService.getMapByBusinessIds(ids);
+        Map<UUID, List<MediaDto>> medias = mediaService.getMapByObjectIds(ids);
+        Map<UUID, List<CommentFullDto>> comments = commentService.getMapFullByObjectIds(ids);
+
+        return entities.stream()
+                .map(i -> converter.convert(i, BusinessFullModel.class))
+                .peek(i -> {
+                    UUID id = i.getId();
+                    i.setRating(ratings.get(id));
+                    i.setBusinessId(id);
+                    i.setServicePrices(ListUtils.emptyIfNull(servicePrices.get(id)));
+                    i.setPackages(ListUtils.emptyIfNull(packages.get(id)));
+                    i.setMedia(ListUtils.emptyIfNull(medias.get(id)));
+                    i.setComments(ListUtils.emptyIfNull(comments.get(id)));
+                    i.setWorkers(ListUtils.emptyIfNull(workers.get(id)));
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

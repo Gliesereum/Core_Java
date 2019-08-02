@@ -41,5 +41,7 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
 
     Map<UUID, LiteWorkerDto> getLiteWorkerMapByIds(Collection<UUID> collect);
 
+    Map<UUID, List<WorkerDto>> getWorkerMapByBusinessIds(List<UUID> businessIds);
+
     WorkerDto createWorkerWithUser(WorkerDto worker);
 }

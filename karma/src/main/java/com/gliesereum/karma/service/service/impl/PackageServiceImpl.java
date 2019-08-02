@@ -25,9 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.BODY_INVALID;
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.ID_NOT_SPECIFIED;
@@ -71,6 +70,18 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     public List<PackageDto> getByBusinessId(UUID id) {
         List<PackageEntity> entities = packageRepository.getByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public Map<UUID, List<PackageDto>> getMapByBusinessIds(List<UUID> businessIds) {
+        Map<UUID, List<PackageDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            List<PackageEntity> entities = packageRepository.findAllByBusinessIdIn(businessIds);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                result = entities.stream().map(i -> converter.convert(i, dtoClass)).collect(Collectors.groupingBy(PackageDto::getBusinessId));
+            }
+        }
+        return result;
     }
 
     @Override
