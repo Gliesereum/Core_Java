@@ -11,12 +11,17 @@ import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkTimeService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
+import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
-import com.gliesereum.share.common.model.dto.karma.business.*;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -71,6 +76,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Autowired
     private BusinessAdministratorService businessAdministratorService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
@@ -291,6 +299,24 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             }
         }
         return result;
+    }
+
+    @Override
+    public CommentDto addComment(UUID objectId, UUID userId, CommentDto comment) {
+        if (!isExist(objectId)) {
+            throw new ClientException(WORKER_NOT_FOUND);
+        }
+        return commentService.addComment(objectId, userId, comment);
+    }
+
+    @Override
+    public CommentDto updateComment(UUID userId, CommentDto comment) {
+        return commentService.updateComment(userId, comment);
+    }
+
+    @Override
+    public void deleteComment(UUID commentId, UUID userId) {
+        commentService.deleteComment(commentId, userId);
     }
 
     private void checkWorker(WorkerDto dto) {

@@ -1,8 +1,13 @@
 package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.service.business.WorkerService;
+import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.response.MapResponse;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +25,9 @@ public class WorkerController {
 
     @Autowired
     private WorkerService workerService;
+
+    @Autowired
+    private CommentService commentService;
 
     @PostMapping
     public WorkerDto createWorker(@RequestBody @Valid WorkerDto worker) {
@@ -61,5 +69,40 @@ public class WorkerController {
     public MapResponse checkWorkerExistByPhone(@RequestParam("phone") String phone) {
         Boolean exist = workerService.checkWorkerExistByPhone(phone);
         return new MapResponse("exist", exist);
+    }
+
+    @GetMapping("/{id}/rating")
+    public RatingDto getRating(@PathVariable("id") UUID id) {
+        return commentService.getRating(id);
+    }
+
+    @GetMapping("/{id}/comment")
+    public List<CommentFullDto> getCommentByWorker(@PathVariable("id") UUID id) {
+        return commentService.findFullByObjectId(id);
+    }
+
+    @GetMapping("/{id}/comment/current-user")
+    public CommentFullDto getCommentByWorkerForUser(@PathVariable("id") UUID id) {
+        return commentService.findByObjectIdForCurrentUser(id);
+    }
+
+    @PostMapping("/{id}/comment")
+    public CommentDto addComment(@PathVariable("id") UUID id,
+                                 @RequestBody @Valid CommentDto comment) {
+        SecurityUtil.checkUserByBanStatus();
+        return workerService.addComment(id, SecurityUtil.getUserId(), comment);
+    }
+
+    @PutMapping("/comment")
+    public CommentDto updateComment(@RequestBody @Valid CommentDto comment) {
+        SecurityUtil.checkUserByBanStatus();
+        return workerService.updateComment(SecurityUtil.getUserId(), comment);
+    }
+
+    @DeleteMapping("/comment/{commentId}")
+    public MapResponse deleteComment(@PathVariable("commentId") UUID commentId) {
+        SecurityUtil.checkUserByBanStatus();
+        workerService.deleteComment(commentId, SecurityUtil.getUserId());
+        return new MapResponse("true");
     }
 }
