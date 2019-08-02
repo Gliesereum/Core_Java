@@ -312,13 +312,14 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         return entities.stream()
                 .map(i -> converter.convert(i, BusinessFullModel.class))
                 .peek(i -> {
-                    i.setRating(ratings.get(i.getId()));
-                    i.setBusinessId(i.getId());
-                    i.setServicePrices(ListUtils.emptyIfNull(servicePrices.get(i.getId())));
-                    i.setPackages(ListUtils.emptyIfNull(packages.get(i.getId())));
-                    i.setMedia(ListUtils.emptyIfNull(medias.get(i.getId())));
-                    i.setComments(ListUtils.emptyIfNull(comments.get(i.getId())));
-                    i.setWorkers(ListUtils.emptyIfNull(workers.get(i.getId())));
+                    UUID id = i.getId();
+                    i.setRating(ratings.get(id));
+                    i.setBusinessId(id);
+                    i.setServicePrices(ListUtils.emptyIfNull(servicePrices.get(id)));
+                    i.setPackages(ListUtils.emptyIfNull(packages.get(id)));
+                    i.setMedia(ListUtils.emptyIfNull(medias.get(id)));
+                    i.setComments(ListUtils.emptyIfNull(comments.get(id)));
+                    i.setWorkers(ListUtils.emptyIfNull(workers.get(id)));
                 })
                 .collect(Collectors.toList());
     }
