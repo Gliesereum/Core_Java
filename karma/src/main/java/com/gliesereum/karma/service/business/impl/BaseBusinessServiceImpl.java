@@ -10,7 +10,6 @@ import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.descriptions.BusinessDescriptionService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
-import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
@@ -310,17 +309,18 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         Map<UUID, List<MediaDto>> medias = mediaService.getMapByObjectIds(ids);
         Map<UUID, List<CommentFullDto>> comments = commentService.getMapFullByObjectIds(ids);
 
-        return entities.stream().map(i -> {
-            BusinessFullModel result = converter.convert(i, BusinessFullModel.class);
-            result.setRating(ratings.get(i.getId()));
-            result.setBusinessId(i.getId());
-            result.setServicePrices(ListUtils.emptyIfNull(servicePrices.get(i.getId())));
-            result.setPackages(ListUtils.emptyIfNull(packages.get(i.getId())));
-            result.setMedia(ListUtils.emptyIfNull(medias.get(i.getId())));
-            result.setComments(ListUtils.emptyIfNull(comments.get(i.getId())));
-            result.setWorkers(ListUtils.emptyIfNull(workers.get(i.getId())));
-            return result;
-        }).collect(Collectors.toList());
+        return entities.stream()
+                .map(i -> converter.convert(i, BusinessFullModel.class))
+                .peek(i -> {
+                    i.setRating(ratings.get(i.getId()));
+                    i.setBusinessId(i.getId());
+                    i.setServicePrices(ListUtils.emptyIfNull(servicePrices.get(i.getId())));
+                    i.setPackages(ListUtils.emptyIfNull(packages.get(i.getId())));
+                    i.setMedia(ListUtils.emptyIfNull(medias.get(i.getId())));
+                    i.setComments(ListUtils.emptyIfNull(comments.get(i.getId())));
+                    i.setWorkers(ListUtils.emptyIfNull(workers.get(i.getId())));
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
