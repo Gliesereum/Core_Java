@@ -24,9 +24,14 @@ import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -298,14 +303,22 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (CollectionUtils.isEmpty(entities)) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
+        Map<UUID, List<WorkerDto>> workers = workerService.getWorkerMapByBusinessIds(ids);
+        Map<UUID, RatingDto> ratings = commentService.getRatings(ids);
+        Map<UUID, List<ServicePriceDto>> servicePrices = servicePriceService.getMapByBusinessIds(ids);
+        Map<UUID, List<PackageDto>> packages = packageService.getMapByBusinessIds(ids);
+        Map<UUID, List<MediaDto>> medias = mediaService.getMapByObjectIds(ids);
+        Map<UUID, List<CommentFullDto>> comments = commentService.getMapFullByObjectIds(ids);
+
         return entities.stream().map(i -> {
             BusinessFullModel result = converter.convert(i, BusinessFullModel.class);
-            result.setRating(commentService.getRating(i.getId()));
+            result.setRating(ratings.get(i.getId()));
             result.setBusinessId(i.getId());
-            result.setServicePrices(ListUtils.emptyIfNull(servicePriceService.getByBusinessId(i.getId())));
-            result.setPackages(ListUtils.emptyIfNull(packageService.getByBusinessId(i.getId())));
-            result.setMedia(ListUtils.emptyIfNull(mediaService.getByObjectId(i.getId())));
-            result.setComments(ListUtils.emptyIfNull(commentService.findFullByObjectId(i.getId())));
+            result.setServicePrices(ListUtils.emptyIfNull(servicePrices.get(i.getId())));
+            result.setPackages(ListUtils.emptyIfNull(packages.get(i.getId())));
+            result.setMedia(ListUtils.emptyIfNull(medias.get(i.getId())));
+            result.setComments(ListUtils.emptyIfNull(comments.get(i.getId())));
+            result.setWorkers(ListUtils.emptyIfNull(workers.get(i.getId())));
             return result;
         }).collect(Collectors.toList());
     }

@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -14,6 +15,8 @@ import java.util.UUID;
 public interface MediaService extends DefaultService<MediaDto, MediaEntity> {
 
     List<MediaDto> getByObjectId(UUID objectId);
+
+    Map<UUID, List<MediaDto>> getMapByObjectIds(List<UUID> objectIds);
 
    void delete(UUID id, UUID objectId);
 }

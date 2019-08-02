@@ -20,6 +20,8 @@ public interface CommentService extends DefaultService<CommentDto, CommentEntity
 
     List<CommentFullDto> findFullByObjectId(UUID objectId);
 
+    Map<UUID, List<CommentFullDto>> getMapFullByObjectIds(List<UUID> objectIds);
+
     CommentFullDto findByObjectIdForCurrentUser(UUID objectId);
 
     CommentDto addComment(UUID objectId, UUID userId, CommentDto comment);

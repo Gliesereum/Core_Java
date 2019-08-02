@@ -7,11 +7,15 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.MEDIA_NOT_FOUND_BY_ID;
 
@@ -42,6 +46,18 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
             result = converter.convert(entities, dtoClass);
         }
 
+        return result;
+    }
+
+    @Override
+    public Map<UUID, List<MediaDto>> getMapByObjectIds(List<UUID> objectIds) {
+        Map<UUID, List<MediaDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(objectIds)) {
+            List<MediaEntity> entities = mediaRepository.findAllByObjectIdIn(objectIds);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                result = entities.stream().map(i -> converter.convert(i, dtoClass)).collect(Collectors.groupingBy(MediaDto::getObjectId));
+            }
+        }
         return result;
     }
 

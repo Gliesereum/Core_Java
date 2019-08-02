@@ -20,4 +20,6 @@ public interface PackageRepository extends JpaRepository<PackageEntity, UUID> {
     PackageEntity findByIdAndObjectState(UUID id, ObjectState objectState);
 
     List<PackageEntity> getAllByIdInAndObjectState(Iterable<UUID> ids, ObjectState objectState);
+
+    List<PackageEntity> findAllByBusinessIdIn(List<UUID> businessIds);
 }

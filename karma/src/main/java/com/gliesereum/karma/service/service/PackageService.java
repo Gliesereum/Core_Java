@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -15,6 +16,8 @@ import java.util.UUID;
 public interface PackageService extends DefaultService<PackageDto, PackageEntity> {
 
     List<PackageDto> getByBusinessId(UUID id);
+
+    Map<UUID, List<PackageDto>> getMapByBusinessIds(List<UUID> businessIds);
 
     PackageDto getByIdIgnoreState(UUID id);
 
