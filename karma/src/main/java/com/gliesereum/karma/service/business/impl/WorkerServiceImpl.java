@@ -210,6 +210,20 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    public Map<UUID, List<WorkerDto>> getWorkerMapByBusinessIds(List<UUID> businessIds) {
+        Map<UUID, List<WorkerDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            List<WorkerEntity> entities = workerRepository.findAllByBusinessIdIn(businessIds);
+            List<WorkerDto> workers = converter.convert(entities, dtoClass);
+            if (CollectionUtils.isNotEmpty(workers)) {
+                setUsers(workers);
+                result = workers.stream().collect(Collectors.groupingBy(WorkerDto::getBusinessId));
+            }
+        }
+        return result;
+    }
+
+    @Override
     @Transactional
     public WorkerDto createWorkerWithUser(WorkerDto worker) {
         WorkerDto result = null;

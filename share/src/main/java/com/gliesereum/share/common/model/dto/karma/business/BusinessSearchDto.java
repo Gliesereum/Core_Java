@@ -24,4 +24,6 @@ public class BusinessSearchDto {
     private List<UUID> businessCategoryIds;
 
     private GeoDistanceDto geoDistance;
+
+    private String fullTextQuery;
 }

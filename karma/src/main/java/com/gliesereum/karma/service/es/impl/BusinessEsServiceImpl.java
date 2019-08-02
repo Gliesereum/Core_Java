@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.*;
@@ -58,6 +59,10 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private static final String FIELD_BUSINESS_CATEGORY_ID = "businessCategoryId";
     private static final String FIELD_GEO_POINT = "geoPoint";
     private static final String FIELD_OBJECT_STATE = "objectState";
+    private static final String FIELD_NAME = "name";
+    private static final String FIELD_DESCRIPTION = "description";
+    private static final String FIELD_ADDRESS = "address";
+    private static final String FIELD_SERVICE_NAMES = "serviceNames";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -100,6 +105,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
             addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
+            addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
 
             CarInfoDto carInfo = null;
             if (!SecurityUtil.isAnonymous()) {
@@ -200,6 +206,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     private BusinessDocument insertServices(BusinessDocument target, List<ServicePriceDto> servicePrices) {
         if ((target != null) && CollectionUtils.isNotEmpty(servicePrices)) {
+            Set<String> serviceNames = new HashSet<>();
             List<BusinessServiceDocument> services = servicePrices.stream()
                     .map(price -> {
                         BusinessServiceDocument serviceDocument = defaultConverter.convert(price, BusinessServiceDocument.class);
@@ -208,10 +215,13 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                                     .map(i -> i.getId().toString())
                                     .collect(Collectors.toList()));
                             insertFilters(serviceDocument, price);
+                            serviceNames.add(price.getName());
+                            serviceNames.add(price.getService().getName());
                         }
                         return serviceDocument;
                     }).collect(Collectors.toList());
             target.setServices(services);
+            target.setServiceNames(new ArrayList<>(serviceNames));
         }
         return target;
     }
@@ -293,7 +303,18 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                     .distance(geoDistance.getDistanceMeters(), DistanceUnit.METERS);
             boolQueryBuilder.filter(geoDistanceQueryBuilder);
         }
+    }
 
+    private void addFullTextQuery(BoolQueryBuilder boolQueryBuilder, String fullTextQuery) {
+        if (StringUtils.isNoneBlank(fullTextQuery) && fullTextQuery.length() > 2) {
+
+            Map<String, Float> fields = Map.of(
+                    FIELD_NAME, 2.0F,
+                    FIELD_DESCRIPTION, 2.0F,
+                    FIELD_ADDRESS, 2.0F,
+                    FIELD_SERVICE_NAMES, 2.0F);
+            boolQueryBuilder.must(QueryBuilders.queryStringQuery(fullTextQuery).fields(fields).type(MultiMatchQueryBuilder.Type.PHRASE_PREFIX));
+        }
     }
 
     private void addObjectStateQuery(BoolQueryBuilder boolQueryBuilder, ObjectState objectState) {

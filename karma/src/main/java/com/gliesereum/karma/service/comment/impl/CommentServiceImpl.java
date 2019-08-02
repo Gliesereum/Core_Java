@@ -3,7 +3,6 @@ package com.gliesereum.karma.service.comment.impl;
 import com.gliesereum.karma.model.entity.comment.CommentEntity;
 import com.gliesereum.karma.model.repository.jpa.comment.CommentRepository;
 import com.gliesereum.karma.service.comment.CommentService;
-import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
@@ -67,6 +66,20 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
             List<CommentEntity> entities = commentRepository.findByObjectIdOrderByDateCreatedDesc(objectId);
             result = converter.convert(entities, CommentFullDto.class);
             setUserInfo(result);
+        }
+        return result;
+    }
+
+    @Override
+    public Map<UUID, List<CommentFullDto>> getMapFullByObjectIds(List<UUID> objectIds) {
+        Map<UUID, List<CommentFullDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(objectIds)) {
+            List<CommentEntity> entities = commentRepository.findAllByObjectIdIn(objectIds);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                List<CommentFullDto> comments = converter.convert(entities, CommentFullDto.class);
+                setUserInfo(comments);
+                result = comments.stream().collect(Collectors.groupingBy(CommentFullDto::getObjectId));
+            }
         }
         return result;
     }
@@ -163,10 +176,10 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
     }
 
     private void setUserInfo(List<CommentFullDto> comments) {
-        if(CollectionUtils.isNotEmpty(comments)) {
+        if (CollectionUtils.isNotEmpty(comments)) {
             List<UUID> ownerIds = comments.stream().map(CommentFullDto::getOwnerId).collect(Collectors.toList());
             Map<UUID, UserDto> userMap = userExchangeService.findUserMapByIds(ownerIds);
-            if (MapUtils.isNotEmpty(userMap))  {
+            if (MapUtils.isNotEmpty(userMap)) {
                 comments.forEach(i -> {
                     UserDto user = userMap.get(i.getOwnerId());
                     if (user != null) {
