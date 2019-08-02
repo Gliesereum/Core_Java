@@ -63,7 +63,7 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage SERVICE_ID_IS_EMPTY = new ExceptionMessage(1460, 400, "Service id is empty");
     public static final ExceptionMessage WORKING_SPACE_ID_IS_EMPTY = new ExceptionMessage(1461, 400, "Working space id is empty");
     public static final ExceptionMessage USER_ALREADY_EXIST_LIKE_WORKER_IN_BUSINESS = new ExceptionMessage(1462, 400, "User already exist like worker in this business");
-    public static final ExceptionMessage WORKER_NOT_FOUND = new ExceptionMessage(1463, 400, "Worker not found");
+    public static final ExceptionMessage WORKER_NOT_FOUND = new ExceptionMessage(1463, 404, "Worker not found");
 
     public static final ExceptionMessage SERVICE_CLASS_ID_IS_EMPTY = new ExceptionMessage(1464, 400, "Service class id is empty");
     public static final ExceptionMessage PRICE_ID_IS_EMPTY = new ExceptionMessage(1465, 400, "Price id is empty");

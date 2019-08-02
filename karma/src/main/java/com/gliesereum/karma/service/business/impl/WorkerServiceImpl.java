@@ -11,12 +11,19 @@ import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkTimeService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
+import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
-import com.gliesereum.share.common.model.dto.karma.business.*;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
+import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -73,6 +80,9 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     private BusinessAdministratorService businessAdministratorService;
 
     @Autowired
+    private CommentService commentService;
+
+    @Autowired
     public WorkerServiceImpl(WorkerRepository workerRepository, DefaultConverter defaultConverter) {
         super(workerRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.workerRepository = workerRepository;
@@ -94,6 +104,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         }
         List<WorkerEntity> entities = workerRepository.findAllByBusinessId(businessId);
         List<WorkerDto> result = converter.convert(entities, dtoClass);
+        setCommentInWorker(result);
         if (setUsers && CollectionUtils.isNotEmpty(result)) {
             setUsers(result);
         }
@@ -152,6 +163,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
                 result = converter.convert(entities, dtoClass);
                 if (CollectionUtils.isNotEmpty(result)) {
                     setUsers(result);
+                    setCommentInWorker(result);
                     result.sort(Comparator.comparing(WorkerDto::getBusinessId));
                 }
             }
@@ -209,6 +221,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             List<WorkerDto> workers = converter.convert(entities, dtoClass);
             if (CollectionUtils.isNotEmpty(workers)) {
                 setUsers(workers);
+                setCommentInWorker(workers);
                 result = workers.stream().collect(Collectors.groupingBy(WorkerDto::getBusinessId));
             }
         }
@@ -307,6 +320,24 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         return result;
     }
 
+    @Override
+    public CommentDto addComment(UUID objectId, UUID userId, CommentDto comment) {
+        if (!isExist(objectId)) {
+            throw new ClientException(WORKER_NOT_FOUND);
+        }
+        return commentService.addComment(objectId, userId, comment);
+    }
+
+    @Override
+    public CommentDto updateComment(UUID userId, CommentDto comment) {
+        return commentService.updateComment(userId, comment);
+    }
+
+    @Override
+    public void deleteComment(UUID commentId, UUID userId) {
+        commentService.deleteComment(commentId, userId);
+    }
+
     private void checkWorker(WorkerDto dto) {
         if (dto.getUserId() == null) {
             throw new ClientException(USER_ID_IS_EMPTY);
@@ -333,6 +364,24 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         dto.setCorporationId(business.getCorporationId());
         businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
 
+    }
+
+    private void setCommentInWorker(List<WorkerDto> list) {
+        if (CollectionUtils.isNotEmpty(list)) {
+            List<UUID> ids = list.stream().map(WorkerDto::getId).collect(Collectors.toList());
+            Map<UUID, List<CommentFullDto>> comments = commentService.getMapFullByObjectIds(ids);
+            Map<UUID, RatingDto> ratings = commentService.getRatings(ids);
+            if (MapUtils.isNotEmpty(comments)) {
+                list.forEach(f -> {
+                    f.setComments(comments.get(f.getId()));
+                });
+            }
+            if (MapUtils.isNotEmpty(ratings)) {
+                list.forEach(f -> {
+                    f.setRating(ratings.get(f.getId()));
+                });
+            }
+        }
     }
 
 }
