@@ -70,6 +70,7 @@ services:
       retries: 20
     volumes:
     - ../config/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
+    - /usr/config/geoconfig/GeoLite2-City.mmdb:/usr/share/geoconfig/GeoLite2-City.mmdb
 
   curator:
     image: gls-curator:0.0.1
