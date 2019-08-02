@@ -182,10 +182,19 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     @Override
     @Transactional
     public List<BaseBusinessDto> getAllBusinessByCurrentUser() {
+        List<BaseBusinessDto> result = new ArrayList<>();
+        List<UUID> businessIds = getAllBusinessIdsByCurrentUser();
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            result = getByIds(businessIds);
+        }
+        return result;
+    }
+
+    @Override
+    public List<UUID> getAllBusinessIdsByCurrentUser() {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_NOT_AUTHENTICATION);
         }
-        List<BaseBusinessDto> result = new ArrayList<>();
         Set<UUID> businessIds = new HashSet<>();
         if (CollectionUtils.isNotEmpty(SecurityUtil.getUserCorporationIds())) {
             List<UUID> businessByCorporation = baseBusinessRepository.getIdsByCorporationIdIn(SecurityUtil.getUserCorporationIds());
@@ -201,19 +210,16 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (CollectionUtils.isNotEmpty(administrator)) {
             businessIds.addAll(administrator.stream().map(BusinessAdministratorDto::getBusinessId).collect(Collectors.toList()));
         }
-        if (CollectionUtils.isNotEmpty(businessIds)) {
-            result = getByIds(businessIds);
-        }
-        return result;
+        return new ArrayList<>(businessIds);
     }
 
     @Override
     @Transactional
     public List<BusinessFullModel> getAllFullBusinessByCurrentUser() {
         List<BusinessFullModel> result = new ArrayList<>();
-        List<BaseBusinessDto> list = getAllBusinessByCurrentUser();
-        if (CollectionUtils.isNotEmpty(list)) {
-            result = getFullModelByIds(list.stream().map(BaseBusinessDto::getId).collect(Collectors.toList()));
+        List<UUID> businessIds = getAllBusinessIdsByCurrentUser();
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            result = getFullModelByIds(businessIds);
             if (CollectionUtils.isNotEmpty(result)) {
                 result.forEach(i -> i.setRecords(ListUtils.emptyIfNull
                         (baseRecordService.getByBusinessIdAndStatusRecord(
