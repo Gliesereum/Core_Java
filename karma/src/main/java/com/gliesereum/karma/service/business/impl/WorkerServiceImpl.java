@@ -22,6 +22,8 @@ import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
+import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -102,6 +104,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         }
         List<WorkerEntity> entities = workerRepository.findAllByBusinessId(businessId);
         List<WorkerDto> result = converter.convert(entities, dtoClass);
+        setCommentInWorker(result);
         if (setUsers && CollectionUtils.isNotEmpty(result)) {
             setUsers(result);
         }
@@ -160,6 +163,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
                 result = converter.convert(entities, dtoClass);
                 if (CollectionUtils.isNotEmpty(result)) {
                     setUsers(result);
+                    setCommentInWorker(result);
                     result.sort(Comparator.comparing(WorkerDto::getBusinessId));
                 }
             }
@@ -217,6 +221,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             List<WorkerDto> workers = converter.convert(entities, dtoClass);
             if (CollectionUtils.isNotEmpty(workers)) {
                 setUsers(workers);
+                setCommentInWorker(workers);
                 result = workers.stream().collect(Collectors.groupingBy(WorkerDto::getBusinessId));
             }
         }
@@ -359,6 +364,24 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         dto.setCorporationId(business.getCorporationId());
         businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
 
+    }
+
+    private void setCommentInWorker(List<WorkerDto> list) {
+        if (CollectionUtils.isNotEmpty(list)) {
+            List<UUID> ids = list.stream().map(WorkerDto::getId).collect(Collectors.toList());
+            Map<UUID, List<CommentFullDto>> comments = commentService.getMapFullByObjectIds(ids);
+            Map<UUID, RatingDto> ratings = commentService.getRatings(ids);
+            if (MapUtils.isNotEmpty(comments)) {
+                list.forEach(f -> {
+                    f.setComments(comments.get(f.getId()));
+                });
+            }
+            if (MapUtils.isNotEmpty(ratings)) {
+                list.forEach(f -> {
+                    f.setRating(ratings.get(f.getId()));
+                });
+            }
+        }
     }
 
 }
