@@ -11,7 +11,6 @@ import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.karma.service.business.WorkerService;
-import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.karma.service.record.BaseRecordService;
@@ -76,9 +75,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Autowired
     private PackageService packageService;
-
-    @Autowired
-    private WorkingSpaceService workingSpaceService;
 
     @Autowired
     private OrderService orderService;
@@ -369,27 +365,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return result;
     }
 
-    /*@Override
-    @Transactional
-    @RecordUpdate
-    public BaseRecordDto updateWorkingSpace(UUID idRecord, UUID workerId) {
-        BaseRecordDto dto = getById(idRecord);
-        checkPermissionToUpdate(dto);
-        BaseBusinessDto business = getBusinessByRecord(dto);
-        if (dto.getWorkingSpaceId() == null) {
-            throw new ClientException(WORKING_SPACE_ID_EMPTY);
-        }
-        WorkingSpaceDto workingSpace = workingSpaceService.getById(workerId);
-        if (workingSpace == null) {
-            throw new ClientException(WORKING_SPACE_NOT_FOUND);
-        }
-        checkWorkingSpaceByOpportunityRecordToTime(dto.getBegin(), dto.getFinish(), workerId, business);
-        dto.setWorkingSpaceId(workerId);
-        BaseRecordDto result = super.update(dto);
-        setServicePrice(Arrays.asList(result));
-        return result;
-    }
-*/
     @Override
     @Transactional
     @RecordUpdate

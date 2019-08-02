@@ -25,16 +25,16 @@ public class BusinessDocument {
     @Field(type = FieldType.Keyword)
     private String corporationId;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text, fielddata = true)
     private String name;
 
     @Field(type = FieldType.Integer)
     private Integer countBox;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text, fielddata = true)
     private String description;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text, fielddata = true)
     private String address;
 
     @Field(type = FieldType.Keyword)
@@ -75,6 +75,9 @@ public class BusinessDocument {
 
     @Field(type = FieldType.Nested)
     private List<WorkTimeDocument> workTimes;
+
+    @Field(type = FieldType.Text, fielddata = true)
+    private List<String> serviceNames;
 
     @Score
     private Float score;
