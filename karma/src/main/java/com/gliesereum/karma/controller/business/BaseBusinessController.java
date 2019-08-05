@@ -209,18 +209,11 @@ public class BaseBusinessController {
     }
 
     @GetMapping("/customers")
-    public Page<ClientDto> getCustomersByBusinessIds(@RequestParam(value = "ids") List<UUID> ids,
-                                                     @RequestParam(value = "page", required = false) Integer page,
-                                                     @RequestParam(value = "size", required = false) Integer size) {
-        return clientFacade.getCustomersByBusinessIds(ids, page, size);
+    public Page<ClientDto> getCustomersByBusinessIds(@RequestParam(value = "corporationId", required = false) UUID corporationId,
+                                                     @RequestParam(value = "businessIds", required = false) List<UUID> businessIds,
+                                                     @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                                     @RequestParam(value = "size", required = false, defaultValue = "100") Integer size,
+                                                     @RequestParam(value = "query", required = false) String query) {
+        return clientFacade.getCustomersByBusinessIdsOrCorporationId(businessIds, corporationId, page, size, query);
     }
-
-    @GetMapping("/customers/by-corporation-id")
-    public Page<ClientDto> getAllCustomersByCorporationIds(@RequestParam(value = "id") UUID id,
-                                                                @RequestParam(value = "page", required = false) Integer page,
-                                                                @RequestParam(value = "size", required = false) Integer size,
-                                                                @RequestParam(value = "query", required = false) String query) {
-        return clientFacade.getAllCustomersByCorporationId(id, page, size, query);
-    }
-
 }

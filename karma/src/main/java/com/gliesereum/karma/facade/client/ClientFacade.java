@@ -16,7 +16,5 @@ public interface ClientFacade {
 
     Map<UUID, ClientDto> getClientMapByIds(Collection<UUID> ids, Collection<UUID> businessIds);
 
-    Page<ClientDto> getCustomersByBusinessIds(List<UUID> ids, Integer page, Integer size);
-
-    Page<ClientDto> getAllCustomersByCorporationId(UUID id, Integer page, Integer size, String query);
+    Page<ClientDto> getCustomersByBusinessIdsOrCorporationId(List<UUID> businessIds, UUID corporationId, Integer page, Integer size, String query);
 }
