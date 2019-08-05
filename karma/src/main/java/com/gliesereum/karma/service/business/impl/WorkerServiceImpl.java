@@ -33,6 +33,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,6 +114,22 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    public Page<WorkerDto> getByBusinessId(UUID businessId, boolean setUsers, Integer page, Integer size) {
+        Page<WorkerDto> result = null;
+        if (businessId != null) {
+            Page<WorkerEntity> entities = workerRepository.findAllByBusinessId(businessId, PageRequest.of(page, size));
+            result = converter.convert(entities, dtoClass);
+            if (CollectionUtils.isNotEmpty(result.getContent())) {
+                setCommentInWorker(result.getContent());
+                if (setUsers) {
+                    setUsers(result.getContent());
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
     public List<LiteWorkerDto> getLiteWorkerByBusinessId(UUID id) {
         List<WorkerEntity> entities = workerRepository.findAllByBusinessId(id);
         List<LiteWorkerDto> result = converter.convert(entities, LiteWorkerDto.class);
@@ -166,6 +184,21 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
                     setCommentInWorker(result);
                     result.sort(Comparator.comparing(WorkerDto::getBusinessId));
                 }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Page<WorkerDto> getByCorporationId(UUID corporationId, Integer page, Integer size) {
+        Page<WorkerDto> result = null;
+        if (corporationId != null) {
+            businessPermissionFacade.checkPermissionByCorporation(corporationId, BusinessPermission.VIEW_BUSINESS_INFO);
+            Page<WorkerEntity> entities = workerRepository.findAllByCorporationId(corporationId, PageRequest.of(page, size));
+            result = converter.convert(entities, dtoClass);
+            if (CollectionUtils.isNotEmpty(result.getContent())) {
+                setUsers(result.getContent());
+                setCommentInWorker(result.getContent());
             }
         }
         return result;

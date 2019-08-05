@@ -9,6 +9,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -46,13 +47,17 @@ public class WorkerController {
     }
 
     @GetMapping("/by-corporation")
-    public List<WorkerDto> getByCorporationId(@RequestParam("corporationId") UUID corporationId) {
-        return workerService.getByCorporationId(corporationId);
+    public Page<WorkerDto> getByCorporationId(@RequestParam("corporationId") UUID corporationId,
+                                              @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                              @RequestParam(value = "size", required = false, defaultValue = "100") Integer size) {
+        return workerService.getByCorporationId(corporationId, page, size);
     }
 
     @GetMapping("/by-business")
-    public List<WorkerDto> getByBusinessId(@RequestParam("businessId") UUID businessId) {
-        return workerService.getByBusinessId(businessId, true);
+    public Page<WorkerDto> getByBusinessId(@RequestParam("businessId") UUID businessId,
+                                           @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                           @RequestParam(value = "size", required = false, defaultValue = "100") Integer size) {
+        return workerService.getByBusinessId(businessId, true, page, size);
     }
 
     @GetMapping("/by-workingSpace")

@@ -1,6 +1,8 @@
 package com.gliesereum.karma.model.repository.jpa.business;
 
 import com.gliesereum.karma.model.entity.business.WorkerEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -27,4 +29,8 @@ public interface WorkerRepository extends JpaRepository<WorkerEntity, UUID> {
     boolean existsByUserIdAndCorporationId(UUID userId, UUID corporationId);
 
     boolean existsByUserIdAndBusinessId(UUID userId, UUID businessId);
+
+    Page<WorkerEntity> findAllByCorporationId(UUID corporationId, Pageable pageable);
+
+    Page<WorkerEntity> findAllByBusinessId(UUID businessId, Pageable pageable);
 }

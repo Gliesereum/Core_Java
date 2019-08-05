@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.service.DefaultService;
+import org.springframework.data.domain.Page;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +28,8 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
 
     List<WorkerDto> getByBusinessId(UUID businessId, boolean setUsers);
 
+    Page<WorkerDto> getByBusinessId(UUID businessId, boolean setUsers, Integer page, Integer size);
+
     List<LiteWorkerDto> getLiteWorkerByBusinessId(UUID id);
 
     List<LiteWorkerDto> getLiteWorkerByIds(List<UUID> ids);
@@ -34,6 +37,8 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
     List<WorkerDto> findByUserIdAndCorporationId(UUID userId, UUID corporationId);
 
     List<WorkerDto> getByCorporationId(UUID corporationId);
+
+    Page<WorkerDto> getByCorporationId(UUID corporationId, Integer page, Integer size);
 
     void setUsers(List<WorkerDto> result);
 
