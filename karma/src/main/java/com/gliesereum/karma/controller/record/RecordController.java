@@ -107,7 +107,7 @@ public class RecordController {
         return service.getFreeTimeForRecord(dto);
     }
 
-    @GetMapping("/free-times")
+    @GetMapping("/workers-free-time")
     public Map<UUID, Set<RecordFreeTime>> getFreeTimes(@RequestParam("businessId") UUID businessId,
                                                        @RequestParam(value = "from", required = false) Long from,
                                                        @RequestParam(value = "packageId", required = false) UUID packageId,

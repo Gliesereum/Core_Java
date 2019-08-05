@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ClientEsServiceImpl implements ClientEsService {
 
-    private final static String CLIENT_ID = "id";
     private final static String BUSINESS_IDS = "businessIds";
     private final static String CORPORATION_IDS = "corporationIds";
     private final static String FIRST_NAME = "firstName";
@@ -53,38 +52,6 @@ public class ClientEsServiceImpl implements ClientEsService {
 
     @Autowired
     private BaseBusinessService businessService;
-
-    @Override
-    public Page<ClientDto> getClientsByBusinessIds(List<UUID> businessIds, Integer page, Integer size) {
-        Page<ClientDto> result = null;
-        if (CollectionUtils.isNotEmpty(businessIds)) {
-            BoolQueryBuilder bq = QueryBuilders.boolQuery();
-            bq.must(QueryBuilders.termsQuery(BUSINESS_IDS, businessIds.stream().map(UUID::toString).collect(Collectors.toList())));
-            Page<ClientDocument> documents = clientEsRepository.search(bq, PageRequest.of(page, size, Sort.by(FIRST_NAME, LAST_NAME)));
-            result = defaultConverter.convert(documents, DTO_CLASS);
-        }
-        return result;
-    }
-
-    @Override
-    public Page<ClientDto> getClientsByCorporationIdAndAutocompleteQuery(String query, UUID corporationId, Integer page, Integer size) {
-        Page<ClientDto> result = null;
-        if (corporationId != null) {
-            BoolQueryBuilder bq = QueryBuilders.boolQuery();
-            List<String> ids = Arrays.asList(corporationId.toString());
-            bq.must(QueryBuilders.termsQuery(CORPORATION_IDS, ids));
-            if (query != null && query.length() >= 3) {
-                Map<String, Float> fields = new HashMap<>();
-                fields.put(FIRST_NAME, 2.0F);
-                fields.put(LAST_NAME, 2.0F);
-                fields.put(PHONE, 2.0F);
-                bq.must(QueryBuilders.queryStringQuery("*" + query + "*").fields(fields));
-            }
-            Page<ClientDocument> documents = clientEsRepository.search(bq, PageRequest.of(page, size, Sort.by(FIRST_NAME, LAST_NAME)));
-            result = defaultConverter.convert(documents, DTO_CLASS);
-        }
-        return result;
-    }
 
     @Override
     @Transactional
@@ -168,6 +135,28 @@ public class ClientEsServiceImpl implements ClientEsService {
             List<ClientDocument> documents = IterableUtils.toList(iterable);
             result = defaultConverter.convert(documents, DTO_CLASS);
         }
+        return result;
+    }
+
+    @Override
+    public Page<ClientDto> getClientsByBusinessIdsOrCorporationIdAndQuery(String query, List<UUID> businessIds, UUID corporationId, Integer page, Integer size) {
+        Page<ClientDto> result = null;
+        BoolQueryBuilder bq = QueryBuilders.boolQuery();
+        if (corporationId != null) {
+            bq.must(QueryBuilders.termsQuery(CORPORATION_IDS, corporationId.toString()));
+        }
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            bq.must(QueryBuilders.termsQuery(BUSINESS_IDS, businessIds.stream().map(UUID::toString).collect(Collectors.toList())));
+        }
+        if (query != null && query.length() >= 3) {
+            Map<String, Float> fields = new HashMap<>();
+            fields.put(FIRST_NAME, 2.0F);
+            fields.put(LAST_NAME, 2.0F);
+            fields.put(PHONE, 2.0F);
+            bq.must(QueryBuilders.queryStringQuery("*" + query + "*").fields(fields));
+        }
+        Page<ClientDocument> documents = clientEsRepository.search(bq, PageRequest.of(page, size, Sort.by(FIRST_NAME, LAST_NAME)));
+        result = defaultConverter.convert(documents, DTO_CLASS);
         return result;
     }
 

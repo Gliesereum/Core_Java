@@ -4,6 +4,7 @@ import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.service.es.ClientEsService;
+import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -15,6 +16,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.BUSINESS_IDS_OR_CORPORATION_IDS_SHOUT_BE_FULL;
 
 /**
  * @author yvlasiuk
@@ -40,31 +43,25 @@ public class ClientFacadeImpl implements ClientFacade {
     }
 
     @Override
-    public Page<ClientDto> getCustomersByBusinessIds(List<UUID> ids, Integer page, Integer size) {
+    public Page<ClientDto> getCustomersByBusinessIdsOrCorporationId(List<UUID> businessIds, UUID corporationId, Integer page, Integer size, String query) {
         Page<ClientDto> result = null;
-        if (size == null) size = 100;
-        if (page == null) page = 0;
-        if (CollectionUtils.isNotEmpty(ids)) {
-            businessPermissionFacade.checkPermissionByBusiness(ids, BusinessPermission.VIEW_BUSINESS_INFO);
-            result = clientEsService.getClientsByBusinessIds(ids, page, size);
-            if ((result != null) && !businessPermissionFacade.isHavePermissionByBusiness(ids, BusinessPermission.VIEW_PHONE)) {
-                hidePhone(result.getContent());
+        boolean viewPhoneCorporation = true;
+        boolean viewPhoneBusiness = true;
+
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            businessPermissionFacade.checkPermissionByBusiness(businessIds, BusinessPermission.VIEW_BUSINESS_INFO);
+            viewPhoneBusiness = businessPermissionFacade.isHavePermissionByBusiness(businessIds, BusinessPermission.VIEW_PHONE);
+        } else {
+            if (corporationId != null) {
+                businessPermissionFacade.checkPermissionByCorporation(corporationId, BusinessPermission.VIEW_BUSINESS_INFO);
+                viewPhoneCorporation = businessPermissionFacade.isHavePermissionByCorporation(corporationId, BusinessPermission.VIEW_PHONE);
+            } else {
+                throw new ClientException(BUSINESS_IDS_OR_CORPORATION_IDS_SHOUT_BE_FULL);
             }
         }
-        return result;
-    }
-
-    @Override
-    public Page<ClientDto> getAllCustomersByCorporationId(UUID id, Integer page, Integer size, String query) {
-        Page<ClientDto> result = null;
-        if (id != null) {
-            businessPermissionFacade.checkPermissionByCorporation(id, BusinessPermission.VIEW_BUSINESS_INFO);
-            if (size == null) size = 100;
-            if (page == null) page = 0;
-            result = clientEsService.getClientsByCorporationIdAndAutocompleteQuery(query, id, page, size);
-            if ((result != null) && !businessPermissionFacade.isHavePermissionByCorporation(id, BusinessPermission.VIEW_PHONE)) {
-                hidePhone(result.getContent());
-            }
+        result = clientEsService.getClientsByBusinessIdsOrCorporationIdAndQuery(query, businessIds, corporationId, page, size);
+        if ((result != null) && (!viewPhoneBusiness || !viewPhoneCorporation)) {
+            hidePhone(result.getContent());
         }
         return result;
     }
