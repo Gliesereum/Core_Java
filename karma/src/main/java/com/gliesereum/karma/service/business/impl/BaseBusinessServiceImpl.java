@@ -37,6 +37,7 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -428,7 +429,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     private void setLogoIfNull(BaseBusinessDto business) {
         if (business != null) {
-            if (business.getLogoUrl() == null) {
+            if (StringUtils.isBlank(business.getLogoUrl())) {
                 business.setLogoUrl(defaultBusinessLogo);
             }
         }
