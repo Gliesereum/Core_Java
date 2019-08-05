@@ -81,7 +81,8 @@ services:
       #CRON: '*/5 * * * *'
       CONFIG_FILE: /curator/config/curator.yml
       COMMAND: /curator/config/actions.yml
-      UNIT_COUNT: 3
+      #delete indeces older 10 days
+      UNIT_COUNT: 10
     deploy:
       restart_policy:
         condition: on-failure
