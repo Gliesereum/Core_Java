@@ -69,6 +69,11 @@ public class ArtBondController {
         return service.getAllByTags(tags);
     }
 
+    @GetMapping("/by-tags")
+    public List<ArtBondDto> getAllByTag(@RequestParam("tags") List<String> tags) {
+        return service.getAllByTags(tags);
+    }
+
     @GetMapping("/status")
     public List<ArtBondDto> getAllByStatus(@RequestParam("status") StatusType status) {
         return service.getAllByStatus(status);

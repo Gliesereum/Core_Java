@@ -119,7 +119,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (businessId != null) {
             Page<WorkerEntity> entities = workerRepository.findAllByBusinessId(businessId, PageRequest.of(page, size));
             result = converter.convert(entities, dtoClass);
-            if (CollectionUtils.isNotEmpty(result.getContent())) {
+            if ((result != null) && CollectionUtils.isNotEmpty(result.getContent())) {
                 setCommentInWorker(result.getContent());
                 if (setUsers) {
                     setUsers(result.getContent());
@@ -196,7 +196,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             businessPermissionFacade.checkPermissionByCorporation(corporationId, BusinessPermission.VIEW_BUSINESS_INFO);
             Page<WorkerEntity> entities = workerRepository.findAllByCorporationId(corporationId, PageRequest.of(page, size));
             result = converter.convert(entities, dtoClass);
-            if (CollectionUtils.isNotEmpty(result.getContent())) {
+            if ((result != null) && CollectionUtils.isNotEmpty(result.getContent())) {
                 setUsers(result.getContent());
                 setCommentInWorker(result.getContent());
             }
