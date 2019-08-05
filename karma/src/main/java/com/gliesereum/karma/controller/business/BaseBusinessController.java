@@ -17,7 +17,6 @@ import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
-import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,39 +57,16 @@ public class BaseBusinessController {
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
 
-    @GetMapping
-    public List<BaseBusinessDto> getAll() {
-        return baseBusinessService.getAll();
-    }
-
-    @PostMapping("/search")
-    public List<BaseBusinessDto> search(@Valid @RequestBody(required = false) BusinessSearchDto businessSearch) {
-        return businessEsService.search(businessSearch);
-    }
-
-    @PostMapping("/search/document")
-    public List<BusinessDocument> searchDocument(@Valid @RequestBody(required = false) BusinessSearchDto businessSearch) {
-        return businessEsService.searchDocuments(businessSearch);
-    }
+    //++++++++++++++ Base +++++++++++++++++++++++
 
     @GetMapping("/{id}")
     public BaseBusinessDto getById(@PathVariable("id") UUID id) {
         return baseBusinessService.getById(id);
     }
 
-    @GetMapping("{id}/full-model")
-    public BusinessFullModel getFullModelById(@PathVariable("id") UUID id) {
-        return baseBusinessService.getFullModelByIds(Arrays.asList(id)).get(0);
-    }
-
-    @GetMapping("/by-user")
-    public List<BaseBusinessDto> getByUser() {
-        return baseBusinessService.getByCorporationIds(SecurityUtil.getUserCorporationIds());
-    }
-
-    @GetMapping("/by-corporation-id")
-    public List<BaseBusinessDto> getByCorporationId(@RequestParam("corporationId") UUID corporationId) {
-        return baseBusinessService.getByCorporationId(corporationId);
+    @GetMapping
+    public List<BaseBusinessDto> getAll() {
+        return baseBusinessService.getAll();
     }
 
     @PostMapping
@@ -115,15 +91,7 @@ public class BaseBusinessController {
         return new MapResponse("true");
     }
 
-    @GetMapping("/by-current-user")
-    public List<BaseBusinessDto> getAllBusinessByUser() {
-        return baseBusinessService.getAllBusinessByCurrentUser();
-    }
-
-    @GetMapping("/full-model/by-current-user")
-    public List<BusinessFullModel> getAllFullBusinessBy() {
-        return baseBusinessService.getAllFullBusinessByCurrentUser();
-    }
+    //++++++++++++++ Media +++++++++++++++++++++++
 
     @GetMapping("/{id}/media")
     public List<MediaDto> getMediaByBusiness(@PathVariable("id") UUID id) {
@@ -148,6 +116,8 @@ public class BaseBusinessController {
         mediaService.delete(mediaId, businessId);
         return new MapResponse("true");
     }
+
+    //++++++++++++++ comment +++++++++++++++++++++++
 
     @GetMapping("/{id}/rating")
     public RatingDto getRating(@PathVariable("id") UUID id) {
@@ -186,27 +156,57 @@ public class BaseBusinessController {
         return baseBusinessService.updateComment(userId, comment);
     }
 
-    @DeleteMapping("/comment/{commentId}")
-    public MapResponse deleteComment(@PathVariable("commentId") UUID commentId) {
+    @DeleteMapping("/comment/{id}")
+    public MapResponse deleteComment(@PathVariable("id") UUID id) {
         UUID userId = SecurityUtil.getUserId();
         if (userId == null) {
             throw new ClientException(ANONYMOUS_CANT_COMMENT);
         }
-        baseBusinessService.deleteComment(commentId, userId);
+        baseBusinessService.deleteComment(id, userId);
         return new MapResponse("true");
     }
 
-    @PostMapping("/client/search")
-    public MapResponse clientSearch(@RequestBody RecordsSearchDto search) {
-        List<UUID> clientIds = baseBusinessService.searchClient(search);
-        return new MapResponse("clientIds", clientIds);
-    }
+    //++++++++++++++ Elastic index +++++++++++++++++++++++
 
     @GetMapping("/indexing")
     public MapResponse indexing() {
         businessEsService.indexAll();
         return MapResponse.resultTrue();
     }
+
+    //++++++++++++++ Search By +++++++++++++++++++++++
+
+    @PostMapping("/search/document")
+    public List<BusinessDocument> searchDocument(@Valid @RequestBody(required = false) BusinessSearchDto businessSearch) {
+        return businessEsService.searchDocuments(businessSearch);
+    }
+
+    @GetMapping("full-model-by-id")
+    public BusinessFullModel getFullModelById(@RequestParam("id") UUID id) {
+        return baseBusinessService.getFullModelByIds(Arrays.asList(id)).get(0);
+    }
+
+    @GetMapping("/by-current-user/like-worker/full-model")
+    public List<BusinessFullModel> getAllFullBusinessBy() {
+        return baseBusinessService.getAllFullBusinessByCurrentUser();
+    }
+
+    @GetMapping("/by-current-user/like-worker")
+    public List<BaseBusinessDto> getAllBusinessByUser() {
+        return baseBusinessService.getAllBusinessByCurrentUser();
+    }
+
+    @GetMapping("/by-current-user/like-owner")
+    public List<BaseBusinessDto> getByUserLikeOwner() {
+        return baseBusinessService.getByCorporationIds(SecurityUtil.getUserCorporationIds());
+    }
+
+    @GetMapping("/by-corporation-id")
+    public List<BaseBusinessDto> getByCorporationId(@RequestParam("id") UUID id) {
+        return baseBusinessService.getByCorporationId(id);
+    }
+
+    //+++++++++++++ Customer ++++++++++++++++++++++++++++++++++++++
 
     @GetMapping("/customers")
     public Page<ClientDto> getCustomersByBusinessIds(@RequestParam(value = "corporationId", required = false) UUID corporationId,
