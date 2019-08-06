@@ -9,8 +9,4 @@ public enum StatusPay {
     PAID,
     NOT_PAID;
 
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
 }

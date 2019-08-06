@@ -12,8 +12,4 @@ public enum StatusProcess {
     IN_PROCESS,
     COMPLETED;
 
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
 }
