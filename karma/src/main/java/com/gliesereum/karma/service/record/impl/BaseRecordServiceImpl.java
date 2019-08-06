@@ -259,8 +259,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         } else {
             businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds(), BusinessPermission.VIEW_BUSINESS_INFO);
         }
-
-        setSearch(search);
         if (workingSpaceId != null) {
             search.setWorkingSpaceIds(Arrays.asList(workingSpaceId));
         }
@@ -845,18 +843,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             return PageRequest.of(page, size, sort);
         } else {
             return PageRequest.of(page, size);
-        }
-    }
-
-    private void setSearch(BusinessRecordSearchDto search) {
-        if (search == null) {
-            search = new BusinessRecordSearchDto();
-        }
-        if (search.getFrom() == null) {
-            search.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
-        }
-        if (search.getTo() == null) {
-            search.setTo(search.getFrom().plusYears(1L));
         }
     }
 

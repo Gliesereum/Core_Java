@@ -108,11 +108,15 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
     }
 
     private void createBetweenDate(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<? extends LocalDateTime> expression, LocalDateTime from, LocalDateTime to) {
-        if (from != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(expression, from));
-        }
-        if (to != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(expression, to));
+        if (ObjectUtils.allNotNull(from, to)) {
+            predicates.add(criteriaBuilder.between(expression, from, to));
+        } else {
+            if (from != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(expression, from));
+            }
+            if (to != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(expression, to));
+            }
         }
     }
 
