@@ -9,9 +9,4 @@ public enum StatusRecord {
     CREATED,
     COMPLETED,
     CANCELED;
-
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
 }
