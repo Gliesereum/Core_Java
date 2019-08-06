@@ -6,7 +6,8 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
-import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
 import org.springframework.data.domain.Page;
 
@@ -23,7 +24,7 @@ import java.util.UUID;
  */
 public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRecordEntity> {
 
-    List<BaseRecordDto> getByParamsForClient(RecordsSearchDto search);
+    List<BaseRecordDto> getByParamsForClient(ClientRecordSearchDto search);
 
     List<BaseRecordDto> getByBusinessIdAndStatusRecord(UUID businessId, StatusRecord status, LocalDateTime from, LocalDateTime to);
 
@@ -31,7 +32,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByTimeBetween(LocalDateTime from, Integer minutesFrom, Integer minutesTo, StatusRecord status, boolean notificationSend);
 
-    List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search);
+    Page<BaseRecordDto> getByParamsForBusiness(BusinessRecordSearchDto search);
 
     BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status);
 

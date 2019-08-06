@@ -49,7 +49,7 @@ exchange:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
     karma:
-      businessForCurrentUser: http://karma-service/business/by-current-user
+      businessForCurrentUser: http://karma-service/business/by-current-user/like-worker
       existChatSupport: http://karma-service/chat-support/exist-chat-support
 
 firebase:

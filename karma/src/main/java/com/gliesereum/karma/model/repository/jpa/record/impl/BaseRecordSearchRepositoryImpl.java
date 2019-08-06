@@ -1,13 +1,17 @@
 package com.gliesereum.karma.model.repository.jpa.record.impl;
 
-import com.gliesereum.karma.model.entity.car.CarEntity;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
-import com.gliesereum.karma.model.entity.record.BaseRecordPageEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordSearchRepository;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
-import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
+import com.gliesereum.share.common.model.entity.DefaultEntity;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,7 +21,8 @@ import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+import static org.springframework.data.jpa.repository.query.QueryUtils.toOrders;
 
 /**
  * @author yvlasiuk
@@ -51,43 +56,38 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
         return result;
     }
 
-    //TODO: use clientEs for lastname, phone, firstname
     @Override
-    public BaseRecordPageEntity getRecordsBySearchDto(RecordsSearchDto search) {
+    public Page<BaseRecordEntity> getRecordsBySearchDto(BusinessRecordSearchDto search, Pageable pageable) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<BaseRecordEntity> query = builder.createQuery(BaseRecordEntity.class);
         Root<BaseRecordEntity> root = query.from(BaseRecordEntity.class);
         List<Predicate> predicates = new ArrayList<>();
-        createEqIfNotNull(builder, predicates, root.get("recordNumber"), search.getRecordNumber());
-        createBetweenDate(builder, predicates, root.get("begin"), search.getFrom(), search.getTo());
-        createInIfNotEmpty(predicates, root.get("statusRecord"), search.getStatus());
-        createInIfNotEmpty(predicates, root.get("statusProcess"), search.getProcesses());
-        createInIfNotEmpty(predicates, root.get("businessId"), search.getBusinessIds());
-        createInIfNotEmpty(predicates, root.get("workingSpaceId"), search.getWorkingSpaceIds());
-
-        if (search.getRegistrationNumber() != null) {
-            Subquery<UUID> subQuery = query.subquery(UUID.class);
-            Root<CarEntity> subRoot = subQuery.from(CarEntity.class);
-            Predicate targetIdEq = builder.equal(subRoot.get("id"), root.get("targetId"));
-            Predicate numberIdEq = builder.equal(subRoot.get("registrationNumber"), search.getRegistrationNumber());
-            subQuery.select(subRoot.get("id"));
-            subQuery.where(targetIdEq, numberIdEq);
-            predicates.add(root.get("targetId").in(subQuery));
+        if (search != null) {
+            createEqIfNotNull(builder, predicates, root.get("recordNumber"), search.getRecordNumber());
+            createBetweenDate(builder, predicates, root.get("begin"), search.getFrom(), search.getTo());
+            createInIfNotEmpty(predicates, root.get("statusRecord"), search.getStatus());
+            createInIfNotEmpty(predicates, root.get("statusProcess"), search.getProcesses());
+            createInIfNotEmpty(predicates, root.get("businessId"), search.getBusinessIds());
+            createInIfNotEmpty(predicates, root.get("clientId"), search.getClientIds());
+            createInIfNotEmpty(predicates, root.get("workingSpaceId"), search.getWorkingSpaceIds());
         }
+
         if (CollectionUtils.isNotEmpty(predicates)) {
             query.where(predicates.toArray(new Predicate[predicates.size()]));
         }
-        TypedQuery<BaseRecordEntity> typedQuery = entityManager.createQuery(query);
-        BaseRecordPageEntity result = new BaseRecordPageEntity();
-        result.setCount(typedQuery.getResultList().size());
-        if (search.getMaxResult() > 0) {
-            typedQuery.setFirstResult(search.getFirstResult());
-            typedQuery.setMaxResults(search.getMaxResult());
-        }
-        result.setRecords(typedQuery.getResultList());
-        return result;
-    }
 
+        query.orderBy(toOrders(pageable.getSortOr(Sort.by(Sort.Direction.DESC, "begin")), root, builder));
+
+        TypedQuery<BaseRecordEntity> typedQuery = entityManager.createQuery(query);
+
+        if (pageable.isPaged()) {
+            typedQuery.setFirstResult((int) pageable.getOffset());
+            typedQuery.setMaxResults(pageable.getPageSize());
+        }
+
+        return PageableExecutionUtils.getPage(typedQuery.getResultList(), pageable,
+                () -> executeCountQuery(entityManager.createQuery(getCountQuery(predicates, BaseRecordEntity.class))));
+    }
 
     private void createLikeIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<String> expression, String value) {
         if (value != null) {
@@ -114,6 +114,32 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
         if (to != null) {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(expression, to));
         }
+    }
+
+    private <E extends DefaultEntity> CriteriaQuery<Long> getCountQuery(List<Predicate> predicates, Class<E> entity) {
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<E> root = query.from(entity);
+        if (CollectionUtils.isNotEmpty(predicates)) {
+            query.where(predicates.toArray(new Predicate[predicates.size()]));
+        }
+        if (query.isDistinct()) {
+            query.select(builder.countDistinct(root));
+        } else {
+            query.select(builder.count(root));
+        }
+        return query;
+    }
+
+    private long executeCountQuery(TypedQuery<Long> query) {
+        Assert.notNull(query, "TypedQuery must not be null!");
+        List<Long> totals = query.getResultList();
+        long total = 0L;
+        for (Long element : totals) {
+            total += element == null ? 0 : element;
+        }
+        return total;
     }
 
 }
