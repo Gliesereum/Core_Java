@@ -28,7 +28,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
@@ -339,22 +339,6 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         dto.setObjectState(ObjectState.DELETED);
         super.update(dto);
         businessEsService.indexAsync(dto.getId());
-    }
-
-    @Override
-    public List<UUID> searchClient(RecordsSearchDto search) {
-        List<UUID> result = null;
-        if (search != null) {
-            List<BaseRecordDto> records = baseRecordService.getByParamsForBusiness(search);
-            if (CollectionUtils.isNotEmpty(records)) {
-                result = records.stream()
-                        .filter(i -> i.getClientId() != null)
-                        .map(BaseRecordDto::getClientId)
-                        .distinct()
-                        .collect(Collectors.toList());
-            }
-        }
-        return result;
     }
 
     @Override

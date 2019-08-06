@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.model.dto.karma.record;
+package com.gliesereum.share.common.model.dto.karma.record.search;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -6,6 +6,7 @@ import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,18 +15,22 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author vitalij
+ * @author yvlasiuk
  * @version 1.0
  */
+
 @Data
 @NoArgsConstructor
-public class RecordsSearchDto {
+@AllArgsConstructor
+public class ClientRecordSearchDto {
+
+    private UUID businessCategoryId;
+
+    private List<UUID> targetIds;
 
     private List<StatusRecord> status;
 
     private List<StatusProcess> processes;
-
-    private UUID businessCategoryId;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
@@ -34,27 +39,4 @@ public class RecordsSearchDto {
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime to;
-
-    private List<UUID> workingSpaceIds;
-
-    private List<UUID> targetIds;
-
-    private List<UUID> businessIds;
-
-    private  List<UUID> corporationIds;
-
-    private  String registrationNumber;
-
-    private  String phone;
-
-    private  String firstName;
-
-    private  String lastName;
-
-    private Integer recordNumber;
-
-    private int firstResult = 0;
-
-    private int maxResult;
-
 }

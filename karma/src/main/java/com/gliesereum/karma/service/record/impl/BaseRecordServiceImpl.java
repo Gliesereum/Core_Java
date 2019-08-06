@@ -30,6 +30,8 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.record.*;
+import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -43,6 +45,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -202,7 +205,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<BaseRecordDto> getByParamsForClient(RecordsSearchDto search) {
+    public List<BaseRecordDto> getByParamsForClient(ClientRecordSearchDto search) {
         SecurityUtil.checkUserByBanStatus();
         if (CollectionUtils.isEmpty(search.getTargetIds())) {
             throw new ClientException(TARGET_ID_IS_EMPTY);
@@ -240,25 +243,34 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public List<BaseRecordDto> getByParamsForBusiness(RecordsSearchDto search) {
-        List<BaseRecordDto> result = null;
-        if (CollectionUtils.isEmpty(search.getBusinessIds())) {
+    public Page<BaseRecordDto> getByParamsForBusiness(BusinessRecordSearchDto search) {
+        Page<BaseRecordDto> result = null;
+        if (CollectionUtils.isEmpty(search.getBusinessIds()) && (search.getCorporationId() == null)) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
+        UUID workingSpaceId = null;
+        if (search.getCorporationId() != null) {
+            businessPermissionFacade.checkPermissionByCorporation(search.getCorporationId(), BusinessPermission.VIEW_BUSINESS_INFO);
+            List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(search.getCorporationId()));
+            search.setBusinessIds(businessIds);
+        } else if (search.getBusinessIds().size() == 1){
+            businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds().get(0), BusinessPermission.VIEW_BUSINESS_INFO);
+            workingSpaceId = getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(search.getBusinessIds().get(0));
+        } else {
+            businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds(), BusinessPermission.VIEW_BUSINESS_INFO);
+        }
 
-        businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds(), BusinessPermission.VIEW_BUSINESS_INFO);
-        UUID workingSpaceId = getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(search.getBusinessIds().get(0));
         setSearch(search);
         if (workingSpaceId != null) {
             search.setWorkingSpaceIds(Arrays.asList(workingSpaceId));
         }
-        BaseRecordPageEntity searchResult = baseRecordRepository.getRecordsBySearchDto(search);
-        result = converter.convert(searchResult.getRecords(), dtoClass);
-        setClients(result);
-        setFullModelRecord(result);
-        setServicePrice(result);
-        if (CollectionUtils.isNotEmpty(result)) {
-            result = result.stream().sorted(Comparator.comparing(AbstractRecordDto::getBegin).reversed()).collect(Collectors.toList());
+        Pageable pageable = getPageable(search);
+        Page<BaseRecordEntity> entities = baseRecordRepository.getRecordsBySearchDto(search, pageable);
+        result = converter.convert(entities, dtoClass);
+        if ((result != null) && (CollectionUtils.isNotEmpty(result.getContent()))) {
+            setClients(result.getContent());
+            setFullModelRecord(result.getContent());
+            setServicePrice(result.getContent());
         }
         return result;
     }
@@ -818,9 +830,39 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
     }
 
-    private void setSearch(RecordsSearchDto search) {
+    private Pageable getPageable(BusinessRecordSearchDto search) {
+        Integer page = 0;
+        Integer size = 10;
+        Sort sort = null;
+        if (search != null) {
+            if (search.getPage() != null) page = search.getPage();
+            if (search.getSize() != null) size = search.getSize();
+            if (search.getSortField() != null) {
+                sort = Sort.by((search.getSortDirection() != null) ? search.getSortDirection() : Sort.Direction.ASC, search.getSortField().toString());
+            }
+        }
+        if (sort != null) {
+            return PageRequest.of(page, size, sort);
+        } else {
+            return PageRequest.of(page, size);
+        }
+    }
+
+    private void setSearch(BusinessRecordSearchDto search) {
         if (search == null) {
-            search = new RecordsSearchDto();
+            search = new BusinessRecordSearchDto();
+        }
+        if (search.getFrom() == null) {
+            search.setFrom(LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atStartOfDay());
+        }
+        if (search.getTo() == null) {
+            search.setTo(search.getFrom().plusYears(1L));
+        }
+    }
+
+    private void setSearch(ClientRecordSearchDto search) {
+        if (search == null) {
+            search = new ClientRecordSearchDto();
         }
         if (CollectionUtils.isEmpty(search.getStatus())) {
             search.setStatus(Arrays.asList(StatusRecord.values()));

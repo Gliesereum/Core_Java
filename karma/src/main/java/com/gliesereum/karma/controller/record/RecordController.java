@@ -5,7 +5,8 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
-import com.gliesereum.share.common.model.dto.karma.record.RecordsSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -85,22 +86,22 @@ public class RecordController {
     }
 
     @PostMapping("/by-params-for-current-user")
-    public List<BaseRecordDto> getByParamsForCurrentClient(@RequestBody RecordsSearchDto search) {
+    public List<BaseRecordDto> getByParamsForCurrentClient(@RequestBody ClientRecordSearchDto search) {
         return service.getByParamsForClient(search);
     }
 
     @PostMapping("/by-params-for-business")
-    public List<BaseRecordDto> getByParamsForBusiness(@RequestBody RecordsSearchDto search) {
+    public Page<BaseRecordDto> getByParamsForBusiness(@RequestBody BusinessRecordSearchDto search) {
         return service.getByParamsForBusiness(search);
     }
 
-    @GetMapping("/by-client-for-corporation")
-    public Page<BaseRecordDto> getByClientForCorporation(@RequestParam("corporationIds") List<UUID> corporationIds,
-                                                         @RequestParam("clientId") UUID clientId,
-                                                         @RequestParam(value = "page", required = false) Integer page,
-                                                         @RequestParam(value = "size", required = false) Integer size) {
-        return service.getByClientForCorporation(corporationIds, clientId, page, size);
-    }
+//    @GetMapping("/by-client-for-corporation")
+//    public Page<BaseRecordDto> getByClientForCorporation(@RequestParam("corporationIds") List<UUID> corporationIds,
+//                                                         @RequestParam("clientId") UUID clientId,
+//                                                         @RequestParam(value = "page", required = false) Integer page,
+//                                                         @RequestParam(value = "size", required = false) Integer size) {
+//        return service.getByClientForCorporation(corporationIds, clientId, page, size);
+//    }
 
     @PostMapping("/free-time")
     public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto) {
