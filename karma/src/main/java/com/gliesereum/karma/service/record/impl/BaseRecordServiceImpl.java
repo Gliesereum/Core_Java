@@ -398,6 +398,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @RecordCreate
     public BaseRecordDto createForBusiness(BaseRecordDto dto) {
         businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.WORK_WITH_RECORD);
+        BaseRecordDto record = createRecord(dto);
+        setClients(Arrays.asList(record));
         if (dto.getClientId() != null) {
             List<PublicUserDto> users = exchangeService.findPublicUserByIds(Arrays.asList(dto.getClientId()));
             if (CollectionUtils.isNotEmpty(users)) {
@@ -406,8 +408,6 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 clientEsService.addNewClient(user, dto.getBusinessId());
             }
         }
-        BaseRecordDto record = createRecord(dto);
-        setClients(Arrays.asList(record));
         return record;
     }
 
