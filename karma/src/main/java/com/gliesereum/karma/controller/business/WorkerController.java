@@ -40,8 +40,8 @@ public class WorkerController {
         return workerService.update(worker);
     }
 
-    @GetMapping("/{id}")
-    public WorkerDto getById(@PathVariable("id") UUID id) {
+    @GetMapping("/by-id")
+    public WorkerDto getById(@RequestParam("id") UUID id) {
         return workerService.getById(id, true);
     }
 
