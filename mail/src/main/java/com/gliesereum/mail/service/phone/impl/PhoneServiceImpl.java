@@ -8,19 +8,19 @@ import com.gliesereum.share.common.model.dto.mail.MailStateDto;
 import com.gliesereum.share.common.model.dto.mail.PhoneResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.SERVER_ERROR;
 import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.NOT_SEND;
 
 /**
@@ -162,6 +162,11 @@ public class PhoneServiceImpl implements PhoneService {
         if (body != null) {
             httpEntity = new HttpEntity<>(body, getHeaders());
         } else httpEntity = new HttpEntity<>(getHeaders());
-        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, responseClass);
+        try {
+            return restTemplate.exchange(url, HttpMethod.POST, httpEntity, responseClass);
+        } catch (ResourceAccessException ex) {
+            log.warn("Error while send sms", ex);
+            throw new ClientException(SERVER_ERROR);
+        }
     }
 }
