@@ -100,6 +100,21 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    public WorkerDto getById(UUID id, boolean setUsers) {
+        WorkerDto result = null;
+        if (id != null) {
+            Optional<WorkerEntity> entityOptional = workerRepository.findById(id);
+            if (entityOptional.isPresent()) {
+                result = converter.convert(entityOptional.get(), dtoClass);
+                setCommentInWorker(Arrays.asList(result));
+                if (setUsers)
+                    setUsers(Arrays.asList(result));
+            }
+        }
+        return result;
+    }
+
+    @Override
     public List<WorkerDto> getByBusinessId(UUID businessId, boolean setUsers) {
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);

@@ -26,6 +26,8 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
 
     boolean checkWorkerExistByPhone(String phone);
 
+    WorkerDto getById(UUID id, boolean setUsers);
+
     List<WorkerDto> getByBusinessId(UUID businessId, boolean setUsers);
 
     Page<WorkerDto> getByBusinessId(UUID businessId, boolean setUsers, Integer page, Integer size);
