@@ -41,7 +41,7 @@ public class PhoneServiceImpl implements PhoneService {
     @Value("${spring.mail.log-email}")
     private String logEmail;
 
-    @Value("${sendSms}")
+    @Value("${phone.sendSms}")
     private Boolean sendSmsEnable;
 
     @Autowired
