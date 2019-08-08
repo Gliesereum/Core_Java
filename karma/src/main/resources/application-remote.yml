@@ -13,7 +13,7 @@ spring:
         default_schema: ${db.schema}
         temp:
           use_jdbc_metadata_defaults: false
-    show-sql: false
+    show-sql: true
 
   flyway:
     enabled: true
