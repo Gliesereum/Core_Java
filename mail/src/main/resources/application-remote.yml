@@ -58,5 +58,6 @@ phone:
   url: https://api.acemountmedia.com/sms/
   alpha-name: SECURITY
   token: Bearer shiM8uESwOEAWEurmDWGNmY6LPSy_x1m
+  sendSms : false
 
 

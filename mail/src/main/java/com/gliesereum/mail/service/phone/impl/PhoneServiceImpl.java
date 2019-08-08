@@ -9,7 +9,7 @@ import com.gliesereum.share.common.model.dto.mail.PhoneResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,13 +29,20 @@ import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessa
 @Slf4j
 public class PhoneServiceImpl implements PhoneService {
 
-    private static final String API_PHONE_URL = "phone.url";
-    private static final String TOKEN = "phone.token";
-    private static final String ALPHA_NAME = "phone.alpha-name";
-    private static final String LOG_EMAIL = "spring.mail.log-email";
+    @Value("${phone.url}")
+    private String apiUrl;
 
-    @Autowired
-    private Environment environment;
+    @Value("${phone.token}")
+    private String apiToken;
+
+    @Value("${phone.alpha-name}")
+    private String apiAlphaName;
+
+    @Value("${spring.mail.log-email}")
+    private String logEmail;
+
+    @Value("${sendSms}")
+    private Boolean sendSmsEnable;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -52,47 +59,51 @@ public class PhoneServiceImpl implements PhoneService {
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        httpHeaders.add(HttpHeaders.AUTHORIZATION, environment.getProperty(TOKEN));
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, apiToken);
         return httpHeaders;
     }
 
     @Override
     public void sendSingleMessage(String phone, String text) {
-        final String url = environment.getProperty(API_PHONE_URL) + "send";
+        final String url = apiUrl + "send";
         Map<String, Object> body = Map.of(
-                "originator", environment.getProperty(ALPHA_NAME),
+                "originator", apiAlphaName,
                 "lifetime", 180,
                 "text", text,
                 "phones", Arrays.asList(phone));
 
-        ResponseEntity<PhoneResponseDto> responseEntity;
-        try {
-            responseEntity = sendRequest(body, url, PhoneResponseDto.class);
-        } catch (Exception e) {
-            log.error("Error to send request for send phone message", e);
-            throw new ClientException(SERVER_ERROR);
-        }
-        PhoneResponseDto response = responseEntity.getBody();
+        String message = "Message: " + text + "\nSend to phone: " + phone;
+        log.info(message);
 
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            String message = "Message: " + text + "\nSend to phone: " + phone;
-            log.info(message);
-            sendLogInfoToEmailAsync(message);
-            Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("info");
-            stateService.create(new MailStateDto(phone, text, info.get(phone).toString(), responseEntity.getStatusCode().toString(), 0, LocalDateTime.now()));
-        } else {
-            Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("additional_info");
-            emailService.sendSimpleMessageAsync(environment.getProperty(LOG_EMAIL), "Phone service error", info.toString());
-            log.error("Error send message: {} to phone: {} date: {}, return http status: {}", text, phone, new Date(), responseEntity.getStatusCodeValue());
-            throw new ClientException(NOT_SEND);
+        if (sendSmsEnable) {
+            ResponseEntity<PhoneResponseDto> responseEntity;
+            try {
+                responseEntity = sendRequest(body, url, PhoneResponseDto.class);
+            } catch (Exception e) {
+                log.error("Error to send request for send phone message", e);
+                throw new ClientException(SERVER_ERROR);
+            }
+            PhoneResponseDto response = responseEntity.getBody();
 
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                log.info("Successful: {}", message);
+                sendLogInfoToEmailAsync(message);
+                Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("info");
+                stateService.create(new MailStateDto(phone, text, info.get(phone).toString(), responseEntity.getStatusCode().toString(), 0, LocalDateTime.now()));
+            } else {
+                Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("additional_info");
+                emailService.sendSimpleMessageAsync(logEmail, "Phone service error", info.toString());
+                log.error("Error send message: {} to phone: {} date: {}, return http status: {}", text, phone, new Date(), responseEntity.getStatusCodeValue());
+                throw new ClientException(NOT_SEND);
+
+            }
         }
     }
 
     @Override
     public String checkBalance() {
         try {
-            final String url = environment.getProperty(API_PHONE_URL) + "balance";
+            final String url = apiUrl + "balance";
             ResponseEntity<PhoneResponseDto> responseEntity = sendRequest(null, url, PhoneResponseDto.class);
             PhoneResponseDto response = responseEntity.getBody();
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
@@ -123,7 +134,7 @@ public class PhoneServiceImpl implements PhoneService {
     private void checkStatus(List<MailStateDto> list) {
         if (CollectionUtils.isNotEmpty(list)) {
 
-            final String url = environment.getProperty(API_PHONE_URL) + "status";
+            final String url = apiUrl + "status";
 
             Map<String, Object> body = new HashMap<>();
             body.put("id_sms", list.stream().map(MailStateDto::getMessageId).toArray());
@@ -151,7 +162,7 @@ public class PhoneServiceImpl implements PhoneService {
     private void sendLogInfoToEmailAsync(String message) {
         taskExecutor.execute(() -> {
             String logInfoToEmail = message + "\nBalance: " + checkBalance();
-            emailService.sendSimpleMessage(environment.getProperty(LOG_EMAIL), "Dispatch service info", logInfoToEmail);
+            emailService.sendSimpleMessage(logEmail, "Dispatch service info", logInfoToEmail);
 
         });
     }

@@ -58,5 +58,6 @@ phone:
   url: https://api.acemountmedia.com/sms/
   alpha-name: ${phone.api.alpha}
   token: ${phone.api.token}
+  sendSms : ${phone.send-sms:true}
 
 
