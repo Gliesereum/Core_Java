@@ -186,6 +186,7 @@ public class CommentServiceImpl extends DefaultServiceImpl<CommentDto, CommentEn
                         i.setFirstName(user.getFirstName());
                         i.setLastName(user.getLastName());
                         i.setMiddleName(user.getMiddleName());
+                        i.setAvatarUrl(user.getAvatarUrl());
                     }
                 });
             }
