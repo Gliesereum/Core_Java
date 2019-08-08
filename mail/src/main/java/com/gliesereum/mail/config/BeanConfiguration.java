@@ -2,7 +2,7 @@ package com.gliesereum.mail.config;
 
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.converter.imp.DefaultConverterImp;
-import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
+import com.gliesereum.share.common.exception.handler.RestTemplateOnlyServerErrorHandler;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,7 @@ public class BeanConfiguration {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(new RestTemplateErrorHandler());
+        restTemplate.setErrorHandler(new RestTemplateOnlyServerErrorHandler());
         return restTemplate;
     }
 

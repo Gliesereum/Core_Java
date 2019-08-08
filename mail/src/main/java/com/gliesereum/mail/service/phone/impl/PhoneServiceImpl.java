@@ -14,7 +14,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -59,34 +58,34 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Override
     public void sendSingleMessage(String phone, String text) {
+        final String url = environment.getProperty(API_PHONE_URL) + "send";
+        Map<String, Object> body = Map.of(
+                "originator", environment.getProperty(ALPHA_NAME),
+                "lifetime", 180,
+                "text", text,
+                "phones", Arrays.asList(phone));
+
+        ResponseEntity<PhoneResponseDto> responseEntity;
         try {
-            final String url = environment.getProperty(API_PHONE_URL) + "send";
-
-            Map<String, Object> body = new HashMap<>();
-            body.put("originator", environment.getProperty(ALPHA_NAME));
-            body.put("lifetime", 180);
-            body.put("text", text);
-            body.put("phones", Arrays.asList(phone));
-
-            ResponseEntity<PhoneResponseDto> responseEntity = sendRequest(body, url, PhoneResponseDto.class);
-            PhoneResponseDto response = responseEntity.getBody();
-
-            if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                String message = "Message: " + text + "\nSend to phone: " + phone;
-                log.info(message);
-                sendLogInfoToEmailAsync(message);
-                Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("info");
-                stateService.create(new MailStateDto(phone, text, info.get(phone).toString(), responseEntity.getStatusCode().toString(), 0, LocalDateTime.now()));
-            } else {
-                Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("additional_info");
-                emailService.sendSimpleMessageAsync(environment.getProperty(LOG_EMAIL), "Phone service error", info.toString());
-                log.error("Error send message: {} to phone: {} date: {}, return http status: {}", text, phone, new Date(), responseEntity.getStatusCodeValue());
-                throw new ClientException(NOT_SEND);
-            }
+            responseEntity = sendRequest(body, url, PhoneResponseDto.class);
         } catch (Exception e) {
-            String error = "Error to send request for send phone message: " + e.getMessage();
-            log.error(error);
-            throw e;
+            log.error("Error to send request for send phone message", e);
+            throw new ClientException(SERVER_ERROR);
+        }
+        PhoneResponseDto response = responseEntity.getBody();
+
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            String message = "Message: " + text + "\nSend to phone: " + phone;
+            log.info(message);
+            sendLogInfoToEmailAsync(message);
+            Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("info");
+            stateService.create(new MailStateDto(phone, text, info.get(phone).toString(), responseEntity.getStatusCode().toString(), 0, LocalDateTime.now()));
+        } else {
+            Map<String, Object> info = (Map<String, Object>) response.getSuccess_request().get("additional_info");
+            emailService.sendSimpleMessageAsync(environment.getProperty(LOG_EMAIL), "Phone service error", info.toString());
+            log.error("Error send message: {} to phone: {} date: {}, return http status: {}", text, phone, new Date(), responseEntity.getStatusCodeValue());
+            throw new ClientException(NOT_SEND);
+
         }
     }
 
@@ -162,11 +161,6 @@ public class PhoneServiceImpl implements PhoneService {
         if (body != null) {
             httpEntity = new HttpEntity<>(body, getHeaders());
         } else httpEntity = new HttpEntity<>(getHeaders());
-        try {
-            return restTemplate.exchange(url, HttpMethod.POST, httpEntity, responseClass);
-        } catch (ResourceAccessException ex) {
-            log.warn("Error while send sms", ex);
-            throw new ClientException(SERVER_ERROR);
-        }
+        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, responseClass);
     }
 }

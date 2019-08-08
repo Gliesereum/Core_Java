@@ -36,6 +36,8 @@ public class CommentFullDto extends DefaultDto {
 
     private String middleName;
 
+    private String avatarUrl;
+
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime dateCreated;
