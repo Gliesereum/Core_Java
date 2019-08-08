@@ -148,7 +148,7 @@ services:
       mail.log-email: log@gliesereum.com
       phone.api.alpha: SECURITY
       phone.api.token: Bearer shiM8uESwOEAWEurmDWGNmY6LPSy_x1m
-      phone.send-sms: false
+      phone.send-sms: "false"
       eureka.host: discovery
       eureka.port: 8761
 
