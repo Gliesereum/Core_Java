@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface MailStateService extends DefaultService<MailStateDto, MailStateEntity> {
 
-    List<MailStateDto> getByMessageStatusAndDateAfter(Integer status, LocalDateTime date);
+    List<MailStateDto> getByMessageStatusAndDateAfter(String status, LocalDateTime date);
 
 }    

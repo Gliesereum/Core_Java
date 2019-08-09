@@ -28,13 +28,13 @@ public class MailStateDto extends DefaultDto {
 
     private String httpStatus;
 
-    private Integer messageStatus;
+    private String messageStatus;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime create;
 
-    public MailStateDto(String phone, String text, String messageId, String httpStatus, Integer messageStatus, LocalDateTime create) {
+    public MailStateDto(String phone, String text, String messageId, String httpStatus, String messageStatus, LocalDateTime create) {
         this.phone = phone;
         this.text = text;
         this.messageId = messageId;

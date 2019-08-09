@@ -34,7 +34,7 @@ public class MailStateEntity extends DefaultEntity {
     private String httpStatus;
 
     @Column(name = "message_status")
-    private Integer messageStatus;
+    private String messageStatus;
 
     @Column(name = "create_date")
     private LocalDateTime create;

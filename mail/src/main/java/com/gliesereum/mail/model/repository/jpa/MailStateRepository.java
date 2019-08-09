@@ -13,5 +13,5 @@ import java.util.UUID;
  */
 public interface MailStateRepository extends JpaRepository<MailStateEntity, UUID> {
 
-    List<MailStateEntity> findAllByMessageStatusAndCreateAfter(Integer messageStatus, LocalDateTime date);
+    List<MailStateEntity> findAllByMessageStatusAndCreateAfter(String messageStatus, LocalDateTime date);
 }
