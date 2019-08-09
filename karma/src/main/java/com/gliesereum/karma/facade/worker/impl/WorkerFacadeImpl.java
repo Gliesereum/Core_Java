@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class WorkerFacadeImpl implements WorkerFacade {
 
-    private final String workerInfoMessage = "Vash nomer telefonu buv vikoristaniy dlya dodavannya spivrobitnika v kompaniyu: ";
+    private static final String WORKER_INFO_MESSAGE = "Vas dodali yak spivrobitnika do kompaniyi: ";
 
     @Autowired
     private BaseBusinessService businessService;
@@ -30,7 +30,7 @@ public class WorkerFacadeImpl implements WorkerFacade {
     @Async
     public void sendMessageToWorkerAfterCreate(WorkerDto worker) {
         if (worker != null && worker.getUser() != null) {
-            StringBuilder message = new StringBuilder(workerInfoMessage);
+            StringBuilder message = new StringBuilder(WORKER_INFO_MESSAGE);
             LiteBusinessDto business = businessService.getLiteById(worker.getBusinessId());
             if (business != null) {
                 message.append(business.getName()).append(" tell: +").append(business.getPhone());
