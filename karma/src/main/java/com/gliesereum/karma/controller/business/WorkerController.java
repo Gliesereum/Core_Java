@@ -40,6 +40,11 @@ public class WorkerController {
         return workerService.update(worker);
     }
 
+    @GetMapping("/by-id")
+    public WorkerDto getById(@RequestParam("id") UUID id) {
+        return workerService.getById(id, true);
+    }
+
     @DeleteMapping("/{id}")
     public MapResponse deleteWorker(@PathVariable("id") UUID id) {
         workerService.delete(id);

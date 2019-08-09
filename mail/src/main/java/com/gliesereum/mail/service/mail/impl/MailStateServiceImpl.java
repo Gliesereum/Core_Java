@@ -33,7 +33,7 @@ public class MailStateServiceImpl extends DefaultServiceImpl<MailStateDto, MailS
     }
 
     @Override
-    public List<MailStateDto> getByMessageStatusAndDateAfter(Integer status, LocalDateTime date) {
+    public List<MailStateDto> getByMessageStatusAndDateAfter(String status, LocalDateTime date) {
         List<MailStateEntity> entities = mailStateRepository.findAllByMessageStatusAndCreateAfter(status, date);
         return converter.convert(entities, dtoClass);
     }

@@ -10,7 +10,7 @@ import java.util.Map;
  */
 @Data
 @NoArgsConstructor
-public class PhoneResponseDto {
+public class AcemountPhoneResponseDto {
 
     private Map<String, Object> success_request;
 

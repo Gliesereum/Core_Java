@@ -54,8 +54,13 @@ spring:
     queue-logstash: logstash
 
 phone:
-  url: https://api.acemountmedia.com/sms/
-  alpha-name: SECURITY
-  token: Bearer shiM8uESwOEAWEurmDWGNmY6LPSy_x1m
+  acemount:
+    url: https://api.acemountmedia.com/sms/
+    alpha-name: SECURITY
+    token: Bearer shiM8uESwOEAWEurmDWGNmY6LPSy_x1m
+  mobizon:
+    url: https://api.mobizon.ua/service/
+    token: ua6bf786d392ac07d7045f72bc72687e24d80cd08d00e35e4f22736534b1a83b2f3163
+  sendSms : true
 
 

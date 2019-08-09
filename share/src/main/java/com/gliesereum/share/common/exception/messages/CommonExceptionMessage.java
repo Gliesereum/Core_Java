@@ -27,6 +27,6 @@ public class CommonExceptionMessage {
 
     public static final ExceptionMessage UNKNOWN_SERVER_EXCEPTION = new ExceptionMessage(9000, 500, "Server error");
     public static final ExceptionMessage SERVICE_NOT_AVAILABLE = new ExceptionMessage(9001, 500, "Service not available now");
-
+    public static final ExceptionMessage SERVER_ERROR = new ExceptionMessage(9002, 500, "Server error, try again later");
 
 }

@@ -36,6 +36,5 @@ public class RestTemplateErrorHandler extends DefaultResponseErrorHandler {
             }
             throw exception;
         }
-
     }
 }

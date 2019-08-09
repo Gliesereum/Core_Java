@@ -8,7 +8,6 @@ public enum StatusProcess {
 
     CANCELED,
     WAITING,
-    STARTED,
     IN_PROCESS,
     COMPLETED;
 

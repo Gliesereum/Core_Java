@@ -55,8 +55,13 @@ spring:
     queue-logstash: logstash
 
 phone:
-  url: https://api.acemountmedia.com/sms/
-  alpha-name: ${phone.api.alpha}
-  token: ${phone.api.token}
+  acemount:
+    url: https://api.acemountmedia.com/sms/
+    alpha-name: ${phone.acemount.api.alpha}
+    token: ${phone.acemount.api.token}
+  mobizon:
+    url: https://api.mobizon.ua/service/
+    token: ${phone.mobizon.api.token}
+  sendSms : ${phone.send-sms:true}
 
 

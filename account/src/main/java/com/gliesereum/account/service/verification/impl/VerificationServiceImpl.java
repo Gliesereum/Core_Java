@@ -49,7 +49,7 @@ public class VerificationServiceImpl implements VerificationService {
         boolean result = false;
         String id = value + code;
         Optional<VerificationDomain> domain = repository.findById(id);
-        if (domain.isPresent() && domain.get().getCreateDate().isAfter(LocalDateTime.now().minusMinutes(3L))) {
+        if (domain.isPresent() && domain.get().getCreateDate().isAfter(LocalDateTime.now().minusMinutes(5L))) {
             repository.deleteById(id);
             result = true;
         }
@@ -95,7 +95,7 @@ public class VerificationServiceImpl implements VerificationService {
         List<VerificationDomain> list = (List<VerificationDomain>) repository.findAll();
         if (!CollectionUtils.isEmpty(list)) {
             list.forEach(f -> {
-                if (f.getCreateDate().isBefore(LocalDateTime.now().minusMinutes(3L))) {
+                if (f.getCreateDate().isBefore(LocalDateTime.now().minusMinutes(5L))) {
                     repository.delete(f);
                 }
             });
