@@ -198,8 +198,8 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                                         ((f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getFrom())) ||
                                                 (f.getTo().isAfter(workerTimeWork.getTo()) && f.getFrom().isBefore(workerTimeWork.getTo())) ||
                                                 (f.getFrom().isAfter(workerTimeWork.getFrom()) && f.getTo().isBefore(workerTimeWork.getTo())) ||
-                                                (f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getTo()))) ||
-                                        (f.getTo().equals(workerTimeWork.getTo()) || f.getFrom().equals(workerTimeWork.getFrom()))) {
+                                                (f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getTo())) ||
+                                                (f.getTo().equals(workerTimeWork.getTo()) || f.getFrom().equals(workerTimeWork.getFrom())))) {
                                     mapWorkerTimeException.put(f.getDayOfWeek().name(),
                                             Map.of("to", workerTimeWork.getTo().toString(), "from", workerTimeWork.getFrom().toString()));
                                 }
