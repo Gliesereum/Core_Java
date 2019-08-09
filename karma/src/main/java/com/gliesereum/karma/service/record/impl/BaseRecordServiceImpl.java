@@ -6,7 +6,6 @@ import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
-import com.gliesereum.karma.model.entity.record.BaseRecordPageEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
@@ -29,9 +28,12 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.*;
-import com.gliesereum.share.common.model.dto.karma.record.*;
-import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.OrderDto;
+import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
+import com.gliesereum.share.common.model.dto.karma.record.RecordServiceDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
@@ -158,9 +160,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (business == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        Long duration = getDurationByRecord(serviceIds, packageId);
+        Long duration = getDurationByRecord(serviceIds, packageId, businessId);
         finish = begin.plusMinutes(duration);
-        List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business, null);
+        List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business, workerId);
         if (CollectionUtils.isNotEmpty(freeTimes)) {
             LocalDateTime finalBegin = begin;
             freeTimes.forEach(f -> {
@@ -253,7 +255,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             businessPermissionFacade.checkPermissionByCorporation(search.getCorporationId(), BusinessPermission.VIEW_BUSINESS_INFO);
             List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(search.getCorporationId()));
             search.setBusinessIds(businessIds);
-        } else if (search.getBusinessIds().size() == 1){
+        } else if (search.getBusinessIds().size() == 1) {
             businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds().get(0), BusinessPermission.VIEW_BUSINESS_INFO);
             workingSpaceId = getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(search.getBusinessIds().get(0));
         } else {
@@ -318,7 +320,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         checkPermissionToUpdate(dto);
         dto.setBegin(begin);
         setServicePriceIds(Arrays.asList(dto));
-        LocalDateTime finish = begin.plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId()));
+        LocalDateTime finish = begin.plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId(), dto.getBusinessId()));
         dto.setFinish(finish);
         checkRecord(dto);
         BaseRecordDto result = super.update(dto);
@@ -450,7 +452,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         BaseRecordDto result = null;
         BaseBusinessDto business = getBusinessByRecord(dto);
         checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
-        dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId())));
+        dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId(), dto.getBusinessId())));
         dto.setPrice(getPriceByRecord(dto));
         dto.setStatusRecord(StatusRecord.CREATED);
         dto.setStatusProcess(StatusProcess.WAITING);
@@ -508,7 +510,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 dto.setBegin(dto.getBegin().plusMinutes(mod).withSecond(0));
             }
             checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
-            Long duration = getDurationByRecord(dto.getServicesIds(), dto.getPackageId());
+            Long duration = getDurationByRecord(dto.getServicesIds(), dto.getPackageId(), dto.getBusinessId());
             dto.setFinish(dto.getBegin().plusMinutes(duration));
             List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(dto.getBegin(), dto.getFinish(), business, dto.getWorkerId());
             if (CollectionUtils.isNotEmpty(freeTimes)) {
@@ -623,7 +625,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return result;
     }
 
-    private Long getDurationByRecord(List<UUID> servicesIds, UUID packageId) {
+    private Long getDurationByRecord(List<UUID> servicesIds, UUID packageId, UUID businessId) {
         Long result = 0L;
         if (packageId == null && CollectionUtils.isEmpty(servicesIds)) {
             throw new ClientException(SERVICE_NOT_CHOOSE);
@@ -631,12 +633,18 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (CollectionUtils.isNotEmpty(servicesIds)) {
             List<ServicePriceDto> services = servicePriceService.getByIds(servicesIds);
             if (CollectionUtils.isNotEmpty(services)) {
+                if (services.stream().anyMatch(s -> !s.getBusinessId().equals(businessId))) {
+                    throw new ClientException(SERVICE_PRICE_NOT_FOUND_IN_BUSINESS);
+                }
                 result += services.stream().mapToInt(ServicePriceDto::getDuration).sum();
             } else throw new ClientException(SERVICE_NOT_FOUND);
         }
         if (packageId != null) {
             LitePackageDto packageDto = packageService.getLiteById(packageId);
             if (packageDto != null) {
+                if (!packageDto.getBusinessId().equals(businessId)) {
+                    throw new ClientException(PACKAGE_NOT_FOUND_IN_BUSINESS);
+                }
                 result += packageDto.getDuration();
             } else throw new ClientException(PACKAGE_NOT_FOUND);
         }

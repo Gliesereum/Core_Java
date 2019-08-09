@@ -28,7 +28,7 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage RECORD_NOT_FOUND = new ExceptionMessage(1431, 404, "Record not found");
 
     public static final ExceptionMessage TIME_BEGIN_EMPTY = new ExceptionMessage(1432, 400, "Time begin is empty");
-    public static final ExceptionMessage WORKING_SPACE_NOT_FOUND = new ExceptionMessage(1433, 404, "Working space not found");
+    public static final ExceptionMessage PACKAGE_NOT_FOUND_IN_BUSINESS = new ExceptionMessage(1433, 404, "This package not found in business");
     public static final ExceptionMessage BUSINESS_NOT_WORK_THIS_DAY = new ExceptionMessage(1434, 400, "Business does not work this day");
     public static final ExceptionMessage BUSINESS_NOT_WORK_THIS_TIME = new ExceptionMessage(1435, 400, "Business does not work this time");
 
