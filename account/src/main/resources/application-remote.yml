@@ -29,6 +29,7 @@ spring:
     host: 46.101.182.178
     port: 6379
     password: GliesereumAdmin0013
+    database: 0
     chanel-verification: verificationQueue
     chanel-logstash: logstash
 

@@ -140,6 +140,7 @@ services:
       rabbit.port: 5672
       rabbit.user: rabbit
       rabbit.password: Af2f4dsASF
+      redis.database-index: 2
       mail.host: mail.adm.tools
       mail.username: support@gliesereum.com
       mail.password: Support0013
