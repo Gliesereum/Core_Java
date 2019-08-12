@@ -5,6 +5,8 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,6 +108,12 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     @Override
     public List<D> getAll() {
         List<E> entities = repository.findAll();
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
+    public Page<D> getAll(Pageable pageable) {
+        Page<E> entities = repository.findAll(pageable);
         return converter.convert(entities, dtoClass);
     }
 
