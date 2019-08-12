@@ -1,0 +1,1 @@
+INSERT INTO permission."group" (id, title, description, purpose, is_active, inactive_message, parent_group_id) VALUES ('9f27be8b-3531-454e-9a21-13d1cc6dc1fe', 'LG admin', 'LG admin', 'LG_ADMIN', true, null, null);
