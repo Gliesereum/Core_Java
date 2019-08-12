@@ -35,14 +35,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ClientEsServiceImpl implements ClientEsService {
 
-    private final static String BUSINESS_IDS = "businessIds";
-    private final static String CORPORATION_IDS = "corporationIds";
-    private final static String FIRST_NAME = "firstName";
-    private final static String LAST_NAME = "lastName";
-    private final static String PHONE = "phone";
+    private static final  String BUSINESS_IDS = "businessIds";
+    private static final String CORPORATION_IDS = "corporationIds";
+    private static final  String FIRST_NAME = "firstName";
+    private static final String LAST_NAME = "lastName";
+    private static final String PHONE = "phone";
 
-    private final static Class<ClientDocument> DOCUMENT_CLASS = ClientDocument.class;
-    private final static Class<ClientDto> DTO_CLASS = ClientDto.class;
+    private static final Class<ClientDocument> DOCUMENT_CLASS = ClientDocument.class;
+    private static final Class<ClientDto> DTO_CLASS = ClientDto.class;
 
     @Autowired
     private DefaultConverter defaultConverter;
