@@ -27,8 +27,6 @@ import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
@@ -68,6 +66,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     @Value("${image-url.business.logo}")
     private String defaultBusinessLogo;
+
+    @Value("${image-url.business.cover}")
+    private String defaultBusinessCover;
 
     @Autowired
     private ServicePriceService servicePriceService;
@@ -415,6 +416,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (business != null) {
             if (StringUtils.isBlank(business.getLogoUrl())) {
                 business.setLogoUrl(defaultBusinessLogo);
+            }
+            if (StringUtils.isBlank(business.getCoverUrl())) {
+                business.setCoverUrl(defaultBusinessCover);
             }
         }
     }

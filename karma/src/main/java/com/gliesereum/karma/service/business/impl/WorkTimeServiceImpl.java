@@ -195,10 +195,13 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                             list.forEach(f -> {
                                 WorkTimeDto workerTimeWork = mapWorkerWorkTime.get(f.getDayOfWeek());
                                 if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
-                                        ((f.getFrom().plusMinutes(1).isAfter(workerTimeWork.getFrom()) && f.getFrom().minusMinutes(1).isBefore(workerTimeWork.getTo())) || (
-                                                f.getTo().minusMinutes(1).isBefore(workerTimeWork.getTo()) && f.getTo().plusMinutes(1).isAfter(workerTimeWork.getFrom())))) {
+                                        ((f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getFrom())) ||
+                                                (f.getTo().isAfter(workerTimeWork.getTo()) && f.getFrom().isBefore(workerTimeWork.getTo())) ||
+                                                (f.getFrom().isAfter(workerTimeWork.getFrom()) && f.getTo().isBefore(workerTimeWork.getTo())) ||
+                                                (f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getTo())) ||
+                                                (f.getTo().equals(workerTimeWork.getTo()) || f.getFrom().equals(workerTimeWork.getFrom())))) {
                                     mapWorkerTimeException.put(f.getDayOfWeek().name(),
-                                            Map.of("from", workerTimeWork.getFrom().toString(), "to", workerTimeWork.getTo().toString()));
+                                            Map.of("to", workerTimeWork.getTo().toString(), "from", workerTimeWork.getFrom().toString()));
                                 }
                             });
                             if (MapUtils.isNotEmpty(mapWorkerTimeException)) {
