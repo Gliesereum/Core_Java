@@ -1,6 +1,7 @@
 package com.gliesereum.karma.model.repository.jpa.car;
 
 import com.gliesereum.karma.model.entity.car.CarEntity;
+import com.gliesereum.share.common.repository.refreshable.RefreshableRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.UUID;
  * @author vitalij
  * @version 1.0
  */
-public interface CarRepository extends JpaRepository<CarEntity, UUID> {
+public interface CarRepository extends JpaRepository<CarEntity, UUID>, RefreshableRepository {
 
     List<CarEntity> getAllByUserId(UUID id);
 

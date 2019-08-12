@@ -85,7 +85,10 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
             }
             dto.setUserId(userId);
             dto.setFavorite(false);
-            dto = super.create(dto);
+            CarEntity entity = converter.convert(dto, entityClass);
+            entity = repository.saveAndFlush(entity);
+            carRepository.refresh(entity);
+            dto = converter.convert(entity, dtoClass);
         }
         return dto;
     }
@@ -100,7 +103,6 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
             if (userId == null) {
                 throw new ClientException(USER_IS_ANONYMOUS);
             }
-            checkCarExistInCurrentUser(dto.getId());
             CarDto existed = checkAndGetCarExistInCurrentUser(dto.getId());
             if (dto.getFavorite() == null) {
                 dto.setFavorite(existed.getFavorite());
