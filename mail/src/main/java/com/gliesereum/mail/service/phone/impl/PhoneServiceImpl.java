@@ -31,8 +31,8 @@ public class PhoneServiceImpl implements PhoneService {
     private boolean sendSmsEnable;
 
     @Autowired
-    @Qualifier("mobizonPhoneProvider")
-    private PhoneProvider mobizonPhoneProvider;
+    @Qualifier("acemountPhoneProvider")
+    private PhoneProvider phoneProvider;
 
     @Autowired
     private EmailService emailService;
@@ -48,7 +48,7 @@ public class PhoneServiceImpl implements PhoneService {
         String message = "Message: " + text + "\nSend to phone: " + phone;
         log.info(message);
         if (sendSmsEnable) {
-            MailStateDto mailStateDto = mobizonPhoneProvider.sendSingleMessage(phone, text);
+            MailStateDto mailStateDto = phoneProvider.sendSingleMessage(phone, text);
             mailStateService.create(mailStateDto);
             log.info("Successful: {}", message);
             sendLogInfoToEmailAsync(message);
@@ -57,14 +57,14 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Override
     public String checkBalance() {
-       return mobizonPhoneProvider.checkBalance();
+       return phoneProvider.checkBalance();
     }
 
     @Scheduled(fixedDelay = 60000)
     private void checkStatus() {
         LocalDateTime date = LocalDateTime.now().minusMinutes(3L);
         List<MailStateDto> list = mailStateService.getByMessageStatusAndDateAfter("1", date);
-        List<MailStateDto> listToUpdate = mobizonPhoneProvider.checkStatus(list);
+        List<MailStateDto> listToUpdate = phoneProvider.checkStatus(list);
         if (CollectionUtils.isNotEmpty(listToUpdate)) {
             mailStateService.update(listToUpdate);
         }
