@@ -62,6 +62,6 @@ phone:
   mobizon:
     url: https://api.mobizon.ua/service/
     token: ua6bf786d392ac07d7045f72bc72687e24d80cd08d00e35e4f22736534b1a83b2f3163
-  sendSms : true
+  sendSms : false
 
 
