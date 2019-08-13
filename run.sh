@@ -38,16 +38,16 @@ docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-notif
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
 
 echo 'Docker build images'
-sudo docker build -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  ./discovery/build/libs/
-sudo docker build -t gls-account:0.0.1 -f docker/account/Dockerfile  ./account/build/libs/
-sudo docker build -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  ./proxy/build/libs/
-sudo docker build -t gls-mail:0.0.1 -f docker/mail/Dockerfile  ./mail/build/libs/
-sudo docker build -t gls-permission:0.0.1 -f docker/permission/Dockerfile  ./permission/build/libs/
-sudo docker build -t gls-karma:0.0.1 -f docker/karma/Dockerfile  ./karma/build/libs/
-sudo docker build -t gls-file:0.0.1 -f docker/file/Dockerfile  ./file/build/libs/
-sudo docker build -t gls-lending-gallery:0.0.1 -f docker/lending-gallery/Dockerfile  ./lending-gallery/build/libs/
-sudo docker build -t gls-notification:0.0.1 -f docker/notification/Dockerfile  ./notification/build/libs/
-sudo docker build -t gls-curator:0.0.1 -f docker/curator/Dockerfile  ./config/elk/
+sudo docker build --rm -t gls-discovery:0.0.1 -f docker/discovery/Dockerfile  ./discovery/build/libs/
+sudo docker build --rm -t gls-account:0.0.1 -f docker/account/Dockerfile  ./account/build/libs/
+sudo docker build --rm  -t gls-proxy:0.0.1  -f docker/proxy/Dockerfile  ./proxy/build/libs/
+sudo docker build --rm  -t gls-mail:0.0.1 -f docker/mail/Dockerfile  ./mail/build/libs/
+sudo docker build --rm  -t gls-permission:0.0.1 -f docker/permission/Dockerfile  ./permission/build/libs/
+sudo docker build --rm  -t gls-karma:0.0.1 -f docker/karma/Dockerfile  ./karma/build/libs/
+sudo docker build --rm  -t gls-file:0.0.1 -f docker/file/Dockerfile  ./file/build/libs/
+sudo docker build --rm  -t gls-lending-gallery:0.0.1 -f docker/lending-gallery/Dockerfile  ./lending-gallery/build/libs/
+sudo docker build --rm  -t gls-notification:0.0.1 -f docker/notification/Dockerfile  ./notification/build/libs/
+sudo docker build --rm  -t gls-curator:0.0.1 -f docker/curator/Dockerfile  ./config/elk/
 
 echo 'Docker deploy'                            
 docker stack deploy -c docker/docker-compose-dev-log.yml gls
