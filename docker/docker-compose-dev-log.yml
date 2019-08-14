@@ -99,6 +99,8 @@ services:
       server.port: 8761
       spring.profiles.active: docker
       eureka.instance.hostname: discovery
+    ports:
+      - 8761:8761
 
   account:
     image: gls-account:0.0.1
