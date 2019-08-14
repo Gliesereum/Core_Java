@@ -297,6 +297,30 @@ services:
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
 
+  payment:
+    image: gls-payment:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      server.port: 8280
+      spring.profiles.active: docker
+      db.host: 46.101.182.178
+      db.database: glsdev
+      db.port: 26780
+      db.username: postgres
+      db.password: GliesereumAdmin0013
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
+      DEBUG_PORT: 8288
+    ports:
+      - 8280:8280
+      - 8288:8288
+
   nginx:
     image: nginx:1.15.7-alpine
     volumes:
