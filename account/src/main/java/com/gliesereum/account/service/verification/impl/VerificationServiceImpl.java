@@ -57,18 +57,18 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
     @Override
-    public void sendVerificationCode(@NotNull String value, VerificationType type) {
+    public void sendVerificationCode(@NotNull String value, VerificationType type, Boolean devMode) {
         String code = String.valueOf(random.ints(100000, (999998 + 1)).limit(1).findFirst().getAsInt());
         VerificationDomain domain = new VerificationDomain();
         domain.setId(value + code);
         domain.setCreateDate(LocalDateTime.now());
         repository.save(domain);
-        sendCode(value, code, type);
+        sendCode(value, code, type, devMode);
     }
 
-    private void sendCode(String value, String code, VerificationType type) {
+    private void sendCode(String value, String code, VerificationType type, Boolean devMode) {
         if (type.equals(VerificationType.PHONE)) {
-            mailExchangeService.sendPhoneVerification(value, code);
+            mailExchangeService.sendPhoneVerification(value, code, devMode);
         } else if (type.equals(VerificationType.EMAIL)) {
             mailExchangeService.sendEmailVerification(value, code);
         }

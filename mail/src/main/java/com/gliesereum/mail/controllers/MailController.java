@@ -26,8 +26,9 @@ public class MailController {
 
     @PostMapping(value = "/phone/single")
     public MapResponse sendSingleMessageToPhone(@RequestParam(value = "to") String phone,
-                                                @RequestParam(value = "message") String message) {
-        phoneService.sendSingleMessage(phone, message);
+                                                @RequestParam(value = "message") String message,
+                                                @RequestParam(value = "dev", defaultValue = "false", required = false) boolean devMode) {
+        phoneService.sendSingleMessage(phone, message, devMode);
         return MapResponse.resultTrue();
     }
 

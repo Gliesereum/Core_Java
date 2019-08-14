@@ -82,7 +82,7 @@ public class FeedBackRequestServiceImpl extends DefaultServiceImpl<FeedBackReque
                     List<UserPhoneDto> phones = exchangeService.findUserPhoneByUserIds(feedBackUsers.stream().map(FeedBackUserDto::getUserId).collect(Collectors.toList()));
                     if (CollectionUtils.isNotEmpty(phones)) {
                         phones.forEach(userPhone -> {
-                            phoneService.sendSingleMessage(userPhone.getPhone(), massage);
+                            phoneService.sendSingleMessage(userPhone.getPhone(), massage, false);
                             log.info(logMessage.concat(userPhone.getPhone()));
                         });
                     }

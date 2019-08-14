@@ -100,9 +100,9 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     }
 
     @Override
-    public void sendCode(String email) {
+    public void sendCode(String email, Boolean devMode) {
         checkIsEmail(email);
-        verificationService.sendVerificationCode(email, VerificationType.EMAIL);
+        verificationService.sendVerificationCode(email, VerificationType.EMAIL, devMode);
     }
 
     @Override

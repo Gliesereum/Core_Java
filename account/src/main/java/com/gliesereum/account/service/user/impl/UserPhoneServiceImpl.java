@@ -107,11 +107,11 @@ public class UserPhoneServiceImpl extends DefaultServiceImpl<UserPhoneDto, UserP
     }
 
     @Override
-    public void sendCode(String phone) {
+    public void sendCode(String phone, Boolean devMode) {
         //TODO: REMOVE isNEW
         //checkPhoneForSignInUp(phone, isNew);
         checkIsPhone(phone);
-        verificationService.sendVerificationCode(phone, VerificationType.PHONE);
+        verificationService.sendVerificationCode(phone, VerificationType.PHONE, devMode);
     }
 
     @Override

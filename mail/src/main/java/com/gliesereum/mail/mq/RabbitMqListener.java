@@ -45,7 +45,7 @@ public class RabbitMqListener {
                     break;
 
                 case "PHONE":
-                    phoneService.sendSingleMessage(model.get("value"), model.get("code"));
+                    phoneService.sendSingleMessage(model.get("value"), model.get("code"), false);
                     break;
             }
         }

@@ -37,8 +37,22 @@ public class MailExchangeServiceImpl implements MailExchangeService {
     }
 
     @Override
-    public String sendPhoneVerification(String to, String code) {
-        return send(to, code, null, exchangeProperties.getMail().getPhoneVerification());
+    public String sendPhoneVerification(String to, String code, Boolean devMode) {
+        String result = null;
+        if (!StringUtils.isAllEmpty(to, code)) {
+            String uri = UriComponentsBuilder
+                    .fromUriString(exchangeProperties.getMail().getPhoneVerification())
+                    .queryParam("to", to)
+                    .queryParam("message", code)
+                    .queryParam("dev", devMode)
+                    .build()
+                    .toUriString();
+            Map response = restTemplate.postForObject(uri, new HashMap<>(), Map.class);
+            if ((response != null) && (response.containsKey("result"))) {
+                result = (String) response.get("result");
+            }
+        }
+        return result;
     }
 
     @Override

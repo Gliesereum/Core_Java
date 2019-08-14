@@ -19,7 +19,7 @@ public interface UserEmailService extends DefaultService<UserEmailDto, UserEmail
 
     UserEmailDto getByValue(String value);
 
-    void sendCode(String email);
+    void sendCode(String email, Boolean devMode);
 
     UserEmailDto update(String email, String code);
 

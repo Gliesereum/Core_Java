@@ -44,10 +44,10 @@ public class PhoneServiceImpl implements PhoneService {
     private TaskExecutor taskExecutor;
 
     @Override
-    public void sendSingleMessage(String phone, String text) {
+    public void sendSingleMessage(String phone, String text, boolean devMode) {
         String message = "Message: " + text + "\nSend to phone: " + phone;
         log.info(message);
-        if (sendSmsEnable) {
+        if (sendSmsEnable && !devMode) {
             MailStateDto mailStateDto = phoneProvider.sendSingleMessage(phone, text);
             mailStateService.create(mailStateDto);
             log.info("Successful: {}", message);

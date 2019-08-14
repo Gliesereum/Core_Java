@@ -5,7 +5,7 @@ package com.gliesereum.mail.service.phone;
  */
 public interface PhoneService {
 
-    void sendSingleMessage(String phone, String text);
+    void sendSingleMessage(String phone, String text, boolean devMode);
 
     String checkBalance();
 }

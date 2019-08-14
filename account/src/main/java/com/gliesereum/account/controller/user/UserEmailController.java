@@ -63,8 +63,9 @@ public class UserEmailController {
     }
 
     @GetMapping("/code")
-    public MapResponse sendCode(@RequestParam(value = "email") String email) {
-        emailService.sendCode(email);
+    public MapResponse sendCode(@RequestParam(name = "email") String email,
+                                @RequestParam(name = "dev", defaultValue = "false", required = false) Boolean devMode) {
+        emailService.sendCode(email, devMode);
         return new MapResponse("sent", "true");
     }
 }

@@ -64,8 +64,9 @@ public class UserPhoneController {
     }
 
     @GetMapping("/code")
-    public MapResponse sendCode(@RequestParam(value = "phone") String phone) {
-        phoneService.sendCode(phone);
+    public MapResponse sendCode(@RequestParam(value = "phone") String phone,
+                                @RequestParam(value = "dev", defaultValue = "false", required = false) Boolean devMode) {
+        phoneService.sendCode(phone, devMode);
         return new MapResponse("sent", "true");
     }
 

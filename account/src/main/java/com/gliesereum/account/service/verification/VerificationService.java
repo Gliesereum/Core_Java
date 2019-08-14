@@ -9,5 +9,5 @@ public interface VerificationService {
 
     boolean checkVerification(String value, String code);
 
-    void sendVerificationCode(String value, VerificationType type);
+    void sendVerificationCode(String value, VerificationType type, Boolean devMode);
 }
