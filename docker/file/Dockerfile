@@ -6,30 +6,11 @@ ADD ./file-0.0.1.jar /gls/file/
 
 WORKDIR /gls/file
 
-ARG PORT
+ARG DEBUG_PORT
 
-EXPOSE ${PORT}
-
-ARG PROFILE
-ARG PROFILE="docker"
-
-ARG DB_HOST
-ARG DB_PORT
-ARG DB_USERNAME
-ARG DB_PASSWORD
-ARG RABBIT_HOST
-ARG RABBIT_PORT
-ARG RABBIT_USER
-ARG RABBIT_PASSWORD
-ARG CDN_ACCESS_KEY
-ARG CDN_SECRET_KEY
-ARG CDN_HOST
-ARG CDN_REGION
-ARG CDN_BUCKET
-ARG CDN_FOLDER
-ARG EUREKA_HOST
-ARG EUREKA_PORT
+EXPOSE ${DEBUG_PORT}
 
 
 CMD sleep 2m && java -jar -server -XX:+UseG1GC -Xms300M -Xmx1G -XX:MaxMetaspaceSize=1G -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
+-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${DEBUG_PORT} \
 ./file-0.0.1.jar
