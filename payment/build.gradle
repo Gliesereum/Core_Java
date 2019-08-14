@@ -10,6 +10,7 @@ buildscript {
 		modelMapperVersion = '2.3.0'
 		lombokVersion = '1.18.2'
 		swaggerVersion = '2.9.2'
+		jaksonJsr310Version = '2.9.7'
 
 	}
 	repositories {
@@ -35,6 +36,7 @@ repositories {
 	mavenCentral()
 	maven { url "https://repo.spring.io/snapshot" }
 	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://github.com/liqpay/sdk-java/raw/repository" }
 }
 
 dependencies {
@@ -44,6 +46,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-amqp')
 	implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jaksonJsr310Version}"
 	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 	implementation "commons-io:commons-io:${commonsIOVersion}"
 	implementation('org.flywaydb:flyway-core')
@@ -54,6 +57,7 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	runtimeOnly('org.postgresql:postgresql')
+	compile 'com.liqpay:liqpay-sdk:0.7-SNAPSHOT'
 
 	implementation (project(':share')) {
 		transitive = false

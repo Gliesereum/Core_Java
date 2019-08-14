@@ -13,4 +13,5 @@ public class PaymentExceptionMessage {
     public static final ExceptionMessage PRIVATE_KEY_EMPTY = new ExceptionMessage(1801, 400, "Private key is empty");
     public static final ExceptionMessage PUBLIC_KEY_EMPTY = new ExceptionMessage(1802, 400, "Public key is empty");
     public static final ExceptionMessage OBJECT_TYPE_EMPTY = new ExceptionMessage(1803, 400, "Object type is empty");
+    public static final ExceptionMessage FAVORITE_EXIST_IN_OBJECT = new ExceptionMessage(1804, 400, "Favorite already exist");
 }
