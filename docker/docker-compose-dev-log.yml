@@ -99,6 +99,8 @@ services:
       server.port: 8761
       spring.profiles.active: docker
       eureka.instance.hostname: discovery
+    ports:
+      - 8761:8761
 
   account:
     image: gls-account:0.0.1
@@ -123,6 +125,9 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      DEBUG_PORT: 8211
+    ports:
+      - 8211:8211
 
   mail:
     image: gls-mail:0.0.1
@@ -153,6 +158,9 @@ services:
       phone.send-sms: "true"
       eureka.host: discovery
       eureka.port: 8761
+      DEBUG_PORT: 8221
+    ports:
+      - 8221:8221
 
   proxy:
     image: gls-proxy:0.0.1
@@ -168,6 +176,9 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      DEBUG_PORT: 8201
+    ports:
+      - 8201:8201
 
   permission:
     image: gls-permission:0.0.1
@@ -188,6 +199,9 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      DEBUG_PORT: 8231
+    ports:
+      - 8231:8231
 
   karma:
     image: gls-karma:0.0.1
@@ -195,7 +209,7 @@ services:
       restart_policy:
         condition: on-failure
     environment:
-      server.port: 8230
+      server.port: 8240
       spring.profiles.active: docker
       db.host: 46.101.182.178
       db.database: glsdev
@@ -210,6 +224,9 @@ services:
       es.port: 9200
       eureka.host: discovery
       eureka.port: 8761
+      DEBUG_PORT: 8241
+    ports:
+      - 8241:8241
 
   file:
     image: gls-file:0.0.1
@@ -236,6 +253,9 @@ services:
       cdn.folder: karma
       eureka.host: discovery
       eureka.port: 8761
+      DEBUG_PORT: 8251
+    ports:
+      - 8251:8251
 
   lending-gallery:
     image: gls-lending-gallery:0.0.1
@@ -256,6 +276,9 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      DEBUG_PORT: 8261
+    ports:
+      - 8261:8261
 
 #  socket:
 #    image: gls-socket:0.0.1
@@ -294,8 +317,34 @@ services:
       eureka.port: 8761
       firebase.properties.credentialPath: /config/google-services.json
       firebase.properties.appName: coupler-13
+      DEBUG_PORT: 8271
+    ports:
+      - 8271:8271
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
+
+  payment:
+    image: gls-payment:0.0.1
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      server.port: 8280
+      spring.profiles.active: docker
+      db.host: 46.101.182.178
+      db.database: glsdev
+      db.port: 26780
+      db.username: postgres
+      db.password: GliesereumAdmin0013
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
+      DEBUG_PORT: 8281
+    ports:
+      - 8281:8281
 
   nginx:
     image: nginx:1.15.7-alpine

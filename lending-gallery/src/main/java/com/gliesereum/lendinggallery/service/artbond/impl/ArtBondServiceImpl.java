@@ -322,16 +322,13 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public Double getNkd(ArtBondDto artBond) {
         Double result = null;
         if (artBond != null) {
-            double dividendValue = artBond.getStockPrice() / 100 * artBond.getDividendPercent();
+            double dividendValue = (artBond.getStockPrice() / 100 * artBond.getDividendPercent()) / (12.0 / artBond.getPaymentPeriod());
             int paymentPeriod = artBond.getPaymentPeriod();
-            long daysAfterLastPayment = (long) PAYMENT_PERIOD_DAYS * paymentPeriod;
             double rewardValue = artBond.getStockPrice() / 100 * artBond.getRewardPercent();
-            long daysAfterPaymentStart = (long) PAYMENT_PERIOD_DAYS * paymentPeriod;
-            long daysPayment = ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
-            if (daysPayment < 1) {
-                daysPayment = 1;
-            }
-            result = calculateNkd(dividendValue, paymentPeriod, daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
+            long daysAfterPaymentStart = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate(), LocalDateTime.now()));
+            long daysPayment = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate()));
+
+            result = calculateNkd(dividendValue, paymentPeriod, daysAfterPaymentStart, rewardValue, daysPayment, daysAfterPaymentStart);
         }
         return result;
     }

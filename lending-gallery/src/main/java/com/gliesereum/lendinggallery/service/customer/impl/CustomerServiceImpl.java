@@ -188,7 +188,7 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                     }
 
                     double purchaseValue = stockCount * artBond.getStockPrice();
-                    double dividendValue = purchaseValue / 100 * artBond.getDividendPercent();
+                    double dividendValue = (purchaseValue / 100 * artBond.getDividendPercent()) / (12.0 / artBond.getPaymentPeriod());
                     double rewardValue = purchaseValue / 100 * artBond.getRewardPercent();
 
                     double resultProfit = purchaseValue + dividendValue + rewardValue;
