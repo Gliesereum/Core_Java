@@ -20,6 +20,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -82,6 +83,7 @@ public class BusinessAdministratorServiceImpl extends DefaultServiceImpl<Busines
     }
 
     @Override
+    @Transactional
     public void delete(UUID userId, UUID businessId) {
         if (ObjectUtils.allNotNull(userId, businessId)) {
             businessPermissionFacade.checkPermissionByBusiness(businessId, BusinessPermission.BUSINESS_ADMINISTRATION);
