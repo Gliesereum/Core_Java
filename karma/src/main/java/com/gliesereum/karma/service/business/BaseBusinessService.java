@@ -5,7 +5,6 @@ import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
-import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.Collection;
