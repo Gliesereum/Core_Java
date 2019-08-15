@@ -5,7 +5,9 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusPay;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
+import com.gliesereum.share.common.model.dto.karma.record.RecordPaymentInfoDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,8 +94,13 @@ public class RecordController {
     }
 
     @PostMapping("/by-params-for-business")
-    public Page<BaseRecordDto> getByParamsForBusiness(@Valid @NotNull @RequestBody BusinessRecordSearchDto search) {
+    public Page<BaseRecordDto> getByParamsForBusiness(@Valid @NotNull @RequestBody BusinessRecordSearchPageableDto search) {
         return service.getByParamsForBusiness(search);
+    }
+
+    @PostMapping("/by-params-for-business/payment-info")
+    public RecordPaymentInfoDto getPaymentInfoByParamsForBusiness(@Valid @NotNull @RequestBody BusinessRecordSearchDto search) {
+        return service.getPaymentInfoForBusiness(search);
     }
 
 //    @GetMapping("/by-client-for-corporation")

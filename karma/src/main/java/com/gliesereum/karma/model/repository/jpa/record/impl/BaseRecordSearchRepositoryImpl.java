@@ -3,7 +3,9 @@ package com.gliesereum.karma.model.repository.jpa.record.impl;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordSearchRepository;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
+import com.gliesereum.share.common.model.dto.karma.record.RecordPaymentInfoDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -57,20 +59,12 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
     }
 
     @Override
-    public Page<BaseRecordEntity> getRecordsBySearchDto(BusinessRecordSearchDto search, Pageable pageable) {
+    public Page<BaseRecordEntity> getRecordsBySearchDto(BusinessRecordSearchPageableDto search, Pageable pageable) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<BaseRecordEntity> query = builder.createQuery(BaseRecordEntity.class);
         Root<BaseRecordEntity> root = query.from(BaseRecordEntity.class);
-        List<Predicate> predicates = new ArrayList<>();
-        if (search != null) {
-            createEqIfNotNull(builder, predicates, root.get("recordNumber"), search.getRecordNumber());
-            createBetweenDate(builder, predicates, root.get("begin"), search.getFrom(), search.getTo());
-            createInIfNotEmpty(predicates, root.get("statusRecord"), search.getStatus());
-            createInIfNotEmpty(predicates, root.get("statusProcess"), search.getProcesses());
-            createInIfNotEmpty(predicates, root.get("businessId"), search.getBusinessIds());
-            createInIfNotEmpty(predicates, root.get("clientId"), search.getClientIds());
-            createInIfNotEmpty(predicates, root.get("workingSpaceId"), search.getWorkingSpaceIds());
-        }
+
+        List<Predicate> predicates = getPredicateForSearch(root, builder, search);
 
         if (CollectionUtils.isNotEmpty(predicates)) {
             query.where(predicates.toArray(new Predicate[predicates.size()]));
@@ -87,6 +81,46 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
 
         return PageableExecutionUtils.getPage(typedQuery.getResultList(), pageable,
                 () -> executeCountQuery(entityManager.createQuery(getCountQuery(predicates, BaseRecordEntity.class))));
+    }
+
+    @Override
+    public RecordPaymentInfoDto getPaymentInfoBySearch(BusinessRecordSearchDto search) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Integer> query = builder.createQuery(Integer.class);
+        Root<BaseRecordEntity> root = query.from(BaseRecordEntity.class);
+
+        List<Predicate> predicates = getPredicateForSearch(root, builder, search);
+        if (CollectionUtils.isNotEmpty(predicates)) {
+            query.where(predicates.toArray(new Predicate[predicates.size()]));
+        }
+        query.select(builder.sum(root.get("price")));
+
+        TypedQuery<Integer> typedQuery = entityManager.createQuery(query);
+        List<Integer> resultList = typedQuery.getResultList();
+        Integer result = 0;
+        if (CollectionUtils.isNotEmpty(resultList)) {
+            for (Integer element : resultList) {
+                result += element == null ? 0 : element;
+            }
+        }
+        RecordPaymentInfoDto recordPaymentInfoDto = new RecordPaymentInfoDto();
+        recordPaymentInfoDto.setSum(result);
+        return recordPaymentInfoDto;
+
+    }
+
+    private List<Predicate> getPredicateForSearch(Root<BaseRecordEntity> root, CriteriaBuilder builder, BusinessRecordSearchDto search) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (search != null) {
+            createEqIfNotNull(builder, predicates, root.get("recordNumber"), search.getRecordNumber());
+            createBetweenDate(builder, predicates, root.get("begin"), search.getFrom(), search.getTo());
+            createInIfNotEmpty(predicates, root.get("statusRecord"), search.getStatus());
+            createInIfNotEmpty(predicates, root.get("statusProcess"), search.getProcesses());
+            createInIfNotEmpty(predicates, root.get("businessId"), search.getBusinessIds());
+            createInIfNotEmpty(predicates, root.get("clientId"), search.getClientIds());
+            createInIfNotEmpty(predicates, root.get("workingSpaceId"), search.getWorkingSpaceIds());
+        }
+        return predicates;
     }
 
     private void createLikeIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<String> expression, String value) {
