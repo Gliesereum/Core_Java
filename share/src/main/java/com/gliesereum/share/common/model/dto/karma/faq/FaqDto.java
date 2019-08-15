@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-
 /**
  * @author vitalij
  * @version 1.0
@@ -19,4 +17,6 @@ public class FaqDto extends DefaultDto {
     private String title;
 
     private String description;
+
+    private Integer index;
 }
