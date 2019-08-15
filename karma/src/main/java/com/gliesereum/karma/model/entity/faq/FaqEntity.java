@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author vitalij
@@ -23,4 +25,8 @@ public class FaqEntity extends DefaultEntity {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "index")
+    private Integer index;
+
 }

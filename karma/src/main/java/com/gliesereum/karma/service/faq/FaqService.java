@@ -9,4 +9,6 @@ import com.gliesereum.share.common.service.DefaultService;
  * @version 1.0
  */
 public interface FaqService extends DefaultService<FaqDto, FaqEntity> {
+
+
 }    
