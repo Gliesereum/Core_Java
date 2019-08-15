@@ -51,3 +51,14 @@ liq-pay:
 liq-pay-exchange:
   order-update-info:
     exchange-name: liq-pay-exchange-order-update-info
+
+way-for-pay:
+  url:
+    verify: https://secure.wayforpay.com/verify
+  merchant:
+   # key: 6c7018b67af807221b14e3e472e1cf57731f9dbd
+   # account: coupler_app
+    key: flk3409refn54t54t*FNJRET
+    account: test_merch_n1
+    domain: https://coupler.app/
+

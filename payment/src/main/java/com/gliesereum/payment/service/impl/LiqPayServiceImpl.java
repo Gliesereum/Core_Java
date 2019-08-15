@@ -12,6 +12,9 @@ import com.liqpay.LiqPayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.json.simple.JSONObject;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author vitalij
@@ -36,7 +40,7 @@ public class LiqPayServiceImpl implements LiqPayService {
     @Value("${liq-pay.crypto.password}")
     private String password;
 
-   private LiqPay liqpay = new LiqPay("sandbox_i68717225710", "sandbox_MbnwJt32pvmXEFielzRaM2gYB4tauUmpYM4a3qFs");
+    private LiqPay liqpay = new LiqPay("sandbox_i68717225710", "sandbox_MbnwJt32pvmXEFielzRaM2gYB4tauUmpYM4a3qFs");
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -92,27 +96,29 @@ public class LiqPayServiceImpl implements LiqPayService {
     @Override
     public void test() {
         HashMap<String, String> params_1 = new HashMap<String, String>();
-        params_1.put("action", "pay");
+        params_1.put("action", "auth");
         params_1.put("amount", "1");
         params_1.put("currency", "UAH");
         params_1.put("description", "description text");
-        params_1.put("order_id", "order_id_3");
+        params_1.put("order_id", UUID.randomUUID().toString());
         params_1.put("version", "3");
+        params_1.put("server_url", "https://d7962e95.ngrok.io/liq-pay/test-response");
         String html = liqpay.cnb_form(params_1);
         System.out.println(html);
 
-       /* HashMap<String, String> params_2 = new HashMap<String, String>();
+        HashMap<String, String> params_2 = new HashMap<String, String>();
         params_2.put("action", "auth");
         params_2.put("version", "3");
         params_2.put("phone", "380996438310");
         params_2.put("amount", "1");
         params_2.put("currency", "UAH");
         params_2.put("description", "add cart");
-        params_2.put("order_id", "order_id_2");
+        params_2.put("order_id", UUID.randomUUID().toString());
         params_2.put("card", "4731185615124168");
         params_2.put("card_exp_month", "10");
         params_2.put("card_exp_year", "26");
         params_2.put("card_cvv", "892");
+        params_2.put("server_url", "https://d7962e95.ngrok.io/liq-pay/test-response");
         HashMap<String, Object> res = null;
         try {
             res = (HashMap<String, Object>) liqpay.api("request", params_2);
@@ -120,7 +126,28 @@ public class LiqPayServiceImpl implements LiqPayService {
             e.printStackTrace();
         }
         String json = JSONObject.toJSONString(res);
-        System.out.println(res.get("status"));*/
+        System.out.println(res.get("status"));
+    }
+
+    @Override
+    public void testResponse(Map<String, String> response) {
+        if (response != null) {
+            Map<String, Object> mapData = null;
+            String data = response.get("data");
+            if (StringUtils.isNotBlank(data)) {
+                String jsonData = new String(Base64.decodeBase64(data));
+                if (StringUtils.isNotBlank(jsonData)) {
+                    mapData = jsonToMap(jsonData);
+                }
+            }
+            String signature = response.get("signature");
+            String privateKey = "sandbox_MbnwJt32pvmXEFielzRaM2gYB4tauUmpYM4a3qFs";
+            String str = privateKey.concat(data).concat(privateKey);
+
+            String signatureSave = Base64.encodeBase64String(LiqPayUtil.sha1(str));
+            System.out.println(signature.equals(signatureSave));
+            signatureSave.toLowerCase();
+        }
     }
 
     private Map<String, Object> jsonToMap(String json) {
