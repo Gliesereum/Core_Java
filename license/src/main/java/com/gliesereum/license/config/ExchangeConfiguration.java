@@ -3,8 +3,6 @@ package com.gliesereum.license.config;
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizationInterceptor;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
-import com.gliesereum.share.common.exchange.service.account.UserPhoneExchangeService;
-import com.gliesereum.share.common.exchange.service.account.impl.UserPhoneExchangeServiceImpl;
 import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,7 +25,7 @@ public class ExchangeConfiguration {
 
     @Bean
     @LoadBalanced
-    public RestTemplate restTemplateLoadBalanced(RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor) {
+    public RestTemplate restTemplate(RestTemplateAuthorizationInterceptor restTemplateAuthorizationInterceptor) {
         RestTemplate restTemplate = new RestTemplate();
         List<ClientHttpRequestInterceptor> existed = restTemplate.getInterceptors();
         List<ClientHttpRequestInterceptor> clientHttpRequestInterceptors = new ArrayList<>();
@@ -46,8 +44,4 @@ public class ExchangeConfiguration {
         return new RestTemplateAuthorizationInterceptor(jwtSecurityProperties);
     }
 
-    @Bean
-    public UserPhoneExchangeService userPhoneExchangeService(RestTemplate restTemplateLoadBalanced, ExchangeProperties exchangeProperties) {
-        return new UserPhoneExchangeServiceImpl(restTemplateLoadBalanced, exchangeProperties);
-    }
 }
