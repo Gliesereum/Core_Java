@@ -34,6 +34,9 @@ spring:
     queue-logstash: logstash
     queue-mail: verificationQueue
 
+swagger:
+  enable: true
+
 cdn:
   properties:
     accessKey: XJSIQ6UA5HZEHMH3DDUP

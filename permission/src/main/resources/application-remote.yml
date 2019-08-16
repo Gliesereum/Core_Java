@@ -33,3 +33,5 @@ spring:
     connection-timeout: 5s
     queue-logstash: logstash
 
+swagger:
+  enable: true

@@ -8,3 +8,6 @@ spring:
     connection-timeout: 5s
     queue-logstash: logstash
     queue-mail: verificationQueue
+
+swagger:
+  enable: true
