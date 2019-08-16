@@ -57,6 +57,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private static final String FIELD_FILTER_IDS = "services.filterIds";
     private static final String FIELD_FILTER_ATTRIBUTE_IDS = "services.filterAttributeIds";
     private static final String FIELD_BUSINESS_CATEGORY_ID = "businessCategoryId";
+    private static final String FIELD_CORPORATION_ID = "corporationId";
     private static final String FIELD_GEO_POINT = "geoPoint";
     private static final String FIELD_OBJECT_STATE = "objectState";
     private static final String FIELD_NAME = "name";
@@ -103,6 +104,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             setBusinessCategoryId(businessSearch);
             setServices(businessSearch);
 
+            addQueryByCorporationId(boolQueryBuilder, businessSearch.getCorporationIds());
             addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
@@ -272,6 +274,14 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             List<String> businessCategoryIdString = businessCategoryIds.stream().map(UUID::toString).collect(Collectors.toList());
             TermsQueryBuilder businessCategoryTerms = new TermsQueryBuilder(FIELD_BUSINESS_CATEGORY_ID, businessCategoryIdString);
             boolQueryBuilder.must(businessCategoryTerms);
+        }
+    }
+
+    private void addQueryByCorporationId(BoolQueryBuilder boolQueryBuilder, List<UUID> corporationIds) {
+        if (CollectionUtils.isNotEmpty(corporationIds)) {
+            List<String> corporationIdsString = corporationIds.stream().map(UUID::toString).collect(Collectors.toList());
+            TermsQueryBuilder corporationTerms = new TermsQueryBuilder(FIELD_CORPORATION_ID, corporationIdsString);
+            boolQueryBuilder.must(corporationTerms);
         }
     }
 
