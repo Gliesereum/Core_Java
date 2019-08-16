@@ -131,7 +131,7 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
         UUID userId = SecurityUtil.getUserId();
         checkUserAuthentication(userId);
         if (verificationService.checkVerification(email, code)) {
-            if (checkEmailByExist(email)) {
+            if (existEmailNotInUser(email, userId)) {
                 throw new ClientException(EMAIL_EXIST);
             }
             if (getByUserId(userId) != null) {
@@ -156,6 +156,12 @@ public class UserEmailServiceImpl extends DefaultServiceImpl<UserEmailDto, UserE
     public boolean checkEmailByExist(String email) {
         checkIsEmail(email);
         return userEmailRepository.existsUserEmailEntityByEmail(email);
+    }
+
+    @Override
+    public boolean existEmailNotInUser(String email, UUID userId) {
+        checkIsEmail(email);
+        return userEmailRepository.existsByEmailAndUserIdNot(email, userId);
     }
 
     @Override
