@@ -10,6 +10,7 @@ import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +26,15 @@ import java.util.UUID;
 @Service
 public class UserUpdateFacadeImpl implements UserUpdateFacade {
 
+    @Lazy
     @Autowired
     private TokenService tokenService;
 
+    @Lazy
     @Autowired
     private AuthService authService;
 
+    @Lazy
     @Autowired
     private SystemNotificationFacade systemNotificationFacade;
 
