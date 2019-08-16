@@ -6,7 +6,9 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
+import com.gliesereum.share.common.model.dto.karma.record.RecordPaymentInfoDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
 import org.springframework.data.domain.Page;
@@ -32,7 +34,9 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByTimeBetween(LocalDateTime from, Integer minutesFrom, Integer minutesTo, StatusRecord status, boolean notificationSend);
 
-    Page<BaseRecordDto> getByParamsForBusiness(BusinessRecordSearchDto search);
+    Page<BaseRecordDto> getByParamsForBusiness(BusinessRecordSearchPageableDto search);
+
+    RecordPaymentInfoDto getPaymentInfoForBusiness(BusinessRecordSearchDto search);
 
     BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status);
 

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -33,6 +34,12 @@ public class FaqServiceImpl extends DefaultServiceImpl<FaqDto, FaqEntity> implem
     }
 
     @Override
+    public List<FaqDto> getAll() {
+        List<FaqEntity> entities = faqRepository.findByOrderByIndex();
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     @Transactional
     public FaqDto create(FaqDto dto) {
         return super.create(dto);
@@ -42,11 +49,6 @@ public class FaqServiceImpl extends DefaultServiceImpl<FaqDto, FaqEntity> implem
     @Transactional
     public FaqDto update(FaqDto dto) {
         return super.update(dto);
-    }
-
-    @Override
-    public FaqDto getById(UUID id) {
-        return super.getById(id);
     }
 
     @Transactional

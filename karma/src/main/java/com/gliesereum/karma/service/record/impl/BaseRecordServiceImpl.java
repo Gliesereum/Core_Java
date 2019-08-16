@@ -28,11 +28,9 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.*;
-import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
-import com.gliesereum.share.common.model.dto.karma.record.OrderDto;
-import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
-import com.gliesereum.share.common.model.dto.karma.record.RecordServiceDto;
+import com.gliesereum.share.common.model.dto.karma.record.*;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
+import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
@@ -245,25 +243,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public Page<BaseRecordDto> getByParamsForBusiness(BusinessRecordSearchDto search) {
+    public Page<BaseRecordDto> getByParamsForBusiness(BusinessRecordSearchPageableDto search) {
         Page<BaseRecordDto> result = null;
-        if (CollectionUtils.isEmpty(search.getBusinessIds()) && (search.getCorporationId() == null)) {
-            throw new ClientException(BUSINESS_ID_EMPTY);
-        }
-        UUID workingSpaceId = null;
-        if (search.getCorporationId() != null) {
-            businessPermissionFacade.checkPermissionByCorporation(search.getCorporationId(), BusinessPermission.VIEW_BUSINESS_INFO);
-            List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(search.getCorporationId()));
-            search.setBusinessIds(businessIds);
-        } else if (search.getBusinessIds().size() == 1) {
-            businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds().get(0), BusinessPermission.VIEW_BUSINESS_INFO);
-            workingSpaceId = getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(search.getBusinessIds().get(0));
-        } else {
-            businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds(), BusinessPermission.VIEW_BUSINESS_INFO);
-        }
-        if (workingSpaceId != null) {
-            search.setWorkingSpaceIds(Arrays.asList(workingSpaceId));
-        }
+        processSearchForBusinessModel(search);
         Pageable pageable = getPageable(search);
         Page<BaseRecordEntity> entities = baseRecordRepository.getRecordsBySearchDto(search, pageable);
         result = converter.convert(entities, dtoClass);
@@ -273,6 +255,12 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             setServicePrice(result.getContent());
         }
         return result;
+    }
+
+    @Override
+    public RecordPaymentInfoDto getPaymentInfoForBusiness(BusinessRecordSearchDto search) {
+        processSearchForBusinessModel(search);
+        return baseRecordRepository.getPaymentInfoBySearch(search);
     }
 
     @Override
@@ -558,6 +546,26 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return result;
     }
 
+    private void processSearchForBusinessModel(BusinessRecordSearchDto search) {
+        if (CollectionUtils.isEmpty(search.getBusinessIds()) && (search.getCorporationId() == null)) {
+            throw new ClientException(BUSINESS_ID_EMPTY);
+        }
+        UUID workingSpaceId = null;
+        if (search.getCorporationId() != null) {
+            businessPermissionFacade.checkPermissionByCorporation(search.getCorporationId(), BusinessPermission.VIEW_BUSINESS_INFO);
+            List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(search.getCorporationId()));
+            search.setBusinessIds(businessIds);
+        } else if (search.getBusinessIds().size() == 1) {
+            businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds().get(0), BusinessPermission.VIEW_BUSINESS_INFO);
+            workingSpaceId = getWorkingSpaceIfWorkerOrCheckPermissionToViewAll(search.getBusinessIds().get(0));
+        } else {
+            businessPermissionFacade.checkPermissionByBusiness(search.getBusinessIds(), BusinessPermission.VIEW_BUSINESS_INFO);
+        }
+        if (workingSpaceId != null) {
+            search.setWorkingSpaceIds(Arrays.asList(workingSpaceId));
+        }
+    }
+
     private void checkRecord(BaseRecordDto dto) {
         if (dto != null) {
             checkServiceChoose(dto);
@@ -836,7 +844,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         }
     }
 
-    private Pageable getPageable(BusinessRecordSearchDto search) {
+    private Pageable getPageable(BusinessRecordSearchPageableDto search) {
         Integer page = 0;
         Integer size = 10;
         Sort sort = null;
@@ -876,8 +884,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         SecurityUtil.checkUserByBanStatus();
         WorkerDto worker = workerService.findByUserIdAndBusinessId(SecurityUtil.getUserId(), businessId);
         UUID result = null;
-        if ((worker == null) || ((result = worker.getWorkingSpaceId()) == null)) {
-            businessPermissionFacade.checkPermissionByBusiness(businessId, BusinessPermission.VIEW_ALL_RECORD);
+        if (!businessPermissionFacade.isHavePermissionByBusiness(businessId, BusinessPermission.VIEW_ALL_RECORD) &&
+                ((worker == null) || ((result = worker.getWorkingSpaceId()) == null))) {
+            throw new ClientException(DONT_HAVE_PERMISSION_TO_ACTION_BUSINESS);
         }
         return result;
     }
