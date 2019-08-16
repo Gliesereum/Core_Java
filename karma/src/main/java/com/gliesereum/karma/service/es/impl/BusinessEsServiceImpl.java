@@ -271,7 +271,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     private void addQueryByBusinessCategoryId(BoolQueryBuilder boolQueryBuilder, List<UUID> businessCategoryIds) {
         if (CollectionUtils.isNotEmpty(businessCategoryIds)) {
-            List<String> businessCategoryIdString = businessCategoryIds.stream().map(UUID::toString).collect(Collectors.toList());
+            List<String> businessCategoryIdString = businessCategoryIds.stream().filter(Objects::nonNull).map(UUID::toString).collect(Collectors.toList());
             TermsQueryBuilder businessCategoryTerms = new TermsQueryBuilder(FIELD_BUSINESS_CATEGORY_ID, businessCategoryIdString);
             boolQueryBuilder.must(businessCategoryTerms);
         }
@@ -279,7 +279,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     private void addQueryByCorporationId(BoolQueryBuilder boolQueryBuilder, List<UUID> corporationIds) {
         if (CollectionUtils.isNotEmpty(corporationIds)) {
-            List<String> corporationIdsString = corporationIds.stream().map(UUID::toString).collect(Collectors.toList());
+            List<String> corporationIdsString = corporationIds.stream().filter(Objects::nonNull).map(UUID::toString).collect(Collectors.toList());
             TermsQueryBuilder corporationTerms = new TermsQueryBuilder(FIELD_CORPORATION_ID, corporationIdsString);
             boolQueryBuilder.must(corporationTerms);
         }
