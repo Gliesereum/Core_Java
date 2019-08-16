@@ -42,6 +42,9 @@ spring:
     queue-logstash: logstash
     #queue-mail: verificationQueue
 
+swagger:
+  enable: true
+
 token:
   expirationTime:
     # 7 days

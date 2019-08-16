@@ -37,3 +37,6 @@ spring:
       uris: http://207.154.239.122:9200
       max-connection-idle-time: 5000
       read-timeout: 5000
+
+swagger:
+  enable: true

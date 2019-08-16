@@ -73,7 +73,7 @@ services:
     - /usr/config/geoconfig/GeoLite2-City.mmdb:/usr/share/geoconfig/GeoLite2-City.mmdb
 
   curator:
-    image: gls-curator:0.0.1
+    image: gls-curator:0.1.0
     environment:
       ES_HOST: elasticsearch
       ES_PORT: 9200
@@ -91,7 +91,7 @@ services:
     - ../config/elk/curator/logs:/curator/logs/
 
   discovery:
-    image: gls-discovery:0.0.1
+    image: gls-discovery:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -103,7 +103,7 @@ services:
       - 8761:8761
 
   account:
-    image: gls-account:0.0.1
+    image: gls-account:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -125,10 +125,10 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
-
+      swagger.enable: "true"
 
   mail:
-    image: gls-mail:0.0.1
+    image: gls-mail:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -156,9 +156,10 @@ services:
       phone.send-sms: "true"
       eureka.host: discovery
       eureka.port: 8761
+      swagger.enable: "true"
 
   proxy:
-    image: gls-proxy:0.0.1
+    image: gls-proxy:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -171,9 +172,10 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      swagger.enable: "true"
 
   permission:
-    image: gls-permission:0.0.1
+    image: gls-permission:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -191,9 +193,10 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      swagger.enable: "true"
 
   karma:
-    image: gls-karma:0.0.1
+    image: gls-karma:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -213,9 +216,10 @@ services:
       es.port: 9200
       eureka.host: discovery
       eureka.port: 8761
+      swagger.enable: "true"
 
   file:
-    image: gls-file:0.0.1
+    image: gls-file:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -239,9 +243,10 @@ services:
       cdn.folder: karma
       eureka.host: discovery
       eureka.port: 8761
+      swagger.enable: "true"
 
   lending-gallery:
-    image: gls-lending-gallery:0.0.1
+    image: gls-lending-gallery:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -259,9 +264,10 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      swagger.enable: "true"
 
 #  socket:
-#    image: gls-socket:0.0.1
+#    image: gls-socket:0.1.0
 #    deploy:
 #      restart_policy:
 #        condition: on-failure
@@ -277,7 +283,7 @@ services:
 #      eureka.port: 8761
 
   notification:
-    image: gls-notification:0.0.1
+    image: gls-notification:0.1.0
     deploy:
       restart_policy:
         condition: on-failure
@@ -297,11 +303,12 @@ services:
       eureka.port: 8761
       firebase.properties.credentialPath: /config/google-services.json
       firebase.properties.appName: coupler-13
+      swagger.enable: "true"
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
 
 #  payment:
-#    image: gls-payment:0.0.1
+#    image: gls-payment:0.1.0
 #    deploy:
 #      restart_policy:
 #        condition: on-failure

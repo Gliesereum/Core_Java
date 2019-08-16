@@ -27,6 +27,8 @@ public interface UserEmailService extends DefaultService<UserEmailDto, UserEmail
 
     boolean checkEmailByExist(String email);
 
+    boolean existEmailNotInUser(String email, UUID userId);
+
     List<UserEmailDto> getByUserIds(List<UUID> ids);
 
     Map<UUID, UserEmailDto> getMapByUserIds(List<UUID> ids);

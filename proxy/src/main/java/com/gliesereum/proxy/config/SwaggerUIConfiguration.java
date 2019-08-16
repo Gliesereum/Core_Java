@@ -1,6 +1,7 @@
 package com.gliesereum.proxy.config;
 
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 @Configuration
 @EnableSwagger2
+@ConditionalOnProperty("swagger.enable")
 public class SwaggerUIConfiguration {
 
     private static final String SWAGGER_API_PATH = "api-docs";
