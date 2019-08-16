@@ -6,6 +6,8 @@ import com.gliesereum.share.common.model.dto.payment.LiqPayStatusRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * @author vitalij
  * @version 1.0
@@ -45,5 +47,10 @@ public class LiqPayController {
     @GetMapping("/test")
     private void test(){
         service.test();
+    }
+
+    @PostMapping("/test-response")
+    private void testRequest(@RequestParam Map<String, String> response){
+        service.testResponse(response);
     }
 }
