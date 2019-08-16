@@ -121,7 +121,7 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
-      swagger.enable: false
+      swagger.enable: "false"
 
   mail:
     image: gls-mail:0.1.0
@@ -152,7 +152,7 @@ services:
       phone.send-sms: "true"
       eureka.host: discovery
       eureka.port: 8761
-      swagger.enable: false
+      swagger.enable: "false"
 
   proxy:
     image: gls-proxy:0.1.0
@@ -168,7 +168,7 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
-      swagger.enable: false
+      swagger.enable: "false"
 
   permission:
     image: gls-permission:0.1.0
@@ -189,7 +189,7 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
-      swagger.enable: false
+      swagger.enable: "false"
 
   karma:
     image: gls-karma:0.1.0
@@ -212,7 +212,7 @@ services:
       es.port: 9200
       eureka.host: discovery
       eureka.port: 8761
-      swagger.enable: false
+      swagger.enable: "false"
 
   file:
     image: gls-file:0.1.0
@@ -239,7 +239,7 @@ services:
       cdn.folder: coupler-prod
       eureka.host: discovery
       eureka.port: 8761
-      swagger.enable: false
+      swagger.enable: "false"
 
   notification:
     image: gls-notification:0.1.0
@@ -262,7 +262,7 @@ services:
       eureka.port: 8761
       firebase.properties.credentialPath: /config/google-services.json
       firebase.properties.appName: coupler-13
-      swagger.enable: false
+      swagger.enable: "false"
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
 
