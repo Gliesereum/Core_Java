@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public interface WayForPayService {
 
-    void verifyCard();
+    String getFormVerifyCard();
 
     void verifyCardResponse(Map<String, String> response);
 }

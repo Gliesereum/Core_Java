@@ -55,10 +55,12 @@ liq-pay-exchange:
 way-for-pay:
   url:
     verify: https://secure.wayforpay.com/verify
+    verify-card-response: https://82ddbd7b.ngrok.io/way-for-pay/verify-card-response
   merchant:
    # key: 6c7018b67af807221b14e3e472e1cf57731f9dbd
    # account: coupler_app
+   # domain: https://coupler.app/
     key: flk3409refn54t54t*FNJRET
     account: test_merch_n1
-    domain: https://coupler.app/
+    domain: merchant.com.ua
 
