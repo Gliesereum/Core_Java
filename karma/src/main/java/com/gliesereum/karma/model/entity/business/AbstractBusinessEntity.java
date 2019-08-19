@@ -37,6 +37,9 @@ public class AbstractBusinessEntity extends DefaultEntity {
     @Column(name = "cover_url")
     private String coverUrl;
 
+    @Column(name = "site_url")
+    private String siteUrl;
+
     @Column(name = "cashless_payment")
     private boolean cashlessPayment;
 

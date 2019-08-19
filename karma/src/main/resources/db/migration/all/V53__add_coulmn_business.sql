@@ -1,0 +1,1 @@
+ALTER TABLE karma.business ADD COLUMN site_url character varying;
