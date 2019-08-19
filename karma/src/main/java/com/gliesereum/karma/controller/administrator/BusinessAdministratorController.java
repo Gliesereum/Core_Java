@@ -28,13 +28,13 @@ public class BusinessAdministratorController {
     private BusinessPermissionFacade businessPermissionFacade;
 
     @PostMapping
-    private DetailedBusinessAdministratorDto create(@RequestParam("businessId") UUID businessId,
+    public DetailedBusinessAdministratorDto create(@RequestParam("businessId") UUID businessId,
                                                     @RequestParam("userId") UUID userId) {
         return businessAdministratorService.create(userId, businessId);
     }
 
     @DeleteMapping
-    private MapResponse delete(@RequestParam("businessId") UUID businessId,
+    public MapResponse delete(@RequestParam("businessId") UUID businessId,
                                @RequestParam("userId") UUID userId) {
         businessAdministratorService.delete(userId, businessId);
         return MapResponse.resultTrue();
@@ -51,7 +51,7 @@ public class BusinessAdministratorController {
     }
 
     @GetMapping("/for-business")
-    private MapResponse checkCurrentUserAdmin(@RequestParam("businessId") UUID businessId) {
+    public MapResponse checkCurrentUserAdmin(@RequestParam("businessId") UUID businessId) {
         SecurityUtil.checkUserByBanStatus();
         return new MapResponse(businessPermissionFacade.isHavePermissionByBusiness(businessId, BusinessPermission.VIEW_PHONE));
     }
