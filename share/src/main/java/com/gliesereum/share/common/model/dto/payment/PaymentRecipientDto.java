@@ -1,7 +1,6 @@
 package com.gliesereum.share.common.model.dto.payment;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.dto.payment.enumerated.PaymentObjectType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

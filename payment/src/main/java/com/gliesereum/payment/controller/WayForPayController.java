@@ -20,13 +20,12 @@ public class WayForPayController {
     @Autowired
     private WayForPayService service;
 
-
-    @PostMapping("/verify-card")
-    private void verifyCard() {
-        service.verifyCard();
+    @PostMapping("/get-form-verify-card")
+    private String getFormVerifyCard() {
+       return service.getFormVerifyCard();
     }
 
-    @PostMapping("/verify-card-response")
+    @PostMapping(value = "/verify-card-response")
     private void verifyCardResponse(@RequestParam Map<String, String> response) {
         service.verifyCardResponse(response);
     }

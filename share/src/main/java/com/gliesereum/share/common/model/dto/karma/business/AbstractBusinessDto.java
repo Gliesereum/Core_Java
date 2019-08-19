@@ -34,6 +34,8 @@ public class AbstractBusinessDto extends DefaultDto {
 
     private String coverUrl;
 
+    private String siteUrl;
+
     private boolean cashlessPayment;
 
     @NotEmpty

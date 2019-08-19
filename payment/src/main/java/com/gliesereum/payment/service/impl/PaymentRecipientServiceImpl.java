@@ -90,7 +90,7 @@ public class PaymentRecipientServiceImpl extends DefaultServiceImpl<PaymentRecip
         if (dto == null)
             throw new ClientException(BODY_INVALID);
         if (dto.getObjectId() == null)
-            throw new ClientException(OBJECT_ID_EMPTY);
+            throw new ClientException(OWNER_ID_EMPTY);
         if (StringUtils.isBlank(dto.getPrivateKey()))
             throw new ClientException(PRIVATE_KEY_EMPTY);
         if (StringUtils.isBlank(dto.getPublicKey()))
