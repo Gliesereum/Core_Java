@@ -6,6 +6,7 @@ import com.gliesereum.payment.service.wayforpay.WayForPayVerifyCardService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.payment.*;
 import com.gliesereum.share.common.util.CryptoUtil;
+import com.gliesereum.share.common.util.SecurityUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -92,7 +93,7 @@ public class WayForPayVerifyCardServiceImpl implements WayForPayVerifyCardServic
 
     @Override
     public String getFormVerifyCard() {
-        // SecurityUtil.checkUserByBanStatus(); //todo ++++++++++++++++++
+        SecurityUtil.checkUserByBanStatus();
         WayForPayVerifyCardRequestDto params = getParamsForVerifyCard();
         return renderHtmlForm(params);
     }
@@ -100,15 +101,15 @@ public class WayForPayVerifyCardServiceImpl implements WayForPayVerifyCardServic
     @Override
     public UserCardDto addNewCard(RequestCardInfoDto card) {
         UserCardDto result = null;
-        //SecurityUtil.checkUserByBanStatus(); //todo ++++++++++++++++++
+        SecurityUtil.checkUserByBanStatus();
         WayForPayVerifyCardRequestDto params = getParamsForVerifyCard();
         if (ObjectUtils.allNotNull(params, card)) {
-            //todo crypt data
-            params.setCard(card.getCard());
-            params.setCardCvv(card.getCardCvv());
-            params.setCardHolder(card.getCardHolder());
-            params.setExpMonth(card.getExpMonth());
-            params.setExpYear(card.getExpYear());
+            String userId = SecurityUtil.getUserId().toString();
+            params.setCard(decryptDate(card.getCard(), userId));
+            params.setCardCvv(decryptDate(card.getCardCvv(), userId));
+            params.setCardHolder(decryptDate(card.getCardHolder(), userId));
+            params.setExpMonth(decryptDate(card.getExpMonth(), userId));
+            params.setExpYear(decryptDate(card.getExpYear(), userId));
         }
         ResponseEntity<String> response =
                 restTemplate.exchange(apiUrl, HttpMethod.POST, new HttpEntity<>(params), String.class);
@@ -140,7 +141,7 @@ public class WayForPayVerifyCardServiceImpl implements WayForPayVerifyCardServic
 
     private WayForPayVerifyCardRequestDto getParamsForVerifyCard() {
         WayForPayVerifyCardRequestDto result = new WayForPayVerifyCardRequestDto();
-        WayForPayCardDto newCard = cardService.create(new WayForPayCardDto(UUID.randomUUID(), false)); //todo set userId in ownerId
+        WayForPayCardDto newCard = cardService.create(new WayForPayCardDto(SecurityUtil.getUserId(), false));
         UUID orderReference = newCard.getId();
         List<String> md5Params = List.of(couplerAccount, couplerDomainName, orderReference.toString(), String.valueOf(1), "UAH");
         String signature = generateHmacMD5(md5Params, couplerKey);
@@ -224,24 +225,14 @@ public class WayForPayVerifyCardServiceImpl implements WayForPayVerifyCardServic
                 throw new ClientException(SERVER_ERROR);
             }
         }
+        return result;
+    }
 
-
-        /*String message="Message to Decode";
-
-        KeyGenerator key = KeyGenerator.getInstance("AES"); key.init(256);
-
-        SecretKey s = key.generateKey();
-        byte[] raw = s.getEncoded();
-
-        SecretKeySpec sskey= new SecretKeySpec(raw, "AES");
-
-        Cipher c = Cipher.getInstance("AES");
-
-        cipher.init(Cipher.ENCRYPT_MODE, skey);
-
-        byte[] encrypted = c.doFinal(message.getBytes()); System.out.println("encrypted string: " + asHex(encrypted));
-
-*/
+    private String decryptDate(String date, String key) {
+        String result = null;
+        if (StringUtils.isNotBlank(date) && StringUtils.isNotBlank(key)) {
+            result = CryptoUtil.decryptAes256(date, key, key);
+        }
         return result;
     }
 

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.QueryParam;
 import java.util.UUID;
 
 /**
@@ -23,7 +22,7 @@ public class DataLoadingController {
     private DataLoadingService loadingService;
 
     @GetMapping("/business")
-    public void createBusiness(@QueryParam("rightTop") String rightTop, @QueryParam("leftBottom") String leftBottom) {
+    public void createBusiness(@RequestParam("rightTop") String rightTop, @RequestParam("leftBottom") String leftBottom) {
         loadingService.createBusiness(rightTop, leftBottom);
     }
 
