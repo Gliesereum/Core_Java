@@ -54,3 +54,4 @@ config/nginx-prod/nginx-logs/**
 
 config/elk/curator/curator-log
 !config/elk/curator/curator-log/tmp
+/notification/src/main/resources/google-services.json
