@@ -1,5 +1,7 @@
 package com.gliesereum.karma.controller.administrator;
 
+import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.service.administrator.BusinessAdministratorService;
 import com.gliesereum.share.common.model.dto.karma.administrator.DetailedBusinessAdministratorDto;
 import com.gliesereum.share.common.model.response.MapResponse;
@@ -22,14 +24,17 @@ public class BusinessAdministratorController {
     @Autowired
     private BusinessAdministratorService businessAdministratorService;
 
+    @Autowired
+    private BusinessPermissionFacade businessPermissionFacade;
+
     @PostMapping
-    private DetailedBusinessAdministratorDto create(@RequestParam("businessId") UUID businessId,
+    public DetailedBusinessAdministratorDto create(@RequestParam("businessId") UUID businessId,
                                                     @RequestParam("userId") UUID userId) {
         return businessAdministratorService.create(userId, businessId);
     }
 
     @DeleteMapping
-    private MapResponse delete(@RequestParam("businessId") UUID businessId,
+    public MapResponse delete(@RequestParam("businessId") UUID businessId,
                                @RequestParam("userId") UUID userId) {
         businessAdministratorService.delete(userId, businessId);
         return MapResponse.resultTrue();
@@ -46,8 +51,8 @@ public class BusinessAdministratorController {
     }
 
     @GetMapping("/for-business")
-    private MapResponse checkCurrentUserAdmin(@RequestParam("businessId") UUID businessId) {
+    public MapResponse checkCurrentUserAdmin(@RequestParam("businessId") UUID businessId) {
         SecurityUtil.checkUserByBanStatus();
-        return new MapResponse(businessAdministratorService.existByUserIdBusinessId(SecurityUtil.getUserId(), businessId));
+        return new MapResponse(businessPermissionFacade.isHavePermissionByBusiness(businessId, BusinessPermission.VIEW_PHONE));
     }
 }
