@@ -113,5 +113,5 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage BUSINESS_DOES_NOT_ANY_WORKER = new ExceptionMessage(1492, 400, "Business does not any worker");
     public static final ExceptionMessage NOT_ENOUGH_TIME_CREATE_RECORD_FOR_THIS_WORKER = new ExceptionMessage(1493, 400, "Not enough time for create record from this worker, choose another time");
     public static final ExceptionMessage WORKER_ID_EMPTY = new ExceptionMessage(1494, 400, "Worker id is empty");
-    public static final ExceptionMessage THIS_DAY_DOES_NOT_WORK_WORKERS = new ExceptionMessage(1495, 400, "This day does not work the workers");
+    public static final ExceptionMessage THIS_DAY_DO_NOT_WORK_WORKERS = new ExceptionMessage(1495, 400, "This day don't work workers");
 }

@@ -807,7 +807,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             });
         }
         if(CollectionUtils.isEmpty(workTimesOnDay) || workTimesOnDay.stream().noneMatch(WorkTimeDto::getIsWork)){
-            throw new ClientException(THIS_DAY_DOES_NOT_WORK_WORKERS);
+            throw new ClientException(THIS_DAY_DO_NOT_WORK_WORKERS);
         }
     }
 
