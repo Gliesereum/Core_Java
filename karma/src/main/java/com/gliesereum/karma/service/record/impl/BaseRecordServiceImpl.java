@@ -730,7 +730,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     private void checkWorkerTimeWorking(WorkTimeDto workTime, LocalDateTime begin) {
-        if (workTime == null || (workTime.getTo().isBefore(begin.toLocalTime()) || workTime.getFrom().isAfter(begin.toLocalTime()))) {
+        if (workTime == null || !workTime.getIsWork() || (workTime.getTo().isBefore(begin.toLocalTime()) || workTime.getFrom().isAfter(begin.toLocalTime()))) {
             throw new ClientException(WORKER_NOT_WORK_THIS_TIME);
         }
     }
@@ -757,6 +757,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (workerId != null) {
             workers = workers.stream().filter(f -> f.getId().equals(workerId)).collect(Collectors.toList());
         }
+        checkWorkerWorkThisDay(workers, beginRecord);
         workers.forEach(worker -> {
             WorkTimeDto workTime = getWorkTimeByWorker(worker, beginRecord);
             if (worker.getId().equals(workerId)) {
@@ -795,12 +796,27 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         return result;
     }
 
+    private void checkWorkerWorkThisDay(List<WorkerDto> workers, LocalDateTime beginRecord) {
+        DayOfWeek day = beginRecord.getDayOfWeek();
+        List<WorkTimeDto> workTimesOnDay = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(workers)) {
+            workers.forEach(f->{
+                if(CollectionUtils.isNotEmpty(f.getWorkTimes())){
+                    f.getWorkTimes().stream().filter(workTimeDto -> workTimeDto.getDayOfWeek().equals(day)).findFirst().ifPresent(workTimesOnDay::add);
+                }
+            });
+        }
+        if(CollectionUtils.isEmpty(workTimesOnDay) || workTimesOnDay.stream().noneMatch(WorkTimeDto::getIsWork)){
+            throw new ClientException(THIS_DAY_DO_NOT_WORK_WORKERS);
+        }
+    }
+
 
     private WorkTimeDto getWorkTimeByWorker(WorkerDto worker, LocalDateTime beginRecord) {
         WorkTimeDto result = null;
         if (worker != null && CollectionUtils.isNotEmpty(worker.getWorkTimes())) {
             result = worker.getWorkTimes().stream()
-                    .filter(wt -> wt.getDayOfWeek().equals(beginRecord.getDayOfWeek())).filter(w -> w.getIsWork()).findFirst().orElse(null);
+                    .filter(wt -> wt.getDayOfWeek().equals(beginRecord.getDayOfWeek())).filter(WorkTimeDto::getIsWork).findFirst().orElse(null);
         }
         return result;
     }
