@@ -44,6 +44,9 @@ zuul:
     license-service:
       path: /license/v1/**
       service-id: license-service
+    language-service:
+      path: /language/v1/**
+      service-id: language-service
   ignored-services: '*'
   host:
     connectTimeoutMillis: 30000
