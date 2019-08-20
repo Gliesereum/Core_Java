@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS payment.payment_order (
    CONSTRAINT payment_order_pk PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS payment.payment_card (
+CREATE TABLE IF NOT EXISTS payment.way_for_pay_card (
    id uuid NOT NULL DEFAULT uuid_generate_v4(),
    rec_token character varying,
    client_name character varying,
@@ -28,5 +28,5 @@ CREATE TABLE IF NOT EXISTS payment.payment_card (
    is_verify boolean,
    reason_code integer,
    reason character varying,
-   CONSTRAINT payment_card_pk PRIMARY KEY (id)
+   CONSTRAINT way_for_pay_card_pk PRIMARY KEY (id)
 );
