@@ -7,6 +7,7 @@ import com.gliesereum.share.common.exchange.service.mail.MailExchangeService;
 import com.gliesereum.share.common.model.dto.account.enumerated.VerificationType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -24,13 +25,16 @@ import java.util.Random;
 @Service
 public class VerificationServiceImpl implements VerificationService {
 
+    private final Random random;
+
+    @Value("${auth.sms.prefix}")
+    private String smsAuthPrefix;
+
     @Autowired
     private VerificationRepository repository;
 
     @Autowired
     private MailExchangeService mailExchangeService;
-
-    private final Random random;
 
 /*    @Autowired
     private Environment environment;
@@ -68,6 +72,7 @@ public class VerificationServiceImpl implements VerificationService {
 
     private void sendCode(String value, String code, VerificationType type, Boolean devMode) {
         if (type.equals(VerificationType.PHONE)) {
+            code = smsAuthPrefix + " " + code;
             mailExchangeService.sendPhoneVerification(value, code, devMode);
         } else if (type.equals(VerificationType.EMAIL)) {
             mailExchangeService.sendEmailVerification(value, code);

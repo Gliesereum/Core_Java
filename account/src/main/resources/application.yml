@@ -66,3 +66,7 @@ image-url:
   corporation:
     logo: https://glcdn.sgp1.digitaloceanspaces.com/coupler/Avatar.png
     cover: https://glcdn.sgp1.digitaloceanspaces.com/coupler/Cover.png
+
+auth:
+  sms:
+    prefix: 'Code:'
