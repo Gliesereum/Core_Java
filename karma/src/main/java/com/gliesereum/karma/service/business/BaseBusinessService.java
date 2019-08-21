@@ -25,6 +25,8 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     LiteBusinessDto getLiteById(UUID businessId);
 
+    BaseBusinessDto getByIdAndLock(UUID businessId);
+
     boolean existByIdAndCorporationIds(UUID id, List<UUID> corporationIds);
 
     List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds);

@@ -11,10 +11,7 @@ import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.AdditionalClientException;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -155,7 +152,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     public void checkWorkTimesByBusyTime(List<WorkTimeDto> list, WorkerDto worker) {
         if (CollectionUtils.isNotEmpty(list) && worker != null) {
             checkWorkTimesCorrect(list);
-            BaseBusinessDto business = businessService.getById(worker.getBusinessId());
+            BaseBusinessDto business = businessService.getByIdAndLock(worker.getBusinessId());
             if (business == null) {
                 throw new ClientException(BUSINESS_NOT_FOUND);
             }
@@ -186,7 +183,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                 throw new AdditionalClientException(BUSINESS_TIME_ONLY, mapBusinessTimeException);
             }
             if (worker.getWorkingSpaceId() != null) {
-                List<WorkerDto> workers = workerService.getByWorkingSpaceIdWithLock(worker.getWorkingSpaceId());
+                List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
                 if (CollectionUtils.isNotEmpty(workers)) {
                     workers = workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).collect(Collectors.toList());
                     if (workers.size() > 0) {

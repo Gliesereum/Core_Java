@@ -1,7 +1,7 @@
 package com.gliesereum.karma.model.repository.jpa.business.impl;
 
-import com.gliesereum.karma.model.entity.business.WorkerEntity;
-import com.gliesereum.karma.model.repository.jpa.business.WorkerLockableRepository;
+import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
+import com.gliesereum.karma.model.repository.jpa.business.BusinessLockableRepository;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.EntityManager;
@@ -17,27 +17,27 @@ import java.util.UUID;
  * @author yvlasiuk
  * @version 1.0
  */
-public class WorkerLockableRepositoryImpl implements WorkerLockableRepository {
+public class BusinessLockableRepositoryImpl implements BusinessLockableRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<WorkerEntity> findByWorkingSpaceIdWithLock(UUID workingSpaceId) {
+    public BaseBusinessEntity findByIdAndLock(UUID id) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<WorkerEntity> query = builder.createQuery(WorkerEntity.class);
-        Root<WorkerEntity> root = query.from(WorkerEntity.class);
+        CriteriaQuery<BaseBusinessEntity> query = builder.createQuery(BaseBusinessEntity.class);
+        Root<BaseBusinessEntity> root = query.from(BaseBusinessEntity.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
-        createEqIfNotNull(builder, predicates, root.get("workingSpaceId"), workingSpaceId);
+        createEqIfNotNull(builder, predicates, root.get("id"), id);
 
         if (CollectionUtils.isNotEmpty(predicates)) {
             query.where(predicates.toArray(new Predicate[predicates.size()]));
         }
-        TypedQuery<WorkerEntity> typedQuery = entityManager.createQuery(query);
+        TypedQuery<BaseBusinessEntity> typedQuery = entityManager.createQuery(query);
         typedQuery.setLockMode(LockModeType.PESSIMISTIC_WRITE);
-        return typedQuery.getResultList();
+        return typedQuery.getSingleResult();
     }
 
     private void createEqIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<?> expression, Object value) {
