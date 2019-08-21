@@ -41,6 +41,9 @@ public class BusinessDocument {
     private String logoUrl;
 
     @Field(type = FieldType.Keyword)
+    private String coverUrl;
+
+    @Field(type = FieldType.Keyword)
     private String phone;
 
     @Field(type = FieldType.Keyword)
