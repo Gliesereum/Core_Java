@@ -126,7 +126,7 @@ services:
       eureka.host: discovery
       eureka.port: 8761
       swagger.enable: "true"
-      auth.sms.prefix: "Coupler SMS authorization. CPS your CODE:"
+      auth.sms.prefix: "Coupler CPS:"
 
   mail:
     image: gls-mail:0.1.0
