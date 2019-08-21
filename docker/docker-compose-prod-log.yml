@@ -267,7 +267,6 @@ services:
       swagger.enable: "false"
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
-      -
   language:
     image: gls-language:0.1.1
     deploy:
