@@ -64,6 +64,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private BusinessPermissionFacade businessPermissionFacade;
 
     @Override
+    //TODO: check permission
     public AnalyticDto getAnalyticByFilter(AnalyticFilterDto filter) {
         AnalyticDto result = new AnalyticDto();
         List<BaseRecordDto> records = getRecords(filter);
@@ -77,6 +78,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     @Override
+    //TODO: check permission
     public CountAnalyticDto getCountAnalyticByFilter(AnalyticFilterDto filter, boolean includeRecord) {
         CountAnalyticDto result = new CountAnalyticDto();
         List<BaseRecordDto> records = getRecords(filter);
