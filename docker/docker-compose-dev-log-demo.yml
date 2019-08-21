@@ -73,7 +73,7 @@ services:
     - /usr/config/geoconfig/GeoLite2-City.mmdb:/usr/share/geoconfig/GeoLite2-City.mmdb
 
   curator:
-    image: gls-curator:0.1.0
+    image: gls-curator:0.1.1
     environment:
       ES_HOST: elasticsearch
       ES_PORT: 9200
@@ -91,7 +91,7 @@ services:
     - ../config/elk/curator/logs:/curator/logs/
 
   discovery:
-    image: gls-discovery:0.1.0
+    image: gls-discovery:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -101,7 +101,7 @@ services:
       eureka.instance.hostname: discovery
 
   account:
-    image: gls-account:0.1.0
+    image: gls-account:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -125,7 +125,7 @@ services:
       eureka.port: 8761
 
   mail:
-    image: gls-mail:0.1.0
+    image: gls-mail:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -155,7 +155,7 @@ services:
       eureka.port: 8761
 
   proxy:
-    image: gls-proxy:0.1.0
+    image: gls-proxy:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -170,7 +170,7 @@ services:
       eureka.port: 8761
 
   permission:
-    image: gls-permission:0.1.0
+    image: gls-permission:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -190,7 +190,7 @@ services:
       eureka.port: 8761
 
   karma:
-    image: gls-karma:0.1.0
+    image: gls-karma:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -212,7 +212,7 @@ services:
       eureka.port: 8761
 
   file:
-    image: gls-file:0.1.0
+    image: gls-file:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -238,7 +238,7 @@ services:
       eureka.port: 8761
 
   lending-gallery:
-    image: gls-lending-gallery:0.1.0
+    image: gls-lending-gallery:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -258,7 +258,7 @@ services:
       eureka.port: 8761
 
 #  socket:
-#    image: gls-socket:0.1.0
+#    image: gls-socket:0.1.1
 #    deploy:
 #      restart_policy:
 #        condition: on-failure
@@ -274,7 +274,7 @@ services:
 #      eureka.port: 8761
 
   notification:
-    image: gls-notification:0.1.0
+    image: gls-notification:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -298,7 +298,7 @@ services:
       - /usr/config/google-services.json:/config/google-services.json
 
   payment:
-    image: gls-payment:0.1.0
+    image: gls-payment:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
