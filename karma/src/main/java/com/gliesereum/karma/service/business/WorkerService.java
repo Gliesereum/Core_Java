@@ -20,6 +20,8 @@ public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
 
     List<WorkerDto> getByWorkingSpaceId(UUID workingSpaceId);
 
+    List<WorkerDto> getByWorkingSpaceIdWithLock(UUID workingSpaceId);
+
     WorkerDto findByUserIdAndBusinessId(UUID userId, UUID businessId);
 
     List<WorkerDto> findByUserId(UUID userId);

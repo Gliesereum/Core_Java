@@ -151,6 +151,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     @Override
+    @Transactional
     public void checkWorkTimesByBusyTime(List<WorkTimeDto> list, WorkerDto worker) {
         if (CollectionUtils.isNotEmpty(list) && worker != null) {
             checkWorkTimesCorrect(list);
@@ -185,7 +186,7 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
                 throw new AdditionalClientException(BUSINESS_TIME_ONLY, mapBusinessTimeException);
             }
             if (worker.getWorkingSpaceId() != null) {
-                List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
+                List<WorkerDto> workers = workerService.getByWorkingSpaceIdWithLock(worker.getWorkingSpaceId());
                 if (CollectionUtils.isNotEmpty(workers)) {
                     workers = workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).collect(Collectors.toList());
                     if (workers.size() > 0) {

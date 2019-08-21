@@ -12,7 +12,7 @@ import java.util.UUID;
  * @author vitalij
  * @version 1.0
  */
-public interface WorkerRepository extends JpaRepository<WorkerEntity, UUID> {
+public interface WorkerRepository extends JpaRepository<WorkerEntity, UUID>, WorkerLockableRepository {
 
     List<WorkerEntity> findAllByWorkingSpaceId(UUID workingSpaceId);
 

@@ -100,6 +100,15 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     }
 
     @Override
+    public List<WorkerDto> getByWorkingSpaceIdWithLock(UUID workingSpaceId) {
+        if (workingSpaceId == null) {
+            throw new ClientException(WORKING_SPACE_ID_IS_EMPTY);
+        }
+        List<WorkerEntity> entities = workerRepository.findByWorkingSpaceIdWithLock(workingSpaceId);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public WorkerDto getById(UUID id, boolean setUsers) {
         WorkerDto result = null;
         if (id != null) {
