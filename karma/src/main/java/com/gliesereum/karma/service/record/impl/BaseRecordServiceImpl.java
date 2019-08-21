@@ -420,8 +420,8 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             setFullModelRecord(list);
             setClients(list);
             result = list.get(0);
+            setServicePrice(Arrays.asList(result));
         }
-        setServicePrice(Arrays.asList(result));
         return result;
     }
 
@@ -824,6 +824,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private List<BaseRecordDto> setServicePrice(List<BaseRecordDto> records) {
         if (CollectionUtils.isNotEmpty(records)) {
             List<UUID> recordIds = records.stream()
+                    .filter(Objects::nonNull)
                     .filter(i -> i.getId() != null)
                     .map(BaseRecordDto::getId)
                     .collect(Collectors.toList());
