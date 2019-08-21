@@ -186,29 +186,32 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             }
             if (worker.getWorkingSpaceId() != null) {
                 List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
-                if (workers != null && workers.size() > 1) {
-                    workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).forEach(otherWorker -> {
-                        List<WorkTimeDto> workTimes = otherWorker.getWorkTimes();
-                        if (CollectionUtils.isNotEmpty(workTimes)) {
-                            Map<DayOfWeek, WorkTimeDto> mapWorkerWorkTime = workTimes.stream().collect(Collectors.toMap(WorkTimeDto::getDayOfWeek, w -> w));
-                            Map<String, Object> mapWorkerTimeException = new HashMap<>();
-                            list.forEach(f -> {
-                                WorkTimeDto workerTimeWork = mapWorkerWorkTime.get(f.getDayOfWeek());
-                                if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
-                                        ((f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getFrom())) ||
-                                                (f.getTo().isAfter(workerTimeWork.getTo()) && f.getFrom().isBefore(workerTimeWork.getTo())) ||
-                                                (f.getFrom().isAfter(workerTimeWork.getFrom()) && f.getTo().isBefore(workerTimeWork.getTo())) ||
-                                                (f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getTo())) ||
-                                                (f.getTo().equals(workerTimeWork.getTo()) || f.getFrom().equals(workerTimeWork.getFrom())))) {
-                                    mapWorkerTimeException.put(f.getDayOfWeek().name(),
-                                            Map.of("to", workerTimeWork.getTo().toString(), "from", workerTimeWork.getFrom().toString()));
+                if (CollectionUtils.isNotEmpty(workers)) {
+                    workers = workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).collect(Collectors.toList());
+                    if (workers.size() > 0) {
+                        workers.forEach(otherWorker -> {
+                            List<WorkTimeDto> workTimes = otherWorker.getWorkTimes();
+                            if (CollectionUtils.isNotEmpty(workTimes)) {
+                                Map<DayOfWeek, WorkTimeDto> mapWorkerWorkTime = workTimes.stream().collect(Collectors.toMap(WorkTimeDto::getDayOfWeek, w -> w));
+                                Map<String, Object> mapWorkerTimeException = new HashMap<>();
+                                list.forEach(f -> {
+                                    WorkTimeDto workerTimeWork = mapWorkerWorkTime.get(f.getDayOfWeek());
+                                    if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
+                                            ((f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getFrom())) ||
+                                                    (f.getTo().isAfter(workerTimeWork.getTo()) && f.getFrom().isBefore(workerTimeWork.getTo())) ||
+                                                    (f.getFrom().isAfter(workerTimeWork.getFrom()) && f.getTo().isBefore(workerTimeWork.getTo())) ||
+                                                    (f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getTo())) ||
+                                                    (f.getTo().equals(workerTimeWork.getTo()) || f.getFrom().equals(workerTimeWork.getFrom())))) {
+                                        mapWorkerTimeException.put(f.getDayOfWeek().name(),
+                                                Map.of("to", workerTimeWork.getTo().toString(), "from", workerTimeWork.getFrom().toString()));
+                                    }
+                                });
+                                if (MapUtils.isNotEmpty(mapWorkerTimeException)) {
+                                    throw new AdditionalClientException(WORKING_TIME_BUSY, mapWorkerTimeException);
                                 }
-                            });
-                            if (MapUtils.isNotEmpty(mapWorkerTimeException)) {
-                                throw new AdditionalClientException(WORKING_TIME_BUSY, mapWorkerTimeException);
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         }
