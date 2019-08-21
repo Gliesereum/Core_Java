@@ -22,6 +22,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.springframework.data.jpa.repository.query.QueryUtils.toOrders;
@@ -135,8 +136,8 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
         }
     }
 
-    private void createInIfNotEmpty(List<Predicate> predicates, Expression<?> expression, Object value) {
-        if (value != null) {
+    private void createInIfNotEmpty(List<Predicate> predicates, Expression<?> expression, Collection<? extends Object> value) {
+        if (CollectionUtils.isNotEmpty(value)) {
             predicates.add(expression.in(value));
         }
     }
