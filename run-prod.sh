@@ -17,6 +17,7 @@ sudo gradle clean build -b=karma/build.gradle --no-daemon
 sudo gradle clean build -b=file/build.gradle --no-daemon
 sudo gradle clean build -b=lending-gallery/build.gradle --no-daemon
 sudo gradle clean build -b=notification/build.gradle --no-daemon
+sudo gradle clean build -b=language/build.gradle --no-daemon
 
 echo 'Docker stop containers'       
 docker stack rm couplerServices
@@ -33,6 +34,7 @@ docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-karma
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-file')
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-lending-gallery')
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-notification')
+docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-language')
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
 
 echo 'Docker build images'
@@ -45,6 +47,7 @@ sudo docker build --rm  -t gls-karma:0.1.0 -f docker/karma/Dockerfile  ./karma/b
 sudo docker build --rm  -t gls-file:0.1.0 -f docker/file/Dockerfile  ./file/build/libs/
 sudo docker build --rm  -t gls-lending-gallery:0.1.0 -f docker/lending-gallery/Dockerfile  ./lending-gallery/build/libs/
 sudo docker build --rm  -t gls-notification:0.1.0 -f docker/notification/Dockerfile  ./notification/build/libs/
+sudo docker build --rm  -t gls-language:0.1.0 -f docker/language/Dockerfile  ./language/build/libs/
 sudo docker build --rm  -t gls-curator:0.1.0 -f docker/curator/Dockerfile  ./config/elk/
 
 echo 'Docker deploy'                            

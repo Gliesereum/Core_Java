@@ -126,6 +126,7 @@ services:
       eureka.host: discovery
       eureka.port: 8761
       swagger.enable: "true"
+      auth.sms.prefix: "Coupler CPS:"
 
   mail:
     image: gls-mail:0.1.0
@@ -306,6 +307,27 @@ services:
       swagger.enable: "true"
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
+
+  language:
+    image: gls-language:0.1.0
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      server.port: 8300
+      spring.profiles.active: docker
+      db.host: 46.101.182.178
+      db.database: glsdev
+      db.port: 26780
+      db.username: postgres
+      db.password: GliesereumAdmin0013
+      rabbit.host: rabbit
+      rabbit.port: 5672
+      rabbit.user: rabbit
+      rabbit.password: Af2f4dsASF
+      eureka.host: discovery
+      eureka.port: 8761
+      swagger.enable: "true"
 
 #  payment:
 #    image: gls-payment:0.1.0

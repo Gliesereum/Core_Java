@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: language-service
+
+db:
+  schema: language
+
+server:
+  port: 8300
+
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+
+module-url: /language/v1
+
+security:
+  properties:
+    jwtHeader: Service-Authorization
+    jwtPrefix: JWT
+    jwtSecret: CnfxFqbCKHLqzT9LGruE
+
+# eureka server url
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${eureka.host:localhost}:${eureka.port:8761}/eureka
+    registry-fetch-interval-seconds: 20
+    availability-zones:
+      default: defaultZone
+    region: default
+    enabled: true
+  instance:
+    prefer-ip-address: true

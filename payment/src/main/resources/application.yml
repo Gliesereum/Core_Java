@@ -54,6 +54,7 @@ liq-pay-exchange:
 
 way-for-pay:
   url:
+    api: https://api.wayforpay.com/api
     verify: https://secure.wayforpay.com/verify
     verify-card-response: https://82ddbd7b.ngrok.io/way-for-pay/verify-card-response
   merchant:
