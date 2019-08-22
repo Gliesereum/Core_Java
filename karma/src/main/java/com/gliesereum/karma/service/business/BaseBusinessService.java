@@ -56,5 +56,7 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
     CommentDto updateComment(UUID userId, CommentDto comment);
 
     void deleteComment(UUID commentId, UUID userId);
+
+    BaseBusinessDto createEmptyBusiness(BaseBusinessDto business);
 }
 

@@ -64,6 +64,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private static final String FIELD_DESCRIPTION = "description";
     private static final String FIELD_ADDRESS = "address";
     private static final String FIELD_SERVICE_NAMES = "serviceNames";
+    private static final String FIELD_BUSINESS_VERIFY = "businessVerify";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -108,6 +109,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
+            addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.isBusinessVerify());
 
             CarInfoDto carInfo = null;
             if (!SecurityUtil.isAnonymous()) {
@@ -330,6 +332,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private void addObjectStateQuery(BoolQueryBuilder boolQueryBuilder, ObjectState objectState) {
         if (objectState != null) {
             boolQueryBuilder.must(new TermQueryBuilder(FIELD_OBJECT_STATE, objectState.toString()));
+        }
+    }
+
+    private void addBusinessVerifyStateQuery(BoolQueryBuilder boolQueryBuilder, Boolean businessVerify) {
+        if (businessVerify != null) {
+            boolQueryBuilder.must(new TermQueryBuilder(FIELD_BUSINESS_VERIFY, businessVerify));
         }
     }
 

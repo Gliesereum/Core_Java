@@ -396,6 +396,23 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         }
     }
 
+    @Override
+    public BaseBusinessDto createEmptyBusiness(BaseBusinessDto dto) {
+        BaseBusinessDto result = null;
+        SecurityUtil.checkUserByBanStatus();
+        if (dto != null) {
+            setLogoIfNull(dto);
+            checkBusinessCategory(dto);
+            dto.setObjectState(ObjectState.ACTIVE);
+            dto.setBusinessVerify(false);
+            result = super.create(dto);
+            if (result != null) {
+                businessEsService.indexAsync(dto.getId());
+            }
+        }
+        return result;
+    }
+
     private void checkCorporationId(BaseBusinessDto business) {
         UUID corporationId = business.getCorporationId();
         if (corporationId == null) {

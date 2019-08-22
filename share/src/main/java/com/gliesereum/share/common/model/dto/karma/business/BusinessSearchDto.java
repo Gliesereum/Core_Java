@@ -28,4 +28,6 @@ public class BusinessSearchDto {
     private GeoDistanceDto geoDistance;
 
     private String fullTextQuery;
+
+    private boolean businessVerify;
 }
