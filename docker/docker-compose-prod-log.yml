@@ -112,7 +112,7 @@ services:
       db.username: couplerprod
       db.password: GliesereumAdmin0013
       redis.host: 167.99.195.233
-      redis.port: 5432
+      redis.port: 6379
       redis.password: GliesereumAdmin0013
       redis.database-index: 3
       rabbit.host: rabbit
