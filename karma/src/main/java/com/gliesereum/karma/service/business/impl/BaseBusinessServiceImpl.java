@@ -170,6 +170,16 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
+    public BaseBusinessDto getByIdAndLock(UUID businessId) {
+        BaseBusinessDto result = null;
+        if (businessId != null) {
+            BaseBusinessEntity entity = baseBusinessRepository.findByIdAndLock(businessId);
+            result = converter.convert(entity, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
     public BaseBusinessDto getById(UUID id) {
         BaseBusinessEntity entity = baseBusinessRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         return converter.convert(entity, dtoClass);

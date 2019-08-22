@@ -41,6 +41,8 @@ public class BusinessFullModel extends DefaultDto {
 
     private String logoUrl;
 
+    private String coverUrl;
+
     private String address;
 
     private String phone;

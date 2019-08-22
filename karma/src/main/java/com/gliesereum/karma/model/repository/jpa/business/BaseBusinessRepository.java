@@ -15,7 +15,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/7/18
  */
-public interface BaseBusinessRepository extends JpaRepository<BaseBusinessEntity, UUID>, RefreshableRepository {
+public interface BaseBusinessRepository extends JpaRepository<BaseBusinessEntity, UUID>, RefreshableRepository, BusinessLockableRepository {
 
     boolean existsByIdAndCorporationIdInAndObjectState(UUID id, List<UUID> corporationIds, ObjectState objectState);
 

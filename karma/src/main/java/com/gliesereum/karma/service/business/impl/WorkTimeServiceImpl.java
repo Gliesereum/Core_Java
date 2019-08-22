@@ -11,10 +11,7 @@ import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.AdditionalClientException;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -151,10 +148,11 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
     }
 
     @Override
+    @Transactional
     public void checkWorkTimesByBusyTime(List<WorkTimeDto> list, WorkerDto worker) {
         if (CollectionUtils.isNotEmpty(list) && worker != null) {
             checkWorkTimesCorrect(list);
-            BaseBusinessDto business = businessService.getById(worker.getBusinessId());
+            BaseBusinessDto business = businessService.getByIdAndLock(worker.getBusinessId());
             if (business == null) {
                 throw new ClientException(BUSINESS_NOT_FOUND);
             }
@@ -186,29 +184,32 @@ public class WorkTimeServiceImpl extends DefaultServiceImpl<WorkTimeDto, WorkTim
             }
             if (worker.getWorkingSpaceId() != null) {
                 List<WorkerDto> workers = workerService.getByWorkingSpaceId(worker.getWorkingSpaceId());
-                if (workers != null && workers.size() > 1) {
-                    workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).forEach(otherWorker -> {
-                        List<WorkTimeDto> workTimes = otherWorker.getWorkTimes();
-                        if (CollectionUtils.isNotEmpty(workTimes)) {
-                            Map<DayOfWeek, WorkTimeDto> mapWorkerWorkTime = workTimes.stream().collect(Collectors.toMap(WorkTimeDto::getDayOfWeek, w -> w));
-                            Map<String, Object> mapWorkerTimeException = new HashMap<>();
-                            list.forEach(f -> {
-                                WorkTimeDto workerTimeWork = mapWorkerWorkTime.get(f.getDayOfWeek());
-                                if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
-                                        ((f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getFrom())) ||
-                                                (f.getTo().isAfter(workerTimeWork.getTo()) && f.getFrom().isBefore(workerTimeWork.getTo())) ||
-                                                (f.getFrom().isAfter(workerTimeWork.getFrom()) && f.getTo().isBefore(workerTimeWork.getTo())) ||
-                                                (f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getTo())) ||
-                                                (f.getTo().equals(workerTimeWork.getTo()) || f.getFrom().equals(workerTimeWork.getFrom())))) {
-                                    mapWorkerTimeException.put(f.getDayOfWeek().name(),
-                                            Map.of("to", workerTimeWork.getTo().toString(), "from", workerTimeWork.getFrom().toString()));
+                if (CollectionUtils.isNotEmpty(workers)) {
+                    workers = workers.stream().filter(filter -> !filter.getId().equals(worker.getId())).collect(Collectors.toList());
+                    if (workers.size() > 0) {
+                        workers.forEach(otherWorker -> {
+                            List<WorkTimeDto> workTimes = otherWorker.getWorkTimes();
+                            if (CollectionUtils.isNotEmpty(workTimes)) {
+                                Map<DayOfWeek, WorkTimeDto> mapWorkerWorkTime = workTimes.stream().collect(Collectors.toMap(WorkTimeDto::getDayOfWeek, w -> w));
+                                Map<String, Object> mapWorkerTimeException = new HashMap<>();
+                                list.forEach(f -> {
+                                    WorkTimeDto workerTimeWork = mapWorkerWorkTime.get(f.getDayOfWeek());
+                                    if ((f.getIsWork() && workerTimeWork.getIsWork()) &&
+                                            ((f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getFrom())) ||
+                                                    (f.getTo().isAfter(workerTimeWork.getTo()) && f.getFrom().isBefore(workerTimeWork.getTo())) ||
+                                                    (f.getFrom().isAfter(workerTimeWork.getFrom()) && f.getTo().isBefore(workerTimeWork.getTo())) ||
+                                                    (f.getFrom().isBefore(workerTimeWork.getFrom()) && f.getTo().isAfter(workerTimeWork.getTo())) ||
+                                                    (f.getTo().equals(workerTimeWork.getTo()) || f.getFrom().equals(workerTimeWork.getFrom())))) {
+                                        mapWorkerTimeException.put(f.getDayOfWeek().name(),
+                                                Map.of("to", workerTimeWork.getTo().toString(), "from", workerTimeWork.getFrom().toString()));
+                                    }
+                                });
+                                if (MapUtils.isNotEmpty(mapWorkerTimeException)) {
+                                    throw new AdditionalClientException(WORKING_TIME_BUSY, mapWorkerTimeException);
                                 }
-                            });
-                            if (MapUtils.isNotEmpty(mapWorkerTimeException)) {
-                                throw new AdditionalClientException(WORKING_TIME_BUSY, mapWorkerTimeException);
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         }

@@ -69,7 +69,7 @@ services:
       - /usr/config/geoconfig/GeoLite2-City.mmdb:/usr/share/geoconfig/GeoLite2-City.mmdb
 
   curator:
-    image: gls-curator:0.1.0
+    image: gls-curator:0.1.1
     environment:
       ES_HOST: elasticsearch
       ES_PORT: 9200
@@ -87,7 +87,7 @@ services:
       - ../config/elk/curator/logs:/curator/logs/
 
   discovery:
-    image: gls-discovery:0.1.0
+    image: gls-discovery:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -99,19 +99,19 @@ services:
       - 8761:8761
 
   account:
-    image: gls-account:0.1.0
+    image: gls-account:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
     environment:
       server.port: 8210
       spring.profiles.active: docker
-      db.host: 46.101.182.178
-      db.database: couplerprod
-      db.port: 26780
-      db.username: postgres
+      db.host: 167.99.195.233
+      db.database: coupler
+      db.port: 5432
+      db.username: couplerprod
       db.password: GliesereumAdmin0013
-      redis.host: 46.101.182.178
+      redis.host: 167.99.195.233
       redis.port: 6379
       redis.password: GliesereumAdmin0013
       redis.database-index: 3
@@ -125,17 +125,17 @@ services:
       auth.sms.prefix: "Coupler CPS:"
 
   mail:
-    image: gls-mail:0.1.0
+    image: gls-mail:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
     environment:
       server.port: 8220
       spring.profiles.active: docker
-      db.host: 46.101.182.178
-      db.database: couplerprod
-      db.port: 26780
-      db.username: postgres
+      db.host: 167.99.195.233
+      db.database: coupler
+      db.port: 5432
+      db.username: couplerprod
       db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
@@ -157,7 +157,7 @@ services:
       auth.sms.prefix: "Coupler SMS authorization. #CPS your CODE:"
 
   proxy:
-    image: gls-proxy:0.1.0
+    image: gls-proxy:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -173,17 +173,17 @@ services:
       swagger.enable: "false"
 
   permission:
-    image: gls-permission:0.1.0
+    image: gls-permission:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
     environment:
       server.port: 8230
       spring.profiles.active: docker
-      db.host: 46.101.182.178
-      db.database: couplerprod
-      db.port: 26780
-      db.username: postgres
+      db.host: 167.99.195.233
+      db.database: coupler
+      db.port: 5432
+      db.username: couplerprod
       db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
@@ -194,17 +194,17 @@ services:
       swagger.enable: "false"
 
   karma:
-    image: gls-karma:0.1.0
+    image: gls-karma:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
     environment:
       server.port: 8240
       spring.profiles.active: docker
-      db.host: 46.101.182.178
-      db.database: couplerprod
-      db.port: 26780
-      db.username: postgres
+      db.host: 167.99.195.233
+      db.database: coupler
+      db.port: 5432
+      db.username: couplerprod
       db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
@@ -217,17 +217,17 @@ services:
       swagger.enable: "false"
 
   file:
-    image: gls-file:0.1.0
+    image: gls-file:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
     environment:
       server.port: 8250
       spring.profiles.active: docker
-      db.host: 46.101.182.178
-      db.database: couplerprod
-      db.port: 26780
-      db.username: postgres
+      db.host: 167.99.195.233
+      db.database: coupler
+      db.port: 5432
+      db.username: couplerprod
       db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
@@ -244,17 +244,17 @@ services:
       swagger.enable: "false"
 
   notification:
-    image: gls-notification:0.1.0
+    image: gls-notification:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
     environment:
       server.port: 8270
       spring.profiles.active: docker
-      db.host: 46.101.182.178
-      db.database: couplerprod
-      db.port: 26780
-      db.username: postgres
+      db.host: 167.99.195.233
+      db.database: coupler
+      db.port: 5432
+      db.username: couplerprod
       db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
@@ -267,19 +267,18 @@ services:
       swagger.enable: "false"
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
-      -
   language:
-    image: gls-language:0.1.0
+    image: gls-language:0.1.1
     deploy:
       restart_policy:
         condition: on-failure
     environment:
       server.port: 8300
       spring.profiles.active: docker
-      db.host: 46.101.182.178
-      db.database: couplerprod
-      db.port: 26780
-      db.username: postgres
+      db.host: 167.99.195.233
+      db.database: coupler
+      db.port: 5432
+      db.username: couplerprod
       db.password: GliesereumAdmin0013
       rabbit.host: rabbit
       rabbit.port: 5672
