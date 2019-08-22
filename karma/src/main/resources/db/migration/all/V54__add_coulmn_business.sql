@@ -1,0 +1,1 @@
+ALTER TABLE karma.business ADD COLUMN business_verify boolean;

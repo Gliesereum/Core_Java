@@ -64,6 +64,9 @@ public class BusinessDocument {
     @Field(type = FieldType.Integer)
     private Integer ratingCount;
 
+    @Field(type = FieldType.Boolean)
+    private Boolean businessVerify;
+
     @GeoPointField
     private GeoPoint geoPoint;
 

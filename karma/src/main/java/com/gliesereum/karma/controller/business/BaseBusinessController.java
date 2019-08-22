@@ -91,6 +91,13 @@ public class BaseBusinessController {
         return new MapResponse("true");
     }
 
+    //++++++++++++++ Empty Business +++++++++++++++++++++++
+
+    @PostMapping("/create-empty")
+    public BaseBusinessDto createEmptyBusiness(@RequestBody @Valid BaseBusinessDto business) {
+        return baseBusinessService.createEmptyBusiness(business);
+    }
+
     //++++++++++++++ Media +++++++++++++++++++++++
 
     @GetMapping("/{id}/media")
