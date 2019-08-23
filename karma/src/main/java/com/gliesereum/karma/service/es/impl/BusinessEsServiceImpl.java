@@ -109,7 +109,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
-            addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.isBusinessVerify());
+            addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.getBusinessVerify());
 
             CarInfoDto carInfo = null;
             if (!SecurityUtil.isAnonymous()) {
