@@ -44,13 +44,13 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     BaseRecordDto updateRecordTime(UUID idRecord, Long beginTime);
 
-    BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto);
+    BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto, Boolean isCustom);
 
     BaseRecordDto superCreateRecord(BaseRecordDto dto);
 
     Page<BaseRecordDto> getAllByUser(Integer page, Integer size);
 
-    BaseRecordDto createForBusiness(BaseRecordDto dto);
+    BaseRecordDto createForBusiness(BaseRecordDto dto, Boolean isCustom);
 
     BaseRecordDto getFullModelById(UUID id);
 

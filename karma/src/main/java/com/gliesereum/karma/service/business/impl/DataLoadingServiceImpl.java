@@ -346,7 +346,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
                             record.setBusinessId(business.getId());
                             record.setBegin(startOfWorkingDay);
                             record.setBusinessCategoryId(business.getBusinessCategoryId());
-                            BaseRecordDto newRecord = recordService.getFreeTimeForRecord(record);
+                            BaseRecordDto newRecord = recordService.getFreeTimeForRecord(record, false);
                             newRecords.add(recordService.superCreateRecord(newRecord));
                             log.info("write: " + newRecords.size() + "   " + from);
                         } catch (ClientException e) {
