@@ -43,6 +43,9 @@ public class AbstractBusinessEntity extends DefaultEntity {
     @Column(name = "cashless_payment")
     private boolean cashlessPayment;
 
+    @Column(name = "business_verify")
+    private Boolean businessVerify;
+
     @Column(name = "address")
     private String address;
 

@@ -79,6 +79,15 @@ public class BaseBusinessController {
         return baseBusinessService.update(business);
     }
 
+    @PutMapping("move-geo-point")
+    public BaseBusinessDto moveGroPoint(@RequestParam("businessId") UUID businessId,
+                                        @RequestParam("address") String address,
+                                        @RequestParam("latitude") Double latitude,
+                                        @RequestParam("longitude") Double longitude,
+                                        @RequestParam(value = "timeZone", required = false) Integer timeZone) {
+        return baseBusinessService.moveGeoPoint(businessId, address, latitude, longitude, timeZone);
+    }
+
     @DeleteMapping("/{id}")
     public MapResponse delete(@PathVariable("id") UUID id) {
         baseBusinessService.delete(id);
@@ -89,6 +98,19 @@ public class BaseBusinessController {
     public MapResponse deleteByCorporationId(@PathVariable("id") UUID id) {
         baseBusinessService.deleteByCorporationIdCheckPermission(id);
         return new MapResponse("true");
+    }
+
+    @GetMapping("/is-owner")
+    public MapResponse checkCurrentUserOwner(@RequestParam("businessId") UUID businessId) {
+        SecurityUtil.checkUserByBanStatus();
+        return new MapResponse(businessPermissionFacade.isHavePermissionByBusiness(businessId, BusinessPermission.BUSINESS_ADMINISTRATION));
+    }
+
+    //++++++++++++++ Empty Business +++++++++++++++++++++++
+
+    @PostMapping("/create-empty")
+    public BaseBusinessDto createEmptyBusiness(@RequestBody @Valid BaseBusinessDto business) {
+        return baseBusinessService.createEmptyBusiness(business);
     }
 
     //++++++++++++++ Media +++++++++++++++++++++++

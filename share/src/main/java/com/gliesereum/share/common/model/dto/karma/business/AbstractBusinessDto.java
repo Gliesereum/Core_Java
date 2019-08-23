@@ -38,6 +38,8 @@ public class AbstractBusinessDto extends DefaultDto {
 
     private boolean cashlessPayment;
 
+    private Boolean businessVerify;
+
     @NotEmpty
     @Size(min = 5)
     private String address;
