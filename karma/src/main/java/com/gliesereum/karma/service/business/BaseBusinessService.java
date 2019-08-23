@@ -58,5 +58,7 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
     void deleteComment(UUID commentId, UUID userId);
 
     BaseBusinessDto createEmptyBusiness(BaseBusinessDto business);
+
+    BaseBusinessDto moveGeoPoint(UUID businessId, String address, Double latitude, Double longitude, Integer timeZone);
 }
 

@@ -79,6 +79,15 @@ public class BaseBusinessController {
         return baseBusinessService.update(business);
     }
 
+    @PutMapping("move-geo-point")
+    public BaseBusinessDto moveGroPoint(@RequestParam("businessId") UUID businessId,
+                                        @RequestParam("address") String address,
+                                        @RequestParam("latitude") Double latitude,
+                                        @RequestParam("longitude") Double longitude,
+                                        @RequestParam(value = "timeZone", required = false) Integer timeZone) {
+        return baseBusinessService.moveGeoPoint(businessId, address, latitude, longitude, timeZone);
+    }
+
     @DeleteMapping("/{id}")
     public MapResponse delete(@PathVariable("id") UUID id) {
         baseBusinessService.delete(id);

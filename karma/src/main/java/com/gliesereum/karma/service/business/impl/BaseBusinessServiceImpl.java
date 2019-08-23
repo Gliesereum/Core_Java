@@ -414,6 +414,21 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         return result;
     }
 
+    @Override
+    public BaseBusinessDto moveGeoPoint(UUID businessId, String address, Double latitude, Double longitude, Integer timeZone) {
+        BaseBusinessDto business = getById(businessId);
+        if (business == null) {
+            throw new ClientException(BUSINESS_NOT_FOUND);
+        }
+        business.setLatitude(latitude);
+        business.setLongitude(longitude);
+        business.setAddress(address);
+        if (timeZone != null) {
+            business.setTimeZone(timeZone);
+        }
+        return update(business);
+    }
+
     private void checkCorporationId(BaseBusinessDto business) {
         UUID corporationId = business.getCorporationId();
         if (corporationId == null) {
