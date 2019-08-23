@@ -100,6 +100,12 @@ public class BaseBusinessController {
         return new MapResponse("true");
     }
 
+    @GetMapping("/is-owner")
+    public MapResponse checkCurrentUserOwner(@RequestParam("businessId") UUID businessId) {
+        SecurityUtil.checkUserByBanStatus();
+        return new MapResponse(businessPermissionFacade.isHavePermissionByBusiness(businessId, BusinessPermission.BUSINESS_ADMINISTRATION));
+    }
+
     //++++++++++++++ Empty Business +++++++++++++++++++++++
 
     @PostMapping("/create-empty")
