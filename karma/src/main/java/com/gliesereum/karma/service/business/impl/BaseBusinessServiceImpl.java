@@ -114,6 +114,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             checkBusinessCategory(dto);
             checkCorporationId(dto);
             dto.setObjectState(ObjectState.ACTIVE);
+            dto.setBusinessVerify(true);
             dto.setId(null);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
             entity = repository.saveAndFlush(entity);
