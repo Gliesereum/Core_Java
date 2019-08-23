@@ -17,10 +17,7 @@ import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.administrator.BusinessAdministratorDto;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
-import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
@@ -408,17 +405,18 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public BaseBusinessDto createEmptyBusiness(BaseBusinessDto dto) {
+    public BaseBusinessDto createEmptyBusiness(EmptyBusinessDto dto) {
         BaseBusinessDto result = null;
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
-            setLogoIfNull(dto);
-            checkBusinessCategory(dto);
-            dto.setObjectState(ObjectState.ACTIVE);
-            dto.setBusinessVerify(false);
-            result = super.create(dto);
+            BaseBusinessDto business = converter.convert(dto, dtoClass);
+            setLogoIfNull(business);
+            checkBusinessCategory(business);
+            business.setObjectState(ObjectState.ACTIVE);
+            business.setBusinessVerify(false);
+            result = super.create(business);
             if (result != null) {
-                businessEsService.indexAsync(dto.getId());
+                businessEsService.indexAsync(result.getId());
             }
         }
         return result;
