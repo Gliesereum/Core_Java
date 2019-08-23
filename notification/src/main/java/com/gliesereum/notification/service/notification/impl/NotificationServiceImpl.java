@@ -8,6 +8,7 @@ import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.chat.ChatMessageDto;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.notification.device.UserDeviceDto;
@@ -53,7 +54,8 @@ public class NotificationServiceImpl implements NotificationService {
             String routingKey = NotificationUtil.routingKey(subscribeDestination.toString(), recordNotification.getObjectId());
             BaseRecordDto data = recordNotification.getData();
             StatusRecord statusRecord = data.getStatusRecord();
-            firebaseService.sendNotificationToTopic(routingKey, getTitle(subscribeDestination, statusRecord), getBody(subscribeDestination, statusRecord), data.getId(), subscribeDestination);
+            StatusProcess statusProcess = data.getStatusProcess();
+            firebaseService.sendNotificationToTopic(routingKey, getTitle(subscribeDestination, statusRecord, statusProcess), getBody(subscribeDestination, statusRecord, statusProcess), data.getId(), subscribeDestination);
 
         }
     }
@@ -118,9 +120,9 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    private String getTitle(SubscribeDestination subscribeDestination, StatusRecord statusRecord) {
+    private String getTitle(SubscribeDestination subscribeDestination, StatusRecord statusRecord, StatusProcess statusProcess) {
         String title;
-        if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED)) {
+        if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED) && statusProcess.equals(StatusProcess.WAITING)) {
             title = messageSource.getMessage(subscribeDestination.toString() + '.' + statusRecord.name() + '.' + "title", new Object[]{}, Locale.getDefault());
         } else {
             title = messageSource.getMessage(subscribeDestination.toString() + '.' + "title", new Object[]{}, Locale.getDefault());
@@ -128,9 +130,9 @@ public class NotificationServiceImpl implements NotificationService {
         return title;
     }
 
-    private String getBody(SubscribeDestination subscribeDestination, StatusRecord statusRecord) {
+    private String getBody(SubscribeDestination subscribeDestination, StatusRecord statusRecord, StatusProcess statusProcess) {
         String body;
-        if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED)) {
+        if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED) && statusProcess.equals(StatusProcess.WAITING)) {
             body = messageSource.getMessage(subscribeDestination.toString() + '.' + statusRecord.name() + '.' + "body", new Object[]{}, Locale.getDefault());
         } else {
             body = messageSource.getMessage(subscribeDestination.toString() + '.' + "body", new Object[]{}, Locale.getDefault());

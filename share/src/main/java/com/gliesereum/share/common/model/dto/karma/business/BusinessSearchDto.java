@@ -29,5 +29,5 @@ public class BusinessSearchDto {
 
     private String fullTextQuery;
 
-    private boolean businessVerify;
+    private Boolean businessVerify;
 }
