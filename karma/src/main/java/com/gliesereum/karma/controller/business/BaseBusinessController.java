@@ -79,7 +79,7 @@ public class BaseBusinessController {
         return baseBusinessService.update(business);
     }
 
-    @PutMapping("move-geo-point")
+    @PutMapping("/move-geo-point")
     public BaseBusinessDto moveGroPoint(@RequestParam("businessId") UUID businessId,
                                         @RequestParam("address") String address,
                                         @RequestParam("latitude") Double latitude,
