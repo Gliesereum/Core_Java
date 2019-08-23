@@ -5,6 +5,7 @@ import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.administrator.BusinessAdministratorService;
+import com.gliesereum.karma.service.audit.AgentService;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.descriptions.BusinessDescriptionService;
@@ -96,6 +97,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
 
     @Autowired
     private BusinessAdministratorService businessAdministratorService;
+
+    @Autowired
+    private AgentService agentService;
 
     @Autowired
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
@@ -409,6 +413,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         BaseBusinessDto result = null;
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
+            if (!agentService.existByUserIdAndActive(SecurityUtil.getUserId())) {
+                throw new ClientException(CURRENT_USER_NOT_AGENT);
+            }
             BaseBusinessDto business = converter.convert(dto, dtoClass);
             setLogoIfNull(business);
             checkBusinessCategory(business);
