@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.gliesereum.share.common.exception.messages.AuthExceptionMessage.*;
@@ -225,7 +226,7 @@ public class AuthServiceImpl implements AuthService {
         if(user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }
-        user.setLastActivity(LocalDateTime.now());
+        user.setLastActivity(LocalDateTime.now(ZoneId.of("UTC")));
         userService.updateAsync(user);
         return createModel(token, user);
     }

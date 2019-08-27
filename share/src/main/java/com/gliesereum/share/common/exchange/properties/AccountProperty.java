@@ -27,4 +27,6 @@ public class AccountProperty {
     private String findPublicUserByUserIds;
 
     private String createOrGetPublicUser;
+
+    private String publicStatistic;
 }

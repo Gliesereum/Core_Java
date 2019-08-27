@@ -25,4 +25,6 @@ public interface AuditableService<D extends AuditableDefaultDto, E extends Audit
     Page<D> getAll(ObjectState objectState, Pageable pageable);
 
     boolean isExist(UUID id, ObjectState objectState);
+
+    long count(ObjectState objectState);
 }

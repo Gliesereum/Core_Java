@@ -6,8 +6,8 @@ import com.gliesereum.lendinggallery.model.repository.jpa.artbond.CustomizedArtB
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.query.base.OrderType;
 import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
+import com.gliesereum.share.common.util.SqlUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,12 +51,12 @@ public class CustomizedArtBondRepositoryImpl implements CustomizedArtBondReposit
             subQuery.select(criteriaBuilder.sum(subQueryFrom.get("sum")));
 
 
-            createLikeIfNotNull(criteriaBuilder, predicates, root.get("name"), queryRequest.getNameEq());
-            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("price"), queryRequest.getPriceGreaterThan(), queryRequest.getPriceLessThan());
-            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("stockPrice"), queryRequest.getStockPriceGreaterThan(), queryRequest.getStockPriceLessThan());
-            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("dividendPercent"), queryRequest.getDividendPercentGreaterThan(), queryRequest.getDividendPercentLessThan());
-            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("rewardPercent"), queryRequest.getRewardPercentGreaterThan(), queryRequest.getRewardPercentLessThan());
-            createBetweenOrGreaterOrLess(criteriaBuilder, predicates, subQuery, queryRequest.getAmountCollectedGreaterThan(), queryRequest.getAmountCollectedLessThan());
+            SqlUtil.createLikeIfNotNull(criteriaBuilder, predicates, root.get("name"), queryRequest.getNameEq());
+            SqlUtil.createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("price"), queryRequest.getPriceGreaterThan(), queryRequest.getPriceLessThan());
+            SqlUtil.createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("stockPrice"), queryRequest.getStockPriceGreaterThan(), queryRequest.getStockPriceLessThan());
+            SqlUtil.createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("dividendPercent"), queryRequest.getDividendPercentGreaterThan(), queryRequest.getDividendPercentLessThan());
+            SqlUtil.createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("rewardPercent"), queryRequest.getRewardPercentGreaterThan(), queryRequest.getRewardPercentLessThan());
+            SqlUtil.createBetweenOrGreaterOrLess(criteriaBuilder, predicates, subQuery, queryRequest.getAmountCollectedGreaterThan(), queryRequest.getAmountCollectedLessThan());
 
             if (CollectionUtils.isNotEmpty(predicates)) {
                 criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
@@ -77,48 +77,5 @@ public class CustomizedArtBondRepositoryImpl implements CustomizedArtBondReposit
         query.setFirstResult(start);
 
         return query.getResultList();
-    }
-
-    private void createBetweenOrGreaterOrLess(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<? extends Double> expression, Double greater, Double less) {
-        if (ObjectUtils.allNotNull(greater, less)) {
-            predicates.add(criteriaBuilder.between(expression, greater, less));
-        } else if (greater != null) {
-            createGreaterThanIfNotNull(criteriaBuilder, predicates, expression, greater);
-        } else {
-            createLessThanIfNotNull(criteriaBuilder, predicates, expression, less);
-        }
-    }
-
-    private void createBetweenOrGreaterOrLess(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<? extends Integer> expression, Integer greater, Integer less) {
-        if (ObjectUtils.allNotNull(greater, less)) {
-            predicates.add(criteriaBuilder.between(expression, greater, less));
-        } else {
-            createGreaterThanIfNotNull(criteriaBuilder, predicates, expression, greater);
-            createLessThanIfNotNull(criteriaBuilder, predicates, expression, less);
-        }
-    }
-
-    private void createEqIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<?> expression, Object value) {
-        if (value != null) {
-            predicates.add(criteriaBuilder.equal(expression, value));
-        }
-    }
-
-    private void createLikeIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<String> expression, String value) {
-        if (value != null) {
-            predicates.add(criteriaBuilder.like(expression, value));
-        }
-    }
-
-    private void createGreaterThanIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<? extends Number> expression, Number value) {
-        if (value != null) {
-            predicates.add(criteriaBuilder.gt(expression, value));
-        }
-    }
-
-    private void createLessThanIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<? extends Number> expression, Number value) {
-        if (value != null) {
-            predicates.add(criteriaBuilder.lt(expression, value));
-        }
     }
 }

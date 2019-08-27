@@ -38,6 +38,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     RecordPaymentInfoDto getPaymentInfoForBusiness(BusinessRecordSearchDto search);
 
+    Long getPriceSum(BusinessRecordSearchDto search);
+
     BaseRecordDto updateStatusProgress(UUID idRecord, StatusProcess status);
 
     BaseRecordDto canceledRecord(UUID idRecord, String message);
@@ -67,4 +69,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, UUID workerId, Long from, UUID packageId, List<UUID> serviceIds);
 
     Page<BaseRecordDto> getByClientForCorporation(List<UUID> corporationIds, UUID clientId, Integer page, Integer size);
+
+    long countByStatusRecord(StatusRecord statusRecord);
+
+    long countBusyWorker(LocalDateTime time, StatusRecord status);
 }

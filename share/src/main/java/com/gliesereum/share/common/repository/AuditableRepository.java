@@ -28,4 +28,6 @@ public interface AuditableRepository<T extends AuditableDefaultEntity> extends J
 
     boolean existsByIdAndObjectState(UUID id, ObjectState objectState);
 
+    long countByObjectState(ObjectState objectState);
+
 }
