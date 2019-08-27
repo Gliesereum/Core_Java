@@ -19,6 +19,8 @@ public interface BaseRecordSearchRepository {
 
     List<BaseRecordEntity> getByTimeBetween(LocalDateTime from, Integer minutesFrom, Integer minutesTo, StatusRecord status, boolean notificationSend);
 
+    long countBusyWorker(LocalDateTime time, StatusRecord status);
+
     Page<BaseRecordEntity> getRecordsBySearchDto(BusinessRecordSearchPageableDto search, Pageable pageable);
 
     RecordPaymentInfoDto getPaymentInfoBySearch(BusinessRecordSearchDto search);

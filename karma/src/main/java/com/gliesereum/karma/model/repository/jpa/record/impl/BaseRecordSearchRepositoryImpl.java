@@ -22,9 +22,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.data.jpa.repository.query.QueryUtils.toOrders;
 
@@ -41,6 +43,14 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
                     "WHERE (r.begin between (to_timestamp(:from, 'YYYY-MM-DD HH24:MI:SS') + ((b.time_zone + :minutesFrom) * interval '1 minute')) AND (to_timestamp(:from, 'YYYY-MM-DD HH24:MI:SS') + ((b.time_zone + :minutesTo) * interval '1 minute'))) AND " +
                     "r.status_record = :status AND r.notification_send = :notificationSend";
 
+    private static final String COUNT_DISTINCT_WORKER_ID_BY_TIME_BETWEEN_QUERY =
+            "SELECT COUNT(DISTINCT r.worker_id) " +
+                    "FROM karma.record as r " +
+                    "LEFT JOIN karma.business as b on r.business_id=b.id " +
+                    "WHERE ((to_timestamp(:time, 'YYYY-MM-DD HH24:MI:SS') + ((b.time_zone) * interval '1 minute')) >= r.begin) AND " +
+                    "((to_timestamp(:time, 'YYYY-MM-DD HH24:MI:SS') + ((b.time_zone) * interval '1 minute')) <= r.finish) AND " +
+                    "r.status_record = :status";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -56,6 +66,22 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
             query.setParameter("status", status.name());
             query.setParameter("notificationSend", notificationSend);
             result = query.getResultList();
+        }
+        return result;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public long countBusyWorker(LocalDateTime time, StatusRecord status) {
+        long result = 0L;
+        if (ObjectUtils.allNotNull(time, status)) {
+            Query query = entityManager.createNativeQuery(COUNT_DISTINCT_WORKER_ID_BY_TIME_BETWEEN_QUERY);
+            query.setParameter("time", time.toString());
+            query.setParameter("status", status.name());
+            List<BigInteger> resultList = query.getResultList();
+            for (BigInteger element : resultList) {
+                result += element == null ? 0 : element.longValue();
+            }
         }
         return result;
     }
@@ -99,7 +125,7 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
 
         TypedQuery<Integer> typedQuery = entityManager.createQuery(query);
         List<Integer> resultList = typedQuery.getResultList();
-        Integer result = 0;
+        long result = 0L;
         if (CollectionUtils.isNotEmpty(resultList)) {
             for (Integer element : resultList) {
                 result += element == null ? 0 : element;

@@ -134,6 +134,11 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     }
 
     @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
     public boolean isExist(UUID id) {
         return repository.existsById(id);
     }

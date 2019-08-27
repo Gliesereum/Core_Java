@@ -53,6 +53,7 @@ exchange:
       findPublicUserByUserIds: http://account-service/user/public/by-ids
       createOrGetPublicUser: http://account-service/user/public/create-or-get
       findUserPhonesByUserIds: http://account-service/phone/by-user-ids
+      publicStatistic: http://account-service/statistic/public
     mail:
       emailVerification: http://mail-service/email/verification
       sentEmail: http://mail-service/email/single

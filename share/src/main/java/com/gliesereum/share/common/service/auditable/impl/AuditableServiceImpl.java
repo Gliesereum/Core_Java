@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,6 +79,11 @@ public class AuditableServiceImpl<D extends AuditableDefaultDto, E extends Audit
     }
 
     @Override
+    public long count(ObjectState objectState) {
+        return auditableRepository.countByObjectState(objectState);
+    }
+
+    @Override
     @Transactional
     public void delete(UUID id) {
         if (id != null) {
@@ -85,7 +91,7 @@ public class AuditableServiceImpl<D extends AuditableDefaultDto, E extends Audit
                     .findById(id)
                     .orElseThrow(() -> new ClientException(NOT_EXIST_BY_ID));
             entity.setObjectState(ObjectState.DELETED);
-            entity.setDeleteDate(LocalDateTime.now());
+            entity.setDeleteDate(LocalDateTime.now(ZoneId.of("UTC")));
             auditableRepository.saveAndFlush(entity);
         }
     }

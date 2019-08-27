@@ -32,5 +32,7 @@ public interface DefaultService<D extends DefaultDto, E extends DefaultEntity> {
 
     void delete(UUID id);
 
+    long count();
+
     boolean isExist(UUID id);
 }

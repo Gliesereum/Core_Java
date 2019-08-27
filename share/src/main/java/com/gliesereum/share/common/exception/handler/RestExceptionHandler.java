@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +110,7 @@ public class RestExceptionHandler {
         if (StringUtils.isBlank(response.getPath())) {
             response.setPath(ServletUriComponentsBuilder.fromCurrentRequest().build().getPath());
         }
-        response.setTimestamp(LocalDateTime.now());
+        response.setTimestamp(LocalDateTime.now(ZoneId.of("UTC")));
         HttpStatus httpStatus = HttpStatus.valueOf(response.getHttpCode());
         if (httpStatus.is5xxServerError()) {
             LOG.error("{} error - errorCode: {}, message: {}, path: {}", response.getHttpCode(), response.getCode(), response.getMessage(), response.getPath(), ex);

@@ -152,7 +152,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (from != null) {
             begin = Instant.ofEpochMilli(from).atZone(ZoneId.of("UTC")).toLocalDateTime();
         } else {
-            begin = LocalDateTime.now();
+            begin = LocalDateTime.now(ZoneId.of("UTC"));
         }
         BaseBusinessDto business = baseBusinessService.getById(businessId);
         if (business == null) {
@@ -261,6 +261,21 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     public RecordPaymentInfoDto getPaymentInfoForBusiness(BusinessRecordSearchDto search) {
         processSearchForBusinessModel(search);
         return baseRecordRepository.getPaymentInfoBySearch(search);
+    }
+
+    @Override
+    public Long getPriceSum(BusinessRecordSearchDto search) {
+        return baseRecordRepository.getPaymentInfoBySearch(search).getSum();
+    }
+
+    @Override
+    public long countByStatusRecord(StatusRecord statusRecord) {
+        return baseRecordRepository.countByStatusRecord(statusRecord);
+    }
+
+    @Override
+    public long countBusyWorker(LocalDateTime time, StatusRecord status) {
+        return baseRecordRepository.countBusyWorker(time, status);
     }
 
     @Override

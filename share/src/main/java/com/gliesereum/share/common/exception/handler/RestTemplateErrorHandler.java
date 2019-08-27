@@ -12,6 +12,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * @author yvlasiuk
@@ -32,7 +33,7 @@ public class RestTemplateErrorHandler extends DefaultResponseErrorHandler {
             if (errorResponse != null) {
                 exception = new RestRequestException(errorResponse, statusCode.value());
             } else {
-                exception = new RestRequestException(LocalDateTime.now(), body, CommonExceptionMessage.UNKNOWN_SERVER_EXCEPTION.getErrorCode(), statusCode.value());
+                exception = new RestRequestException(LocalDateTime.now(ZoneId.of("UTC")), body, CommonExceptionMessage.UNKNOWN_SERVER_EXCEPTION.getErrorCode(), statusCode.value());
             }
             throw exception;
         }

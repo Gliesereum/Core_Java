@@ -41,4 +41,6 @@ public interface BaseRecordRepository extends JpaRepository<BaseRecordEntity, UU
 
     @Query("SELECT DISTINCT b.clientId FROM BaseRecordEntity b WHERE b.businessId IN :ids")
     List<UUID> getCustomerIdsByBusinessIds(@Param("ids") List<UUID> ids);
+
+    long countByStatusRecord(StatusRecord statusRecord);
 }
