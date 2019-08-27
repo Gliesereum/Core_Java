@@ -6,23 +6,24 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.RecordPaymentInfoDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
-import com.gliesereum.share.common.model.entity.DefaultEntity;
+import com.gliesereum.share.common.util.SqlUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
-import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.springframework.data.jpa.repository.query.QueryUtils.toOrders;
@@ -81,7 +82,7 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
         }
 
         return PageableExecutionUtils.getPage(typedQuery.getResultList(), pageable,
-                () -> executeCountQuery(entityManager.createQuery(getCountQuery(predicates, BaseRecordEntity.class))));
+                () -> SqlUtil.executeCountQuery(entityManager.createQuery(SqlUtil.getCountQuery(entityManager, predicates, BaseRecordEntity.class))));
     }
 
     @Override
@@ -113,72 +114,15 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
     private List<Predicate> getPredicateForSearch(Root<BaseRecordEntity> root, CriteriaBuilder builder, BusinessRecordSearchDto search) {
         List<Predicate> predicates = new ArrayList<>();
         if (search != null) {
-            createEqIfNotNull(builder, predicates, root.get("recordNumber"), search.getRecordNumber());
-            createBetweenDate(builder, predicates, root.get("begin"), search.getFrom(), search.getTo());
-            createInIfNotEmpty(predicates, root.get("statusRecord"), search.getStatus());
-            createInIfNotEmpty(predicates, root.get("statusProcess"), search.getProcesses());
-            createInIfNotEmpty(predicates, root.get("businessId"), search.getBusinessIds());
-            createInIfNotEmpty(predicates, root.get("clientId"), search.getClientIds());
-            createInIfNotEmpty(predicates, root.get("workingSpaceId"), search.getWorkingSpaceIds());
+            SqlUtil.createEqIfNotNull(builder, predicates, root.get("recordNumber"), search.getRecordNumber());
+            SqlUtil.createBetweenDate(builder, predicates, root.get("begin"), search.getFrom(), search.getTo());
+            SqlUtil.createInIfNotEmpty(predicates, root.get("statusRecord"), search.getStatus());
+            SqlUtil.createInIfNotEmpty(predicates, root.get("statusProcess"), search.getProcesses());
+            SqlUtil.createInIfNotEmpty(predicates, root.get("businessId"), search.getBusinessIds());
+            SqlUtil.createInIfNotEmpty(predicates, root.get("clientId"), search.getClientIds());
+            SqlUtil.createInIfNotEmpty(predicates, root.get("workingSpaceId"), search.getWorkingSpaceIds());
         }
         return predicates;
-    }
-
-    private void createLikeIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<String> expression, String value) {
-        if (value != null) {
-            predicates.add(criteriaBuilder.like(expression, value));
-        }
-    }
-
-    private void createEqIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<?> expression, Object value) {
-        if (value != null) {
-            predicates.add(criteriaBuilder.equal(expression, value));
-        }
-    }
-
-    private void createInIfNotEmpty(List<Predicate> predicates, Expression<?> expression, Collection<? extends Object> value) {
-        if (CollectionUtils.isNotEmpty(value)) {
-            predicates.add(expression.in(value));
-        }
-    }
-
-    private void createBetweenDate(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<? extends LocalDateTime> expression, LocalDateTime from, LocalDateTime to) {
-        if (ObjectUtils.allNotNull(from, to)) {
-            predicates.add(criteriaBuilder.between(expression, from, to));
-        } else {
-            if (from != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(expression, from));
-            }
-            if (to != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(expression, to));
-            }
-        }
-    }
-
-    private <E extends DefaultEntity> CriteriaQuery<Long> getCountQuery(List<Predicate> predicates, Class<E> entity) {
-
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<E> root = query.from(entity);
-        if (CollectionUtils.isNotEmpty(predicates)) {
-            query.where(predicates.toArray(new Predicate[predicates.size()]));
-        }
-        if (query.isDistinct()) {
-            query.select(builder.countDistinct(root));
-        } else {
-            query.select(builder.count(root));
-        }
-        return query;
-    }
-
-    private long executeCountQuery(TypedQuery<Long> query) {
-        Assert.notNull(query, "TypedQuery must not be null!");
-        List<Long> totals = query.getResultList();
-        long total = 0L;
-        for (Long element : totals) {
-            total += element == null ? 0 : element;
-        }
-        return total;
     }
 
 }

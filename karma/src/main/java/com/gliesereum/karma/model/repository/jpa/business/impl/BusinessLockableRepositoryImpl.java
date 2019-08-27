@@ -2,13 +2,17 @@ package com.gliesereum.karma.model.repository.jpa.business.impl;
 
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BusinessLockableRepository;
+import com.gliesereum.share.common.util.SqlUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +34,7 @@ public class BusinessLockableRepositoryImpl implements BusinessLockableRepositor
 
         List<Predicate> predicates = new ArrayList<>();
 
-        createEqIfNotNull(builder, predicates, root.get("id"), id);
+        SqlUtil.createEqIfNotNull(builder, predicates, root.get("id"), id);
 
         if (CollectionUtils.isNotEmpty(predicates)) {
             query.where(predicates.toArray(new Predicate[predicates.size()]));
@@ -38,11 +42,5 @@ public class BusinessLockableRepositoryImpl implements BusinessLockableRepositor
         TypedQuery<BaseBusinessEntity> typedQuery = entityManager.createQuery(query);
         typedQuery.setLockMode(LockModeType.PESSIMISTIC_WRITE);
         return typedQuery.getSingleResult();
-    }
-
-    private void createEqIfNotNull(CriteriaBuilder criteriaBuilder, List<Predicate> predicates, Expression<?> expression, Object value) {
-        if (value != null) {
-            predicates.add(criteriaBuilder.equal(expression, value));
-        }
     }
 }
