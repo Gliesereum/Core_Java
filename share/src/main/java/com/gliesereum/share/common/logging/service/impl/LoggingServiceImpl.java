@@ -21,7 +21,8 @@ import org.springframework.stereotype.Service;
 public class LoggingServiceImpl implements LoggingService {
 
     private static final String SERVICE_NAME = "spring.application.name";
-    private static final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
+    private static final String QUEUE_LOGSTASH_SYSTEM = "spring.rabbitmq.queue-logstash-system";
+    private static final String QUEUE_LOGSTASH_REQUEST = "spring.rabbitmq.queue-logstash-request";
 
     @Autowired
     private Environment environment;
@@ -34,9 +35,9 @@ public class LoggingServiceImpl implements LoggingService {
 
     @Async
     @Override
-    public void publishing(JsonNode jsonNode) {
+    public void publishing(JsonNode jsonNode, String queueName) {
         try {
-            rabbitTemplate.convertAndSend(environment.getRequiredProperty(QUEUE_LOGSTASH), jsonNode);
+            rabbitTemplate.convertAndSend(queueName, jsonNode);
         } catch (Exception e) {
             log.warn("Error while logging: {} ", e.getMessage());
         }
@@ -44,12 +45,26 @@ public class LoggingServiceImpl implements LoggingService {
 
     @Async
     @Override
-    public void publishingObject(Object obj) {
+    public void publishingRequestObject(Object obj) {
         if (obj != null) {
             try {
                 JsonNode jsonNode = objectMapper.valueToTree(obj);
                 ((ObjectNode) jsonNode).put("service_name", environment.getRequiredProperty(SERVICE_NAME));
-                publishing(jsonNode);
+                publishing(jsonNode, environment.getRequiredProperty(QUEUE_LOGSTASH_REQUEST));
+            } catch (Exception e) {
+                log.warn("Error while logging: {} ", e.getMessage());
+            }
+        }
+    }
+
+    @Async
+    @Override
+    public void publishingSystemObject(Object obj) {
+        if (obj != null) {
+            try {
+                JsonNode jsonNode = objectMapper.valueToTree(obj);
+                ((ObjectNode) jsonNode).put("service_name", environment.getRequiredProperty(SERVICE_NAME));
+                publishing(jsonNode, environment.getRequiredProperty(QUEUE_LOGSTASH_SYSTEM));
             } catch (Exception e) {
                 log.warn("Error while logging: {} ", e.getMessage());
             }

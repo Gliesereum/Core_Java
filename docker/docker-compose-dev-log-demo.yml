@@ -69,7 +69,9 @@ services:
       timeout: 10s
       retries: 20
     volumes:
-    - ../config/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
+    - ../config/elk/logstash/logstash.request.conf:/usr/share/logstash/pipeline/logstash.request.conf
+    - ../config/elk/logstash/logstash.system.conf:/usr/share/logstash/pipeline/logstash.system.conf
+    - ../config/elk/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
     - /usr/config/geoconfig/GeoLite2-City.mmdb:/usr/share/geoconfig/GeoLite2-City.mmdb
 
   curator:

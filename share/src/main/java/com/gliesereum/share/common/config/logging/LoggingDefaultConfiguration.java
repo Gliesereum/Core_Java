@@ -17,11 +17,4 @@ import org.springframework.core.env.Environment;
         value = "com.gliesereum.share.common.logging",
         basePackageClasses = RabbitMQDefaultConfiguration.class)
 public class LoggingDefaultConfiguration {
-
-    private static final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
-
-    @Bean
-    public Queue queue(Environment environment) {
-        return new Queue(environment.getRequiredProperty(QUEUE_LOGSTASH));
-    }
 }

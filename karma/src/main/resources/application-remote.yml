@@ -28,7 +28,8 @@ spring:
     port: 5672
     password: Af2f4dsASF
     username: rabbit
-    queue-logstash: logstash
+    queue-logstash-system: logstash-system
+    queue-logstash-request: logstash-request
     queue-mail: verificationQueue
     connection-timeout: 5s
 

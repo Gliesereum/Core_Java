@@ -50,7 +50,7 @@ public class RestLoggingFilter extends OncePerRequestFilter {
     }
 
     private void processLog(RequestInfo requestInfo) {
-        loggingService.publishingObject(requestInfo);
+        loggingService.publishingRequestObject(requestInfo);
     }
 
     private RequestInfo getRequestInfo(Long startTime, Long endTime, ContentCachingRequestWrapper requestWrapper, ContentCachingResponseWrapper responseWrapper, boolean isError, Exception ex) {
