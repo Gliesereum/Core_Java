@@ -37,8 +37,8 @@ spring:
     password: ${rabbit.password}
     username: ${rabbit.user}
     connection-timeout: 5s
-    queue-logstash-system: LOG_SYSTEM_QUEUE
-    queue-logstash-request: LOG_REQUEST_QUEUE
+    queue-logstash-system: ${LOG_SYSTEM_QUEUE}
+    queue-logstash-request: ${LOG_REQUEST_QUEUE}
     #queue-mail: verificationQueue
 
 token:
