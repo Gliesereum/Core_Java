@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public interface LoggingService {
 
-    void publishing(JsonNode jsonNode);
+    void publishing(JsonNode jsonNode, String queueName);
 
-    void publishingObject(Object o);
+    void publishingRequestObject(Object o);
+
+    void publishingSystemObject(Object o);
 }

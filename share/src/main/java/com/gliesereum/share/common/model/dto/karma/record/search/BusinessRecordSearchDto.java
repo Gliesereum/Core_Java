@@ -40,6 +40,8 @@ public class BusinessRecordSearchDto {
 
     private UUID corporationId;
 
+    private List<UUID> corporationIds;
+
     private List<UUID> clientIds;
 
     private Integer recordNumber;

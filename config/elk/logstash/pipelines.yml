@@ -1,0 +1,4 @@
+- pipeline.id: log-system
+  path.config: "/usr/share/logstash/pipeline/logstash.system.conf"
+- pipeline.id: log-request
+  path.config: "/usr/share/logstash/pipeline/logstash.request.conf"
