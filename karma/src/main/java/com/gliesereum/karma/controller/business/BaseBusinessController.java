@@ -12,6 +12,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
+import com.gliesereum.share.common.model.dto.karma.business.EmptyBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
@@ -79,7 +80,7 @@ public class BaseBusinessController {
         return baseBusinessService.update(business);
     }
 
-    @PutMapping("move-geo-point")
+    @PutMapping("/move-geo-point")
     public BaseBusinessDto moveGroPoint(@RequestParam("businessId") UUID businessId,
                                         @RequestParam("address") String address,
                                         @RequestParam("latitude") Double latitude,
@@ -109,7 +110,7 @@ public class BaseBusinessController {
     //++++++++++++++ Empty Business +++++++++++++++++++++++
 
     @PostMapping("/create-empty")
-    public BaseBusinessDto createEmptyBusiness(@RequestBody @Valid BaseBusinessDto business) {
+    public BaseBusinessDto createEmptyBusiness(@RequestBody @Valid EmptyBusinessDto business) {
         return baseBusinessService.createEmptyBusiness(business);
     }
 

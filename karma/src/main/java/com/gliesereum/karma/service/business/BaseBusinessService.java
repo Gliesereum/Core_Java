@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.business;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
+import com.gliesereum.share.common.model.dto.karma.business.EmptyBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.service.DefaultService;
@@ -24,6 +25,8 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
     List<LiteBusinessDto> getAllLite();
 
     LiteBusinessDto getLiteById(UUID businessId);
+
+    BaseBusinessDto getByIdAndLock(UUID businessId);
 
     boolean existByIdAndCorporationIds(UUID id, List<UUID> corporationIds);
 
@@ -57,7 +60,7 @@ public interface BaseBusinessService extends DefaultService<BaseBusinessDto, Bas
 
     void deleteComment(UUID commentId, UUID userId);
 
-    BaseBusinessDto createEmptyBusiness(BaseBusinessDto business);
+    BaseBusinessDto createEmptyBusiness(EmptyBusinessDto business);
 
     BaseBusinessDto moveGeoPoint(UUID businessId, String address, Double latitude, Double longitude, Integer timeZone);
 }

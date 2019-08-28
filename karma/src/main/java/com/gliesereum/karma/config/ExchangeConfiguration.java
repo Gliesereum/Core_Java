@@ -3,8 +3,10 @@ package com.gliesereum.karma.config;
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizationInterceptor;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
+import com.gliesereum.share.common.exchange.service.account.AccountStatisticExchangeService;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.exchange.service.account.UserPhoneExchangeService;
+import com.gliesereum.share.common.exchange.service.account.impl.AccountStatisticExchangeServiceImpl;
 import com.gliesereum.share.common.exchange.service.account.impl.UserExchangeServiceImpl;
 import com.gliesereum.share.common.exchange.service.account.impl.UserPhoneExchangeServiceImpl;
 import com.gliesereum.share.common.exchange.service.mail.MailExchangeService;
@@ -56,13 +58,13 @@ public class ExchangeConfiguration {
     }
 
     @Bean
-    public UserExchangeService userExchangeService(RestTemplate restTemplate, ExchangeProperties exchangeProperties) {
-        return new UserExchangeServiceImpl(restTemplate, exchangeProperties);
+    public UserExchangeService userExchangeService(RestTemplate restTemplateLoadBalanced, ExchangeProperties exchangeProperties) {
+        return new UserExchangeServiceImpl(restTemplateLoadBalanced, exchangeProperties);
     }
 
     @Bean
-    public GroupUserExchangeService groupUserExchangeService(RestTemplate restTemplate, ExchangeProperties exchangeProperties) {
-        return new GroupUserExchangeServiceImpl(restTemplate, exchangeProperties);
+    public GroupUserExchangeService groupUserExchangeService(RestTemplate restTemplateLoadBalanced, ExchangeProperties exchangeProperties) {
+        return new GroupUserExchangeServiceImpl(restTemplateLoadBalanced, exchangeProperties);
     }
 
     @Bean
@@ -73,5 +75,10 @@ public class ExchangeConfiguration {
     @Bean
     public MailExchangeService mailExchangeService(RestTemplate restTemplateLoadBalanced, ExchangeProperties exchangeProperties) {
         return new MailExchangeServiceImpl(restTemplateLoadBalanced, exchangeProperties);
+    }
+
+    @Bean
+    public AccountStatisticExchangeService accountStatisticExchangeService(RestTemplate restTemplateLoadBalanced, ExchangeProperties exchangeProperties) {
+        return new AccountStatisticExchangeServiceImpl(restTemplateLoadBalanced, exchangeProperties);
     }
 }

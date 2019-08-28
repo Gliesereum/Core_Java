@@ -5,6 +5,7 @@ import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.administrator.BusinessAdministratorService;
+import com.gliesereum.karma.service.audit.AgentService;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.descriptions.BusinessDescriptionService;
@@ -17,10 +18,7 @@ import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.administrator.BusinessAdministratorDto;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
-import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
@@ -101,6 +99,9 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     private BusinessAdministratorService businessAdministratorService;
 
     @Autowired
+    private AgentService agentService;
+
+    @Autowired
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
         super(repository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.baseBusinessRepository = repository;
@@ -166,6 +167,16 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         if (businessId != null) {
             BaseBusinessEntity entity = baseBusinessRepository.findByIdAndObjectState(businessId, ObjectState.ACTIVE);
             result = converter.convert(entity, LiteBusinessDto.class);
+        }
+        return result;
+    }
+
+    @Override
+    public BaseBusinessDto getByIdAndLock(UUID businessId) {
+        BaseBusinessDto result = null;
+        if (businessId != null) {
+            BaseBusinessEntity entity = baseBusinessRepository.findByIdAndLock(businessId);
+            result = converter.convert(entity, dtoClass);
         }
         return result;
     }
@@ -398,17 +409,21 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     }
 
     @Override
-    public BaseBusinessDto createEmptyBusiness(BaseBusinessDto dto) {
+    public BaseBusinessDto createEmptyBusiness(EmptyBusinessDto dto) {
         BaseBusinessDto result = null;
         SecurityUtil.checkUserByBanStatus();
         if (dto != null) {
-            setLogoIfNull(dto);
-            checkBusinessCategory(dto);
-            dto.setObjectState(ObjectState.ACTIVE);
-            dto.setBusinessVerify(false);
-            result = super.create(dto);
+            if (!agentService.existByUserIdAndActive(SecurityUtil.getUserId())) {
+                throw new ClientException(CURRENT_USER_NOT_AGENT);
+            }
+            BaseBusinessDto business = converter.convert(dto, dtoClass);
+            setLogoIfNull(business);
+            checkBusinessCategory(business);
+            business.setObjectState(ObjectState.ACTIVE);
+            business.setBusinessVerify(false);
+            result = super.create(business);
             if (result != null) {
-                businessEsService.indexAsync(dto.getId());
+                businessEsService.indexAsync(result.getId());
             }
         }
         return result;

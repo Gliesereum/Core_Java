@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecordPaymentInfoDto {
 
-    private Integer sum;
+    private Long sum;
 }
