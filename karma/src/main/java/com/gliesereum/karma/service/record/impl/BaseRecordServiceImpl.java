@@ -562,11 +562,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     private void processSearchForBusinessModel(BusinessRecordSearchDto search) {
-        if (CollectionUtils.isEmpty(search.getBusinessIds()) && (search.getCorporationId() == null)) {
+        if (CollectionUtils.isEmpty(search.getBusinessIds()) && CollectionUtils.isEmpty(search.getCorporationIds()) && (search.getCorporationId() == null)) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
         UUID workingSpaceId = null;
-        if (search.getCorporationId() != null) {
+        if (CollectionUtils.isNotEmpty(search.getCorporationIds())) {
+            search.getCorporationIds().forEach(i -> businessPermissionFacade.checkPermissionByCorporation(i, BusinessPermission.VIEW_BUSINESS_INFO));
+            List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(search.getCorporationIds());
+            search.setBusinessIds(businessIds);
+        } else if (search.getCorporationId() != null) {
             businessPermissionFacade.checkPermissionByCorporation(search.getCorporationId(), BusinessPermission.VIEW_BUSINESS_INFO);
             List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(search.getCorporationId()));
             search.setBusinessIds(businessIds);
