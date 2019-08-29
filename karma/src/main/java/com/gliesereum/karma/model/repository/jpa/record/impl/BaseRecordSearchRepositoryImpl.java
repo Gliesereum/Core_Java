@@ -113,22 +113,24 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
 
     @Override
     public RecordPaymentInfoDto getPaymentInfoBySearch(BusinessRecordSearchDto search) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Integer> query = builder.createQuery(Integer.class);
-        Root<BaseRecordEntity> root = query.from(BaseRecordEntity.class);
-
-        List<Predicate> predicates = getPredicateForSearch(root, builder, search);
-        if (CollectionUtils.isNotEmpty(predicates)) {
-            query.where(predicates.toArray(new Predicate[predicates.size()]));
-        }
-        query.select(builder.sum(root.get("price")));
-
-        TypedQuery<Integer> typedQuery = entityManager.createQuery(query);
-        List<Integer> resultList = typedQuery.getResultList();
         long result = 0L;
-        if (CollectionUtils.isNotEmpty(resultList)) {
-            for (Integer element : resultList) {
-                result += element == null ? 0 : element;
+        if ((search != null) && CollectionUtils.isNotEmpty(search.getBusinessIds())) {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Integer> query = builder.createQuery(Integer.class);
+            Root<BaseRecordEntity> root = query.from(BaseRecordEntity.class);
+
+            List<Predicate> predicates = getPredicateForSearch(root, builder, search);
+            if (CollectionUtils.isNotEmpty(predicates)) {
+                query.where(predicates.toArray(new Predicate[predicates.size()]));
+            }
+            query.select(builder.sum(root.get("price")));
+
+            TypedQuery<Integer> typedQuery = entityManager.createQuery(query);
+            List<Integer> resultList = typedQuery.getResultList();
+            if (CollectionUtils.isNotEmpty(resultList)) {
+                for (Integer element : resultList) {
+                    result += element == null ? 0 : element;
+                }
             }
         }
         RecordPaymentInfoDto recordPaymentInfoDto = new RecordPaymentInfoDto();

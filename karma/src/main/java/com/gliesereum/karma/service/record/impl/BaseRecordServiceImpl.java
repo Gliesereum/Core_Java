@@ -247,6 +247,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         Page<BaseRecordDto> result = null;
         processSearchForBusinessModel(search);
         Pageable pageable = getPageable(search);
+        if (CollectionUtils.isEmpty(search.getBusinessIds())) {
+            throw new ClientException(BUSINESS_NOT_FOUND);
+        }
         Page<BaseRecordEntity> entities = baseRecordRepository.getRecordsBySearchDto(search, pageable);
         result = converter.convert(entities, dtoClass);
         if ((result != null) && (CollectionUtils.isNotEmpty(result.getContent()))) {
