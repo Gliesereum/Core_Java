@@ -14,4 +14,6 @@ import java.util.List;
 public interface InformationService extends DefaultService<InformationDto, InformationEntity> {
 
     List<InformationDto> getByTag(String tag);
+
+    List<InformationDto> getByTagAndIsoCode(String tag, String isoCode);
 }

@@ -15,5 +15,7 @@ public interface InformationRepository extends JpaRepository<InformationEntity, 
 
     List<InformationEntity> findByTagOrderByIndex(String tag);
 
+    List<InformationEntity> findByTagAndIsoCodeOrderByIndex(String tag, String isoCode);
+
     List<InformationEntity> findByOrderByIndex();
 }

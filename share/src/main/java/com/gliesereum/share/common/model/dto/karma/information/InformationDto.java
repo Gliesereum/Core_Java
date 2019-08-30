@@ -25,5 +25,7 @@ public class InformationDto extends DefaultDto {
 
     private String tag;
 
+    private String isoCode;
+
     private Integer index;
 }
