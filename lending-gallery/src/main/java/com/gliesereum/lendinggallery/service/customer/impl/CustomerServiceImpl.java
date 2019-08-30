@@ -188,17 +188,24 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                     }
 
                     double purchaseValue = stockCount * artBond.getStockPrice();
-                    double dividendValue = (purchaseValue / 100 * artBond.getDividendPercent()) / (12.0 / artBond.getPaymentPeriod());
+                    double dividendValuePerYear = (purchaseValue / 100 * artBond.getDividendPercent());
+                    double dividendValue = dividendValuePerYear / (12.0 / artBond.getPaymentPeriod());
                     double rewardValue = purchaseValue / 100 * artBond.getRewardPercent();
 
-                    double resultProfit = purchaseValue + dividendValue + rewardValue;
+                    long paymentPeriodMonth = ChronoUnit.MONTHS.between(paymentStartDate.toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
+
+                    double profitOnDividend = paymentPeriodMonth / artBond.getPaymentPeriod() * dividendValue;
+
+                    double resultProfit = profitOnDividend + rewardValue;
 
                     if (paymentStartDate.isBefore(currentDate)) {
                         long daysAfterPaymentStart = ChronoUnit.DAYS.between(paymentStartDate.toLocalDate(), currentDate.toLocalDate());
                         long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate.toLocalDate(), currentDate.toLocalDate());
                         long daysPayment = ChronoUnit.DAYS.between(paymentStartDate.toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
 
-                        double nkd = artBondService.calculateNkd(dividendValue, artBond.getPaymentPeriod(), daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
+                        long daysPerPaymentYear = ChronoUnit.DAYS.between(lastPaymentDate.toLocalDate(), lastPaymentDate.toLocalDate().plus(1, ChronoUnit.YEARS));
+
+                        double nkd = artBondService.calculateNkd(dividendValuePerYear, daysPerPaymentYear, daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
                         result.setNkd(nkd);
                     }
 
