@@ -43,4 +43,10 @@ public class InformationServiceImpl extends DefaultServiceImpl<InformationDto, I
         List<InformationEntity> entities = informationRepository.findByTagOrderByIndex(tag);
         return converter.convert(entities, dtoClass);
     }
+
+    @Override
+    public List<InformationDto> getByTagAndIsoCode(String tag, String isoCode) {
+        List<InformationEntity> entities = informationRepository.findByTagAndIsoCodeOrderByIndex(tag, isoCode);
+        return converter.convert(entities, dtoClass);
+    }
 }

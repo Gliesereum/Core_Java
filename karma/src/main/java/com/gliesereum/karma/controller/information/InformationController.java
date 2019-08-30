@@ -24,8 +24,11 @@ public class InformationController {
     private InformationService informationService;
 
     @GetMapping
-    public List<InformationDto> getAll(@RequestParam(required = false, name = "tag") String tag) {
-        if (StringUtils.isNotBlank(tag)) {
+    public List<InformationDto> getAll(@RequestParam(required = false, name = "tag") String tag,
+                                       @RequestParam(required = false, name = "isoCode") String isoCode) {
+        if (StringUtils.isNotBlank(tag) && StringUtils.isNotBlank(isoCode)) {
+            return informationService.getByTagAndIsoCode(tag, isoCode);
+        } else if (StringUtils.isNotBlank(tag)) {
             return informationService.getByTag(tag);
         } else {
             return informationService.getAll();

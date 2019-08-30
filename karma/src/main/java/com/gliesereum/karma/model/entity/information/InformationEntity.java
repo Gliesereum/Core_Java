@@ -36,6 +36,9 @@ public class InformationEntity extends DefaultEntity {
     @Column(name = "tag")
     private String tag;
 
+    @Column(name = "iso_code")
+    private String isoCode;
+
     @Column(name = "index")
     private Integer index;
 
