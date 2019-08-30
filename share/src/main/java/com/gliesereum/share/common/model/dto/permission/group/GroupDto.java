@@ -2,6 +2,7 @@ package com.gliesereum.share.common.model.dto.permission.group;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.permission.endpoint.EndpointDto;
+import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ public class GroupDto extends DefaultDto {
 
     private String description;
 
-    private String purpose;
+    private GroupPurpose purpose;
 
     private boolean isActive;
 

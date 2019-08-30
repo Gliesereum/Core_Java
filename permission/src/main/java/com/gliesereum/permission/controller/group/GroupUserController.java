@@ -59,6 +59,11 @@ public class GroupUserController {
         return result;
     }
 
+    @GetMapping("/user-have-group")
+    public MapResponse userHaveGroup(@RequestParam("groupPurpose") GroupPurpose groupPurpose) {
+        return new MapResponse(groupUserService.groupExistInUser(groupPurpose));
+    }
+
     @GetMapping("/by-group-purpose")
     public List<GroupUserDto> getByGroupPurpose(@RequestParam("groupPurpose") GroupPurpose groupPurpose) {
         return groupUserService.getByGroupPurpose(groupPurpose);

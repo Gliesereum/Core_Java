@@ -13,5 +13,6 @@ public enum GroupPurpose {
     BANNED,
     KARMA_WORKER,
     LG_ADMIN,
+    COUPLER_ADMIN,
     CUSTOM;
 }
