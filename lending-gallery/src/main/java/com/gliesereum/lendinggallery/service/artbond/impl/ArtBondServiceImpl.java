@@ -342,10 +342,11 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     public Double getNkd(ArtBondDto artBond) {
         Double result = null;
-        if (artBond != null) {
+        LocalDateTime currentDate = LocalDateTime.now(ZoneId.of("UTC"));
+        if ((artBond != null) && artBond.getPaymentStartDate().isBefore(currentDate)) {
             double dividendValuePerYear = (artBond.getStockPrice() / 100 * artBond.getDividendPercent());
             double rewardValue = artBond.getStockPrice() / 100 * artBond.getRewardPercent();
-            long daysAfterPaymentStart = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), LocalDateTime.now(ZoneId.of("UTC")).toLocalDate()));
+            long daysAfterPaymentStart = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), currentDate.toLocalDate()));
             long daysPayment = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate()));
 
             long daysPerPaymentYear = ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentStartDate().plus(1, ChronoUnit.YEARS).toLocalDate());

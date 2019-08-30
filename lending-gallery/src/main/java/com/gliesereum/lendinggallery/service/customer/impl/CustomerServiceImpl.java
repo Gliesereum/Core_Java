@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -166,7 +167,7 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                 if (CollectionUtils.isNotEmpty(operationsStories)) {
                     result = new CustomerPaymentInfo();
                     ArtBondDto artBond = artBondService.getArtBondById(artBondId);
-                    LocalDateTime currentDate = LocalDateTime.now();
+                    LocalDateTime currentDate = LocalDateTime.now(ZoneId.of("UTC"));
                     LocalDateTime paymentStartDate = artBond.getPaymentStartDate();
 
                     double balance = 0.0;
