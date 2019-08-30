@@ -5,9 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.gliesereum.share.common.logging.service.LoggingService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoggingServiceImpl implements LoggingService {
 
-    private static final String SERVICE_NAME = "spring.application.name";
-    private static final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
-
-    @Autowired
-    private Environment environment;
+    @Value("${spring.application.name}")
+    private String serviceName;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -32,11 +30,17 @@ public class LoggingServiceImpl implements LoggingService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private Queue queueLogstashSystem;
+
+    @Autowired
+    private Queue queueLogstashRequest;
+
     @Async
     @Override
-    public void publishing(JsonNode jsonNode) {
+    public void publishing(JsonNode jsonNode, String queueName) {
         try {
-            rabbitTemplate.convertAndSend(environment.getRequiredProperty(QUEUE_LOGSTASH), jsonNode);
+            rabbitTemplate.convertAndSend(queueName, jsonNode);
         } catch (Exception e) {
             log.warn("Error while logging: {} ", e.getMessage());
         }
@@ -44,12 +48,26 @@ public class LoggingServiceImpl implements LoggingService {
 
     @Async
     @Override
-    public void publishingObject(Object obj) {
+    public void publishingRequestObject(Object obj) {
         if (obj != null) {
             try {
                 JsonNode jsonNode = objectMapper.valueToTree(obj);
-                ((ObjectNode) jsonNode).put("service_name", environment.getRequiredProperty(SERVICE_NAME));
-                publishing(jsonNode);
+                ((ObjectNode) jsonNode).put("service_name", serviceName);
+                publishing(jsonNode, queueLogstashRequest.getName());
+            } catch (Exception e) {
+                log.warn("Error while logging: {} ", e.getMessage());
+            }
+        }
+    }
+
+    @Async
+    @Override
+    public void publishingSystemObject(Object obj) {
+        if (obj != null) {
+            try {
+                JsonNode jsonNode = objectMapper.valueToTree(obj);
+                ((ObjectNode) jsonNode).put("service_name", serviceName);
+                publishing(jsonNode, queueLogstashSystem.getName());
             } catch (Exception e) {
                 log.warn("Error while logging: {} ", e.getMessage());
             }

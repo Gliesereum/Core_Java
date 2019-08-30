@@ -25,4 +25,6 @@ public interface GroupUserService extends DefaultService<GroupUserDto, GroupUser
     List<GroupDto> getGroupByUser(UserDto user, UUID applicationId);
 
     List<GroupUserDto> getByGroupPurpose(GroupPurpose groupPurpose);
+
+    boolean groupExistInUser(GroupPurpose groupPurpose);
 }

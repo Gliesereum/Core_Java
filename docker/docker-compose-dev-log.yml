@@ -60,6 +60,8 @@ services:
       ES_HOST: elasticsearch
       ES_PORT: 9200
       LS_JAVA_OPTS: "-Xms100M -Xmx1G"
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
     deploy:
       restart_policy:
         condition: on-failure
@@ -69,11 +71,13 @@ services:
       timeout: 10s
       retries: 20
     volumes:
-    - ../config/elk/logstash/logstash.dev.conf:/usr/share/logstash/pipeline/logstash.conf
+    - ../config/elk/logstash/logstash.request.conf:/usr/share/logstash/pipeline/logstash.request.conf
+    - ../config/elk/logstash/logstash.system.conf:/usr/share/logstash/pipeline/logstash.system.conf
+    - ../config/elk/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
     - /usr/config/geoconfig/GeoLite2-City.mmdb:/usr/share/geoconfig/GeoLite2-City.mmdb
 
   curator:
-    image: gls-curator:0.1.1
+    image: gls-curator:0.1.2
     environment:
       ES_HOST: elasticsearch
       ES_PORT: 9200
@@ -91,7 +95,7 @@ services:
     - ../config/elk/curator/logs:/curator/logs/
 
   discovery:
-    image: gls-discovery:0.1.1
+    image: gls-discovery:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -103,7 +107,7 @@ services:
       - 8761:8761
 
   account:
-    image: gls-account:0.1.1
+    image: gls-account:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -125,11 +129,13 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
       auth.sms.prefix: "Coupler CPS:"
 
   mail:
-    image: gls-mail:0.1.1
+    image: gls-mail:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -157,10 +163,12 @@ services:
       phone.send-sms: "true"
       eureka.host: discovery
       eureka.port: 8761
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
 
   proxy:
-    image: gls-proxy:0.1.1
+    image: gls-proxy:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -173,10 +181,12 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
 
   permission:
-    image: gls-permission:0.1.1
+    image: gls-permission:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -194,10 +204,12 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
 
   karma:
-    image: gls-karma:0.1.1
+    image: gls-karma:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -217,10 +229,12 @@ services:
       es.port: 9200
       eureka.host: discovery
       eureka.port: 8761
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
 
   file:
-    image: gls-file:0.1.1
+    image: gls-file:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -244,10 +258,12 @@ services:
       cdn.folder: karma
       eureka.host: discovery
       eureka.port: 8761
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
 
   lending-gallery:
-    image: gls-lending-gallery:0.1.1
+    image: gls-lending-gallery:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -265,10 +281,12 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
 
 #  socket:
-#    image: gls-socket:0.1.1
+#    image: gls-socket:0.1.2
 #    deploy:
 #      restart_policy:
 #        condition: on-failure
@@ -284,7 +302,7 @@ services:
 #      eureka.port: 8761
 
   notification:
-    image: gls-notification:0.1.1
+    image: gls-notification:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -304,12 +322,14 @@ services:
       eureka.port: 8761
       firebase.properties.credentialPath: /config/google-services.json
       firebase.properties.appName: coupler-13
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
 
   language:
-    image: gls-language:0.1.1
+    image: gls-language:0.1.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -327,10 +347,12 @@ services:
       rabbit.password: Af2f4dsASF
       eureka.host: discovery
       eureka.port: 8761
+      LOG_SYSTEM_QUEUE: logSystemQueue
+      LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
 
 #  payment:
-#    image: gls-payment:0.1.1
+#    image: gls-payment:0.1.2
 #    deploy:
 #      restart_policy:
 #        condition: on-failure

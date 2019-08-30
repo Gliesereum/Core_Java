@@ -36,6 +36,7 @@ import yahoofinance.quotes.fx.FxQuote;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -319,7 +320,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         return getNkd(artBond);
     }
 
-    public Double getNkd(ArtBondDto artBond) {
+    /*public Double getNkd(ArtBondDto artBond) {
         Double result = null;
         if (artBond != null) {
             double dividendValue = (artBond.getStockPrice() / 100 * artBond.getDividendPercent()) / (12.0 / artBond.getPaymentPeriod());
@@ -337,6 +338,27 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public double calculateNkd(double dividendValue, int paymentPeriod, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart) {
         long paymentPeriodDays = (long) PAYMENT_PERIOD_DAYS * paymentPeriod;
         return (dividendValue / MathUtil.getOneIfZero(paymentPeriodDays)) * daysAfterLastPayment + (rewardValue / MathUtil.getOneIfZero(daysPayment)) * daysAfterPaymentStart;
+    }*/
+
+    public Double getNkd(ArtBondDto artBond) {
+        Double result = 0.0;
+        LocalDateTime currentDate = LocalDateTime.now(ZoneId.of("UTC"));
+        if ((artBond != null) && artBond.getPaymentStartDate().isBefore(currentDate)) {
+            double dividendValuePerYear = (artBond.getStockPrice() / 100 * artBond.getDividendPercent());
+            double rewardValue = artBond.getStockPrice() / 100 * artBond.getRewardPercent();
+            long daysAfterPaymentStart = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), currentDate.toLocalDate()));
+            long daysPayment = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate()));
+
+            long daysPerPaymentYear = ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentStartDate().plus(1, ChronoUnit.YEARS).toLocalDate());
+
+            result = calculateNkd(dividendValuePerYear, daysPerPaymentYear, daysAfterPaymentStart, rewardValue, daysPayment, daysAfterPaymentStart);
+        }
+        return result;
+    }
+
+    @Override
+    public double calculateNkd(double dividendValuePerYear, long daysPerPaymentYear, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart) {
+        return (dividendValuePerYear / daysPerPaymentYear) * daysAfterLastPayment + (rewardValue / MathUtil.getOneIfZero(daysPayment)) * daysAfterPaymentStart;
     }
 
     @Override

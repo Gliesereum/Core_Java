@@ -39,7 +39,8 @@ spring:
     password: Af2f4dsASF
     username: rabbit
     connection-timeout: 5s
-    queue-logstash: logstash
+    queue-logstash-system: logstash-system
+    queue-logstash-request: logstash-request
     #queue-mail: verificationQueue
 
 swagger:

@@ -12,6 +12,7 @@ import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import com.gliesereum.share.common.model.dto.permission.group.GroupUserDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +142,24 @@ public class GroupUserServiceImpl extends DefaultServiceImpl<GroupUserDto, Group
                 List<UUID> groupIds = groups.stream().map(GroupDto::getId).collect(Collectors.toList());
                 List<GroupUserEntity> entities = groupUserRepository.findAllByGroupIdIn(groupIds);
                 result = converter.convert(entities, dtoClass);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean groupExistInUser(GroupPurpose groupPurpose) {
+        boolean result = false;
+        if (groupPurpose != null) {
+            List<GroupDto> groups;
+            if (SecurityUtil.isAnonymous()) {
+                groups = groupService.getForAnonymous(SecurityUtil.getApplicationId());
+            } else {
+                SecurityUtil.checkUserByBanStatus();
+                groups = this.getGroupByUser(SecurityUtil.getUserModel(), SecurityUtil.getApplicationId());
+            }
+            if (CollectionUtils.isNotEmpty(groups)) {
+                result = groups.stream().anyMatch(i -> i.getPurpose().equals(groupPurpose));
             }
         }
         return result;

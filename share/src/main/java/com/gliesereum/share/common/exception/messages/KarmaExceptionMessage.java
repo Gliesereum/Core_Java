@@ -99,7 +99,7 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage PIN_DOES_NOT_FOUNT = new ExceptionMessage(1485, 400, "Pin doesn't fount");
 
-    public static final ExceptionMessage BUSINESS_MUST_BE_FROM_ONE_CORPORATION = new ExceptionMessage(1486, 400, "Business must be from one business");
+    public static final ExceptionMessage BUSINESS_MUST_BE_FROM_ONE_CORPORATION = new ExceptionMessage(1486, 400, "Business must be from one corporation");
 
     public static final ExceptionMessage ALL_TYPE_NOT_EQUALS = new ExceptionMessage(1487, 400, "All type must be equals");
 

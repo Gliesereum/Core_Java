@@ -2,6 +2,7 @@ package com.gliesereum.share.common.config.logging;
 
 import com.gliesereum.share.common.config.rabbitmq.RabbitMQDefaultConfiguration;
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +19,13 @@ import org.springframework.core.env.Environment;
         basePackageClasses = RabbitMQDefaultConfiguration.class)
 public class LoggingDefaultConfiguration {
 
-    private static final String QUEUE_LOGSTASH = "spring.rabbitmq.queue-logstash";
+    @Bean("queueLogstashSystem")
+    public Queue queueLogstashSystem(@Value("${spring.rabbitmq.queue-logstash-system}") String queueName) {
+        return new Queue(queueName);
+    }
 
-    @Bean
-    public Queue queue(Environment environment) {
-        return new Queue(environment.getRequiredProperty(QUEUE_LOGSTASH));
+    @Bean("queueLogstashRequest")
+    public Queue queueLogstashRequest(@Value("${spring.rabbitmq.queue-logstash-request}") String queueName) {
+        return new Queue(queueName);
     }
 }

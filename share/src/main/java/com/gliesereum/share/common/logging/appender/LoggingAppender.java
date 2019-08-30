@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.AppenderBase;
 import com.gliesereum.share.common.logging.service.LoggingService;
+import com.gliesereum.share.common.logging.service.impl.LoggingServiceImpl;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> implements Appl
 
     @Override
     protected void append(ILoggingEvent event) {
-        if (LoggingAppender.remoteLoggingEnable) {
+        if (LoggingAppender.remoteLoggingEnable && classIsLogable(event)) {
             Map<String, Object> eventMap = new HashMap<>();
             eventMap.put("timestamp", event.getTimeStamp());
             eventMap.put("level", event.getLevel());
@@ -74,11 +75,11 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> implements Appl
             putError(eventMap, event);
             if (LoggingAppender.publisherEnable) {
                 if (LoggingAppender.queueIsNotEmpty) {
-                    LoggingAppender.eventQueue.forEach(loggingService::publishingObject);
+                    LoggingAppender.eventQueue.forEach(loggingService::publishingSystemObject);
                     LoggingAppender.eventQueue.clear();
                     LoggingAppender.queueIsNotEmpty = false;
                 }
-                LoggingAppender.loggingService.publishingObject(eventMap);
+                LoggingAppender.loggingService.publishingSystemObject(eventMap);
             } else {
                 LoggingAppender.eventQueue.add(eventMap);
                 LoggingAppender.queueIsNotEmpty = true;
@@ -90,6 +91,10 @@ public class LoggingAppender extends AppenderBase<ILoggingEvent> implements Appl
     public void start() {
         super.start();
         LoggingAppender.activeAppender = this;
+    }
+
+    private boolean classIsLogable(ILoggingEvent event) {
+        return !event.getLoggerName().equals(LoggingServiceImpl.class.getName());
     }
 
     private void putError(Map<String, Object> eventMap, ILoggingEvent event) {
