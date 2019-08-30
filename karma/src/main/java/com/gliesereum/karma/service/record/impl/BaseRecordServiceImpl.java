@@ -51,6 +51,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -394,7 +395,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             }
             UserDto user = SecurityUtil.getUser().getUser();
             dto.setClientId(user.getId());
-            result = createRecord(dto);
+            result = createRecord(dto, false);
             clientEsService.addNewClient(user, dto.getBusinessId());
         }
         return result;
@@ -403,9 +404,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Override
     @Transactional
     @RecordCreate
-    public BaseRecordDto createForBusiness(BaseRecordDto dto) {
+    public BaseRecordDto createForBusiness(BaseRecordDto dto, Boolean isCustom) {
         businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.WORK_WITH_RECORD);
-        BaseRecordDto record = createRecord(dto);
+        BaseRecordDto record = createRecord(dto, isCustom);
         setClients(Arrays.asList(record));
         if (dto.getClientId() != null) {
             List<PublicUserDto> users = exchangeService.findPublicUserByIds(Arrays.asList(dto.getClientId()));
@@ -453,12 +454,16 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
 
-    private BaseRecordDto createRecord(BaseRecordDto dto) {
+    private BaseRecordDto createRecord(BaseRecordDto dto, Boolean isCustom) {
         BaseRecordDto result = null;
         BaseBusinessDto business = getBusinessByRecord(dto);
         checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
-        dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId(), dto.getBusinessId())));
-        dto.setPrice(getPriceByRecord(dto));
+        if (!isCustom || dto.getFinish() == null) {
+            dto.setFinish(dto.getBegin().plusMinutes(getDurationByRecord(dto.getServicesIds(), dto.getPackageId(), dto.getBusinessId())));
+        }
+        if (!isCustom || dto.getPrice() == null) {
+            dto.setPrice(getPriceByRecord(dto));
+        }
         dto.setStatusRecord(StatusRecord.CREATED);
         dto.setStatusProcess(StatusProcess.WAITING);
         dto.setStatusPay(StatusPay.NOT_PAID);
@@ -504,7 +509,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
-    public BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto) {
+    public BaseRecordDto getFreeTimeForRecord(BaseRecordDto dto, Boolean isCustom) {
         if (dto != null) {
             BaseBusinessDto business = getBusinessByRecord(dto);
             if (dto.getBegin() != null) {
@@ -515,8 +520,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 dto.setBegin(dto.getBegin().plusMinutes(mod).withSecond(0));
             }
             checkBeginTimeForRecord(dto.getBegin(), business.getTimeZone());
-            Long duration = getDurationByRecord(dto.getServicesIds(), dto.getPackageId(), dto.getBusinessId());
-            dto.setFinish(dto.getBegin().plusMinutes(duration));
+            Long duration = null;
+            if (isCustom && dto.getFinish() != null) {
+                duration = ChronoUnit.MINUTES.between(dto.getBegin(), dto.getFinish());
+            } else {
+                duration = getDurationByRecord(dto.getServicesIds(), dto.getPackageId(), dto.getBusinessId());
+                dto.setFinish(dto.getBegin().plusMinutes(duration));
+            }
             List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(dto.getBegin(), dto.getFinish(), business, dto.getWorkerId());
             if (CollectionUtils.isNotEmpty(freeTimes)) {
                 RecordFreeTime freeTime = getNearest(freeTimes, dto.getBegin(), duration);
@@ -527,7 +537,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                         dto.setBegin(freeTime.getBegin());
                         dto.setFinish(dto.getBegin().plusMinutes(duration));
                     }
-                    dto.setPrice(getPriceByRecord(dto));
+                    if (!isCustom || dto.getPrice() == null) {
+                        dto.setPrice(getPriceByRecord(dto));
+                    }
                 } else {
                     throw new ClientException(NOT_ENOUGH_TIME_FOR_RECORD);
                 }
@@ -821,13 +833,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         DayOfWeek day = beginRecord.getDayOfWeek();
         List<WorkTimeDto> workTimesOnDay = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(workers)) {
-            workers.forEach(f->{
-                if(CollectionUtils.isNotEmpty(f.getWorkTimes())){
+            workers.forEach(f -> {
+                if (CollectionUtils.isNotEmpty(f.getWorkTimes())) {
                     f.getWorkTimes().stream().filter(workTimeDto -> workTimeDto.getDayOfWeek().equals(day)).findFirst().ifPresent(workTimesOnDay::add);
                 }
             });
         }
-        if(CollectionUtils.isEmpty(workTimesOnDay) || workTimesOnDay.stream().noneMatch(WorkTimeDto::getIsWork)){
+        if (CollectionUtils.isEmpty(workTimesOnDay) || workTimesOnDay.stream().noneMatch(WorkTimeDto::getIsWork)) {
             throw new ClientException(THIS_DAY_DO_NOT_WORK_WORKERS);
         }
     }

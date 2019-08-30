@@ -54,8 +54,9 @@ public class RecordController {
     }
 
     @PostMapping("/create-for-business")
-    public BaseRecordDto createForBusiness(@Valid @RequestBody BaseRecordDto dto) {
-        return service.createForBusiness(dto);
+    public BaseRecordDto createForBusiness(@Valid @RequestBody BaseRecordDto dto,
+                                           @RequestParam(value = "isCustom", required = false, defaultValue = "false") Boolean isCustom) {
+        return service.createForBusiness(dto, isCustom);
     }
 
     @PutMapping("/canceled-record")
@@ -112,8 +113,9 @@ public class RecordController {
 //    }
 
     @PostMapping("/free-time")
-    public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto) {
-        return service.getFreeTimeForRecord(dto);
+    public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto,
+                                              @RequestParam(value = "isCustom", required = false, defaultValue = "false") Boolean isCustom) {
+        return service.getFreeTimeForRecord(dto, isCustom);
     }
 
     @GetMapping("/workers-free-time")
