@@ -341,7 +341,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     }*/
 
     public Double getNkd(ArtBondDto artBond) {
-        Double result = null;
+        Double result = 0.0;
         LocalDateTime currentDate = LocalDateTime.now(ZoneId.of("UTC"));
         if ((artBond != null) && artBond.getPaymentStartDate().isBefore(currentDate)) {
             double dividendValuePerYear = (artBond.getStockPrice() / 100 * artBond.getDividendPercent());
