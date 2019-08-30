@@ -44,7 +44,7 @@ public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity
 
     Double getNkd(ArtBondDto artBond);
 
-    double calculateNkd(double dividendValue, int paymentPeriod, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart);
+    double calculateNkd(double dividendValuePerYear, long daysPerPaymentYear, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart);
 
     Map<String, Integer> getPercentPerYear(UUID artBondId);
 
