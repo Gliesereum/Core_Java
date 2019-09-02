@@ -6,9 +6,14 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationEmployeeDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,8 +36,8 @@ public class CorporationController {
     private CorporationEmployeeService employeeService;
 
     @GetMapping
-    public List<CorporationDto> getAll() {
-        return service.getAll();
+    public Page<CorporationDto> getAll(@PageableDefault(page = 0, size = 100, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return service.getAll(ObjectState.ACTIVE, pageable);
     }
 
     @GetMapping("/{id}")

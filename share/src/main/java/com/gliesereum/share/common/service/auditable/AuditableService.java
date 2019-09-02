@@ -27,4 +27,6 @@ public interface AuditableService<D extends AuditableDefaultDto, E extends Audit
     boolean isExist(UUID id, ObjectState objectState);
 
     long count(ObjectState objectState);
+
+    void delete(D dto);
 }

@@ -97,6 +97,18 @@ public class AuditableServiceImpl<D extends AuditableDefaultDto, E extends Audit
     }
 
     @Override
+    @Transactional
+    public void delete(D dto) {
+        E entity = converter.convert(dto, entityClass);
+        if (entity == null) {
+            throw new ClientException(NOT_EXIST_BY_ID);
+        }
+        entity.setObjectState(ObjectState.DELETED);
+        entity.setDeleteDate(LocalDateTime.now(ZoneId.of("UTC")));
+        auditableRepository.saveAndFlush(entity);
+    }
+
+    @Override
     protected E onCreate(E entity) {
         entity = super.onCreate(entity);
         entity.setObjectState(ObjectState.ACTIVE);

@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
-import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.enumerated.ObjectState;
+import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,7 +20,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class CorporationDto extends DefaultDto {
+public class CorporationDto extends AuditableDefaultDto {
 
     @Size(min = 2)
     @NotEmpty
@@ -62,16 +61,6 @@ public class CorporationDto extends DefaultDto {
     private LocalDateTime dateIncorporation;
 
     private Boolean kycApproved;
-
-    private ObjectState objectState;
-
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime createDate;
-
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime updateDate;
 
     private List<CorporationSharedOwnershipDto> corporationSharedOwnerships;
 
