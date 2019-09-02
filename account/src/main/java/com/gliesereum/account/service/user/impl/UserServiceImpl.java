@@ -14,7 +14,8 @@ import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
-import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
+import com.gliesereum.share.common.service.auditable.impl.AuditableServiceImpl;
 import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
  */
 @Slf4j
 @Service
-public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> implements UserService {
+public class UserServiceImpl extends AuditableServiceImpl<UserDto, UserEntity> implements UserService {
 
     private static final String URL_PATTERN = "^(https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
     private static final Pattern urlPattern = Pattern.compile(URL_PATTERN);
@@ -164,7 +165,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
             if (StringUtils.isNotEmpty(dto.getCoverUrl()) && !urlPattern.matcher(dto.getCoverUrl()).matches()) {
                 throw new ClientException(UPL_COVER_IS_NOT_VALID);
             }
-            UserDto byId = super.getById(dto.getId());
+            UserDto byId = super.getByIdAndObjectState(dto.getId(), ObjectState.ACTIVE);
             if (byId == null) {
                 throw new ClientException(USER_NOT_FOUND);
             }
@@ -202,7 +203,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
 
     @Override
     public UserDto getById(UUID id) {
-        UserDto byId = super.getById(id);
+        UserDto byId = super.getByIdAndObjectState(id, ObjectState.ACTIVE);
         if (byId != null) {
             byId.setCorporationIds(corporationSharedOwnershipService.getAllCorporationIdByUserId(byId.getId()));
             byId.setPhone(phoneService.getPhoneByUserId(byId.getId()));
@@ -212,7 +213,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
 
     @Override
     public List<UserDto> getByIds(Iterable<UUID> ids) {
-        List<UserDto> byIds = super.getByIds(ids);
+        List<UserDto> byIds = super.getByIds(ids, ObjectState.ACTIVE);
         if (CollectionUtils.isNotEmpty(byIds)) {
             List<UUID> userIds = IteratorUtils.toList(ids.iterator());
             Map<UUID, List<UUID>> corporationsIds = corporationSharedOwnershipService.getAllCorporationIdByUserIds(userIds);
@@ -232,7 +233,7 @@ public class UserServiceImpl extends DefaultServiceImpl<UserDto, UserEntity> imp
 
     @Override
     public void setKycApproved(UUID objectId) {
-        UserDto user = super.getById(objectId);
+        UserDto user = super.getByIdAndObjectState(objectId, ObjectState.ACTIVE);
         if (user == null) {
             throw new ClientException(USER_NOT_FOUND);
         }

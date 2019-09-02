@@ -109,7 +109,9 @@ public class AuthServiceImpl implements AuthService {
         AuthDto result = null;
         if (verificationService.checkVerification(value, code)) {
             checkValueByExist(value, type, true);
-            UserDto newUser = userService.create(new UserDto(), referralCode);
+            UserDto newUser = new UserDto();
+            newUser.setLastSignIn(LocalDateTime.now(ZoneId.of("UTC")));
+            newUser = userService.create(newUser, referralCode);
             if (newUser != null) {
                 if(type.equals(VerificationType.EMAIL)) {
                     UserEmailDto newEmail = new UserEmailDto();
