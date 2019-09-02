@@ -58,6 +58,7 @@ public class StatisticFacadeImpl implements StatisticFacade {
         result.setRecordCount(baseRecordService.count());
         result.setRecordCompletedCount(baseRecordService.countByStatusRecord(StatusRecord.COMPLETED));
         result.setRecordCanceledCount(baseRecordService.countByStatusRecord(StatusRecord.CANCELED));
+        result.setRecordWaitingCount(baseRecordService.countByStatusRecord(StatusRecord.CREATED));
         result.setRecordPriceSum(baseRecordService.getPriceSum(null));
         result.setRecordCompletedPriceSum(baseRecordService.getPriceSum(searchStatusCompleted()));
 
