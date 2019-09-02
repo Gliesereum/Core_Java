@@ -4,6 +4,7 @@ import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.business.WorkingSpaceEntity;
 import com.gliesereum.karma.model.repository.jpa.business.WorkingSpaceRepository;
+import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.business.WorkingSpaceService;
 import com.gliesereum.karma.service.business.WorkingSpaceServicePriceService;
 import com.gliesereum.karma.service.business.descriptions.WorkingSpaceDescriptionService;
@@ -56,6 +57,9 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
 
     @Autowired
     private UserExchangeService userExchangeService;
+
+    @Autowired
+    private WorkerService workerService;
 
     @Autowired
     public WorkingSpaceServiceImpl(WorkingSpaceRepository workingSpaceRepository, DefaultConverter defaultConverter) {
@@ -213,7 +217,11 @@ public class WorkingSpaceServiceImpl extends DefaultServiceImpl<WorkingSpaceDto,
                 businessPermissionFacade.checkPermissionByBusiness(i.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
                 repository.delete(i);
             });
-
+            List<WorkerDto> workers = workerService.getByWorkingSpaceId(id);
+            if (CollectionUtils.isNotEmpty(workers)) {
+                workers.forEach(f->f.setWorkingSpaceId(null));
+                workerService.update(workers);
+            }
         }
     }
 

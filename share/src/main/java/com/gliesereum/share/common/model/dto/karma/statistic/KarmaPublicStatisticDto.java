@@ -26,6 +26,8 @@ public class KarmaPublicStatisticDto {
 
     private Long recordCanceledCount;
 
+    private Long recordWaitingCount;
+
     private Long recordPriceSum;
 
     private Long recordCompletedPriceSum;
