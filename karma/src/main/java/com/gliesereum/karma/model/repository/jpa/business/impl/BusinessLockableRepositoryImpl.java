@@ -2,6 +2,7 @@ package com.gliesereum.karma.model.repository.jpa.business.impl;
 
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BusinessLockableRepository;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.util.SqlUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -27,7 +28,7 @@ public class BusinessLockableRepositoryImpl implements BusinessLockableRepositor
     private EntityManager entityManager;
 
     @Override
-    public BaseBusinessEntity findByIdAndLock(UUID id) {
+    public BaseBusinessEntity findByIdAndObjectStateAndLock(UUID id, ObjectState objectState) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<BaseBusinessEntity> query = builder.createQuery(BaseBusinessEntity.class);
         Root<BaseBusinessEntity> root = query.from(BaseBusinessEntity.class);
@@ -35,6 +36,7 @@ public class BusinessLockableRepositoryImpl implements BusinessLockableRepositor
         List<Predicate> predicates = new ArrayList<>();
 
         SqlUtil.createEqIfNotNull(builder, predicates, root.get("id"), id);
+        SqlUtil.createEqIfNotNull(builder, predicates, root.get("objectState"), objectState);
 
         if (CollectionUtils.isNotEmpty(predicates)) {
             query.where(predicates.toArray(new Predicate[predicates.size()]));

@@ -1,6 +1,7 @@
 package com.gliesereum.karma.model.repository.jpa.business;
 
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 
 import java.util.UUID;
 
@@ -10,5 +11,5 @@ import java.util.UUID;
  */
 public interface BusinessLockableRepository {
 
-    BaseBusinessEntity findByIdAndLock(UUID id);
+    BaseBusinessEntity findByIdAndObjectStateAndLock(UUID id, ObjectState objectState);
 }

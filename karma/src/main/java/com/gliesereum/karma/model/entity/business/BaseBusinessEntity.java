@@ -20,7 +20,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "business")
-@EntityListeners(AuditingEntityListener.class)
 public class BaseBusinessEntity extends AbstractBusinessEntity {
 
     @OneToMany

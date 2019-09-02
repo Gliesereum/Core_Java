@@ -1,15 +1,11 @@
 package com.gliesereum.karma.model.entity.business;
 
-import com.gliesereum.share.common.model.entity.DefaultEntity;
-import com.gliesereum.share.common.model.enumerated.ObjectState;
+import com.gliesereum.share.common.model.entity.AuditableDefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -20,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
-public class AbstractBusinessEntity extends DefaultEntity {
+public class AbstractBusinessEntity extends AuditableDefaultEntity {
 
     @Column(name = "corporation_id")
     private UUID corporationId;
@@ -70,16 +66,4 @@ public class AbstractBusinessEntity extends DefaultEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_category_id", insertable = false, updatable = false)
     private BusinessCategoryEntity businessCategory;
-
-    @Column(name = "object_state")
-    @Enumerated(EnumType.STRING)
-    private ObjectState objectState;
-
-    @Column(name = "create_date")
-    @CreatedDate
-    private LocalDateTime createDate;
-
-    @Column(name = "update_date")
-    @LastModifiedDate
-    private LocalDateTime updateDate;
 }
