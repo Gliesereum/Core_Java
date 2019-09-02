@@ -81,7 +81,7 @@ public class BaseBusinessController {
     }
 
     @PutMapping("/move-geo-point")
-    public BaseBusinessDto moveGroPoint(@RequestParam("businessId") UUID businessId,
+    public BaseBusinessDto moveGeoPoint(@RequestParam("businessId") UUID businessId,
                                         @RequestParam("address") String address,
                                         @RequestParam("latitude") Double latitude,
                                         @RequestParam("longitude") Double longitude,
