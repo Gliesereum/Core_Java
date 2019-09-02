@@ -6,8 +6,11 @@ import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.EmptyBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultService;
 import com.gliesereum.share.common.service.auditable.AuditableService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +27,8 @@ public interface BaseBusinessService extends AuditableService<BaseBusinessDto, B
     List<BaseBusinessDto> getAllIgnoreState();
 
     List<LiteBusinessDto> getAllLite();
+
+    Page<LiteBusinessDto> getAllLite(ObjectState objectState, Pageable pageable);
 
     LiteBusinessDto getLiteById(UUID businessId);
 
