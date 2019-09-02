@@ -29,6 +29,7 @@ import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.service.auditable.impl.AuditableServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -55,7 +56,7 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
  */
 @Slf4j
 @Service
-public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto, BaseBusinessEntity> implements BaseBusinessService {
+public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDto, BaseBusinessEntity> implements BaseBusinessService {
 
     private static final Class<BaseBusinessDto> DTO_CLASS = BaseBusinessDto.class;
     private static final Class<BaseBusinessEntity> ENTITY_CLASS = BaseBusinessEntity.class;
@@ -114,10 +115,10 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             setLogoIfNull(dto);
             checkBusinessCategory(dto);
             checkCorporationId(dto);
-            dto.setObjectState(ObjectState.ACTIVE);
             dto.setBusinessVerify(true);
             dto.setId(null);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
+            super.onCreate(entity);
             entity = repository.saveAndFlush(entity);
             businessDescriptionService.create(dto.getDescriptions(), entity.getId());
             baseBusinessRepository.refresh(entity);
@@ -139,6 +140,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
             businessPermissionFacade.checkPermissionByBusiness(dto.getId(), BusinessPermission.BUSINESS_ADMINISTRATION);
             checkCorporationId(dto);
             BaseBusinessEntity entity = converter.convert(dto, entityClass);
+            onUpdate(entity);
             entity = repository.saveAndFlush(entity);
             List<BusinessDescriptionDto> descriptions = businessDescriptionService.update(dto.getDescriptions(), entity.getId());
             dto = converter.convert(entity, dtoClass);
@@ -175,7 +177,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
     public BaseBusinessDto getByIdAndLock(UUID businessId) {
         BaseBusinessDto result = null;
         if (businessId != null) {
-            BaseBusinessEntity entity = baseBusinessRepository.findByIdAndLock(businessId);
+            BaseBusinessEntity entity = baseBusinessRepository.findByIdAndObjectStateAndLock(businessId, ObjectState.ACTIVE);
             result = converter.convert(entity, dtoClass);
         }
         return result;
@@ -346,11 +348,7 @@ public class BaseBusinessServiceImpl extends DefaultServiceImpl<BaseBusinessDto,
         }
         businessPermissionFacade.checkPermissionByBusiness(id, BusinessPermission.BUSINESS_ADMINISTRATION);
         BaseBusinessDto dto = getById(id);
-        if (dto == null) {
-            throw new ClientException(BUSINESS_NOT_FOUND);
-        }
-        dto.setObjectState(ObjectState.DELETED);
-        super.update(dto);
+        super.delete(dto);
         businessEsService.indexAsync(dto.getId());
     }
 

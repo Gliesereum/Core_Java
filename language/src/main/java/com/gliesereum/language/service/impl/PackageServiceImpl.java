@@ -16,6 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     }
 
     @Override
+    @Transactional
     public PackageDto update(PackageDto dto) {
         PackageDto result = null;
         if (dto != null) {
@@ -98,7 +100,12 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
             UUID packageId = result.getId();
             phraseService.deleteByPackageId(packageId);
             if (CollectionUtils.isNotEmpty(phrases)) {
-                phrases = phrases.stream().peek(i -> i.setPackageId(packageId)).collect(Collectors.toList());
+                phrases = phrases.stream()
+                        .collect(Collectors.toMap(PhraseDto::getKey, i -> i, (i, j) -> j))
+                        .values()
+                        .stream()
+                        .peek(i -> i.setPackageId(packageId))
+                        .collect(Collectors.toList());
                 phrases = phraseService.create(phrases);
                 result.setPhrases(phrases);
             }
@@ -119,7 +126,10 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
                         .flatMap(i -> i.getPhrases().stream())
                         .collect(Collectors.groupingBy(
                                 PhraseDto::getKey,
-                                Collectors.toMap(i -> isoKeyMap.get(i.getPackageId()), PhraseDto::getLabel)));
+                                Collectors.toMap(
+                                        i -> isoKeyMap.get(i.getPackageId()),
+                                        PhraseDto::getLabel,
+                                        (first, second) -> first)));
                 List<LitePackageDto> litePackage = converter.convert(packages, LitePackageDto.class);
                 result.setPackages(litePackage);
                 result.setPhrases(phrases);

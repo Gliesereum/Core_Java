@@ -18,10 +18,14 @@ import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -66,8 +70,8 @@ public class BaseBusinessController {
     }
 
     @GetMapping
-    public List<BaseBusinessDto> getAll() {
-        return baseBusinessService.getAll();
+    public Page<BaseBusinessDto> getAll(@PageableDefault(page = 0, size = 100, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return baseBusinessService.getAll(ObjectState.ACTIVE, pageable);
     }
 
     @PostMapping
@@ -81,7 +85,7 @@ public class BaseBusinessController {
     }
 
     @PutMapping("/move-geo-point")
-    public BaseBusinessDto moveGroPoint(@RequestParam("businessId") UUID businessId,
+    public BaseBusinessDto moveGeoPoint(@RequestParam("businessId") UUID businessId,
                                         @RequestParam("address") String address,
                                         @RequestParam("latitude") Double latitude,
                                         @RequestParam("longitude") Double longitude,

@@ -1,17 +1,11 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
-import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
-import com.gliesereum.share.common.model.dto.DefaultDto;
-import com.gliesereum.share.common.model.enumerated.ObjectState;
+import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -21,7 +15,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AbstractBusinessDto extends DefaultDto {
+public class AbstractBusinessDto extends AuditableDefaultDto {
 
     private UUID corporationId;
 
@@ -69,15 +63,5 @@ public class AbstractBusinessDto extends DefaultDto {
     private UUID businessCategoryId;
 
     private BusinessCategoryDto businessCategory;
-
-    private ObjectState objectState;
-
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime createDate;
-
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime updateDate;
 
 }

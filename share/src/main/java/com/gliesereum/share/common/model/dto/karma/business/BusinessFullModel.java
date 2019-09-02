@@ -1,10 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
-import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
-import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import com.gliesereum.share.common.model.dto.karma.business.descriptions.BusinessDescriptionDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
@@ -12,13 +8,10 @@ import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
-import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +23,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BusinessFullModel extends DefaultDto {
+public class BusinessFullModel extends AuditableDefaultDto {
 
     private String name;
 
@@ -58,21 +51,11 @@ public class BusinessFullModel extends DefaultDto {
 
     private RatingDto rating;
 
-    private ObjectState objectState;
-
     private UUID businessCategoryId;
 
     private BusinessCategoryDto businessCategory;
 
     private boolean businessVerify;
-
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime createDate;
-
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime updateDate;
 
     private List<WorkTimeDto> workTimes = new ArrayList<>();
 

@@ -2,17 +2,15 @@ package com.gliesereum.account.model.entity;
 
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
-import com.gliesereum.share.common.model.entity.DefaultEntity;
+import com.gliesereum.share.common.model.entity.AuditableDefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-/**
+/**§
  * @author yvlasiuk
  * @version 1.0
  */
@@ -21,8 +19,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "user")
-@EntityListeners(AuditingEntityListener.class)
-public class UserEntity extends DefaultEntity {
+public class UserEntity extends AuditableDefaultEntity {
 
     @Column(name = "first_name")
     private String firstName;
@@ -63,13 +60,8 @@ public class UserEntity extends DefaultEntity {
     private Boolean kycApproved;
 
     @Column(name = "last_sign_in")
-    @CreatedDate
     private LocalDateTime lastSignIn;
 
     @Column(name = "last_activity")
     private LocalDateTime lastActivity;
-
-    @Column(name = "create_date")
-    @CreatedDate
-    private LocalDateTime createDate;
 }

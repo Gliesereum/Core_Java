@@ -3,7 +3,7 @@ package com.gliesereum.account.service.user;
 import com.gliesereum.account.model.entity.UserEntity;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
-import com.gliesereum.share.common.service.DefaultService;
+import com.gliesereum.share.common.service.auditable.AuditableService;
 
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author yvlasiuk
  * @version 1.0
  */
-public interface UserService extends DefaultService<UserDto, UserEntity> {
+public interface UserService extends AuditableService<UserDto, UserEntity> {
 
     void banById(UUID id);
 

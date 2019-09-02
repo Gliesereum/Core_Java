@@ -7,6 +7,7 @@ import com.gliesereum.share.common.model.dto.karma.business.EmptyBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.service.DefaultService;
+import com.gliesereum.share.common.service.auditable.AuditableService;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 12/7/18
  */
-public interface BaseBusinessService extends DefaultService<BaseBusinessDto, BaseBusinessEntity> {
+public interface BaseBusinessService extends AuditableService<BaseBusinessDto, BaseBusinessEntity> {
 
     List<BaseBusinessDto> getAllIgnoreState();
 

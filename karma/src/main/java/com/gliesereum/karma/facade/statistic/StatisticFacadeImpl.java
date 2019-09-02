@@ -69,6 +69,7 @@ public class StatisticFacadeImpl implements StatisticFacade {
         long countFreeWorker = countAllWorker - countBusyWorker;
         result.setWorkerBusyCount(countBusyWorker);
         result.setWorkerFreeCount(countFreeWorker);
+        result.setWorkerCount(countAllWorker);
         try {
             AccountPublicStatisticDto accountPublicStatisticDto = accountStatisticFuture.get();
             result.setUserCount(accountPublicStatisticDto.getUserCount());

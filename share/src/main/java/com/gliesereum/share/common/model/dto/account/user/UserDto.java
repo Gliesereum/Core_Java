@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
-import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import com.gliesereum.share.common.model.dto.account.enumerated.BanStatus;
 import com.gliesereum.share.common.model.dto.account.enumerated.Gender;
 import lombok.Data;
@@ -26,7 +26,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UserDto extends DefaultDto {
+public class UserDto extends AuditableDefaultDto {
 
     @Size(min = 2)
     @NotEmpty
@@ -71,10 +71,6 @@ public class UserDto extends DefaultDto {
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime lastActivity;
-
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime createDate;
 
     private List<UUID> corporationIds = new ArrayList<>();
 

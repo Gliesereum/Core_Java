@@ -19,7 +19,7 @@ import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwner
 import com.gliesereum.share.common.model.dto.account.user.UserCorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
-import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.service.auditable.impl.AuditableServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,7 +40,7 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
  */
 @Slf4j
 @Service
-public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, CorporationEntity> implements CorporationService {
+public class CorporationServiceImpl extends AuditableServiceImpl<CorporationDto, CorporationEntity> implements CorporationService {
 
     private static final Class<CorporationDto> DTO_CLASS = CorporationDto.class;
     private static final Class<CorporationEntity> ENTITY_CLASS = CorporationEntity.class;
@@ -83,7 +83,6 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
         CorporationDto result = null;
         SecurityUtil.checkUserByBanStatus();
         dto.setKycApproved(false);
-        dto.setObjectState(ObjectState.ACTIVE);
         setLogoIfNull(dto);
         result = super.create(dto);
         if (result != null) {
@@ -123,10 +122,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
             dto.setKycApproved(byId.getKycApproved());
-            dto.setObjectState(byId.getObjectState());
-            CorporationEntity entity = converter.convert(dto, entityClass);
-            entity = repository.saveAndFlush(entity);
-            dto = converter.convert(entity, dtoClass);
+            dto = super.update(dto);
         }
         return dto;
     }
@@ -136,8 +132,7 @@ public class CorporationServiceImpl extends DefaultServiceImpl<CorporationDto, C
     public void delete(UUID id) {
         checkCurrentUserForPermissionActionThisCorporation(id);
         CorporationDto dto = getById(id);
-        dto.setObjectState(ObjectState.DELETED);
-        dto = super.update(dto);
+        super.delete(dto);
         kycRequestService.delete(KycRequestType.CORPORATION, id);
         systemNotificationFacade.sendCorporationDelete(dto);
     }

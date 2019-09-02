@@ -4,6 +4,7 @@ import com.gliesereum.account.model.entity.CorporationEntity;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationSharedOwnershipDto;
 import com.gliesereum.share.common.service.DefaultService;
+import com.gliesereum.share.common.service.auditable.AuditableService;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.UUID;
 /**
  * @author vitalij
  */
-public interface CorporationService extends DefaultService<CorporationDto, CorporationEntity> {
+public interface CorporationService extends AuditableService<CorporationDto, CorporationEntity> {
 
     void addOwnerCorporation(CorporationSharedOwnershipDto dto);
 
