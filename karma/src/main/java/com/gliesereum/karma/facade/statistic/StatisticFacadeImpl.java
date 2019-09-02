@@ -60,7 +60,9 @@ public class StatisticFacadeImpl implements StatisticFacade {
         result.setRecordCanceledCount(baseRecordService.countByStatusRecord(StatusRecord.CANCELED));
         result.setRecordWaitingCount(baseRecordService.countByStatusRecord(StatusRecord.CREATED));
         result.setRecordPriceSum(baseRecordService.getPriceSum(null));
-        result.setRecordCompletedPriceSum(baseRecordService.getPriceSum(searchStatusCompleted()));
+        result.setRecordCompletedPriceSum(baseRecordService.getPriceSum(buildSearchByStatus(StatusRecord.COMPLETED)));
+        result.setRecordWaitingPriceSum(baseRecordService.getPriceSum(buildSearchByStatus(StatusRecord.CREATED)));
+        result.setRecordCanceledPriceSum(baseRecordService.getPriceSum(buildSearchByStatus(StatusRecord.CANCELED)));
 
         long countBusyWorker = baseRecordService.countBusyWorker(LocalDateTime.now(ZoneId.of("UTC")), StatusRecord.CREATED);
         long countAllWorker = workerService.count();
@@ -78,9 +80,9 @@ public class StatisticFacadeImpl implements StatisticFacade {
         return result;
     }
 
-    private BusinessRecordSearchDto searchStatusCompleted() {
+    private BusinessRecordSearchDto buildSearchByStatus(StatusRecord statusRecord) {
         BusinessRecordSearchDto businessRecordSearchDto = new BusinessRecordSearchDto();
-        businessRecordSearchDto.setStatus(Arrays.asList(StatusRecord.COMPLETED));
+        businessRecordSearchDto.setStatus(Arrays.asList(statusRecord));
         return businessRecordSearchDto;
     }
 }
