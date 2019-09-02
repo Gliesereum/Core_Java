@@ -262,8 +262,15 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Override
     public RecordPaymentInfoDto getPaymentInfoForBusiness(BusinessRecordSearchDto search) {
+        RecordPaymentInfoDto result;
         processSearchForBusinessModel(search);
-        return baseRecordRepository.getPaymentInfoBySearch(search);
+        if (CollectionUtils.isNotEmpty(search.getBusinessIds())) {
+            result =  baseRecordRepository.getPaymentInfoBySearch(search);
+        } else {
+            result = new RecordPaymentInfoDto();
+            result.setSum(0L);
+        }
+        return result;
     }
 
     @Override
