@@ -34,9 +34,12 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -161,6 +164,16 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
     public List<LiteBusinessDto> getAllLite() {
         List<BaseBusinessEntity> entities = baseBusinessRepository.getAllByObjectState(ObjectState.ACTIVE);
         return converter.convert(entities, LiteBusinessDto.class);
+    }
+
+    @Override
+    public Page<LiteBusinessDto> getAllLite(ObjectState objectState, Pageable pageable) {
+        Page<LiteBusinessDto> result = null;
+        if (ObjectUtils.allNotNull(objectState, pageable)) {
+            Page<BaseBusinessEntity> entities = auditableRepository.findAllByObjectState(objectState, pageable);
+            result = converter.convert(entities, LiteBusinessDto.class);
+        }
+        return result;
     }
 
     @Override

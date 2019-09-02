@@ -9,10 +9,7 @@ import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
-import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
-import com.gliesereum.share.common.model.dto.karma.business.EmptyBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
@@ -70,8 +67,8 @@ public class BaseBusinessController {
     }
 
     @GetMapping
-    public Page<BaseBusinessDto> getAll(@PageableDefault(page = 0, size = 100, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        return baseBusinessService.getAll(ObjectState.ACTIVE, pageable);
+    public Page<LiteBusinessDto> getAll(@PageableDefault(page = 0, size = 100, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return baseBusinessService.getAllLite(ObjectState.ACTIVE, pageable);
     }
 
     @PostMapping

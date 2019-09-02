@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
+import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class LiteBusinessDto extends DefaultDto {
+public class LiteBusinessDto extends AuditableDefaultDto {
 
     private UUID corporationId;
 
@@ -44,11 +45,12 @@ public class LiteBusinessDto extends DefaultDto {
 
     private UUID businessCategoryId;
 
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime createDate;
+    private String coverUrl;
 
-    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    private LocalDateTime updateDate;
+    private String siteUrl;
+
+    private boolean cashlessPayment;
+
+    private Boolean businessVerify;
+
 }
