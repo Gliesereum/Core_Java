@@ -306,7 +306,7 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
     public List<BaseBusinessDto> getByCorporationIds(List<UUID> corporationIds) {
         List<BaseBusinessDto> result = null;
         if (CollectionUtils.isNotEmpty(corporationIds)) {
-            List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
+            List<BaseBusinessEntity> entities = baseBusinessRepository.findByCorporationIdInAndObjectStateOrderByCreateDateDesc(corporationIds, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
         return result;

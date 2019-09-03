@@ -216,7 +216,7 @@ public class CorporationServiceImpl extends AuditableServiceImpl<CorporationDto,
         List<CorporationDto> result = null;
         List<UUID> corporationIds = sharedOwnershipService.getAllCorporationIdByUserId(userId);
         if (CollectionUtils.isNotEmpty(corporationIds)) {
-            List<CorporationEntity> entities = corporationRepository.findAllByIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
+            List<CorporationEntity> entities = corporationRepository.findAllByIdInAndObjectStateOrderByCreateDateDesc(corporationIds, ObjectState.ACTIVE);
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = converter.convert(entities, dtoClass);
 

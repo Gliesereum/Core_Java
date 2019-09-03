@@ -21,6 +21,8 @@ public interface BaseBusinessRepository extends AuditableRepository<BaseBusiness
 
     List<BaseBusinessEntity> findByCorporationIdInAndObjectState(List<UUID> corporationIds, ObjectState objectState);
 
+    List<BaseBusinessEntity> findByCorporationIdInAndObjectStateOrderByCreateDateDesc(List<UUID> corporationIds, ObjectState objectState);
+
     List<BaseBusinessEntity> findByCorporationIdAndObjectState(UUID corporationId, ObjectState objectState);
 
     List<BaseBusinessEntity> findByIdInAndObjectState(List<UUID> ids, ObjectState objectState);
