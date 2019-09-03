@@ -30,6 +30,12 @@ public class VerificationServiceImpl implements VerificationService {
     @Value("${auth.sms.prefix}")
     private String smsAuthPrefix;
 
+    @Value("${demo.phone}")
+    private String demoPhone;
+
+    @Value("${demo.code}")
+    private String demoCode;
+
     @Autowired
     private VerificationRepository repository;
 
@@ -62,12 +68,18 @@ public class VerificationServiceImpl implements VerificationService {
 
     @Override
     public void sendVerificationCode(@NotNull String value, VerificationType type, Boolean devMode) {
+        boolean demo = isDemo(type, value);
         String code = String.valueOf(random.ints(100000, (999998 + 1)).limit(1).findFirst().getAsInt());
         VerificationDomain domain = new VerificationDomain();
+        if (demo) {
+            code = demoCode;
+        }
         domain.setId(value + code);
         domain.setCreateDate(LocalDateTime.now());
         repository.save(domain);
-        sendCode(value, code, type, devMode);
+        if (!demo) {
+            sendCode(value, code, type, devMode);
+        }
     }
 
     private void sendCode(String value, String code, VerificationType type, Boolean devMode) {
@@ -77,6 +89,10 @@ public class VerificationServiceImpl implements VerificationService {
         } else if (type.equals(VerificationType.EMAIL)) {
             mailExchangeService.sendEmailVerification(value, code);
         }
+    }
+
+    private boolean isDemo(VerificationType verificationType, String value) {
+        return  verificationType.equals(VerificationType.PHONE) && value.equals(demoPhone);
     }
 
   /*  private void sendCode(String value, String code, VerificationType type) {
