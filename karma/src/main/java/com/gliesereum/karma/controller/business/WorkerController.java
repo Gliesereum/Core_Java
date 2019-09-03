@@ -6,10 +6,14 @@ import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,6 +42,11 @@ public class WorkerController {
     @PutMapping
     public WorkerDto updateWorker(@RequestBody @Valid WorkerDto worker) {
         return workerService.update(worker);
+    }
+
+    @GetMapping
+    public Page<WorkerDto> getAll(@PageableDefault(page = 0, size = 100, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return workerService.getAll(ObjectState.ACTIVE, pageable);
     }
 
     @GetMapping("/by-id")

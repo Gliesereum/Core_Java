@@ -14,8 +14,6 @@ import java.util.UUID;
 
 public interface CorporationRepository extends AuditableRepository<CorporationEntity> {
 
-    CorporationEntity findByIdAndObjectState(UUID id, ObjectState state);
-
     List<CorporationEntity> findAllByIdInAndObjectState(List<UUID> ids, ObjectState state);
 
     List<CorporationEntity> findAllByObjectStateOrderByName(ObjectState state);

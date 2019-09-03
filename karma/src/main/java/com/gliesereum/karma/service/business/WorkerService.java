@@ -5,6 +5,7 @@ import com.gliesereum.share.common.model.dto.karma.business.LiteWorkerDto;
 import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.service.DefaultService;
+import com.gliesereum.share.common.service.auditable.AuditableService;
 import org.springframework.data.domain.Page;
 
 import java.util.Collection;
@@ -16,7 +17,7 @@ import java.util.UUID;
  * @author vitalij
  * @version 1.0
  */
-public interface WorkerService extends DefaultService<WorkerDto, WorkerEntity> {
+public interface WorkerService extends AuditableService<WorkerDto, WorkerEntity> {
 
     List<WorkerDto> getByWorkingSpaceId(UUID workingSpaceId);
 

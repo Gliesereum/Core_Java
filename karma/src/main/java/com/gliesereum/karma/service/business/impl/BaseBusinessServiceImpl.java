@@ -180,8 +180,8 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
     public LiteBusinessDto getLiteById(UUID businessId) {
         LiteBusinessDto result = null;
         if (businessId != null) {
-            BaseBusinessEntity entity = baseBusinessRepository.findByIdAndObjectState(businessId, ObjectState.ACTIVE);
-            result = converter.convert(entity, LiteBusinessDto.class);
+            Optional<BaseBusinessEntity> entity = baseBusinessRepository.findByIdAndObjectState(businessId, ObjectState.ACTIVE);
+            result = converter.convert(entity.orElse(null), LiteBusinessDto.class);
         }
         return result;
     }
@@ -198,8 +198,8 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
 
     @Override
     public BaseBusinessDto getById(UUID id) {
-        BaseBusinessEntity entity = baseBusinessRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
-        return converter.convert(entity, dtoClass);
+        Optional<BaseBusinessEntity> entity = baseBusinessRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        return converter.convert(entity.orElse(null), dtoClass);
     }
 
     @Override
@@ -230,7 +230,7 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         }
         Set<UUID> businessIds = new HashSet<>();
         if (CollectionUtils.isNotEmpty(SecurityUtil.getUserCorporationIds())) {
-            List<UUID> businessByCorporation = baseBusinessRepository.getIdsByCorporationIdIn(SecurityUtil.getUserCorporationIds());
+            List<UUID> businessByCorporation = baseBusinessRepository.getIdsByCorporationIdInAndObjectState(SecurityUtil.getUserCorporationIds(), ObjectState.ACTIVE);
             if (CollectionUtils.isNotEmpty(businessByCorporation)) {
                 businessIds.addAll(businessByCorporation);
             }
@@ -390,7 +390,7 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         if (CollectionUtils.isEmpty(corporationIds)) {
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
-        return baseBusinessRepository.getIdsByCorporationIdIn(corporationIds);
+        return baseBusinessRepository.getIdsByCorporationIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
     }
 
     @Override

@@ -23,8 +23,6 @@ public interface BaseBusinessRepository extends AuditableRepository<BaseBusiness
 
     List<BaseBusinessEntity> findByCorporationIdAndObjectState(UUID corporationId, ObjectState objectState);
 
-    BaseBusinessEntity findByIdAndObjectState(UUID id, ObjectState objectState);
-
     List<BaseBusinessEntity> findByIdInAndObjectState(List<UUID> ids, ObjectState objectState);
 
     List<BaseBusinessEntity> getAllByObjectState(ObjectState objectState);
@@ -33,4 +31,7 @@ public interface BaseBusinessRepository extends AuditableRepository<BaseBusiness
 
     @Query("SELECT DISTINCT b.id FROM BaseBusinessEntity b WHERE b.corporationId IN :corporationIds")
     List<UUID> getIdsByCorporationIdIn(@Param("corporationIds") List<UUID> corporationIds);
+
+    @Query("SELECT DISTINCT b.id FROM BaseBusinessEntity b WHERE b.corporationId IN :corporationIds AND b.objectState = :objectState")
+    List<UUID> getIdsByCorporationIdInAndObjectState(@Param("corporationIds") List<UUID> corporationIds, @Param("objectState") ObjectState objectState);
 }

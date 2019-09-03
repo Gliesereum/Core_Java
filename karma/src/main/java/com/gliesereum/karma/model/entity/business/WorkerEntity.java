@@ -1,6 +1,6 @@
 package com.gliesereum.karma.model.entity.business;
 
-import com.gliesereum.share.common.model.entity.DefaultEntity;
+import com.gliesereum.share.common.model.entity.AuditableDefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "worker")
-public class WorkerEntity extends DefaultEntity {
+public class WorkerEntity extends AuditableDefaultEntity {
 
     @Column(name = "user_id")
     private UUID userId;

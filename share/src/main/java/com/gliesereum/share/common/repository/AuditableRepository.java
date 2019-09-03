@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -18,7 +19,7 @@ import java.util.UUID;
 @NoRepositoryBean
 public interface AuditableRepository<T extends AuditableDefaultEntity> extends JpaRepository<T, UUID> {
 
-    T findByIdAndObjectState(UUID id, ObjectState objectState);
+    Optional<T> findByIdAndObjectState(UUID id, ObjectState objectState);
 
     List<T> findByIdInAndObjectState(Iterable<UUID> ids, ObjectState objectState);
 
