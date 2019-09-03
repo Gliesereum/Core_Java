@@ -34,6 +34,8 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     List<BaseRecordDto> getByTimeBetween(LocalDateTime from, Integer minutesFrom, Integer minutesTo, StatusRecord status, boolean notificationSend);
 
+    List<BaseRecordDto> getByFinishTimeInPast(LocalDateTime from, StatusProcess status);
+
     Page<BaseRecordDto> getByParamsForBusiness(BusinessRecordSearchPageableDto search);
 
     RecordPaymentInfoDto getPaymentInfoForBusiness(BusinessRecordSearchDto search);
