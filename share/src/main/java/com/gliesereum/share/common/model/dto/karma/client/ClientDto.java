@@ -1,11 +1,11 @@
 package com.gliesereum.share.common.model.dto.karma.client;
 
-import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author yvlasiuk
@@ -14,13 +14,9 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ClientDto {
+public class ClientDto extends AuditableDefaultDto {
 
-    private String id;
-
-    private List<String> corporationIds;
-
-    private List<String> businessIds;
+    private UUID userId;
 
     private String firstName;
 
@@ -33,4 +29,8 @@ public class ClientDto {
     private String email;
 
     private String avatarUrl;
+
+    private List<UUID> businessIds;
+
+    private List<UUID> corporationIds;
 }
