@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.NOT_EXIST_BY_ID;
@@ -37,8 +38,8 @@ public class AuditableServiceImpl<D extends AuditableDefaultDto, E extends Audit
     public D getByIdAndObjectState(UUID id, ObjectState objectState) {
         D result = null;
         if (ObjectUtils.allNotNull(id, objectState)) {
-            AuditableDefaultEntity entity = auditableRepository.findByIdAndObjectState(id, objectState);
-            result = converter.convert(entity, dtoClass);
+            Optional<E> entity = auditableRepository.findByIdAndObjectState(id, objectState);
+            result = converter.convert(entity.orElse(null), dtoClass);
         }
         return result;
     }

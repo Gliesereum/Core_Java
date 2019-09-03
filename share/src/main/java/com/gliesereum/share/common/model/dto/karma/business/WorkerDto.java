@@ -1,6 +1,6 @@
 package com.gliesereum.share.common.model.dto.karma.business;
 
-import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class WorkerDto extends DefaultDto {
+public class WorkerDto extends AuditableDefaultDto {
 
     private UUID userId;
 

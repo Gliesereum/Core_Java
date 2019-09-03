@@ -26,7 +26,8 @@ import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.WorkTimeType;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
-import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
+import com.gliesereum.share.common.service.auditable.impl.AuditableServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -50,7 +51,7 @@ import static com.gliesereum.share.common.exception.messages.UserExceptionMessag
  */
 @Slf4j
 @Service
-public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntity> implements WorkerService {
+public class WorkerServiceImpl extends AuditableServiceImpl<WorkerDto, WorkerEntity> implements WorkerService {
 
     private static final Class<WorkerDto> DTO_CLASS = WorkerDto.class;
     private static final Class<WorkerEntity> ENTITY_CLASS = WorkerEntity.class;
@@ -95,7 +96,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (workingSpaceId == null) {
             throw new ClientException(WORKING_SPACE_ID_IS_EMPTY);
         }
-        List<WorkerEntity> entities = workerRepository.findAllByWorkingSpaceId(workingSpaceId);
+        List<WorkerEntity> entities = workerRepository.findAllByWorkingSpaceIdAndObjectState(workingSpaceId, ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
     }
 
@@ -103,7 +104,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public WorkerDto getById(UUID id, boolean setUsers) {
         WorkerDto result = null;
         if (id != null) {
-            Optional<WorkerEntity> entityOptional = workerRepository.findById(id);
+            Optional<WorkerEntity> entityOptional = workerRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
             if (entityOptional.isPresent()) {
                 result = converter.convert(entityOptional.get(), dtoClass);
                 setCommentInWorker(Arrays.asList(result));
@@ -119,7 +120,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (businessId == null) {
             throw new ClientException(BUSINESS_ID_EMPTY);
         }
-        List<WorkerEntity> entities = workerRepository.findAllByBusinessId(businessId);
+        List<WorkerEntity> entities = workerRepository.findAllByBusinessIdAndObjectState(businessId, ObjectState.ACTIVE);
         List<WorkerDto> result = converter.convert(entities, dtoClass);
         setCommentInWorker(result);
         if (setUsers && CollectionUtils.isNotEmpty(result)) {
@@ -132,7 +133,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public Page<WorkerDto> getByBusinessId(UUID businessId, boolean setUsers, Integer page, Integer size) {
         Page<WorkerDto> result = null;
         if (businessId != null) {
-            Page<WorkerEntity> entities = workerRepository.findAllByBusinessId(businessId, PageRequest.of(page, size));
+            Page<WorkerEntity> entities = workerRepository.findAllByBusinessIdAndObjectState(businessId, ObjectState.ACTIVE, PageRequest.of(page, size));
             result = converter.convert(entities, dtoClass);
             if ((result != null) && CollectionUtils.isNotEmpty(result.getContent())) {
                 setCommentInWorker(result.getContent());
@@ -146,14 +147,14 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Override
     public List<LiteWorkerDto> getLiteWorkerByBusinessId(UUID id) {
-        List<WorkerEntity> entities = workerRepository.findAllByBusinessId(id);
+        List<WorkerEntity> entities = workerRepository.findAllByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
         List<LiteWorkerDto> result = converter.convert(entities, LiteWorkerDto.class);
         return setUsersInLiteModels(result);
     }
 
     @Override
     public List<LiteWorkerDto> getLiteWorkerByIds(List<UUID> ids) {
-        List<WorkerEntity> entities = workerRepository.findAllById(ids);
+        List<WorkerEntity> entities = workerRepository.findByIdInAndObjectState(ids, ObjectState.ACTIVE);
         List<LiteWorkerDto> result = converter.convert(entities, LiteWorkerDto.class);
         return setUsersInLiteModels(result);
     }
@@ -179,7 +180,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         List<WorkerDto> result = new ArrayList<>();
         List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(corporationId));
         if (CollectionUtils.isNotEmpty(businessIds)) {
-            List<WorkerEntity> entities = workerRepository.findByUserIdAndBusinessIdIn(userId, businessIds);
+            List<WorkerEntity> entities = workerRepository.findByUserIdAndBusinessIdInAndObjectState(userId, businessIds, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
         return result;
@@ -192,7 +193,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
             businessPermissionFacade.checkPermissionByCorporation(corporationId, BusinessPermission.VIEW_BUSINESS_INFO);
             List<UUID> businessIds = baseBusinessService.getIdsByCorporationIds(Arrays.asList(corporationId));
             if (CollectionUtils.isNotEmpty(businessIds)) {
-                List<WorkerEntity> entities = workerRepository.findAllByBusinessIdIn(businessIds);
+                List<WorkerEntity> entities = workerRepository.findAllByBusinessIdInAndObjectState(businessIds, ObjectState.ACTIVE);
                 result = converter.convert(entities, dtoClass);
                 if (CollectionUtils.isNotEmpty(result)) {
                     setUsers(result);
@@ -209,7 +210,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         Page<WorkerDto> result = null;
         if (corporationId != null) {
             businessPermissionFacade.checkPermissionByCorporation(corporationId, BusinessPermission.VIEW_BUSINESS_INFO);
-            Page<WorkerEntity> entities = workerRepository.findAllByCorporationId(corporationId, PageRequest.of(page, size));
+            Page<WorkerEntity> entities = workerRepository.findAllByCorporationIdAndObjectState(corporationId, ObjectState.ACTIVE, PageRequest.of(page, size));
             result = converter.convert(entities, dtoClass);
             if ((result != null) && CollectionUtils.isNotEmpty(result.getContent())) {
                 setUsers(result.getContent());
@@ -231,7 +232,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public boolean existByUserIdAndCorporationId(UUID userId, UUID corporationId) {
         boolean result = false;
         if (ObjectUtils.allNotNull(userId, corporationId)) {
-            result = workerRepository.existsByUserIdAndCorporationId(userId, corporationId);
+            result = workerRepository.existsByUserIdAndCorporationIdAndObjectState(userId, corporationId, ObjectState.ACTIVE);
         }
         return result;
     }
@@ -240,15 +241,15 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public boolean existByUserIdAndBusinessId(UUID userId, UUID businessId) {
         boolean result = false;
         if (ObjectUtils.allNotNull(userId, businessId)) {
-            result = workerRepository.existsByUserIdAndBusinessId(userId, businessId);
+            result = workerRepository.existsByUserIdAndBusinessIdAndObjectState(userId, businessId, ObjectState.ACTIVE);
         }
         return result;
     }
 
     @Override
     public LiteWorkerDto getLiteWorkerById(UUID workerId) {
-        WorkerEntity entity = repository.getOne(workerId);
-        return converter.convert(entity, LiteWorkerDto.class);
+        Optional<WorkerEntity> entity = workerRepository.findByIdAndObjectState(workerId, ObjectState.ACTIVE);
+        return converter.convert(entity.orElse(null), LiteWorkerDto.class);
     }
 
     @Override
@@ -265,7 +266,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
     public Map<UUID, List<WorkerDto>> getWorkerMapByBusinessIds(List<UUID> businessIds) {
         Map<UUID, List<WorkerDto>> result = new HashMap<>();
         if (CollectionUtils.isNotEmpty(businessIds)) {
-            List<WorkerEntity> entities = workerRepository.findAllByBusinessIdIn(businessIds);
+            List<WorkerEntity> entities = workerRepository.findAllByBusinessIdInAndObjectState(businessIds, ObjectState.ACTIVE);
             List<WorkerDto> workers = converter.convert(entities, dtoClass);
             if (CollectionUtils.isNotEmpty(workers)) {
                 setUsers(workers);
@@ -300,7 +301,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (userId == null) {
             throw new ClientException(USER_ID_IS_EMPTY);
         }
-        WorkerEntity entity = workerRepository.findByUserIdAndBusinessId(userId, businessId);
+        WorkerEntity entity = workerRepository.findByUserIdAndBusinessIdAndObjectState(userId, businessId, ObjectState.ACTIVE);
         return converter.convert(entity, dtoClass);
     }
 
@@ -309,7 +310,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
         if (userId == null) {
             throw new ClientException(USER_ID_IS_EMPTY);
         }
-        List<WorkerEntity> entities = workerRepository.findAllByUserId(userId);
+        List<WorkerEntity> entities = workerRepository.findAllByUserIdAndObjectState(userId, ObjectState.ACTIVE);
         return converter.convert(entities, dtoClass);
     }
 
@@ -370,7 +371,7 @@ public class WorkerServiceImpl extends DefaultServiceImpl<WorkerDto, WorkerEntit
 
     @Override
     public CommentDto addComment(UUID objectId, UUID userId, CommentDto comment) {
-        if (!isExist(objectId)) {
+        if (!isExist(objectId, ObjectState.ACTIVE)) {
             throw new ClientException(WORKER_NOT_FOUND);
         }
         return commentService.addComment(objectId, userId, comment);

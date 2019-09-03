@@ -117,11 +117,11 @@ public class CorporationServiceImpl extends AuditableServiceImpl<CorporationDto,
             }
             setLogoIfNull(dto);
             checkCurrentUserForPermissionActionThisCorporation(dto.getId());
-            CorporationEntity byId = corporationRepository.findByIdAndObjectState(dto.getId(), ObjectState.ACTIVE);
-            if (byId == null) {
+            Optional<CorporationEntity> byId = corporationRepository.findByIdAndObjectState(dto.getId(), ObjectState.ACTIVE);
+            if (byId.isEmpty()) {
                 throw new ClientException(NOT_EXIST_BY_ID);
             }
-            dto.setKycApproved(byId.getKycApproved());
+            dto.setKycApproved(byId.get().getKycApproved());
             dto = super.update(dto);
         }
         return dto;
@@ -204,11 +204,11 @@ public class CorporationServiceImpl extends AuditableServiceImpl<CorporationDto,
         if (id == null) {
             throw new ClientException(CORPORATION_ID_IS_EMPTY);
         }
-        CorporationEntity corporation = corporationRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
-        if (corporation == null) {
+        Optional<CorporationEntity> entity = corporationRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
+        if (entity.isEmpty()) {
             throw new ClientException(CORPORATION_NOT_FOUND);
         }
-        return converter.convert(corporation, dtoClass);
+        return converter.convert(entity.get(), dtoClass);
     }
 
     @Override
@@ -216,7 +216,7 @@ public class CorporationServiceImpl extends AuditableServiceImpl<CorporationDto,
         List<CorporationDto> result = null;
         List<UUID> corporationIds = sharedOwnershipService.getAllCorporationIdByUserId(userId);
         if (CollectionUtils.isNotEmpty(corporationIds)) {
-            List<CorporationEntity> entities = corporationRepository.findAllByIdInAndObjectState(corporationIds, ObjectState.ACTIVE);
+            List<CorporationEntity> entities = corporationRepository.findAllByIdInAndObjectStateOrderByCreateDateDesc(corporationIds, ObjectState.ACTIVE);
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = converter.convert(entities, dtoClass);
 
