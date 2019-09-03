@@ -28,6 +28,7 @@ public class RecordUpdateFacadeImpl implements RecordRemindFacade {
     @Scheduled(fixedRate = 5 * 60 * 1000)
     public void recordUpdateExpired() {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
+        now = now.minusMinutes(4L);
         List<BaseRecordDto> records = baseRecordService.getByFinishTimeInPast(now, StatusProcess.WAITING);
         if (CollectionUtils.isNotEmpty(records)) {
             records.forEach(record -> {
