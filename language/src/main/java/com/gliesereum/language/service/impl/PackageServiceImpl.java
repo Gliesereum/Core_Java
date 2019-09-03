@@ -18,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.LanguageExceptionMessage.PACKAGE_BY_ID_FOR_CREATE_FROM_NOT_EXIST;
@@ -126,6 +124,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
                         .flatMap(i -> i.getPhrases().stream())
                         .collect(Collectors.groupingBy(
                                 PhraseDto::getKey,
+                                () -> new TreeMap<>(Comparator.naturalOrder()),
                                 Collectors.toMap(
                                         i -> isoKeyMap.get(i.getPackageId()),
                                         PhraseDto::getLabel,
