@@ -7,6 +7,7 @@ package com.gliesereum.share.common.model.dto.karma.enumerated;
 public enum StatusRecord {
 
     CREATED,
+    EXPIRED,
     COMPLETED,
     CANCELED;
 }

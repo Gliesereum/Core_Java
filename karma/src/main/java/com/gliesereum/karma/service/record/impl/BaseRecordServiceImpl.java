@@ -135,6 +135,13 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     }
 
     @Override
+    @Transactional
+    public List<BaseRecordDto> getByFinishTimeInPast(LocalDateTime from, StatusProcess status) {
+        List<BaseRecordEntity> entities = baseRecordRepository.getByFinishTimeInPast(from, status);
+        return converter.convert(entities, dtoClass);
+    }
+
+    @Override
     public void setNotificationSend(UUID recordId) {
         Optional<BaseRecordEntity> byId = baseRecordRepository.findById(recordId);
         if (byId.isPresent()) {

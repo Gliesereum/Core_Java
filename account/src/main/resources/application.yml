@@ -70,3 +70,7 @@ image-url:
 auth:
   sms:
     prefix: 'Code:'
+
+demo:
+  phone: '380888080808'
+  code: '808080'

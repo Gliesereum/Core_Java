@@ -2,6 +2,7 @@ package com.gliesereum.karma.model.repository.jpa.record.impl;
 
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordSearchRepository;
+import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.RecordPaymentInfoDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
@@ -42,6 +43,14 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
                     "WHERE (r.begin between (to_timestamp(:from, 'YYYY-MM-DD HH24:MI:SS') + ((b.time_zone + :minutesFrom) * interval '1 minute')) AND (to_timestamp(:from, 'YYYY-MM-DD HH24:MI:SS') + ((b.time_zone + :minutesTo) * interval '1 minute'))) AND " +
                     "r.status_record = :status AND r.notification_send = :notificationSend";
 
+    private static final String GET_BY_FINISH_TIME_IN_PAST_QUERY =
+            "SELECT r.* " +
+                    "FROM karma.record as r " +
+                    "LEFT JOIN karma.business as b on r.business_id=b.id " +
+                    "WHERE r.finish <=  (to_timestamp(:from, 'YYYY-MM-DD HH24:MI:SS') + ((b.time_zone) * interval '1 minute')) AND " +
+                    "r.status_process = :status";
+
+
     private static final String COUNT_DISTINCT_WORKER_ID_BY_TIME_BETWEEN_QUERY =
             "SELECT COUNT(DISTINCT r.worker_id) " +
                     "FROM karma.record as r " +
@@ -64,6 +73,19 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
             query.setParameter("minutesTo", minutesTo);
             query.setParameter("status", status.name());
             query.setParameter("notificationSend", notificationSend);
+            result = query.getResultList();
+        }
+        return result;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<BaseRecordEntity> getByFinishTimeInPast(LocalDateTime from, StatusProcess status) {
+        List<BaseRecordEntity> result = null;
+        if (ObjectUtils.allNotNull(from, status)) {
+            Query query = entityManager.createNativeQuery(GET_BY_FINISH_TIME_IN_PAST_QUERY, BaseRecordEntity.class);
+            query.setParameter("from", from.toString());
+            query.setParameter("status", status.name());
             result = query.getResultList();
         }
         return result;
