@@ -156,9 +156,9 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                                 .noneMatch(e ->
                                         e.getSubscribeDestination().equals(i.getSubscribeDestination()) &&
                                                 (((e.getObjectId() == null) && (i.getObjectId() == null)) || (e.getObjectId().equals(i.getObjectId())))))
-                        .peek(i -> i.setUserDeviceId(userDeviceId))
                         .collect(Collectors.toList());
             }
+            subscribes = subscribes.stream().peek(i -> i.setUserDeviceId(userDeviceId)).collect(Collectors.toList());
             subscribes = validateDestinations(subscribes, userDevice.getUserId());
             if (CollectionUtils.isNotEmpty(subscribes)) {
                 if (overrideExistedDestination) {
