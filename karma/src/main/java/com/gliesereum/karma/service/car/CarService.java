@@ -40,4 +40,6 @@ public interface CarService extends DefaultService<CarDto, CarEntity> {
     List<LiteCarDto> getCarByBrandIds(List<UUID> brandsIds);
 
     List<CarDto> getAsWorker(UUID clientId, UUID corporationId);
+
+    UUID getFavoriteCarByUserId(UUID userId);
 }
