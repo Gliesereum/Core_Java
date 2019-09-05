@@ -262,6 +262,18 @@ public class CarServiceImpl extends DefaultServiceImpl<CarDto, CarEntity> implem
         return result;
     }
 
+    @Override
+    public UUID getFavoriteCarByUserId(UUID userId) {
+        UUID result = null;
+        if (userId != null) {
+            List<UUID> carIds = carRepository.getIdsByUserIdAndFavorite(userId, true);
+            if (CollectionUtils.isNotEmpty(carIds)) {
+                result = carIds.get(0);
+            }
+        }
+        return result;
+    }
+
     private void checkServiceExist(UUID id) {
         if (!serviceClassService.existsService(id)) {
             throw new ClientException(SERVICE_CLASS_NOT_FOUND);
