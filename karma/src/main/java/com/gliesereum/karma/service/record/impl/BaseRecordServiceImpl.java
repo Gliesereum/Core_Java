@@ -403,6 +403,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                     if (carId == null) {
                         throw new ClientException(TARGET_ID_IS_EMPTY);
                     }
+                    dto.setTargetId(carId);
                     carService.checkCarExistInCurrentUser(dto.getTargetId());
                     break;
                 }
