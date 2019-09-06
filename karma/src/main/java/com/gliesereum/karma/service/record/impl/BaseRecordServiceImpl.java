@@ -396,9 +396,14 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             BusinessType businessType = businessCategoryService.checkAndGetType(dto.getBusinessCategoryId());
             switch (businessType) {
                 case CAR: {
-                    if (dto.getTargetId() == null) {
+                    UUID carId = dto.getTargetId();
+                    if (carId == null) {
+                        carId = carService.getFavoriteCarByUserId(SecurityUtil.getUserId());
+                    }
+                    if (carId == null) {
                         throw new ClientException(TARGET_ID_IS_EMPTY);
                     }
+                    dto.setTargetId(carId);
                     carService.checkCarExistInCurrentUser(dto.getTargetId());
                     break;
                 }

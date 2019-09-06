@@ -173,6 +173,7 @@ public class UserServiceImpl extends AuditableServiceImpl<UserDto, UserEntity> i
             dto.setLastActivity(byId.getLastActivity());
             dto.setLastSignIn(byId.getLastSignIn());
             dto.setCreateDate(byId.getCreateDate());
+            dto.setObjectState(ObjectState.ACTIVE);
             setLogoIfNull(dto);
             result = super.update(dto);
             userUpdateFacade.tokenInfoUpdateEvent(Arrays.asList(result.getId()));
