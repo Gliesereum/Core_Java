@@ -1,13 +1,14 @@
 package com.gliesereum.karma.model.entity.filter;
 
+import com.gliesereum.karma.model.entity.filter.descriptions.FilterAttributeDescriptionEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -29,5 +30,9 @@ public class FilterAttributeEntity extends DefaultEntity {
 
     @Column(name = "filter_id")
     private UUID filterId;
+
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<FilterAttributeDescriptionEntity> descriptions = new HashSet<>();
 
 }

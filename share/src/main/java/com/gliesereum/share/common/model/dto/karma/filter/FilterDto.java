@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.karma.filter;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.filter.descriptions.FilterDescriptionDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -28,4 +29,6 @@ public class FilterDto extends DefaultDto {
     private UUID businessCategoryId;
 
     private List<FilterAttributeDto> attributes = new ArrayList<>();
+
+    private List<FilterDescriptionDto> descriptions = new ArrayList<>();
 }
