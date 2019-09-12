@@ -4,10 +4,12 @@ import com.gliesereum.karma.model.entity.filter.FilterEntity;
 import com.gliesereum.karma.model.repository.jpa.filter.FilterRepository;
 import com.gliesereum.karma.service.business.BusinessCategoryService;
 import com.gliesereum.karma.service.filter.FilterService;
+import com.gliesereum.karma.service.filter.descriptions.FilterDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessCategoryDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.BusinessType;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterDto;
+import com.gliesereum.share.common.model.dto.karma.filter.descriptions.FilterDescriptionDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -35,9 +37,34 @@ public class FilterServiceImpl extends DefaultServiceImpl<FilterDto, FilterEntit
     private BusinessCategoryService businessCategoryService;
 
     @Autowired
+    private FilterDescriptionService filterDescriptionService;
+
+    @Autowired
     public FilterServiceImpl(FilterRepository filterRepository, DefaultConverter defaultConverter) {
         super(filterRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.filterRepository = filterRepository;
+    }
+
+    @Override
+    public FilterDto create(FilterDto dto) {
+        FilterDto result = null;
+        if (dto != null) {
+            result = super.create(dto);
+            List<FilterDescriptionDto> descriptions = filterDescriptionService.create(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
+        }
+        return result;
+    }
+
+    @Override
+    public FilterDto update(FilterDto dto) {
+        FilterDto result = null;
+        if (dto != null) {
+            result = super.update(dto);
+            List<FilterDescriptionDto> descriptions = filterDescriptionService.update(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
+        }
+        return result;
     }
 
     @Override

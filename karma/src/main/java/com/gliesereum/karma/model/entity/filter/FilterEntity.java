@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.filter;
 
+import com.gliesereum.karma.model.entity.filter.descriptions.FilterDescriptionEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,4 +35,8 @@ public class FilterEntity extends DefaultEntity {
     @OrderBy("title asc")
     @JoinColumn(name = "filter_id", insertable = false, updatable = false)
     private Set<FilterAttributeEntity> attributes = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "object_id", insertable = false, updatable = false)
+    private Set<FilterDescriptionEntity> descriptions = new HashSet<>();
 }

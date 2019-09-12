@@ -1,11 +1,14 @@
 package com.gliesereum.share.common.model.dto.karma.filter;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.karma.filter.descriptions.FilterAttributeDescriptionDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,5 +27,7 @@ public class FilterAttributeDto extends DefaultDto {
     private String title;
 
     private UUID filterId;
+
+    private List<FilterAttributeDescriptionDto> descriptions = new ArrayList<>();
 
 }
