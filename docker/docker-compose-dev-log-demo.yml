@@ -22,6 +22,7 @@ services:
       http.host: 0.0.0.0
       transport.host: 127.0.0.1
       ES_JAVA_OPTS: "-Xms800M -Xmx3072M"
+      xpack.monitoring.collection.enabled: false
     ports:
     - 9200:9200
     - 9300:9300
