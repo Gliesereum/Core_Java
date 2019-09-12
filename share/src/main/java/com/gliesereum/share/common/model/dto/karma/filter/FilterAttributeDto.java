@@ -1,5 +1,9 @@
 package com.gliesereum.share.common.model.dto.karma.filter;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.description.DescriptionJsonDeserializer;
+import com.gliesereum.share.common.databind.json.description.DescriptionJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.filter.descriptions.FilterAttributeDescriptionDto;
 import lombok.Data;
@@ -28,6 +32,8 @@ public class FilterAttributeDto extends DefaultDto {
 
     private UUID filterId;
 
+    @JsonDeserialize(using = DescriptionJsonDeserializer.class)
+    @JsonSerialize(using = DescriptionJsonSerializer.class)
     private List<FilterAttributeDescriptionDto> descriptions = new ArrayList<>();
 
 }
