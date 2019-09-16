@@ -73,7 +73,7 @@ services:
       - /usr/config/geoconfig/GeoLite2-City.mmdb:/usr/share/geoconfig/GeoLite2-City.mmdb
 
   curator:
-    image: gls-curator:0.1.2
+    image: gls-curator:0.1.3
     environment:
       ES_HOST: elasticsearch
       ES_PORT: 9200
@@ -91,7 +91,7 @@ services:
       - ../config/elk/curator/logs:/curator/logs/
 
   discovery:
-    image: gls-discovery:0.1.2
+    image: gls-discovery:0.1.3
     deploy:
       restart_policy:
         condition: on-failure
@@ -103,7 +103,7 @@ services:
       - 8761:8761
 
   account:
-    image: gls-account:0.1.2
+    image: gls-account:0.1.3
     deploy:
       restart_policy:
         condition: on-failure
@@ -131,7 +131,7 @@ services:
       auth.sms.prefix: "Coupler CPS:"
 
   mail:
-    image: gls-mail:0.1.2
+    image: gls-mail:0.1.3
     deploy:
       restart_policy:
         condition: on-failure
@@ -165,7 +165,7 @@ services:
       auth.sms.prefix: "Coupler SMS authorization. #CPS your CODE:"
 
   proxy:
-    image: gls-proxy:0.1.2
+    image: gls-proxy:0.1.3
     deploy:
       restart_policy:
         condition: on-failure
@@ -183,7 +183,7 @@ services:
       swagger.enable: "false"
 
   permission:
-    image: gls-permission:0.1.2
+    image: gls-permission:0.1.3
     deploy:
       restart_policy:
         condition: on-failure
@@ -206,7 +206,7 @@ services:
       swagger.enable: "false"
 
   karma:
-    image: gls-karma:0.1.2
+    image: gls-karma:0.1.3
     deploy:
       restart_policy:
         condition: on-failure
@@ -231,7 +231,7 @@ services:
       swagger.enable: "false"
 
   file:
-    image: gls-file:0.1.2
+    image: gls-file:0.1.3
     deploy:
       restart_policy:
         condition: on-failure
@@ -260,7 +260,7 @@ services:
       swagger.enable: "false"
 
   notification:
-    image: gls-notification:0.1.2
+    image: gls-notification:0.1.3
     deploy:
       restart_policy:
         condition: on-failure
@@ -286,7 +286,7 @@ services:
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
   language:
-    image: gls-language:0.1.2
+    image: gls-language:0.1.3
     deploy:
       restart_policy:
         condition: on-failure

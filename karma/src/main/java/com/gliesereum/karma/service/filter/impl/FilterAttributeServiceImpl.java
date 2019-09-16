@@ -3,9 +3,11 @@ package com.gliesereum.karma.service.filter.impl;
 import com.gliesereum.karma.model.entity.filter.FilterAttributeEntity;
 import com.gliesereum.karma.model.repository.jpa.filter.FilterAttributeRepository;
 import com.gliesereum.karma.service.filter.FilterAttributeService;
+import com.gliesereum.karma.service.filter.descriptions.FilterAttributeDescriptionService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
+import com.gliesereum.share.common.model.dto.karma.filter.descriptions.FilterAttributeDescriptionDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,9 +36,34 @@ public class FilterAttributeServiceImpl extends DefaultServiceImpl<FilterAttribu
     private final FilterAttributeRepository filterAttributeRepository;
 
     @Autowired
+    private FilterAttributeDescriptionService filterAttributeDescriptionService;
+
+    @Autowired
     public FilterAttributeServiceImpl(FilterAttributeRepository filterAttributeRepository, DefaultConverter defaultConverter) {
         super(filterAttributeRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.filterAttributeRepository = filterAttributeRepository;
+    }
+
+    @Override
+    public FilterAttributeDto create(FilterAttributeDto dto) {
+        FilterAttributeDto result = null;
+        if (dto != null) {
+            result = super.create(dto);
+            List<FilterAttributeDescriptionDto> descriptions = filterAttributeDescriptionService.create(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
+        }
+        return result;
+    }
+
+    @Override
+    public FilterAttributeDto update(FilterAttributeDto dto) {
+        FilterAttributeDto result = null;
+        if (dto != null) {
+            result = super.update(dto);
+            List<FilterAttributeDescriptionDto> descriptions = filterAttributeDescriptionService.update(dto.getDescriptions(), result.getId());
+            result.setDescriptions(descriptions);
+        }
+        return result;
     }
 
     @Override
