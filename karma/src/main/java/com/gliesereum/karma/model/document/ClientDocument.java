@@ -22,6 +22,9 @@ public class ClientDocument {
     private String id;
 
     @Field(type = FieldType.Keyword)
+    private String userId;
+
+    @Field(type = FieldType.Keyword)
     private List<String> corporationIds;
 
     @Field(type = FieldType.Keyword)

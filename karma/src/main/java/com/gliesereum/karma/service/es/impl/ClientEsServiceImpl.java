@@ -112,33 +112,6 @@ public class ClientEsServiceImpl implements ClientEsService {
     }
 
     @Override
-    public ClientDto getClientByUserId(UUID userId) {
-        ClientDocument document = clientEsRepository.findById(userId.toString()).orElse(null);
-        return defaultConverter.convert(document, DTO_CLASS);
-    }
-
-    @Override
-    public Map<UUID, ClientDto> getClientMapByIds(Collection<UUID> ids) {
-        Map<UUID, ClientDto> result = new HashMap<>();
-        List<ClientDto> clients = getClientByIds(ids);
-        if (CollectionUtils.isNotEmpty(clients)) {
-            result = clients.stream().filter(i -> RegexUtil.isUUID(i.getId())).collect(Collectors.toMap(i -> UUID.fromString(i.getId()), i -> i));
-        }
-        return result;
-    }
-
-    @Override
-    public List<ClientDto> getClientByIds(Collection<UUID> ids) {
-        List<ClientDto> result = null;
-        if (CollectionUtils.isNotEmpty(ids)) {
-            Iterable<ClientDocument> iterable = clientEsRepository.findAllById(ids.stream().map(UUID::toString).collect(Collectors.toList()));
-            List<ClientDocument> documents = IterableUtils.toList(iterable);
-            result = defaultConverter.convert(documents, DTO_CLASS);
-        }
-        return result;
-    }
-
-    @Override
     public Page<ClientDto> getClientsByBusinessIdsOrCorporationIdAndQuery(String query, List<UUID> businessIds, UUID corporationId, Integer page, Integer size) {
         Page<ClientDto> result = null;
         BoolQueryBuilder bq = QueryBuilders.boolQuery();

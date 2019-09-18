@@ -7,6 +7,7 @@ import com.gliesereum.share.common.repository.AuditableRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +16,10 @@ import java.util.UUID;
  * @version 1.0
  */
 public interface ClientRepository extends AuditableRepository<ClientEntity> {
+
+    List<ClientEntity> findAllByUserIdIn(Collection<UUID> userIds);
+
+    ClientEntity findByUserId(UUID userId);
 
     @Query("SELECT c FROM ClientEntity c JOIN c.businessIds b WHERE (b IN :businessIds) AND c.objectState = :objectState")
     List<ClientEntity> findAllByBusinessIdsInAndObjectState(@Param("businessIds") List<UUID> businessIds,

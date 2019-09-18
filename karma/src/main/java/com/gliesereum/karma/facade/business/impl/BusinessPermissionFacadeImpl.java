@@ -5,6 +5,7 @@ import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.service.administrator.BusinessAdministratorService;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.business.WorkerService;
+import com.gliesereum.karma.service.client.ClientService;
 import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
@@ -34,7 +35,7 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
     private WorkerService workerService;
 
     @Autowired
-    private ClientEsService clientEsService;
+    private ClientService clientService;
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -182,11 +183,11 @@ public class BusinessPermissionFacadeImpl implements BusinessPermissionFacade {
         SecurityUtil.checkUserByBanStatus();
         if (corporationId != null) {
             checkPermissionByCorporation(corporationId, BusinessPermission.VIEW_BUSINESS_INFO);
-            ClientDto client = clientEsService.getClientByUserId(clientId);
+            ClientDto client = clientService.getByUserId(clientId);
             if (client == null) {
                 throw new ClientException(CLIENT_NOT_FOUND);
             }
-            if (CollectionUtils.isEmpty(client.getCorporationIds()) || !client.getCorporationIds().contains(corporationId.toString())) {
+            if (CollectionUtils.isEmpty(client.getCorporationIds()) || !client.getCorporationIds().contains(corporationId)) {
                 throw new ClientException(USER_NOT_CLIENT_FOR_BUSINESS);
             }
         }

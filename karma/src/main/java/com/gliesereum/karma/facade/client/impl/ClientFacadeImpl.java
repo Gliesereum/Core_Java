@@ -3,6 +3,7 @@ package com.gliesereum.karma.facade.client.impl;
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
+import com.gliesereum.karma.service.client.ClientService;
 import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
@@ -31,11 +32,14 @@ public class ClientFacadeImpl implements ClientFacade {
     private ClientEsService clientEsService;
 
     @Autowired
+    private ClientService clientService;
+
+    @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
 
     @Override
     public Map<UUID, ClientDto> getClientMapByIds(Collection<UUID> ids, Collection<UUID> businessIds) {
-        Map<UUID, ClientDto> result = clientEsService.getClientMapByIds(ids);
+        Map<UUID, ClientDto> result = clientService.getClientMapByIds(ids);
         if (MapUtils.isNotEmpty(result) && !businessPermissionFacade.isHavePermissionByBusiness(businessIds, BusinessPermission.VIEW_PHONE)) {
             hidePhone(result.values());
         }
