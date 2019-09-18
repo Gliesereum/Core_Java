@@ -272,7 +272,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         RecordPaymentInfoDto result;
         processSearchForBusinessModel(search);
         if (CollectionUtils.isNotEmpty(search.getBusinessIds())) {
-            result =  baseRecordRepository.getPaymentInfoBySearch(search);
+            result = baseRecordRepository.getPaymentInfoBySearch(search);
         } else {
             result = new RecordPaymentInfoDto();
             result.setSum(0L);
@@ -336,7 +336,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         LocalDateTime begin = LocalDateTime.ofInstant(Instant.ofEpochMilli(beginTime),
                 TimeZone.getDefault().toZoneId());
 
-        BaseRecordDto dto = getById(idRecord);
+        BaseRecordDto dto = getFullModelById(idRecord);
         checkPermissionToUpdate(dto);
         dto.setBegin(begin);
         setServicePriceIds(Arrays.asList(dto));
@@ -899,7 +899,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     private List<BaseRecordDto> setServicePriceIds(List<BaseRecordDto> records) {
         if (CollectionUtils.isNotEmpty(records)) {
             Map<UUID, List<UUID>> mapIds = recordServiceService.getServicePriceIds(records.stream().map(BaseRecordDto::getId).collect(Collectors.toList()));
-            records.forEach(r -> r.setServicesIds(mapIds.get(r.getId())));
+            if (MapUtils.isNotEmpty(mapIds)) {
+                records.forEach(r -> r.setServicesIds(mapIds.get(r.getId())));
+            }
         }
         return records;
     }
