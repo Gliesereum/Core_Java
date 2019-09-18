@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.telegram.telegrambots.ApiContextInitializer;
 
 @SpringBootApplication(scanBasePackages = {
         "com.gliesereum.mail",
@@ -20,6 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class MailApplication {
 
     public static void main(String[] args) {
+        ApiContextInitializer.init();
         SpringApplication.run(MailApplication.class, args);
     }
 }
