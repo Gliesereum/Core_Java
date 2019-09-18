@@ -11,7 +11,7 @@ client:
   aws_secret_key:
   aws_region:
   ssl_no_validate: False
-  http_auth: ${ES_PASSWORD}
+  http_auth:
   timeout: 30
   master_only: False
 
