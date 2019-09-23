@@ -40,3 +40,13 @@ exchange:
   endpoint:
     account:
       findUserPhonesByUserIds: http://account-service/phone/by-user-ids
+
+telegram:
+  bot:
+    feed-back:
+      token: 914987096:AAFJWyVEq7Qu9DQru0dhve8N64GpIcHUtkM
+      user-name: feedBack_bot
+      message:
+        start: "couplerFeedBack connected to this chat: "
+        end: "couplerFeedBack disconnected to this chat: "
+        help: "/start connected bot to chat\n/end disconnected bot to chat"
