@@ -4,6 +4,7 @@ import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.document.BusinessDocument;
+import com.gliesereum.karma.model.document.ClientDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
@@ -233,11 +234,11 @@ public class BaseBusinessController {
     //+++++++++++++ Customer ++++++++++++++++++++++++++++++++++++++
 
     @GetMapping("/customers")
-    public Page<ClientDto> getCustomersByBusinessIds(@RequestParam(value = "corporationId", required = false) UUID corporationId,
-                                                     @RequestParam(value = "businessIds", required = false) List<UUID> businessIds,
-                                                     @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-                                                     @RequestParam(value = "size", required = false, defaultValue = "100") Integer size,
-                                                     @RequestParam(value = "query", required = false) String query) {
+    public Page<ClientDocument> getCustomersByBusinessIds(@RequestParam(value = "corporationId", required = false) UUID corporationId,
+                                                          @RequestParam(value = "businessIds", required = false) List<UUID> businessIds,
+                                                          @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                                          @RequestParam(value = "size", required = false, defaultValue = "100") Integer size,
+                                                          @RequestParam(value = "query", required = false) String query) {
         return clientFacade.getCustomersByBusinessIdsOrCorporationId(businessIds, corporationId, page, size, query);
     }
 }

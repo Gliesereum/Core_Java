@@ -1,6 +1,8 @@
 package com.gliesereum.karma.service.client;
 
 import com.gliesereum.karma.model.entity.client.ClientEntity;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.service.auditable.AuditableService;
 
@@ -14,6 +16,12 @@ import java.util.UUID;
  * @version 1.0
  */
 public interface ClientService extends AuditableService<ClientDto, ClientEntity> {
+
+    ClientDto addNewClient(PublicUserDto user, UUID businessId);
+
+    ClientDto addNewClient(UserDto user, UUID businessId);
+
+    ClientDto updateClientInfo(UserDto user);
 
     Map<UUID, ClientDto> getClientMapByIds(Collection<UUID> ids);
 

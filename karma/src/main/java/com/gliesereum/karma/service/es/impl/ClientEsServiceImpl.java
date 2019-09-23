@@ -54,66 +54,29 @@ public class ClientEsServiceImpl implements ClientEsService {
     private BaseBusinessService businessService;
 
     @Override
-    @Transactional
-    @Async
-    public void addNewClient(PublicUserDto user, UUID businessId) {
-        if (ObjectUtils.allNotNull(user, businessId)) {
-            BaseBusinessDto business = businessService.getById(businessId);
-            if (business != null) {
-                ClientDocument client = new ClientDocument();
-                client.setBusinessIds(Arrays.asList(businessId.toString()));
-                client.setCorporationIds((Arrays.asList(business.getCorporationId().toString())));
-                client.setAvatarUrl(user.getAvatarUrl());
-                client.setFirstName(user.getFirstName());
-                client.setLastName(user.getLastName());
-                client.setId(user.getId().toString());
-                client.setMiddleName(user.getMiddleName());
-                client.setEmail(user.getEmail());
-                client.setPhone(user.getPhone());
-                addNewClient(client);
-            }
+    public ClientDocument index(ClientDto client) {
+        ClientDocument result = null;
+        if (client != null) {
+            ClientDocument clientDocument = convert(client);
+            result = clientEsRepository.save(clientDocument);
         }
+        return result;
     }
-
+    
     @Override
-    @Transactional
-    @Async
-    public void addNewClient(UserDto user, UUID businessId) {
-        if (ObjectUtils.allNotNull(user, businessId)) {
-            BaseBusinessDto business = businessService.getById(businessId);
-            if (business != null) {
-                ClientDocument client = new ClientDocument();
-                client.setBusinessIds(Arrays.asList(businessId.toString()));
-                client.setCorporationIds((Arrays.asList(business.getCorporationId().toString())));
-                client.setId(user.getId().toString());
-                client.setFirstName(user.getFirstName());
-                client.setLastName(user.getLastName());
-                client.setMiddleName(user.getMiddleName());
-                client.setPhone(user.getPhone());
-                client.setAvatarUrl(user.getAvatarUrl());
-                addNewClient(client);
-            }
+    public List<ClientDocument> index(List<ClientDto> client) {
+        List<ClientDocument> result = null;
+        if (CollectionUtils.isNotEmpty(client)) {
+            List<ClientDocument> documents = client.stream().map(this::convert).collect(Collectors.toList());
+            Iterable<ClientDocument> clientDocuments = clientEsRepository.saveAll(documents);
+            result = IterableUtils.toList(clientDocuments);
         }
+        return result;
     }
-
+    
     @Override
-    @Async
-    public void updateClientInfo(UserDto user) {
-        if ((user != null) && (user.getId() != null)) {
-            ClientDocument client = clientEsRepository.findById(user.getId().toString()).orElse(null);
-            if (client != null) {
-                client.setMiddleName(user.getMiddleName());
-                client.setLastName(user.getLastName());
-                client.setFirstName(user.getFirstName());
-                client.setAvatarUrl(user.getAvatarUrl());
-                clientEsRepository.save(client);
-            }
-        }
-    }
-
-    @Override
-    public Page<ClientDto> getClientsByBusinessIdsOrCorporationIdAndQuery(String query, List<UUID> businessIds, UUID corporationId, Integer page, Integer size) {
-        Page<ClientDto> result = null;
+    public Page<ClientDocument> getClientsByBusinessIdsOrCorporationIdAndQuery(String query, List<UUID> businessIds, UUID corporationId, Integer page, Integer size) {
+        Page<ClientDocument> result = null;
         BoolQueryBuilder bq = QueryBuilders.boolQuery();
         if (corporationId != null) {
             bq.must(QueryBuilders.termsQuery(CORPORATION_IDS, corporationId.toString()));
@@ -128,25 +91,31 @@ public class ClientEsServiceImpl implements ClientEsService {
             fields.put(PHONE, 2.0F);
             bq.must(QueryBuilders.queryStringQuery("*" + query + "*").fields(fields));
         }
-        Page<ClientDocument> documents = clientEsRepository.search(bq, PageRequest.of(page, size, Sort.by(FIRST_NAME, LAST_NAME)));
-        result = defaultConverter.convert(documents, DTO_CLASS);
+        result = clientEsRepository.search(bq, PageRequest.of(page, size, Sort.by(FIRST_NAME, LAST_NAME)));
         return result;
     }
-
-    private void addNewClient(ClientDocument client) {
-        final Optional<ClientDocument> byId = clientEsRepository.findById(client.getId());
-        ClientDocument exist = null;
-        if (byId.isPresent()) {
-            exist = byId.get();
-            if (!exist.getBusinessIds().contains(client.getBusinessIds().get(0))) {
-                exist.getBusinessIds().add(client.getBusinessIds().get(0));
+    
+    private ClientDocument convert(ClientDto clientDto) {
+        ClientDocument clientDocument = null;
+        if (clientDto != null) {
+            clientDocument = new ClientDocument();
+            clientDocument.setId(clientDto.getId().toString());
+            clientDocument.setUserId(clientDto.getUserId().toString());
+            if (CollectionUtils.isNotEmpty(clientDto.getCorporationIds())) {
+                clientDocument.setCorporationIds(clientDto.getCorporationIds().stream().map(UUID::toString).collect(Collectors.toList()));
             }
-            if (!exist.getCorporationIds().contains(client.getCorporationIds().get(0))) {
-                exist.getCorporationIds().add(client.getCorporationIds().get(0));
+            if (CollectionUtils.isNotEmpty(clientDto.getBusinessIds())) {
+                clientDocument.setBusinessIds(clientDto.getBusinessIds().stream().map(UUID::toString).collect(Collectors.toList()));
             }
-        } else {
-            exist = client;
+            clientDocument.setFirstName(clientDto.getFirstName());
+            clientDocument.setLastName(clientDto.getLastName());
+            clientDocument.setMiddleName(clientDto.getMiddleName());
+            clientDocument.setPhone(clientDto.getPhone());
+            clientDocument.setEmail(clientDto.getEmail());
+            clientDocument.setAvatarUrl(clientDto.getAvatarUrl());
+        
+            clientDocument = clientEsRepository.index(clientDocument);
         }
-        clientEsRepository.save(exist);
+        return clientDocument;
     }
 }

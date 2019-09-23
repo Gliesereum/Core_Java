@@ -415,7 +415,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             UserDto user = SecurityUtil.getUser().getUser();
             dto.setClientId(user.getId());
             result = createRecord(dto, false);
-            clientEsService.addNewClient(user, dto.getBusinessId());
+            clientFacade.addNewClient(user, dto.getBusinessId());
         }
         return result;
     }
@@ -432,7 +432,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             if (CollectionUtils.isNotEmpty(users)) {
                 PublicUserDto user = users.get(0);
                 dto.setClientId(user.getId());
-                clientEsService.addNewClient(user, dto.getBusinessId());
+                clientFacade.addNewClient(user, dto.getBusinessId());
             }
         }
         return record;

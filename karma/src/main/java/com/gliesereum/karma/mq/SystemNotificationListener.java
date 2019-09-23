@@ -1,6 +1,7 @@
 package com.gliesereum.karma.mq;
 
 import com.gliesereum.karma.facade.bonus.BonusScoreFacade;
+import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.es.ClientEsService;
 import com.gliesereum.share.common.model.dto.account.referral.ReferralCodeUserDto;
@@ -31,7 +32,7 @@ public class SystemNotificationListener {
     private BonusScoreFacade bonusScoreFacade;
 
     @Autowired
-    private ClientEsService clientEsService;
+    private ClientFacade clientFacade;
 
     @RabbitListener(bindings = @QueueBinding(value = @Queue, exchange = @Exchange(
             value = "${system-notification.corporation-delete.exchange-name}",
@@ -65,7 +66,7 @@ public class SystemNotificationListener {
     public void updateClientInfo(SystemNotificationDto<UserDto> userSystemNotification) {
         try {
             if ((userSystemNotification != null) && (userSystemNotification.getObject() != null)) {
-                clientEsService.updateClientInfo(userSystemNotification.getObject());
+                clientFacade.updateClientInfo(userSystemNotification.getObject());
             }
         } catch (Exception e) {
             log.warn("Error while process update client notification", e);

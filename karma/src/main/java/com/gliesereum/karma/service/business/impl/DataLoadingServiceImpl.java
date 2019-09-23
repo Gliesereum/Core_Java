@@ -1,5 +1,6 @@
 package com.gliesereum.karma.service.business.impl;
 
+import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.model.entity.business.BaseBusinessEntity;
 import com.gliesereum.karma.model.repository.jpa.business.BaseBusinessRepository;
 import com.gliesereum.karma.service.business.*;
@@ -94,7 +95,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
     @Autowired
     private UserExchangeService userExchangeService;
     @Autowired
-    private ClientEsService clientEsService;
+    private ClientFacade clientFacade;
 
     @Override
     @Transactional
@@ -305,7 +306,7 @@ public class DataLoadingServiceImpl implements DataLoadingService {
             Set<UUID> userIds = records.stream().map(BaseRecordDto::getClientId).collect(Collectors.toSet());
             Map<UUID, UserDto> userMap = userExchangeService.findUserMapByIds(userIds);
             records.forEach(record -> {
-                clientEsService.addNewClient(userMap.get(record.getClientId()), record.getBusinessId());
+                clientFacade.addNewClient(userMap.get(record.getClientId()), record.getBusinessId());
             });
         }
     }

@@ -4,6 +4,7 @@ import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public class ClientDto extends AuditableDefaultDto {
 
     private String avatarUrl;
 
-    private List<UUID> businessIds;
+    private List<UUID> businessIds = new ArrayList<>();
 
-    private List<UUID> corporationIds;
+    private List<UUID> corporationIds = new ArrayList<>();
 }
