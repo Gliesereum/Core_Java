@@ -10,6 +10,7 @@ import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.preference.ClientPreferenceService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
+import com.gliesereum.karma.service.tag.BusinessTagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
@@ -19,6 +20,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.preference.ClientPreferenceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +91,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private BusinessTagService businessTagService;
 
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
@@ -177,12 +182,14 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             List<UUID> businessIds = businessList.stream().map(BaseBusinessDto::getId).collect(Collectors.toList());
             Map<UUID, RatingDto> ratingMap = commentService.getRatings(businessIds);
             Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessIds);
+            Map<UUID, List<TagDto>>  tagMap = businessTagService.getMapByBusinessIds(businessIds);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
                 if (document != null) {
                     insertGeoPoint(document, business);
                     insertServices(document, serviceMap.get(business.getId()));
                     insertRating(document, ratingMap.get(business.getId()));
+                    insertTags(document, tagMap.get(business.getId()));
                     if (CollectionUtils.isNotEmpty(business.getSpaces())) {
                         document.setCountBox(business.getSpaces().size());
                     }
@@ -248,6 +255,15 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         if (ObjectUtils.allNotNull(target, source)) {
             GeoPoint geoPoint = new GeoPoint(source.getLatitude(), source.getLongitude());
             target.setGeoPoint(geoPoint);
+        }
+        return target;
+    }
+
+    private BusinessDocument insertTags(BusinessDocument target, List<TagDto> tags) {
+        if ((target != null) && CollectionUtils.isNotEmpty(tags)) {
+            Set<String> tagNames = new HashSet<>();
+            tagNames = tags.stream().map(TagDto::getName).collect(Collectors.toSet());
+            target.setTags(new ArrayList<>(tagNames));
         }
         return target;
     }

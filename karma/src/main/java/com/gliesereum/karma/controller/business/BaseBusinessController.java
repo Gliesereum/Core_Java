@@ -8,6 +8,7 @@ import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
+import com.gliesereum.karma.service.tag.BusinessTagService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
@@ -15,6 +16,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -239,5 +241,19 @@ public class BaseBusinessController {
                                                      @RequestParam(value = "size", required = false, defaultValue = "100") Integer size,
                                                      @RequestParam(value = "query", required = false) String query) {
         return clientFacade.getCustomersByBusinessIdsOrCorporationId(businessIds, corporationId, page, size, query);
+    }
+
+    //++++++++++++++++++++ Tag ++++++++++++++++++++++++++++++++++
+
+    @PostMapping("/tag/add")
+    public List<TagDto> addTag(@RequestParam(value = "tagId") UUID tagId,
+                               @RequestParam(value = "businessId") UUID businessId) {
+        return baseBusinessService.addTag(tagId, businessId);
+    }
+
+    @PostMapping("/tag/remove")
+    public List<TagDto> removeTag(@RequestParam(value = "tagId") UUID tagId,
+                                  @RequestParam(value = "businessId") UUID businessId) {
+        return baseBusinessService.removeTag(tagId, businessId);
     }
 }

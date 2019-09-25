@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.karma.business.BusinessFullModel;
 import com.gliesereum.share.common.model.dto.karma.business.EmptyBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultService;
 import com.gliesereum.share.common.service.auditable.AuditableService;
@@ -69,5 +70,9 @@ public interface BaseBusinessService extends AuditableService<BaseBusinessDto, B
     BaseBusinessDto createEmptyBusiness(EmptyBusinessDto business);
 
     BaseBusinessDto moveGeoPoint(UUID businessId, String address, Double latitude, Double longitude, Integer timeZone);
+
+    List<TagDto> addTag(UUID tagId, UUID businessId);
+
+    List<TagDto> removeTag(UUID tagId, UUID businessId);
 }
 

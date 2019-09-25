@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class AuditableDefaultEntity extends DefaultEntity {
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     @CreatedDate
     private LocalDateTime createDate;
 
