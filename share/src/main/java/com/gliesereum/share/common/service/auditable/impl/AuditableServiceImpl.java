@@ -122,6 +122,7 @@ public class AuditableServiceImpl<D extends AuditableDefaultDto, E extends Audit
         entity = super.onUpdate(entity, existed);
         entity.setDeleteDate(existed.getDeleteDate());
         entity.setObjectState(entity.getObjectState());
+        entity.setCreateDate(existed.getCreateDate());
         return entity;
     }
 }
