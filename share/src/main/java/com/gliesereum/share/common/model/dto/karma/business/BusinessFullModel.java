@@ -8,6 +8,7 @@ import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -74,4 +75,6 @@ public class BusinessFullModel extends AuditableDefaultDto {
     private List<CommentFullDto> comments = new ArrayList<>();
 
     private List<BaseRecordDto> records = new ArrayList<>();
+
+    private List<TagDto> tags = new ArrayList<>();
 }
