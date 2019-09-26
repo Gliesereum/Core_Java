@@ -104,14 +104,6 @@ public class RecordController {
         return service.getPaymentInfoForBusiness(search);
     }
 
-//    @GetMapping("/by-client-for-corporation")
-//    public Page<BaseRecordDto> getByClientForCorporation(@RequestParam("corporationIds") List<UUID> corporationIds,
-//                                                         @RequestParam("clientId") UUID clientId,
-//                                                         @RequestParam(value = "page", required = false) Integer page,
-//                                                         @RequestParam(value = "size", required = false) Integer size) {
-//        return service.getByClientForCorporation(corporationIds, clientId, page, size);
-//    }
-
     @PostMapping("/free-time")
     public BaseRecordDto getFreeTimeForRecord(@RequestBody BaseRecordDto dto,
                                               @RequestParam(value = "isCustom", required = false, defaultValue = "false") Boolean isCustom) {
@@ -121,9 +113,7 @@ public class RecordController {
     @GetMapping("/workers-free-time")
     public Map<UUID, Set<RecordFreeTime>> getFreeTimes(@RequestParam("businessId") UUID businessId,
                                                        @RequestParam(value = "from", required = false) Long from,
-                                                       @RequestParam(value = "packageId", required = false) UUID packageId,
-                                                       @RequestParam(value = "workerId", required = false) UUID workerId,
-                                                       @RequestParam(value = "serviceIds", required = false) List<UUID> serviceIds) {
-        return service.getFreeTimes(businessId, workerId, from, packageId, serviceIds);
+                                                       @RequestParam(value = "workerId", required = false) UUID workerId) {
+        return service.getFreeTimes(businessId, workerId, from);
     }
 }
