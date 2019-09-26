@@ -30,4 +30,6 @@ public class BusinessSearchDto {
     private String fullTextQuery;
 
     private Boolean businessVerify;
+
+    private List<String> tags;
 }
