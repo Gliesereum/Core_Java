@@ -4,11 +4,14 @@ import com.gliesereum.karma.facade.bonus.BonusScoreFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.es.ClientEsService;
+import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.account.referral.ReferralCodeUserDto;
 import com.gliesereum.share.common.model.dto.account.user.CorporationDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.notification.notification.SystemNotificationDto;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -72,4 +75,5 @@ public class SystemNotificationListener {
             log.warn("Error while process update client notification", e);
         }
     }
+
 }

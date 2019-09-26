@@ -10,6 +10,7 @@ import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.preference.ClientPreferenceService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
+import com.gliesereum.karma.service.tag.BusinessTagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
@@ -19,6 +20,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.preference.ClientPreferenceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +67,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private static final String FIELD_ADDRESS = "address";
     private static final String FIELD_SERVICE_NAMES = "serviceNames";
     private static final String FIELD_BUSINESS_VERIFY = "businessVerify";
+    private static final String FIELD_TAG = "tags";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -90,6 +93,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private BusinessTagService businessTagService;
+
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
         List<BusinessDocument> businessDocuments = searchDocuments(businessSearch);
@@ -110,6 +116,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
             addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.getBusinessVerify());
+            addQueryByTags(boolQueryBuilder, businessSearch.getTags());
 
             CarInfoDto carInfo = null;
             if (!SecurityUtil.isAnonymous()) {
@@ -177,12 +184,14 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             List<UUID> businessIds = businessList.stream().map(BaseBusinessDto::getId).collect(Collectors.toList());
             Map<UUID, RatingDto> ratingMap = commentService.getRatings(businessIds);
             Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessIds);
+            Map<UUID, List<TagDto>> tagMap = businessTagService.getMapByBusinessIds(businessIds);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
                 if (document != null) {
                     insertGeoPoint(document, business);
                     insertServices(document, serviceMap.get(business.getId()));
                     insertRating(document, ratingMap.get(business.getId()));
+                    insertTags(document, tagMap.get(business.getId()));
                     if (CollectionUtils.isNotEmpty(business.getSpaces())) {
                         document.setCountBox(business.getSpaces().size());
                     }
@@ -252,6 +261,15 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         return target;
     }
 
+    private BusinessDocument insertTags(BusinessDocument target, List<TagDto> tags) {
+        if ((target != null) && CollectionUtils.isNotEmpty(tags)) {
+            Set<String> tagNames = new HashSet<>();
+            tagNames = tags.stream().map(TagDto::getName).collect(Collectors.toSet());
+            target.setTags(new ArrayList<>(tagNames));
+        }
+        return target;
+    }
+
     private void addQueryByService(BoolQueryBuilder boolQueryBuilder, List<UUID> serviceIds, CarInfoDto carInfo) {
         if (CollectionUtils.isNotEmpty(serviceIds)) {
             for (UUID serviceId : serviceIds) {
@@ -284,6 +302,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             List<String> corporationIdsString = corporationIds.stream().filter(Objects::nonNull).map(UUID::toString).collect(Collectors.toList());
             TermsQueryBuilder corporationTerms = new TermsQueryBuilder(FIELD_CORPORATION_ID, corporationIdsString);
             boolQueryBuilder.must(corporationTerms);
+        }
+    }
+
+    private void addQueryByTags(BoolQueryBuilder boolQueryBuilder, List<String> tags) {
+        if (CollectionUtils.isNotEmpty(tags)) {
+            boolQueryBuilder.must(QueryBuilders.termsQuery(FIELD_TAG, tags));
         }
     }
 

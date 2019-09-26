@@ -117,4 +117,6 @@ public class KarmaExceptionMessage {
 
     public static final ExceptionMessage AGENT_EXIST = new ExceptionMessage(1496, 400, "Agent exist");
     public static final ExceptionMessage CURRENT_USER_NOT_AGENT = new ExceptionMessage(1497, 400, "Current user not a agent");
+
+    public static final ExceptionMessage TAG_NOT_FOUND = new ExceptionMessage(1498, 404, "Tag not found");
 }

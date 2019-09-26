@@ -35,7 +35,7 @@ docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-file'
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-lending-gallery')
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-notification')
 docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-language')
-docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
+#docker rmi $(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'gls-curator')
 
 echo 'Docker build images'
 sudo docker build --rm -t gls-discovery:0.1.3 -f docker/discovery/Dockerfile  ./discovery/build/libs/
@@ -48,7 +48,7 @@ sudo docker build --rm  -t gls-file:0.1.3 -f docker/file/Dockerfile  ./file/buil
 sudo docker build --rm  -t gls-lending-gallery:0.1.3 -f docker/lending-gallery/Dockerfile  ./lending-gallery/build/libs/
 sudo docker build --rm  -t gls-notification:0.1.3 -f docker/notification/Dockerfile  ./notification/build/libs/
 sudo docker build --rm  -t gls-language:0.1.3 -f docker/language/Dockerfile  ./language/build/libs/
-sudo docker build --rm  -t gls-curator:0.1.3 -f docker/curator/Dockerfile  ./config/elk/
+#sudo docker build --rm  -t gls-curator:0.1.3 -f docker/curator/Dockerfile  ./config/elk/
 
 echo 'Docker deploy'                            
 docker stack deploy -c docker/docker-compose-prod-log.yml couplerServices

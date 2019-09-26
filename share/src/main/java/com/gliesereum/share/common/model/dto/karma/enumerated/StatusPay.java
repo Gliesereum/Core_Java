@@ -6,7 +6,7 @@ package com.gliesereum.share.common.model.dto.karma.enumerated;
  */
 public enum StatusPay {
 
-    PAID,
+    PAID, FREEZING,
     NOT_PAID;
 
 }
