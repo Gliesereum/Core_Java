@@ -16,9 +16,15 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackageClasses = RabbitMQDefaultConfiguration.class)
 public class RabbitMQConfiguration {
 
-    @Bean
-    public FanoutExchange orderUpdateInfoExchange(@Value("${liq-pay-exchange.order-update-info.exchange-name}")
-                                                            String orderUpdateInfoExchangeName) {
-        return new FanoutExchange(orderUpdateInfoExchangeName);
+   /* @Bean
+    public FanoutExchange orderUpdateStatusPaymentInfoExchange(@Value("${way-for-pay.exchange.order-update-status-payment-info.exchange-name}")
+                                                            String orderUpdateStatusPaymentInfoExchangeName) {
+        return new FanoutExchange(orderUpdateStatusPaymentInfoExchangeName);
     }
+
+    @Bean
+    public FanoutExchange businessUpdateTypePaymentInfoExchange(@Value("${way-for-pay.exchange.business-update-type-payment-info.exchange-name}")
+                                                                       String businessUpdateTypePaymentInfoExchangeName) {
+        return new FanoutExchange(businessUpdateTypePaymentInfoExchangeName);
+    }*/
 }
