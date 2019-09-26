@@ -25,7 +25,7 @@ public interface ClientRepository extends AuditableRepository<ClientEntity> {
     List<ClientEntity> findAllByBusinessIdsInAndObjectState(@Param("businessIds") List<UUID> businessIds,
                                                             @Param("objectState") ObjectState objectState);
 
-    @Query("SELECT c FROM ClientEntity c JOIN c.corporationIds co WHERE (co IN :corporationIds) AND c.objectState = :objectSate")
+    @Query("SELECT c FROM ClientEntity c JOIN c.corporationIds co WHERE (co IN :corporationIds) AND c.objectState = :objectState")
     List<Client> findAllByCorporationIdsAndObjectState(@Param("corporationIds") List<UUID> corporationIds,
                                                        @Param("objectState") ObjectState objectState);
 }
