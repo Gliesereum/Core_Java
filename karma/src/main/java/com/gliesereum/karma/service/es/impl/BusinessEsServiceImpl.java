@@ -67,6 +67,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private static final String FIELD_ADDRESS = "address";
     private static final String FIELD_SERVICE_NAMES = "serviceNames";
     private static final String FIELD_BUSINESS_VERIFY = "businessVerify";
+    private static final String FIELD_TAG = "tags";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -115,6 +116,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
             addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.getBusinessVerify());
+            addQueryByTags(boolQueryBuilder, businessSearch.getTags());
 
             CarInfoDto carInfo = null;
             if (!SecurityUtil.isAnonymous()) {
@@ -182,7 +184,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             List<UUID> businessIds = businessList.stream().map(BaseBusinessDto::getId).collect(Collectors.toList());
             Map<UUID, RatingDto> ratingMap = commentService.getRatings(businessIds);
             Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessIds);
-            Map<UUID, List<TagDto>>  tagMap = businessTagService.getMapByBusinessIds(businessIds);
+            Map<UUID, List<TagDto>> tagMap = businessTagService.getMapByBusinessIds(businessIds);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
                 if (document != null) {
@@ -300,6 +302,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             List<String> corporationIdsString = corporationIds.stream().filter(Objects::nonNull).map(UUID::toString).collect(Collectors.toList());
             TermsQueryBuilder corporationTerms = new TermsQueryBuilder(FIELD_CORPORATION_ID, corporationIdsString);
             boolQueryBuilder.must(corporationTerms);
+        }
+    }
+
+    private void addQueryByTags(BoolQueryBuilder boolQueryBuilder, List<String> tags) {
+        if (CollectionUtils.isNotEmpty(tags)) {
+            boolQueryBuilder.must(QueryBuilders.termsQuery(FIELD_TAG, tags));
         }
     }
 
