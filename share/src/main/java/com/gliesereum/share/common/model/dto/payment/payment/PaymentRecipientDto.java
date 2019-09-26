@@ -1,4 +1,4 @@
-package com.gliesereum.share.common.model.dto.payment;
+package com.gliesereum.share.common.model.dto.payment.payment;
 
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import lombok.Data;

@@ -5,7 +5,7 @@ import com.gliesereum.payment.model.repository.jpa.payment.PaymentRecipientRepos
 import com.gliesereum.payment.service.payment.PaymentRecipientService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
-import com.gliesereum.share.common.model.dto.payment.PaymentRecipientDto;
+import com.gliesereum.share.common.model.dto.payment.payment.PaymentRecipientDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.CryptoUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +40,10 @@ public class PaymentRecipientServiceImpl extends DefaultServiceImpl<PaymentRecip
 
     private final PaymentRecipientRepository repository;
 
-    @Value("${liq-pay.crypto.salt}")
+    //@Value("${liq-pay.crypto.salt}")
     private String salt;
 
-    @Value("${liq-pay.crypto.password}")
+    //@Value("${liq-pay.crypto.password}")
     private String password;
 
     @Override
