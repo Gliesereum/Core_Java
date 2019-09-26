@@ -34,6 +34,9 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.script.Script;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +71,10 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private static final String FIELD_SERVICE_NAMES = "serviceNames";
     private static final String FIELD_BUSINESS_VERIFY = "businessVerify";
     private static final String FIELD_TAG = "tags";
+    private static final String FIELD_WORK_TIMES = "workTimes";
+    
+    public static final String BUSINESS_INDEX_NAME = "karma-business";
+    public static final String BUSINESS_TYPE_NAME = "business";
 
     @Autowired
     private BaseBusinessService baseBusinessService;
@@ -110,7 +117,6 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         if (businessSearch != null) {
             setBusinessCategoryId(businessSearch);
             setServices(businessSearch);
-
             addQueryByCorporationId(boolQueryBuilder, businessSearch.getCorporationIds());
             addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
@@ -126,8 +132,11 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
         }
         addObjectStateQuery(boolQueryBuilder, ObjectState.ACTIVE);
-
-        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(boolQueryBuilder);
+    
+        FetchSourceFilter fetchSourceFilter = new FetchSourceFilter(null, new String[]{FIELD_SERVICE_NAMES, FIELD_SERVICES, FIELD_WORK_TIMES});
+        NativeSearchQuery nativeQuery = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder).withSourceFilter(fetchSourceFilter).withIndices(BUSINESS_INDEX_NAME).withTypes(BUSINESS_TYPE_NAME).build();
+    
+        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeQuery);
         result = IterableUtils.toList(searchResult);
         return result;
     }
