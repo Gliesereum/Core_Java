@@ -1,5 +1,9 @@
 package com.gliesereum.share.common.model.dto.karma.record;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
+import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +23,12 @@ public class RecordFreeTime {
 
     private UUID workerID;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime begin;
 
+    @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime finish;
 
     private Long min;

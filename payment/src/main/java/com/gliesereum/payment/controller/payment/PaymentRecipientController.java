@@ -1,7 +1,7 @@
 package com.gliesereum.payment.controller.payment;
 
 import com.gliesereum.payment.service.payment.PaymentRecipientService;
-import com.gliesereum.share.common.model.dto.payment.PaymentRecipientDto;
+import com.gliesereum.share.common.model.dto.payment.payment.PaymentRecipientDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

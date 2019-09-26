@@ -10,13 +10,16 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import java.util.List;
 import java.util.UUID;
 
+import static com.gliesereum.karma.service.es.impl.BusinessEsServiceImpl.BUSINESS_INDEX_NAME;
+import static com.gliesereum.karma.service.es.impl.BusinessEsServiceImpl.BUSINESS_TYPE_NAME;
+
 /**
  * @author yvlasiuk
  * @version 1.0
  */
 @Data
 @NoArgsConstructor
-@Document(indexName = "karma-business", type = "business")
+@Document(indexName = BUSINESS_INDEX_NAME, type = BUSINESS_TYPE_NAME)
 public class BusinessDocument {
 
     @Id

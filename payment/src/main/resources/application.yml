@@ -39,7 +39,26 @@ eureka:
 exchange:
   endpoint:
     account:
-      findUserPhonesByUserIds: http://account-service/phone/by-user-ids
+      findPublicUserByUserIds: http://account-service/user/public/by-ids
+
+way-for-pay:
+  url:
+    api: https://api.wayforpay.com/api
+    verify: https://secure.wayforpay.com/verify
+    verify-response: https://8f008257.ngrok.io/card/way-for-pay/verify-response
+    purchase-response: https://8f008257.ngrok.io/payment/way-for-pay/purchase-response
+  merchant:
+    #key: 6c7018b67af807221b14e3e472e1cf57731f9dbd
+    #account: coupler_app
+    #domain: https://coupler.app/
+    key: flk3409refn54t54t*FNJRET
+    account: test_merch_n1
+    domain: merchant.com.ua
+  exchange:
+    order-update-status-payment-info:
+      exchange-name: order-update-status-payment-info
+    business-update-type-payment:
+      exchange-name: business-update-type-payment
 
 liq-pay:
   crypto:
@@ -47,21 +66,3 @@ liq-pay:
     salt: f57P7bCf25dc2e
   public-key: sandbox_i68717225710
   private-key: sandbox_MbnwJt32pvmXEFielzRaM2gYB4tauUmpYM4a3qFs
-
-liq-pay-exchange:
-  order-update-info:
-    exchange-name: liq-pay-exchange-order-update-info
-
-way-for-pay:
-  url:
-    api: https://api.wayforpay.com/api
-    verify: https://secure.wayforpay.com/verify
-    verify-card-response: https://82ddbd7b.ngrok.io/way-for-pay/verify-card-response
-  merchant:
-   # key: 6c7018b67af807221b14e3e472e1cf57731f9dbd
-   # account: coupler_app
-   # domain: https://coupler.app/
-    key: flk3409refn54t54t*FNJRET
-    account: test_merch_n1
-    domain: merchant.com.ua
-
