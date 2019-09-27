@@ -4,6 +4,7 @@ import com.gliesereum.karma.aspect.annotation.RecordCreate;
 import com.gliesereum.karma.aspect.annotation.RecordUpdate;
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
+import com.gliesereum.karma.facade.client.ClientSearchFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
@@ -104,6 +105,9 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Autowired
     private ClientFacade clientFacade;
+    
+    @Autowired
+    private ClientSearchFacade clientSearchFacade;
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
@@ -261,7 +265,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
         if (CollectionUtils.isNotEmpty(result)) {
             Set<UUID> clientIds = result.stream().filter(i -> i.getClientId() != null).map(BaseRecordDto::getClientId).collect(Collectors.toSet());
             Set<UUID> businessIds = result.stream().map(BaseRecordDto::getBusinessId).collect(Collectors.toSet());
-            Map<UUID, ClientDto> clientMap = clientFacade.getClientMapByIds(clientIds, businessIds);
+            Map<UUID, ClientDto> clientMap = clientSearchFacade.getClientMapByIds(clientIds, businessIds);
             result.forEach(r -> {
                 if (r.getClientId() != null) {
                     r.setClient(clientMap.get(r.getClientId()));
@@ -435,7 +439,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             UserDto user = SecurityUtil.getUser().getUser();
             dto.setClientId(user.getId());
             result = createRecord(dto, false);
-            clientEsService.addNewClient(user, dto.getBusinessId());
+            clientFacade.addNewClient(user, dto.getBusinessId());
         }
         return result;
     }
@@ -452,7 +456,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
             if (CollectionUtils.isNotEmpty(users)) {
                 PublicUserDto user = users.get(0);
                 dto.setClientId(user.getId());
-                clientEsService.addNewClient(user, dto.getBusinessId());
+                clientFacade.addNewClient(user, dto.getBusinessId());
             }
         }
         return record;
