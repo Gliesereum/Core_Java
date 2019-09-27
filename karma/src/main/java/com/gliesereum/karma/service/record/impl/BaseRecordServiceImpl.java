@@ -33,6 +33,7 @@ import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordS
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
+import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
@@ -153,26 +154,45 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
 
     @Override
-    public Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, UUID workerId, Long from, UUID packageId, List<UUID> serviceIds) {
+    public Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, UUID workerId, Long from) {
         Map<UUID, Set<RecordFreeTime>> result = new HashMap<>();
         LocalDateTime begin = null;
-        LocalDateTime finish = null;
         if (from != null) {
             begin = Instant.ofEpochMilli(from).atZone(ZoneId.of("UTC")).toLocalDateTime();
         } else {
             begin = LocalDateTime.now(ZoneId.of("UTC"));
         }
+        LocalDateTime finalBegin = begin;
         BaseBusinessDto business = baseBusinessService.getById(businessId);
         if (business == null) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        Long duration = getDurationByRecord(serviceIds, packageId, businessId);
-        finish = begin.plusMinutes(duration);
-        List<RecordFreeTime> freeTimes = getFreeTimesByBusinessAndCheckWorkingTime(begin, finish, business, workerId);
+        Long duration = 0L;
+        List<LiteServicePriceDto> services = servicePriceService.getLiteServicePriceByBusinessId(businessId);
+        if (CollectionUtils.isNotEmpty(services)) {
+            services.sort(Comparator.comparing(LiteServicePriceDto::getDuration));
+            Integer serviceDuration = services.get(0).getDuration();
+            if (serviceDuration != null) {
+                duration = serviceDuration.longValue();
+            }
+        }
+        Long finalDuration = duration;
+        List<RecordFreeTime> freeTimes = new ArrayList<>();
+
+        WorkTimeDto workTime = business.getWorkTimes().stream().filter(wt -> wt.getDayOfWeek().equals(finalBegin.getDayOfWeek())).findFirst().orElse(null);
+
+        if (workTime != null) {
+            LocalDateTime startOfDay = begin.toLocalDate().atTime(workTime.getFrom());
+            LocalDateTime endOfDay = begin.toLocalDate().atTime(workTime.getTo());
+            if (!begin.toLocalDate().equals(LocalDateTime.now(ZoneId.of("UTC")).toLocalDate())) {
+                begin = startOfDay;
+            }
+            freeTimes = getFreeTimesByBusiness(businessId, workerId, startOfDay, endOfDay, begin);
+        }
+
         if (CollectionUtils.isNotEmpty(freeTimes)) {
-            LocalDateTime finalBegin = begin;
             freeTimes.forEach(f -> {
-                if (f.getFinish().minusMinutes(duration).isAfter(finalBegin) && f.getMin() >= duration) {
+                if (f.getFinish().minusMinutes(finalDuration).isAfter(finalBegin) && f.getMin() >= finalDuration) {
                     putToMapIfKeyNotNull(result, f.getWorkerID(), f);
                 }
             });

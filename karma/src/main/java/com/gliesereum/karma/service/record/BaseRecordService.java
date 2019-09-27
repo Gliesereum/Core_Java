@@ -68,7 +68,7 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
 
     void setNotificationSend(UUID recordId);
 
-    Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, UUID workerId, Long from, UUID packageId, List<UUID> serviceIds);
+    Map<UUID, Set<RecordFreeTime>> getFreeTimes(UUID businessId, UUID workerId, Long from);
 
     Page<BaseRecordDto> getByClientForCorporation(List<UUID> corporationIds, UUID clientId, Integer page, Integer size);
 

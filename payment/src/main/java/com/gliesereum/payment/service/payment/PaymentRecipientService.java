@@ -1,7 +1,7 @@
 package com.gliesereum.payment.service.payment;
 
 import com.gliesereum.payment.model.entity.payment.PaymentRecipientEntity;
-import com.gliesereum.share.common.model.dto.payment.PaymentRecipientDto;
+import com.gliesereum.share.common.model.dto.payment.payment.PaymentRecipientDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 /**
