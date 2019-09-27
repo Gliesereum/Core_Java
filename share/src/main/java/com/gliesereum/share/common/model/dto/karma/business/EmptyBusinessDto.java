@@ -31,6 +31,10 @@ public class EmptyBusinessDto {
     @Max(180)
     @Min(-180)
     private Double longitude;
+    
+    private String logoUrl;
+    
+    private String coverUrl;
 
     @NotNull
     private UUID businessCategoryId;
