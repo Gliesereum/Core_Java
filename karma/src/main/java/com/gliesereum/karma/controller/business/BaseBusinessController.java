@@ -2,6 +2,7 @@ package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
+import com.gliesereum.karma.facade.client.ClientSearchFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.document.BusinessDocument;
 import com.gliesereum.karma.model.document.ClientDocument;
@@ -9,10 +10,8 @@ import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
-import com.gliesereum.karma.service.tag.BusinessTagService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.*;
-import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
@@ -58,6 +57,9 @@ public class BaseBusinessController {
 
     @Autowired
     private ClientFacade clientFacade;
+    
+    @Autowired
+    private ClientSearchFacade clientSearchFacade;
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
@@ -241,7 +243,7 @@ public class BaseBusinessController {
                                                           @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
                                                           @RequestParam(value = "size", required = false, defaultValue = "100") Integer size,
                                                           @RequestParam(value = "query", required = false) String query) {
-        return clientFacade.getCustomersByBusinessIdsOrCorporationId(businessIds, corporationId, page, size, query);
+        return clientSearchFacade.getCustomersByBusinessIdsOrCorporationId(businessIds, corporationId, page, size, query);
     }
 
     //++++++++++++++++++++ Tag ++++++++++++++++++++++++++++++++++

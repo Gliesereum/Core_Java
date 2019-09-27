@@ -20,6 +20,8 @@ public interface ClientRepository extends AuditableRepository<ClientEntity> {
     List<ClientEntity> findAllByUserIdIn(Collection<UUID> userIds);
 
     ClientEntity findByUserId(UUID userId);
+    
+    void deleteAllByUserIdIn(List<UUID> userIds);
 
     @Query("SELECT c FROM ClientEntity c JOIN c.businessIds b WHERE (b IN :businessIds) AND c.objectState = :objectState")
     List<ClientEntity> findAllByBusinessIdsInAndObjectState(@Param("businessIds") List<UUID> businessIds,

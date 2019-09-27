@@ -5,17 +5,21 @@ import com.gliesereum.karma.model.repository.jpa.client.ClientRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.client.ClientService;
 import com.gliesereum.share.common.converter.DefaultConverter;
+import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.service.auditable.impl.AuditableServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -57,6 +61,31 @@ public class ClientServiceImpl extends AuditableServiceImpl<ClientDto, ClientEnt
             }
         }
         return result;
+    }
+    
+    @Override
+    @Transactional
+    public void importClients(List<Pair<PublicUserDto, List<LiteBusinessDto>>> userPair) {
+        if (CollectionUtils.isNotEmpty(userPair)) {
+            List<ClientDto> clients = userPair.stream().map(i -> {
+                PublicUserDto user = i.getLeft();
+                ClientDto result = new ClientDto();
+                result.setUserId(user.getId());
+                result.setFirstName(user.getFirstName());
+                result.setLastName(user.getLastName());
+                result.setMiddleName(user.getMiddleName());
+                result.setPhone(user.getPhone());
+                result.setAvatarUrl(user.getAvatarUrl());
+                List<UUID> businessIds = i.getRight().stream().map(DefaultDto::getId).collect(Collectors.toList());
+                List<UUID> corporationIds = i.getRight().stream().map(LiteBusinessDto::getCorporationId).distinct().collect(Collectors.toList());
+                result.setBusinessIds(businessIds);
+                result.setCorporationIds(corporationIds);
+                return result;
+            }).collect(Collectors.toList());
+            List<UUID> userIds = clients.stream().map(ClientDto::getUserId).collect(Collectors.toList());
+            clientRepository.deleteAllByUserIdIn(userIds);
+            super.create(clients);
+        }
     }
     
     @Override

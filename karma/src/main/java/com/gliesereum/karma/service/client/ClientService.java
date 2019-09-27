@@ -3,8 +3,10 @@ package com.gliesereum.karma.service.client;
 import com.gliesereum.karma.model.entity.client.ClientEntity;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
+import com.gliesereum.share.common.model.dto.karma.business.LiteBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.service.auditable.AuditableService;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.UUID;
 public interface ClientService extends AuditableService<ClientDto, ClientEntity> {
 
     ClientDto addNewClient(PublicUserDto user, UUID businessId);
+    
+    void importClients(List<Pair<PublicUserDto, List<LiteBusinessDto>>> userPair);
 
     ClientDto addNewClient(UserDto user, UUID businessId);
 
