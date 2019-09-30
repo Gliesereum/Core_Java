@@ -33,6 +33,7 @@ import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.script.Script;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
@@ -135,8 +136,8 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     
         FetchSourceFilter fetchSourceFilter = new FetchSourceFilter(null, new String[]{FIELD_SERVICE_NAMES, FIELD_SERVICES, FIELD_WORK_TIMES});
         NativeSearchQuery nativeQuery = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder).withSourceFilter(fetchSourceFilter).withIndices(BUSINESS_INDEX_NAME).withTypes(BUSINESS_TYPE_NAME).build();
-    
-        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeQuery);
+        
+        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeQuery.getQuery());
         result = IterableUtils.toList(searchResult);
         return result;
     }
