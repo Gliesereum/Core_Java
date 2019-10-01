@@ -6,15 +6,16 @@ import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
+import com.gliesereum.share.common.model.dto.karma.media.MediaListUpdateDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.MEDIA_NOT_FOUND_BY_ID;
@@ -37,7 +38,26 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
         super(mediaRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.mediaRepository = mediaRepository;
     }
-
+    
+    @Override
+    @Transactional
+    public List<MediaDto> updateList(MediaListUpdateDto medias) {
+        List<MediaDto> result = Collections.emptyList();
+        UUID objectId = medias.getObjectId();
+        if (objectId != null) {
+            mediaRepository.deleteAllByObjectId(objectId);
+            List<MediaDto> list = medias.getList();
+            if (CollectionUtils.isNotEmpty(list)) {
+                list.forEach(i -> {
+                    i.setObjectId(objectId);
+                    i.setId(null);
+                });
+                result = super.create(list);
+            }
+        }
+        return result;
+    }
+    
     @Override
     public List<MediaDto> getByObjectId(UUID objectId) {
         List<MediaDto> result = null;
