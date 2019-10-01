@@ -16,6 +16,7 @@ import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
+import com.gliesereum.share.common.model.dto.karma.media.MediaListUpdateDto;
 import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.model.response.MapResponse;
@@ -131,6 +132,12 @@ public class BaseBusinessController {
     public MediaDto create(@RequestBody @Valid MediaDto media) {
         businessPermissionFacade.checkPermissionByBusiness(media.getObjectId(), BusinessPermission.BUSINESS_ADMINISTRATION);
         return mediaService.create(media);
+    }
+    
+    @PostMapping("/media/list")
+    public List<MediaDto> updateList(@RequestBody @Valid MediaListUpdateDto medias) {
+        businessPermissionFacade.checkPermissionByBusiness(medias.getObjectId(), BusinessPermission.BUSINESS_ADMINISTRATION);
+        return mediaService.updateList(medias);
     }
 
     @PutMapping("/media")

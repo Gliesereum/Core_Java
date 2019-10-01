@@ -23,9 +23,7 @@ public class MediaDto extends DefaultDto {
 
     @NotNull
     private UUID objectId;
-
-    @NotEmpty
-    @Size(min = 2)
+    
     private String title;
 
     private String description;

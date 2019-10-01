@@ -17,4 +17,6 @@ public interface MediaRepository extends JpaRepository<MediaEntity, UUID> {
     MediaEntity findByIdAndObjectId(UUID id, UUID objectId);
 
     List<MediaEntity> findAllByObjectIdIn(List<UUID> objectIds);
+    
+    void deleteAllByObjectId(UUID objectId);
 }
