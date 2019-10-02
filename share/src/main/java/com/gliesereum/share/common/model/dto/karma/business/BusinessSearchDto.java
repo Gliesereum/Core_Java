@@ -33,5 +33,7 @@ public class BusinessSearchDto {
 
     private List<String> tags;
     
-    private Integer count;
+    private Integer size;
+    
+    private Integer page;
 }

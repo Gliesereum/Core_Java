@@ -5,7 +5,7 @@ import com.gliesereum.karma.model.document.BusinessDocument;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordRepository;
 import com.gliesereum.karma.service.business.WorkerService;
 import com.gliesereum.karma.service.es.BusinessEsService;
-import com.gliesereum.karma.service.record.BaseRecordService;
+import com.gliesereum.karma.service.popular.BusinessPopularService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.tag.TagService;
@@ -16,16 +16,16 @@ import com.gliesereum.share.common.model.dto.karma.business.group.BusinessGroupD
 import com.gliesereum.share.common.model.dto.karma.business.group.BusinessGroupListItemDto;
 import com.gliesereum.share.common.model.dto.karma.business.group.BusinessGroupTagDto;
 import com.gliesereum.share.common.model.dto.karma.business.group.enumerated.BusinessGroupBy;
+import com.gliesereum.share.common.model.dto.karma.business.popular.BusinessPopularDto;
 import com.gliesereum.share.common.model.dto.karma.business.search.BusinessGroupSearchDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordUsageCountDto;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
-import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
-import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -57,30 +57,37 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
     @Autowired
     private ServicePriceService servicePriceService;
     
+    @Autowired
+    private BusinessPopularService businessPopularService;
+    
     @Override
     public BusinessGroupDto getBusinessGroup(BusinessGroupSearchDto groupSearch) {
         BusinessGroupDto result = null;
         if (groupSearch != null) {
-            List<BusinessDocument> businessDocuments = businessEsService.searchDocuments(groupSearch);
-            if (CollectionUtils.isNotEmpty(businessDocuments)) {
-                result = new BusinessGroupDto();
-                
-                List<BusinessDocumentDto> businesses = defaultConverter.convert(businessDocuments, BusinessDocumentDto.class);
-                result.setBusiness(businesses);
-                
-                if (groupSearch.getCount() != null) {
-                    groupSearch.setCount(null);
-                    businessDocuments = businessEsService.searchDocuments(groupSearch);
-                    businesses = defaultConverter.convert(businessDocuments, BusinessDocumentDto.class);
-                }
-    
-                result.setGroups(new HashMap<>());
+            Page<BusinessDocument> businessDocuments = businessEsService.searchDocumentsPage(groupSearch);
+            result = new BusinessGroupDto();
+            Page<BusinessDocumentDto> documentDtoPage = defaultConverter.convert(businessDocuments, BusinessDocumentDto.class);
+            result.setPage(documentDtoPage);
+            
+            List<BusinessDocumentDto> businesses = null;
+            if (documentDtoPage != null) {
+                businesses = documentDtoPage.getContent();
+            }
+            
+            if ((groupSearch.getSize() != null) || (groupSearch.getPage() != null)) {
+                groupSearch.setSize(null);
+                groupSearch.setPage(null);
+                List<BusinessDocument> searchDocuments = businessEsService.searchDocuments(groupSearch);
+                businesses = defaultConverter.convert(searchDocuments, BusinessDocumentDto.class);
+            }
+            
+            result.setGroups(new HashMap<>());
+            if (CollectionUtils.isNotEmpty(businesses)) {
                 long limit = groupSearch.getCountInGroups() != null ? groupSearch.getCountInGroups() : 10L;
                 Map<UUID, BusinessDocumentDto> businessMap = businesses.stream().collect(Collectors.toMap(i -> UUID.fromString(i.getId()), i -> i));
                 
                 addTagGroups(groupSearch, businesses, result);
                 addGroup(groupSearch, businessMap, result, limit);
-                
             }
         }
         return result;
@@ -93,6 +100,9 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
                 switch (group) {
                     case orderByRating:
                         addGroupOrderByRating(businessMap, target, group, limit);
+                        break;
+                    case orderByPopular:
+                        addGroupOrderByPopular(businessMap, target, group, limit);
                         break;
                     case orderByPopularPackage:
                         addGroupOrderByPopularPackage(businessMap, target, group, limit);
@@ -108,76 +118,93 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
                         break;
                 }
             }
-    
+            
         }
     }
     
     private void addGroupOrderByPopularPackage(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
         Set<UUID> businessIds = businessMap.keySet();
         List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountPackageUsage(LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1), businessIds, limit);
+        List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(usageCount)) {
             List<UUID> packageIds = usageCount.stream().map(RecordUsageCountDto::getObjectId).collect(Collectors.toList());
             Map<UUID, LitePackageDto> packageMap = packageService.getMapByIds(packageIds);
-    
-            List<BusinessGroupListItemDto> list = usageCount.stream().map(i -> {
+            list = usageCount.stream().map(i -> {
                 BusinessGroupListItemDto item = new BusinessGroupListItemDto();
                 item.setBusiness(businessMap.get(i.getBusinessId()));
                 item.setCount(i.getCount());
                 item.setObject(packageMap.get(i.getObjectId()));
                 return item;
             }).collect(Collectors.toList());
-            target.getGroups().put(businessGroup, list);
         }
+        target.getGroups().put(businessGroup, list);
+    }
+    
+    private void addGroupOrderByPopular(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
+        Set<UUID> businessIds = businessMap.keySet();
+        List<BusinessPopularDto> businessPopular = businessPopularService.getByBusinessIds(businessIds);
+        List<BusinessGroupListItemDto> list = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(businessPopular)) {
+            list = businessPopular.stream().map(i -> {
+                BusinessGroupListItemDto item = new BusinessGroupListItemDto();
+                item.setBusiness(businessMap.get(i.getBusinessId()));
+                item.setCount(i.getCount());
+                return item;
+            }).collect(Collectors.toList());
+        }
+        target.getGroups().put(businessGroup, list);
     }
     
     private void addGroupOrderByPopularService(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
         Set<UUID> businessIds = businessMap.keySet();
         List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountServiceUsage(LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1), businessIds, limit);
+        List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(usageCount)) {
             List<UUID> serviceIds = usageCount.stream().map(RecordUsageCountDto::getObjectId).collect(Collectors.toList());
             Map<UUID, LiteServicePriceDto> serviceMap = servicePriceService.getMapByIds(serviceIds);
-    
-            List<BusinessGroupListItemDto> list = usageCount.stream().map(i -> {
+            list = usageCount.stream().map(i -> {
                 BusinessGroupListItemDto item = new BusinessGroupListItemDto();
                 item.setBusiness(businessMap.get(i.getBusinessId()));
                 item.setCount(i.getCount());
                 item.setObject(serviceMap.get(i.getObjectId()));
                 return item;
             }).collect(Collectors.toList());
-            target.getGroups().put(businessGroup, list);
         }
+        target.getGroups().put(businessGroup, list);
     }
     
     private void addGroupOrderByPopularWorker(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
         Set<UUID> businessIds = businessMap.keySet();
         List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountWorkerUsage(LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1), businessIds, limit);
+        List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(usageCount)) {
             List<UUID> workerIds = usageCount.stream().map(RecordUsageCountDto::getObjectId).collect(Collectors.toList());
             Map<UUID, LiteWorkerDto> workerMap = workerService.getLiteWorkerMapByIds(workerIds);
-    
-            List<BusinessGroupListItemDto> list = usageCount.stream().map(i -> {
+            
+            list = usageCount.stream().map(i -> {
                 BusinessGroupListItemDto item = new BusinessGroupListItemDto();
                 item.setBusiness(businessMap.get(i.getBusinessId()));
                 item.setCount(i.getCount());
                 item.setObject(workerMap.get(i.getObjectId()));
                 return item;
             }).collect(Collectors.toList());
-            target.getGroups().put(businessGroup, list);
         }
+        target.getGroups().put(businessGroup, list);
     }
     
     private void addGroupOrderByRecordCount(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
         Set<UUID> businessIds = businessMap.keySet();
         List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountRecordInBusiness(LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1), businessIds, limit);
+        List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(usageCount)) {
-            List<BusinessGroupListItemDto> list = usageCount.stream().map(i -> {
+            list = usageCount.stream().map(i -> {
                 BusinessGroupListItemDto item = new BusinessGroupListItemDto();
                 item.setBusiness(businessMap.get(i.getBusinessId()));
                 item.setCount(i.getCount());
                 return item;
             }).collect(Collectors.toList());
-            target.getGroups().put(businessGroup, list);
         }
+        target.getGroups().put(businessGroup, list);
     }
     
     private void addGroupOrderByRating(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {

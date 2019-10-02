@@ -227,6 +227,11 @@ public class BaseBusinessController {
     public BusinessGroupDto searchGroup(@RequestBody BusinessGroupSearchDto businessGroupSearch) {
         return businessSearchFacade.getBusinessGroup(businessGroupSearch);
     }
+    
+    @PostMapping("/search/page")
+    public Page<BusinessDocument> searchPage(@RequestBody(required = false) BusinessSearchDto businessSearch) {
+        return businessEsService.searchDocumentsPage(businessSearch);
+    }
 
     @GetMapping("full-model-by-id")
     public BusinessFullModel getFullModelById(@RequestParam("id") UUID id) {
