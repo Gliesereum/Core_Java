@@ -4,9 +4,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -20,13 +20,17 @@ import java.util.UUID;
 @Entity
 @Table(name = "record")
 public class BaseRecordEntity extends AbstractRecordEntity {
-
+    
     @Column(name = "working_space_id")
     private UUID workingSpaceId;
-
+    
     @Column(name = "specified_working_space")
     private boolean specifiedWorkingSpace;
-
+    
     @Column(name = "worker_id")
     private UUID workerId;
+    
+    @OneToMany
+    @JoinColumn(name = "record_id", insertable = false, updatable = false)
+    private Set<RecordServiceEntity> services = new HashSet<>();
 }

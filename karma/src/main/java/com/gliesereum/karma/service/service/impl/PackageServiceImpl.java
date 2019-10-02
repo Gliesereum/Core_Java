@@ -83,7 +83,27 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         }
         return result;
     }
-
+    
+    @Override
+    public Map<UUID, LitePackageDto> getMapByIds(List<UUID> packageIds) {
+        Map<UUID, LitePackageDto> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(packageIds)) {
+            List<LitePackageDto> packages = this.getLiteByIds(packageIds);
+            result = packages.stream().collect(Collectors.toMap(LitePackageDto::getId, i -> i));
+        }
+        return result;
+    }
+    
+    @Override
+    public List<LitePackageDto> getLiteByIds(List<UUID> ids) {
+        List<LitePackageDto> result = null;
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<PackageEntity> entities = packageRepository.findAllById(ids);
+            result = converter.convert(entities, LitePackageDto.class);
+        }
+        return result;
+    }
+    
     @Override
     public PackageDto getByIdIgnoreState(UUID id) {
         PackageDto result = null;

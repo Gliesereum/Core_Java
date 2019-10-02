@@ -56,4 +56,14 @@ public class TagServiceImpl extends AuditableServiceImpl<TagDto, TagEntity> impl
         }
         return result;
     }
+    
+    @Override
+    public List<TagDto> getTagsByName(List<String> names, List<ObjectState> states) {
+        List<TagDto> result = null;
+        if (CollectionUtils.isNotEmpty(names)) {
+            List<TagEntity> entities = tagRepository.getAllByNameInAndObjectStateIn(names, states);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
 }

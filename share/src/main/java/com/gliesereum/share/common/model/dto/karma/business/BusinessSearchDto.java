@@ -32,4 +32,6 @@ public class BusinessSearchDto {
     private Boolean businessVerify;
 
     private List<String> tags;
+    
+    private Integer count;
 }

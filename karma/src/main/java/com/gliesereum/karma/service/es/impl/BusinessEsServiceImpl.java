@@ -33,7 +33,10 @@ import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.script.Script;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
@@ -103,6 +106,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     @Autowired
     private BusinessTagService businessTagService;
+    
+    @Autowired
+    private ElasticsearchOperations elasticsearchOperations;
 
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
@@ -135,9 +141,11 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         addObjectStateQuery(boolQueryBuilder, ObjectState.ACTIVE);
     
         FetchSourceFilter fetchSourceFilter = new FetchSourceFilter(null, new String[]{FIELD_SERVICE_NAMES, FIELD_SERVICES, FIELD_WORK_TIMES});
-        NativeSearchQuery nativeQuery = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder).withSourceFilter(fetchSourceFilter).withIndices(BUSINESS_INDEX_NAME).withTypes(BUSINESS_TYPE_NAME).build();
-        
-        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeQuery.getQuery());
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder).withSourceFilter(fetchSourceFilter).withIndices(BUSINESS_INDEX_NAME).withTypes(BUSINESS_TYPE_NAME);
+        setPageable(nativeSearchQueryBuilder, businessSearch);
+    
+        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeSearchQueryBuilder.build());
+        //Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeQuery.getQuery());
         result = IterableUtils.toList(searchResult);
         return result;
     }
@@ -401,6 +409,15 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                 businessSearch.setServiceIds(clientPreference.stream().map(ClientPreferenceDto::getServiceId).collect(Collectors.toList()));
             }
 
+        }
+    }
+    
+    private void setPageable(NativeSearchQueryBuilder nativeSearchQueryBuilder, BusinessSearchDto businessSearchDto) {
+        if ((businessSearchDto != null) && (businessSearchDto.getCount() != null) && (businessSearchDto.getCount() > 0)) {
+            nativeSearchQueryBuilder.withPageable(PageRequest.of(0, businessSearchDto.getCount()));
+        } else {
+            long count = elasticsearchOperations.count(nativeSearchQueryBuilder.build(), carWashEsRepository.getEntityClass());
+            nativeSearchQueryBuilder.withPageable(PageRequest.of(0, (int)count));
         }
     }
 }
