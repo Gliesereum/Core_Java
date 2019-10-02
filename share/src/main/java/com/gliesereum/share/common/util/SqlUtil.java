@@ -31,6 +31,7 @@ public class SqlUtil {
             predicates.add(criteriaBuilder.equal(expression, value));
         }
     }
+    
 
     public static void createInIfNotEmpty(List<Predicate> predicates, Expression<?> expression, Collection<? extends Object> value) {
         if (CollectionUtils.isNotEmpty(value)) {

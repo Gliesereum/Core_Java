@@ -36,18 +36,18 @@ public class BusinessTagServiceImpl extends DefaultServiceImpl<BusinessTagDto, B
     private static final Class<BusinessTagEntity> ENTITY_CLASS = BusinessTagEntity.class;
 
     private final BusinessTagRepository businessTagRepository;
+    
+    @Autowired
+    private TagService tagService;
+    
+    @Autowired
+    private BaseBusinessService businessService;
 
     @Autowired
     public BusinessTagServiceImpl(BusinessTagRepository businessTagRepository, DefaultConverter defaultConverter) {
         super(businessTagRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.businessTagRepository = businessTagRepository;
     }
-
-    @Autowired
-    private TagService tagService;
-
-    @Autowired
-    private BaseBusinessService businessService;
 
     @Override
     public List<TagDto> addTag(UUID tagId, UUID businessId) {

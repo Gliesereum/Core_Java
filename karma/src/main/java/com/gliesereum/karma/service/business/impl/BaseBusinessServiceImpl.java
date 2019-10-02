@@ -12,6 +12,7 @@ import com.gliesereum.karma.service.business.descriptions.BusinessDescriptionSer
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
+import com.gliesereum.karma.service.popular.BusinessPopularService;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
@@ -113,6 +114,9 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
 
     @Autowired
     private BusinessTagService businessTagService;
+    
+    @Autowired
+    private BusinessPopularService businessPopularService;
 
     @Autowired
     public BaseBusinessServiceImpl(BaseBusinessRepository repository, DefaultConverter defaultConverter) {
@@ -347,6 +351,8 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         Map<UUID, List<MediaDto>> medias = mediaService.getMapByObjectIds(ids);
         Map<UUID, List<CommentFullDto>> comments = commentService.getMapFullByObjectIds(ids);
         Map<UUID, List<TagDto>> tags = businessTagService.getMapByBusinessIds(ids);
+        
+        businessPopularService.updateBusinessCountAsync(ids);
 
         return entities.stream()
                 .map(i -> converter.convert(i, BusinessFullModel.class))

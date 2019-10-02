@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface TagRepository extends AuditableRepository <TagEntity> {
 
     List<TagEntity> getAllByIdInAndObjectStateIn(List<UUID> ids, List<ObjectState> states);
+    
+    List<TagEntity> getAllByNameInAndObjectStateIn(List<String> names, List<ObjectState> states);
 }

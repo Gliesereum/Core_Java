@@ -45,6 +45,12 @@ public class BusinessDocument {
 
     @Field(type = FieldType.Keyword)
     private String coverUrl;
+    
+    @Field(type = FieldType.Keyword)
+    private String siteUrl;
+    
+    @Field(type = FieldType.Keyword)
+    private String videoUrl;
 
     @Field(type = FieldType.Keyword)
     private String phone;

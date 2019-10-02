@@ -33,7 +33,10 @@ import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.script.Script;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
@@ -103,6 +106,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
 
     @Autowired
     private BusinessTagService businessTagService;
+    
+    @Autowired
+    private ElasticsearchOperations elasticsearchOperations;
 
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
@@ -114,6 +120,28 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Override
     public List<BusinessDocument> searchDocuments(BusinessSearchDto businessSearch) {
         List<BusinessDocument> result;
+    
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = buildQuery(businessSearch);
+    
+        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeSearchQueryBuilder.build());
+        //Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeQuery.getQuery());
+        result = IterableUtils.toList(searchResult);
+        return result;
+    }
+    
+    @Override
+    public Page<BusinessDocument> searchDocumentsPage(BusinessSearchDto businessSearch) {
+        Page<BusinessDocument> result;
+    
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = buildQuery(businessSearch);
+        setPageable(nativeSearchQueryBuilder, businessSearch);
+    
+        result = carWashEsRepository.search(nativeSearchQueryBuilder.build());
+        return result;
+    }
+    
+    
+    private NativeSearchQueryBuilder buildQuery(BusinessSearchDto businessSearch) {
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
         if (businessSearch != null) {
             setBusinessCategoryId(businessSearch);
@@ -124,24 +152,22 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
             addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.getBusinessVerify());
             addQueryByTags(boolQueryBuilder, businessSearch.getTags());
-
+        
             CarInfoDto carInfo = null;
             if (!SecurityUtil.isAnonymous()) {
                 carInfo = carService.getCarInfo(businessSearch.getTargetId());
             }
             addQueryByService(boolQueryBuilder, businessSearch.getServiceIds(), carInfo);
-
+        
         }
         addObjectStateQuery(boolQueryBuilder, ObjectState.ACTIVE);
     
         FetchSourceFilter fetchSourceFilter = new FetchSourceFilter(null, new String[]{FIELD_SERVICE_NAMES, FIELD_SERVICES, FIELD_WORK_TIMES});
-        NativeSearchQuery nativeQuery = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder).withSourceFilter(fetchSourceFilter).withIndices(BUSINESS_INDEX_NAME).withTypes(BUSINESS_TYPE_NAME).build();
-        
-        Iterable<BusinessDocument> searchResult = carWashEsRepository.search(nativeQuery.getQuery());
-        result = IterableUtils.toList(searchResult);
-        return result;
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder).withSourceFilter(fetchSourceFilter).withIndices(BUSINESS_INDEX_NAME).withTypes(BUSINESS_TYPE_NAME);
+        setPageable(nativeSearchQueryBuilder, businessSearch);
+        return nativeSearchQueryBuilder;
     }
-
+    
     @Override
     @Transactional
     @Async
@@ -401,6 +427,19 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                 businessSearch.setServiceIds(clientPreference.stream().map(ClientPreferenceDto::getServiceId).collect(Collectors.toList()));
             }
 
+        }
+    }
+    
+    private void setPageable(NativeSearchQueryBuilder nativeSearchQueryBuilder, BusinessSearchDto businessSearchDto) {
+        int page = 0;
+        if ((businessSearchDto != null) && (businessSearchDto.getPage() != null) && (businessSearchDto.getPage() >= 0)) {
+            page = businessSearchDto.getPage();
+        }
+        if ((businessSearchDto != null) && (businessSearchDto.getSize() != null) && (businessSearchDto.getSize() > 0)) {
+            nativeSearchQueryBuilder.withPageable(PageRequest.of(page, businessSearchDto.getSize()));
+        } else {
+            long count = elasticsearchOperations.count(nativeSearchQueryBuilder.build(), carWashEsRepository.getEntityClass());
+            nativeSearchQueryBuilder.withPageable(PageRequest.of(page, (int)count));
         }
     }
 }

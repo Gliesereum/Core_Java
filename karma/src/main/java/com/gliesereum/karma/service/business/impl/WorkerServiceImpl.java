@@ -161,7 +161,7 @@ public class WorkerServiceImpl extends AuditableServiceImpl<WorkerDto, WorkerEnt
 
     private List<LiteWorkerDto> setUsersInLiteModels(List<LiteWorkerDto> list) {
         if (CollectionUtils.isNotEmpty(list)) {
-            Map<UUID, UserDto> users = userExchangeService.findUserMapByIds(list.stream().map(LiteWorkerDto::getUserId).collect(Collectors.toList()));
+            Map<UUID, PublicUserDto> users = userExchangeService.findPublicUserMapByIds(list.stream().map(LiteWorkerDto::getUserId).collect(Collectors.toList()));
             if (MapUtils.isNotEmpty(users)) {
                 list.forEach(f -> f.setUser(users.get(f.getUserId())));
             }

@@ -1,6 +1,7 @@
 package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.facade.business.BusinessSearchFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
 import com.gliesereum.karma.facade.client.ClientSearchFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
@@ -12,6 +13,8 @@ import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.*;
+import com.gliesereum.share.common.model.dto.karma.business.group.BusinessGroupDto;
+import com.gliesereum.share.common.model.dto.karma.business.search.BusinessGroupSearchDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
@@ -64,6 +67,9 @@ public class BaseBusinessController {
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
+    
+    @Autowired
+    private BusinessSearchFacade businessSearchFacade;
 
     //++++++++++++++ Base +++++++++++++++++++++++
 
@@ -215,6 +221,16 @@ public class BaseBusinessController {
     @PostMapping("/search/document")
     public List<BusinessDocument> searchDocument(@Valid @RequestBody(required = false) BusinessSearchDto businessSearch) {
         return businessEsService.searchDocuments(businessSearch);
+    }
+    
+    @PostMapping("/search/groups")
+    public BusinessGroupDto searchGroup(@RequestBody BusinessGroupSearchDto businessGroupSearch) {
+        return businessSearchFacade.getBusinessGroup(businessGroupSearch);
+    }
+    
+    @PostMapping("/search/page")
+    public Page<BusinessDocument> searchPage(@RequestBody(required = false) BusinessSearchDto businessSearch) {
+        return businessEsService.searchDocumentsPage(businessSearch);
     }
 
     @GetMapping("full-model-by-id")

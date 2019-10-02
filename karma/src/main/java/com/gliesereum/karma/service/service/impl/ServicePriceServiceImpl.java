@@ -78,7 +78,30 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         super(servicePriceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.servicePriceRepository = servicePriceRepository;
     }
-
+    
+    @Override
+    public Map<UUID, LiteServicePriceDto> getMapByIds(List<UUID> servicePriceIds) {
+        Map<UUID, LiteServicePriceDto> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(servicePriceIds)) {
+            
+            List<LiteServicePriceDto> services = this.getLiteByIds(servicePriceIds);
+            if (CollectionUtils.isNotEmpty(services)) {
+                result = services.stream().collect(Collectors.toMap(LiteServicePriceDto::getId, i -> i));
+            }
+        }
+        return result;
+    }
+    
+    @Override
+    public List<LiteServicePriceDto> getLiteByIds(List<UUID> ids) {
+        List<LiteServicePriceDto> result = null;
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<ServicePriceEntity> entities = servicePriceRepository.findAllById(ids);
+            result = converter.convert(entities, LiteServicePriceDto.class);
+        }
+        return result;
+    }
+    
     @Override
     public ServicePriceDto create(ServicePriceDto dto) {
         ServicePriceDto result = null;
