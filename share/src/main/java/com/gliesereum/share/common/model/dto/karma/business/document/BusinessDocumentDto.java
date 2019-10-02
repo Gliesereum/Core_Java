@@ -32,6 +32,10 @@ public class BusinessDocumentDto {
     
     private String coverUrl;
     
+    private String siteUrl;
+    
+    private String videoUrl;
+    
     private String phone;
     
     private String addPhone;

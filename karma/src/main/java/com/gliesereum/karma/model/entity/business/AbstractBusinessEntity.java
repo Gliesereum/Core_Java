@@ -35,6 +35,9 @@ public class AbstractBusinessEntity extends AuditableDefaultEntity {
 
     @Column(name = "site_url")
     private String siteUrl;
+    
+    @Column(name = "video_url")
+    private String videoUrl;
 
     @Column(name = "cashless_payment")
     private boolean cashlessPayment;

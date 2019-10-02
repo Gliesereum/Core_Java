@@ -30,6 +30,12 @@ public class LiteBusinessDto extends AuditableDefaultDto {
     private String description;
 
     private String logoUrl;
+    
+    private String coverUrl;
+    
+    private String siteUrl;
+    
+    private String videoUrl;
 
     private String address;
 
@@ -44,10 +50,6 @@ public class LiteBusinessDto extends AuditableDefaultDto {
     private Integer timeZone;
 
     private UUID businessCategoryId;
-
-    private String coverUrl;
-
-    private String siteUrl;
 
     private boolean cashlessPayment;
 

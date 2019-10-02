@@ -35,6 +35,10 @@ public class EmptyBusinessDto {
     private String logoUrl;
     
     private String coverUrl;
+    
+    private String siteUrl;
+    
+    private String videoUrl;
 
     @NotNull
     private UUID businessCategoryId;
