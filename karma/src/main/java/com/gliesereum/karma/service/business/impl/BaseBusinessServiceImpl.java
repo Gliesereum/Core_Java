@@ -479,7 +479,14 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         businessEsService.indexAsync(businessId);
         return result;
     }
-
+    
+    @Override
+    public List<TagDto> saveTags(List<UUID> tagId, UUID businessId) {
+        List<TagDto> result =  businessTagService.saveTags(tagId, businessId);
+        businessEsService.indexAsync(businessId);
+        return result;
+    }
+    
     @Override
     public List<TagDto> removeTag(UUID tagId, UUID businessId) {
         List<TagDto> result =  businessTagService.removeTag(tagId,businessId);

@@ -76,5 +76,7 @@ public interface BaseBusinessService extends AuditableService<BaseBusinessDto, B
     List<TagDto> removeTag(UUID tagId, UUID businessId);
     
     List<TagDto> getTags(UUID businessId);
+    
+    List<TagDto> saveTags(List<UUID> tagId, UUID businessId);
 }
 

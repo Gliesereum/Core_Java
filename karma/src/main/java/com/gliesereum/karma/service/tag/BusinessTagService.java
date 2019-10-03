@@ -12,6 +12,8 @@ import java.util.UUID;
 public interface BusinessTagService extends DefaultService<BusinessTagDto, BusinessTagEntity> {
    
     List<TagDto> addTag(UUID tagId, UUID businessId);
+    
+    List<TagDto> saveTags(List<UUID> tagId, UUID businessId);
 
     List<TagDto> removeTag(UUID tagId, UUID businessId);
 
