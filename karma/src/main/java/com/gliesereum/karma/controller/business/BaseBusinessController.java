@@ -282,4 +282,9 @@ public class BaseBusinessController {
                                   @RequestParam(value = "businessId") UUID businessId) {
         return baseBusinessService.removeTag(tagId, businessId);
     }
+    
+    @GetMapping("/{id}/tags")
+    public List<TagDto> getTags(@PathVariable("id") UUID businessId) {
+        return baseBusinessService.getTags(businessId);
+    }
 }

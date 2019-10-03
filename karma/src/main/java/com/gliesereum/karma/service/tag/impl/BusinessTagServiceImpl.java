@@ -89,7 +89,20 @@ public class BusinessTagServiceImpl extends DefaultServiceImpl<BusinessTagDto, B
             businessTagRepository.deleteAllByBusinessId(businessId);
         }
     }
-
+    
+    @Override
+    public List<TagDto> getByBusinessId(UUID businessId) {
+        List<TagDto> result = null;
+        if (businessId != null) {
+            List<BusinessTagEntity> businessTags = businessTagRepository.getByBusinessId(businessId);
+            if (CollectionUtils.isNotEmpty(businessTags)) {
+                List<UUID> tagIds = businessTags.stream().map(BusinessTagEntity::getTagId).collect(Collectors.toList());
+                result = tagService.getByIds(tagIds);
+            }
+        }
+        return result;
+    }
+    
     @Override
     public Map<UUID, List<TagDto>> getMapByBusinessIds(List<UUID> ids) {
         Map<UUID, List<TagDto>> result = new HashMap<>();

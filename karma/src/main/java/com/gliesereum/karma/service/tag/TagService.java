@@ -14,4 +14,6 @@ public interface TagService extends AuditableService<TagDto, TagEntity> {
     Map<UUID, TagDto> getMapByIds(List<UUID> ids, List<ObjectState> states);
     
     List<TagDto> getTagsByName(List<String> names, List<ObjectState> states);
+    
+    List<TagDto> getByIds(List<UUID> tagIds);
 }

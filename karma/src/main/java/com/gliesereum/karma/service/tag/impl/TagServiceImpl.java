@@ -66,4 +66,14 @@ public class TagServiceImpl extends AuditableServiceImpl<TagDto, TagEntity> impl
         }
         return result;
     }
+    
+    @Override
+    public List<TagDto> getByIds(List<UUID> tagIds) {
+        List<TagDto> result = null;
+        if (CollectionUtils.isNotEmpty(tagIds)) {
+            List<TagEntity> tags = tagRepository.findAllById(tagIds);
+            result = converter.convert(tags, dtoClass);
+        }
+        return result;
+    }
 }
