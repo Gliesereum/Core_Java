@@ -44,7 +44,7 @@ public class TagServiceImpl extends AuditableServiceImpl<TagDto, TagEntity> impl
     public TagDto create(TagDto dto) {
         TagDto result = null;
         if (dto != null) {
-            if (tagRepository.existsByName(dto.getName())) {
+            if (tagRepository.existsByNameAndObjectState(dto.getName(), ObjectState.ACTIVE)) {
                 throw new ClientException(TAG_WITH_THIS_NAME_EXIST);
             }
             result = super.create(dto);
@@ -56,7 +56,7 @@ public class TagServiceImpl extends AuditableServiceImpl<TagDto, TagEntity> impl
     public TagDto update(TagDto dto) {
         TagDto result = null;
         if (dto != null) {
-            if (tagRepository.existsByNameAndIdNot(dto.getName(), dto.getId())) {
+            if (tagRepository.existsByNameAndIdNotAndObjectState(dto.getName(), dto.getId(), ObjectState.ACTIVE)) {
                 throw new ClientException(TAG_WITH_THIS_NAME_EXIST);
             }
             result = super.update(dto);
@@ -69,7 +69,7 @@ public class TagServiceImpl extends AuditableServiceImpl<TagDto, TagEntity> impl
         Map<UUID, TagDto> result = new HashMap<>();
         if (CollectionUtils.isNotEmpty(ids)) {
             if(CollectionUtils.isEmpty(states)){
-                states = Arrays.asList(ObjectState.ACTIVE, ObjectState.DELETED);
+                states = Arrays.asList(ObjectState.ACTIVE);
             }
             List<TagEntity> entities = tagRepository.getAllByIdInAndObjectStateIn(ids, states);
             List<TagDto> tags = converter.convert(entities, dtoClass);
@@ -96,7 +96,7 @@ public class TagServiceImpl extends AuditableServiceImpl<TagDto, TagEntity> impl
     public List<TagDto> getByIds(List<UUID> tagIds) {
         List<TagDto> result = null;
         if (CollectionUtils.isNotEmpty(tagIds)) {
-            List<TagEntity> tags = tagRepository.findAllById(tagIds);
+            List<TagEntity> tags = tagRepository.getAllByIdInAndObjectStateIn(tagIds, Arrays.asList(ObjectState.ACTIVE));
             result = converter.convert(tags, dtoClass);
         }
         return result;
