@@ -13,4 +13,8 @@ public interface TagRepository extends AuditableRepository <TagEntity> {
     List<TagEntity> getAllByIdInAndObjectStateIn(List<UUID> ids, List<ObjectState> states);
     
     List<TagEntity> getAllByNameInAndObjectStateIn(List<String> names, List<ObjectState> states);
+    
+    boolean existsByName(String name);
+    
+    boolean existsByNameAndIdNot(String name, UUID id);
 }
