@@ -276,6 +276,12 @@ public class BaseBusinessController {
                                @RequestParam(value = "businessId") UUID businessId) {
         return baseBusinessService.addTag(tagId, businessId);
     }
+    
+    @PostMapping("/tag/save")
+    public List<TagDto> saveTag(@RequestParam(value = "tagId") List<UUID> tagId,
+                                @RequestParam(value = "businessId") UUID businessId) {
+        return baseBusinessService.saveTags(tagId, businessId);
+    }
 
     @PostMapping("/tag/remove")
     public List<TagDto> removeTag(@RequestParam(value = "tagId") UUID tagId,
