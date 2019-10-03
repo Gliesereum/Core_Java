@@ -62,6 +62,7 @@ public class BusinessTagServiceImpl extends DefaultServiceImpl<BusinessTagDto, B
     }
     
     @Override
+    @Transactional
     public List<TagDto> saveTags(List<UUID> tagId, UUID businessId) {
         List<TagDto> result = null;
         if (businessId != null) {
