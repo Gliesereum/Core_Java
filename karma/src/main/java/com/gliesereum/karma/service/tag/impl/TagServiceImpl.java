@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.BUSINESS_NOT_FOUND;
+import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.TAG_WITH_THIS_NAME_EXIST;
 
 
 @Slf4j
@@ -38,7 +39,31 @@ public class TagServiceImpl extends AuditableServiceImpl<TagDto, TagEntity> impl
         super(tagRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.tagRepository = tagRepository;
     }
-
+    
+    @Override
+    public TagDto create(TagDto dto) {
+        TagDto result = null;
+        if (dto != null) {
+            if (tagRepository.existsByName(dto.getName())) {
+                throw new ClientException(TAG_WITH_THIS_NAME_EXIST);
+            }
+            result = super.create(dto);
+        }
+        return result;
+    }
+    
+    @Override
+    public TagDto update(TagDto dto) {
+        TagDto result = null;
+        if (dto != null) {
+            if (tagRepository.existsByNameAndIdNot(dto.getName(), dto.getId())) {
+                throw new ClientException(TAG_WITH_THIS_NAME_EXIST);
+            }
+            result = super.update(dto);
+        }
+        return result;
+    }
+    
     @Override
     public Map<UUID, TagDto> getMapByIds(List<UUID> ids, List<ObjectState> states) {
         Map<UUID, TagDto> result = new HashMap<>();
