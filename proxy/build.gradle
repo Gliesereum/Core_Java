@@ -31,7 +31,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.gliesereum'
-version = '0.1.3'
+version = '0.1.4'
 sourceCompatibility = 11
 
 repositories {
