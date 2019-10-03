@@ -18,6 +18,8 @@ public interface BusinessTagService extends DefaultService<BusinessTagDto, Busin
     List<UUID> getTagIdsByBusinessId(UUID businessId);
 
     void deleteByBusinessId(UUID businessId);
+    
+    List<TagDto> getByBusinessId(UUID businessId);
 
     Map<UUID, List<TagDto>> getMapByBusinessIds(List<UUID> ids);
 }

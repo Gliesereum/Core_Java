@@ -486,7 +486,12 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         businessEsService.indexAsync(businessId);
         return result;
     }
-
+    
+    @Override
+    public List<TagDto> getTags(UUID businessId) {
+        return businessTagService.getByBusinessId(businessId);
+    }
+    
     private void checkCorporationId(BaseBusinessDto business) {
         UUID corporationId = business.getCorporationId();
         if (corporationId == null) {
