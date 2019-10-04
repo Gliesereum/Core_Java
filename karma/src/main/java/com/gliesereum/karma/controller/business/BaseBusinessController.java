@@ -1,21 +1,25 @@
 package com.gliesereum.karma.controller.business;
 
 import com.gliesereum.karma.facade.business.BusinessPermissionFacade;
+import com.gliesereum.karma.facade.business.BusinessSearchFacade;
 import com.gliesereum.karma.facade.client.ClientFacade;
+import com.gliesereum.karma.facade.client.ClientSearchFacade;
 import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.document.BusinessDocument;
+import com.gliesereum.karma.model.document.ClientDocument;
 import com.gliesereum.karma.service.business.BaseBusinessService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.media.MediaService;
-import com.gliesereum.karma.service.tag.BusinessTagService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.*;
-import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
+import com.gliesereum.share.common.model.dto.karma.business.group.BusinessGroupDto;
+import com.gliesereum.share.common.model.dto.karma.business.search.BusinessGroupSearchDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentDto;
 import com.gliesereum.share.common.model.dto.karma.comment.CommentFullDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.media.MediaDto;
+import com.gliesereum.share.common.model.dto.karma.media.MediaListUpdateDto;
 import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.model.response.MapResponse;
@@ -57,9 +61,15 @@ public class BaseBusinessController {
 
     @Autowired
     private ClientFacade clientFacade;
+    
+    @Autowired
+    private ClientSearchFacade clientSearchFacade;
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
+    
+    @Autowired
+    private BusinessSearchFacade businessSearchFacade;
 
     //++++++++++++++ Base +++++++++++++++++++++++
 
@@ -128,6 +138,12 @@ public class BaseBusinessController {
     public MediaDto create(@RequestBody @Valid MediaDto media) {
         businessPermissionFacade.checkPermissionByBusiness(media.getObjectId(), BusinessPermission.BUSINESS_ADMINISTRATION);
         return mediaService.create(media);
+    }
+    
+    @PostMapping("/media/list")
+    public List<MediaDto> updateList(@RequestBody @Valid MediaListUpdateDto medias) {
+        businessPermissionFacade.checkPermissionByBusiness(medias.getObjectId(), BusinessPermission.BUSINESS_ADMINISTRATION);
+        return mediaService.updateList(medias);
     }
 
     @PutMapping("/media")
@@ -206,6 +222,16 @@ public class BaseBusinessController {
     public List<BusinessDocument> searchDocument(@Valid @RequestBody(required = false) BusinessSearchDto businessSearch) {
         return businessEsService.searchDocuments(businessSearch);
     }
+    
+    @PostMapping("/search/groups")
+    public BusinessGroupDto searchGroup(@RequestBody BusinessGroupSearchDto businessGroupSearch) {
+        return businessSearchFacade.getBusinessGroup(businessGroupSearch);
+    }
+    
+    @PostMapping("/search/page")
+    public Page<BusinessDocument> searchPage(@RequestBody(required = false) BusinessSearchDto businessSearch) {
+        return businessEsService.searchDocumentsPage(businessSearch);
+    }
 
     @GetMapping("full-model-by-id")
     public BusinessFullModel getFullModelById(@RequestParam("id") UUID id) {
@@ -235,12 +261,12 @@ public class BaseBusinessController {
     //+++++++++++++ Customer ++++++++++++++++++++++++++++++++++++++
 
     @GetMapping("/customers")
-    public Page<ClientDto> getCustomersByBusinessIds(@RequestParam(value = "corporationId", required = false) UUID corporationId,
-                                                     @RequestParam(value = "businessIds", required = false) List<UUID> businessIds,
-                                                     @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-                                                     @RequestParam(value = "size", required = false, defaultValue = "100") Integer size,
-                                                     @RequestParam(value = "query", required = false) String query) {
-        return clientFacade.getCustomersByBusinessIdsOrCorporationId(businessIds, corporationId, page, size, query);
+    public Page<ClientDocument> getCustomersByBusinessIds(@RequestParam(value = "corporationId", required = false) UUID corporationId,
+                                                          @RequestParam(value = "businessIds", required = false) List<UUID> businessIds,
+                                                          @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                                          @RequestParam(value = "size", required = false, defaultValue = "100") Integer size,
+                                                          @RequestParam(value = "query", required = false) String query) {
+        return clientSearchFacade.getCustomersByBusinessIdsOrCorporationId(businessIds, corporationId, page, size, query);
     }
 
     //++++++++++++++++++++ Tag ++++++++++++++++++++++++++++++++++
@@ -250,10 +276,21 @@ public class BaseBusinessController {
                                @RequestParam(value = "businessId") UUID businessId) {
         return baseBusinessService.addTag(tagId, businessId);
     }
+    
+    @PostMapping("/tag/save")
+    public List<TagDto> saveTag(@RequestParam(value = "tagId") List<UUID> tagId,
+                                @RequestParam(value = "businessId") UUID businessId) {
+        return baseBusinessService.saveTags(tagId, businessId);
+    }
 
     @PostMapping("/tag/remove")
     public List<TagDto> removeTag(@RequestParam(value = "tagId") UUID tagId,
                                   @RequestParam(value = "businessId") UUID businessId) {
         return baseBusinessService.removeTag(tagId, businessId);
+    }
+    
+    @GetMapping("/{id}/tags")
+    public List<TagDto> getTags(@PathVariable("id") UUID businessId) {
+        return baseBusinessService.getTags(businessId);
     }
 }

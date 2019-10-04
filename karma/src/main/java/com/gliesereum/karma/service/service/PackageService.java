@@ -18,10 +18,14 @@ public interface PackageService extends DefaultService<PackageDto, PackageEntity
     List<PackageDto> getByBusinessId(UUID id);
 
     Map<UUID, List<PackageDto>> getMapByBusinessIds(List<UUID> businessIds);
+    
+    Map<UUID, LitePackageDto> getMapByIds(List<UUID> packageIds);
 
     PackageDto getByIdIgnoreState(UUID id);
 
     List<LitePackageDto> getLitePackageByBusinessId(UUID id);
 
     LitePackageDto getLiteById(UUID id);
+    
+    List<LitePackageDto> getLiteByIds(List<UUID> ids);
 }

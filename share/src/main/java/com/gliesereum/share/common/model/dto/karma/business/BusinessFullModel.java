@@ -37,6 +37,10 @@ public class BusinessFullModel extends AuditableDefaultDto {
     private String logoUrl;
 
     private String coverUrl;
+    
+    private String siteUrl;
+    
+    private String videoUrl;
 
     private String address;
 

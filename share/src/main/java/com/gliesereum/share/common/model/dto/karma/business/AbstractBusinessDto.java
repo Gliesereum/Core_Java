@@ -29,6 +29,8 @@ public class AbstractBusinessDto extends AuditableDefaultDto {
     private String coverUrl;
 
     private String siteUrl;
+    
+    private String videoUrl;
 
     private boolean cashlessPayment;
 

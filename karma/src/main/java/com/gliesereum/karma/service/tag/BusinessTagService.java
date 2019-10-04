@@ -12,12 +12,16 @@ import java.util.UUID;
 public interface BusinessTagService extends DefaultService<BusinessTagDto, BusinessTagEntity> {
    
     List<TagDto> addTag(UUID tagId, UUID businessId);
+    
+    List<TagDto> saveTags(List<UUID> tagId, UUID businessId);
 
     List<TagDto> removeTag(UUID tagId, UUID businessId);
 
     List<UUID> getTagIdsByBusinessId(UUID businessId);
 
     void deleteByBusinessId(UUID businessId);
+    
+    List<TagDto> getByBusinessId(UUID businessId);
 
     Map<UUID, List<TagDto>> getMapByBusinessIds(List<UUID> ids);
 }

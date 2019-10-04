@@ -36,18 +36,18 @@ public class BusinessTagServiceImpl extends DefaultServiceImpl<BusinessTagDto, B
     private static final Class<BusinessTagEntity> ENTITY_CLASS = BusinessTagEntity.class;
 
     private final BusinessTagRepository businessTagRepository;
+    
+    @Autowired
+    private TagService tagService;
+    
+    @Autowired
+    private BaseBusinessService businessService;
 
     @Autowired
     public BusinessTagServiceImpl(BusinessTagRepository businessTagRepository, DefaultConverter defaultConverter) {
         super(businessTagRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.businessTagRepository = businessTagRepository;
     }
-
-    @Autowired
-    private TagService tagService;
-
-    @Autowired
-    private BaseBusinessService businessService;
 
     @Override
     public List<TagDto> addTag(UUID tagId, UUID businessId) {
@@ -60,7 +60,22 @@ public class BusinessTagServiceImpl extends DefaultServiceImpl<BusinessTagDto, B
         }
         return tagService.getByIds(tagIds);
     }
-
+    
+    @Override
+    @Transactional
+    public List<TagDto> saveTags(List<UUID> tagId, UUID businessId) {
+        List<TagDto> result = null;
+        if (businessId != null) {
+            businessTagRepository.deleteAllByBusinessId(businessId);
+            if (CollectionUtils.isNotEmpty(tagId)) {
+                List<BusinessTagDto> tags = tagId.stream().map(i -> new BusinessTagDto(businessId, i)).collect(Collectors.toList());
+                create(tags);
+                result = tagService.getByIds(tagId);
+            }
+        }
+        return result;
+    }
+    
     @Override
     public List<TagDto> removeTag(UUID tagId, UUID businessId) {
         checkExist(tagId, businessId);
@@ -89,7 +104,20 @@ public class BusinessTagServiceImpl extends DefaultServiceImpl<BusinessTagDto, B
             businessTagRepository.deleteAllByBusinessId(businessId);
         }
     }
-
+    
+    @Override
+    public List<TagDto> getByBusinessId(UUID businessId) {
+        List<TagDto> result = null;
+        if (businessId != null) {
+            List<BusinessTagEntity> businessTags = businessTagRepository.getByBusinessId(businessId);
+            if (CollectionUtils.isNotEmpty(businessTags)) {
+                List<UUID> tagIds = businessTags.stream().map(BusinessTagEntity::getTagId).collect(Collectors.toList());
+                result = tagService.getByIds(tagIds);
+            }
+        }
+        return result;
+    }
+    
     @Override
     public Map<UUID, List<TagDto>> getMapByBusinessIds(List<UUID> ids) {
         Map<UUID, List<TagDto>> result = new HashMap<>();

@@ -1,11 +1,8 @@
 package com.gliesereum.karma.facade.client;
 
-import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
-import org.springframework.data.domain.Page;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -13,8 +10,14 @@ import java.util.UUID;
  * @version 1.0
  */
 public interface ClientFacade {
-
-    Map<UUID, ClientDto> getClientMapByIds(Collection<UUID> ids, Collection<UUID> businessIds);
-
-    Page<ClientDto> getCustomersByBusinessIdsOrCorporationId(List<UUID> businessIds, UUID corporationId, Integer page, Integer size, String query);
+    
+    void addNewClient(PublicUserDto user, UUID businessId);
+    
+    void addNewClient(UserDto user, UUID businessId);
+    
+    void updateClientInfo(UserDto user);
+    
+    void importClients();
+    
+    void indexingClients();
 }

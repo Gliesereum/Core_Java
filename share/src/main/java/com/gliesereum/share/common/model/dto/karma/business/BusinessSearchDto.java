@@ -32,4 +32,8 @@ public class BusinessSearchDto {
     private Boolean businessVerify;
 
     private List<String> tags;
+    
+    private Integer size;
+    
+    private Integer page;
 }
