@@ -3,6 +3,7 @@ package com.gliesereum.payment.controller.liqpay;
 import com.gliesereum.payment.service.liqpay.LiqPayCheckoutService;
 import com.gliesereum.share.common.model.dto.payment.liqpay.CheckoutRequestDto;
 import com.gliesereum.share.common.model.dto.payment.liqpay.LiqPayResponseDto;
+import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,12 @@ public class LiqPayController {
     private ResponseEntity<byte[]> createCheckoutQrCode(@Valid @RequestBody CheckoutRequestDto request) {
         byte[] image = checkoutService.createCheckoutQrCode(request);
         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(image);
+    }
+
+    @PostMapping("/send-invoice")
+    private MapResponse sendInvoice(@Valid @RequestBody CheckoutRequestDto request) {
+        checkoutService.sendInvoice(request);
+        return new MapResponse("true");
     }
 
     @PostMapping("/call-back")

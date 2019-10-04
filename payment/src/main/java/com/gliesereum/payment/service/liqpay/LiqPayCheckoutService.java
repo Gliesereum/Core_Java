@@ -14,4 +14,6 @@ public interface LiqPayCheckoutService {
     String createCheckoutLinkQrCode(CheckoutRequestDto request);
 
     byte[] createCheckoutQrCode(CheckoutRequestDto request);
+
+    void sendInvoice(CheckoutRequestDto request);
 }

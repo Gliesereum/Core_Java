@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -16,6 +17,8 @@ public class CheckoutRequestDto {
 
     @NotNull
     private String description;
+
+    private String emailInvoice;
 
     private LiqPayActionType actionType;
 

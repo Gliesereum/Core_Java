@@ -45,7 +45,7 @@ public class LiqPayCheckoutServiceImpl implements LiqPayCheckoutService {
     public String createCheckoutButton(CheckoutRequestDto request) {
         String result = "";
         if (request != null) {
-            HashMap<String, String> params = new HashMap<>();
+            HashMap<String, String> params = getBaseParams(request);
             LiqPayActionType actionType = request.getActionType();
             if (actionType == null) {
                 actionType = LiqPayActionType.pay;
@@ -58,14 +58,7 @@ public class LiqPayCheckoutServiceImpl implements LiqPayCheckoutService {
                 payPayType = LiqPayPayType.card;
             }
             params.put("paytypes", payPayType.toString());
-            params.put("description", request.getDescription());
-            params.put("server_url", serverUrl);
             params.put("action", actionType.toString());
-            params.put("amount", request.getAmount().toString());
-            params.put("order_id", request.getOrderId().toString());
-            params.put("currency", "UAH");
-            params.put("language", "uk");
-            params.put("version", "3");
             LiqPay liqpay = new LiqPay(publicKey, privateKey);
             result = liqpay.cnb_form(params);
         }
@@ -96,19 +89,12 @@ public class LiqPayCheckoutServiceImpl implements LiqPayCheckoutService {
     public String createCheckoutLinkQrCode(CheckoutRequestDto request) {
         String result = "";
         if (request != null) {
-            HashMap<String, String> params = new HashMap<>();
-            params.put("version", "3");
-            params.put("currency", "UAH");
-            params.put("language", "uk");
-            params.put("server_url", serverUrl);
+            HashMap<String, String> params = getBaseParams(request);
             params.put("action", LiqPayActionType.payqr.toString());
-            params.put("amount", request.getAmount().toString());
-            params.put("description", request.getDescription());
-            params.put("order_id", request.getOrderId().toString());
             LiqPay liqpay = new LiqPay(publicKey, privateKey);
             try {
                 HashMap<String, Object> res = (HashMap<String, Object>) liqpay.api("request", params);
-                if(MapUtils.isNotEmpty(res)){
+                if (MapUtils.isNotEmpty(res)) {
                     result = (String) res.get("qr_code");
                 }
             } catch (Exception e) {
@@ -122,11 +108,40 @@ public class LiqPayCheckoutServiceImpl implements LiqPayCheckoutService {
     public byte[] createCheckoutQrCode(CheckoutRequestDto request) {
         byte[] result = new byte[0];
         String link = createCheckoutLinkQrCode(request);
-        if(StringUtils.isNotEmpty(link)){
-            ByteArrayOutputStream bout =
-                    QRCode.from(link).withSize(250, 250).to(ImageType.PNG).stream();
+        if (StringUtils.isNotEmpty(link)) {
+            ByteArrayOutputStream bout = QRCode.from(link)
+                    .withSize(250, 250)
+                    .to(ImageType.PNG)
+                    .stream();
             result = bout.toByteArray();
         }
+        return result;
+    }
+
+    @Override
+    public void sendInvoice(CheckoutRequestDto request) {
+        if (request != null && StringUtils.isNotEmpty(request.getEmailInvoice())) {
+            HashMap<String, String> params = getBaseParams(request);
+            params.put("email", request.getEmailInvoice());
+            params.put("action", LiqPayActionType.invoice_send.toString());
+            LiqPay liqpay = new LiqPay(publicKey, privateKey);
+            try {
+                liqpay.api("request", params);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private HashMap<String, String> getBaseParams(CheckoutRequestDto request) {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("version", "3");
+        result.put("currency", "UAH");
+        result.put("language", "uk");
+        result.put("server_url", serverUrl);
+        result.put("amount", request.getAmount().toString());
+        result.put("order_id", request.getOrderId().toString());
+        result.put("description", request.getDescription());
         return result;
     }
 
