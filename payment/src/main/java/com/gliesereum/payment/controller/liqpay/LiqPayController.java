@@ -23,6 +23,11 @@ public class LiqPayController {
         return checkoutService.createCheckoutButton(request);
     }
 
+    @PostMapping("/get-checkout-link-qr-code")
+    private String createCheckoutQrCode(@Valid @RequestBody CheckoutRequestDto request) {
+        return checkoutService.createCheckoutQrCode(request);
+    }
+
     @PostMapping("/call-back")
     private void callBack(LiqPayResponseDto response) {
         checkoutService.callBack(response);

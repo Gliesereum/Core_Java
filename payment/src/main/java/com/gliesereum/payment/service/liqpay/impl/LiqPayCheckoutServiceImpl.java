@@ -10,6 +10,7 @@ import com.gliesereum.share.common.model.dto.payment.liqpay.LiqPayResponseDto;
 import com.gliesereum.share.common.model.dto.payment.liqpay.LiqPayTransactionDto;
 import com.liqpay.LiqPay;
 import com.liqpay.LiqPayUtil;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,32 @@ public class LiqPayCheckoutServiceImpl implements LiqPayCheckoutService {
                 }
             }
         }
+    }
+
+    @Override
+    public String createCheckoutQrCode(CheckoutRequestDto request) {
+        String result = "";
+        if (request != null) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("version", "3");
+            params.put("currency", "UAH");
+            params.put("language", "uk");
+            params.put("server_url", serverUrl);
+            params.put("action", LiqPayActionType.payqr.toString());
+            params.put("amount", request.getAmount().toString());
+            params.put("description", request.getDescription());
+            params.put("order_id", request.getOrderId().toString());
+            LiqPay liqpay = new LiqPay(publicKey, privateKey);
+            try {
+                HashMap<String, Object> res = (HashMap<String, Object>) liqpay.api("request", params);
+                if(MapUtils.isNotEmpty(res)){
+                    result = (String) res.get("qr_code");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
     private LiqPayTransactionDto jsonToTransaction(String json) {

@@ -62,6 +62,6 @@ way-for-pay:
 
 liq-pay:
   checkout:
-    callback-server-url: https://dce6151d.ngrok.io/liq-pay/call-back
+    callback-server-url: https://d75513f4.ngrok.io/liq-pay/call-back
   public-key: sandbox_i68717225710
   private-key: sandbox_MbnwJt32pvmXEFielzRaM2gYB4tauUmpYM4a3qFs

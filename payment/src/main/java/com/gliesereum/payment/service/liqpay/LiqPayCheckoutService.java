@@ -10,4 +10,6 @@ public interface LiqPayCheckoutService {
     String createCheckoutButton(CheckoutRequestDto request);
 
     void callBack(LiqPayResponseDto response);
+
+    String createCheckoutQrCode(CheckoutRequestDto request);
 }

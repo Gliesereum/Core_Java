@@ -34,7 +34,7 @@ public class LiqPayTransactionServiceImpl extends DefaultServiceImpl<LiqPayTrans
 
     @Override
     public LiqPayTransactionDto getByOrderId(UUID orderId) {
-        LiqPayTransactionEntity entity = liqPayTransactionRepository.getByOrder_id(orderId);
+        LiqPayTransactionEntity entity = liqPayTransactionRepository.getByOrderId(orderId);
         return converter.convert(entity, dtoClass);
     }
 
