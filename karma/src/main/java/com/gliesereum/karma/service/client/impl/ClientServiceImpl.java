@@ -51,6 +51,7 @@ public class ClientServiceImpl extends AuditableServiceImpl<ClientDto, ClientEnt
     }
     
     @Override
+    @Transactional
     public ClientDto addNewClient(PublicUserDto user, UUID businessId) {
         ClientDto result = null;
         if (ObjectUtils.allNotNull(user, businessId)) {
@@ -89,6 +90,7 @@ public class ClientServiceImpl extends AuditableServiceImpl<ClientDto, ClientEnt
     }
     
     @Override
+    @Transactional
     public ClientDto addNewClient(UserDto user, UUID businessId) {
         ClientDto result = null;
         if (ObjectUtils.allNotNull(user, businessId)) {
@@ -102,6 +104,7 @@ public class ClientServiceImpl extends AuditableServiceImpl<ClientDto, ClientEnt
     }
     
     @Override
+    @Transactional
     public ClientDto updateClientInfo(UserDto user) {
         ClientDto result = null;
         if ((user != null) && (user.getId() != null)) {
@@ -118,6 +121,7 @@ public class ClientServiceImpl extends AuditableServiceImpl<ClientDto, ClientEnt
     }
     
     @Override
+    @Transactional
     public Map<UUID, ClientDto> getClientMapByIds(Collection<UUID> ids) {
         Map<UUID, ClientDto> result = new HashMap<>();
         List<ClientDto> clients = getClientByIds(ids);
@@ -128,6 +132,7 @@ public class ClientServiceImpl extends AuditableServiceImpl<ClientDto, ClientEnt
     }
     
     @Override
+    @Transactional
     public List<ClientDto> getClientByIds(Collection<UUID> ids) {
         List<ClientDto> result = null;
         if (CollectionUtils.isNotEmpty(ids)) {
@@ -138,6 +143,7 @@ public class ClientServiceImpl extends AuditableServiceImpl<ClientDto, ClientEnt
     }
     
     @Override
+    @Transactional
     public ClientDto getByUserId(UUID userId) {
         ClientDto result = null;
         if (userId != null) {
@@ -148,12 +154,14 @@ public class ClientServiceImpl extends AuditableServiceImpl<ClientDto, ClientEnt
     }
     
     @Override
+    @Transactional
     public ClientDto create(ClientDto dto) {
         setLogoIfNull(dto);
         return super.create(dto);
     }
     
     @Override
+    @Transactional
     public ClientDto update(ClientDto dto) {
         setLogoIfNull(dto);
         return super.update(dto);
