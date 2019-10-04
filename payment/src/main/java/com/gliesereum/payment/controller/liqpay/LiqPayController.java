@@ -4,10 +4,9 @@ import com.gliesereum.payment.service.liqpay.LiqPayCheckoutService;
 import com.gliesereum.share.common.model.dto.payment.liqpay.CheckoutRequestDto;
 import com.gliesereum.share.common.model.dto.payment.liqpay.LiqPayResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -24,8 +23,14 @@ public class LiqPayController {
     }
 
     @PostMapping("/get-checkout-link-qr-code")
-    private String createCheckoutQrCode(@Valid @RequestBody CheckoutRequestDto request) {
-        return checkoutService.createCheckoutQrCode(request);
+    private String createCheckoutLinkQrCode(@Valid @RequestBody CheckoutRequestDto request) {
+        return checkoutService.createCheckoutLinkQrCode(request);
+    }
+
+    @PostMapping("/get-checkout-qr-code")
+    private ResponseEntity<byte[]> createCheckoutQrCode(@Valid @RequestBody CheckoutRequestDto request) {
+        byte[] image = checkoutService.createCheckoutQrCode(request);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(image);
     }
 
     @PostMapping("/call-back")

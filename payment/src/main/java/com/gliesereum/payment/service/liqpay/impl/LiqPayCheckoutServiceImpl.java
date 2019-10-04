@@ -10,6 +10,8 @@ import com.gliesereum.share.common.model.dto.payment.liqpay.LiqPayResponseDto;
 import com.gliesereum.share.common.model.dto.payment.liqpay.LiqPayTransactionDto;
 import com.liqpay.LiqPay;
 import com.liqpay.LiqPayUtil;
+import net.glxn.qrgen.QRCode;
+import net.glxn.qrgen.image.ImageType;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -91,7 +93,7 @@ public class LiqPayCheckoutServiceImpl implements LiqPayCheckoutService {
     }
 
     @Override
-    public String createCheckoutQrCode(CheckoutRequestDto request) {
+    public String createCheckoutLinkQrCode(CheckoutRequestDto request) {
         String result = "";
         if (request != null) {
             HashMap<String, String> params = new HashMap<>();
@@ -112,6 +114,18 @@ public class LiqPayCheckoutServiceImpl implements LiqPayCheckoutService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        return result;
+    }
+
+    @Override
+    public byte[] createCheckoutQrCode(CheckoutRequestDto request) {
+        byte[] result = new byte[0];
+        String link = createCheckoutLinkQrCode(request);
+        if(StringUtils.isNotEmpty(link)){
+            ByteArrayOutputStream bout =
+                    QRCode.from(link).withSize(250, 250).to(ImageType.PNG).stream();
+            result = bout.toByteArray();
         }
         return result;
     }

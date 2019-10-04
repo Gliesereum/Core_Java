@@ -11,5 +11,7 @@ public interface LiqPayCheckoutService {
 
     void callBack(LiqPayResponseDto response);
 
-    String createCheckoutQrCode(CheckoutRequestDto request);
+    String createCheckoutLinkQrCode(CheckoutRequestDto request);
+
+    byte[] createCheckoutQrCode(CheckoutRequestDto request);
 }
