@@ -431,7 +431,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     }
     
     private void setPageable(NativeSearchQueryBuilder nativeSearchQueryBuilder, BusinessSearchDto businessSearchDto) {
-        int page = 1;
+        int page = 0;
         if ((businessSearchDto != null) && (businessSearchDto.getPage() != null) && (businessSearchDto.getPage() > 0)) {
             page = businessSearchDto.getPage();
         }
@@ -439,6 +439,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             nativeSearchQueryBuilder.withPageable(PageRequest.of(page, businessSearchDto.getSize()));
         } else {
             long count = elasticsearchOperations.count(nativeSearchQueryBuilder.build(), carWashEsRepository.getEntityClass());
+            if (count < 1) {
+                count = 1;
+            }
             nativeSearchQueryBuilder.withPageable(PageRequest.of(page, (int)count));
         }
     }
