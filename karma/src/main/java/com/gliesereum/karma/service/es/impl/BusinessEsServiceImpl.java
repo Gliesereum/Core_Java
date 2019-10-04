@@ -431,8 +431,8 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     }
     
     private void setPageable(NativeSearchQueryBuilder nativeSearchQueryBuilder, BusinessSearchDto businessSearchDto) {
-        int page = 0;
-        if ((businessSearchDto != null) && (businessSearchDto.getPage() != null) && (businessSearchDto.getPage() >= 0)) {
+        int page = 1;
+        if ((businessSearchDto != null) && (businessSearchDto.getPage() != null) && (businessSearchDto.getPage() > 0)) {
             page = businessSearchDto.getPage();
         }
         if ((businessSearchDto != null) && (businessSearchDto.getSize() != null) && (businessSearchDto.getSize() > 0)) {

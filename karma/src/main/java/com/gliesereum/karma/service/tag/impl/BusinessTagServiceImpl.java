@@ -60,7 +60,22 @@ public class BusinessTagServiceImpl extends DefaultServiceImpl<BusinessTagDto, B
         }
         return tagService.getByIds(tagIds);
     }
-
+    
+    @Override
+    @Transactional
+    public List<TagDto> saveTags(List<UUID> tagId, UUID businessId) {
+        List<TagDto> result = null;
+        if (businessId != null) {
+            businessTagRepository.deleteAllByBusinessId(businessId);
+            if (CollectionUtils.isNotEmpty(tagId)) {
+                List<BusinessTagDto> tags = tagId.stream().map(i -> new BusinessTagDto(businessId, i)).collect(Collectors.toList());
+                create(tags);
+                result = tagService.getByIds(tagId);
+            }
+        }
+        return result;
+    }
+    
     @Override
     public List<TagDto> removeTag(UUID tagId, UUID businessId) {
         checkExist(tagId, businessId);
