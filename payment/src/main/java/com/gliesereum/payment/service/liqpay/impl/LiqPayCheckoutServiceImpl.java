@@ -119,7 +119,7 @@ public class LiqPayCheckoutServiceImpl implements LiqPayCheckoutService {
     }
 
     @Override
-    public void sendInvoice(CheckoutRequestDto request) {
+    public void sendInvoiceEmail(CheckoutRequestDto request) {
         if (request != null && StringUtils.isNotEmpty(request.getEmailInvoice())) {
             HashMap<String, String> params = getBaseParams(request);
             params.put("email", request.getEmailInvoice());

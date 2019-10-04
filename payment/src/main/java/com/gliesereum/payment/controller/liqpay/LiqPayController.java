@@ -34,9 +34,9 @@ public class LiqPayController {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(image);
     }
 
-    @PostMapping("/send-invoice")
-    private MapResponse sendInvoice(@Valid @RequestBody CheckoutRequestDto request) {
-        checkoutService.sendInvoice(request);
+    @PostMapping("/send-invoice-email")
+    private MapResponse sendInvoiceEmail(@Valid @RequestBody CheckoutRequestDto request) {
+        checkoutService.sendInvoiceEmail(request);
         return new MapResponse("true");
     }
 
