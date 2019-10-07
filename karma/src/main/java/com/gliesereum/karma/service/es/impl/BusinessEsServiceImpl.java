@@ -49,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -178,6 +179,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAllAsync() {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         indexAll();
     }
 
@@ -185,6 +192,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAsync(UUID businessId) {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         log.info("Get data for index Business to ElasticSearch");
         BaseBusinessDto business = baseBusinessService.getByIdIgnoreState(businessId);
         List<BusinessDocument> businessDocuments = collectData(Arrays.asList(business));
@@ -196,6 +209,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAsync(List<UUID> businessIds) {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         log.info("Get data for index Business to ElasticSearch");
         List<BaseBusinessDto> business = baseBusinessService.getByIds(businessIds);
         List<BusinessDocument> businessDocuments = collectData(business);
