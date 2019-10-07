@@ -64,6 +64,8 @@ public class BusinessDocumentDto {
     
     private List<String> serviceNames;
     
+    private List<String> packageNames;
+    
     private List<String> tags;
     
     private Float score;

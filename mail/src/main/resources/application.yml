@@ -44,8 +44,8 @@ exchange:
 telegram:
   bot:
     feed-back:
-      token: 914987096:AAFJWyVEq7Qu9DQru0dhve8N64GpIcHUtkM
-      user-name: feedBack_bot
+      token: ${telegram.bot.token:966060711:AAExu0BrqYpybx1ERtUNzTSeo5S0_GKb7LM}
+      user-name: ${telegram.bot.username:coupler_feedback_dev_bot}
       message:
         start: "couplerFeedBack connected to this chat: "
         end: "couplerFeedBack disconnected to this chat: "

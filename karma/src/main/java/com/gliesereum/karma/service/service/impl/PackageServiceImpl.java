@@ -85,6 +85,18 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     }
     
     @Override
+    public Map<UUID, List<LitePackageDto>> getLiteMapByBusinessIds(List<UUID> businessIds) {
+        Map<UUID, List<LitePackageDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            List<PackageEntity> entities = packageRepository.findAllByBusinessIdIn(businessIds);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                result = entities.stream().map(i -> converter.convert(i, LitePackageDto.class)).collect(Collectors.groupingBy(LitePackageDto::getBusinessId));
+            }
+        }
+        return result;
+    }
+    
+    @Override
     public Map<UUID, LitePackageDto> getMapByIds(List<UUID> packageIds) {
         Map<UUID, LitePackageDto> result = new HashMap<>();
         if (CollectionUtils.isNotEmpty(packageIds)) {
