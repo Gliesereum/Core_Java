@@ -163,7 +163,8 @@ services:
       LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "false"
       auth.sms.prefix: "Coupler SMS authorization. #CPS your CODE:"
-
+      telegram.bot.username: "feedBack_bot"
+      telegram.bot.token: "914987096:AAFJWyVEq7Qu9DQru0dhve8N64GpIcHUtkM"
   proxy:
     image: gls-proxy:0.1.4
     deploy:

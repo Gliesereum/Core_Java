@@ -93,6 +93,9 @@ public class BusinessDocument {
 
     @Field(type = FieldType.Text, fielddata = true)
     private List<String> serviceNames;
+    
+    @Field(type = FieldType.Text, fielddata = true)
+    private List<String> packageNames;
 
     @Field(type = FieldType.Keyword)
     private List<String> tags;

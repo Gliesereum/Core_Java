@@ -166,6 +166,8 @@ services:
       LOG_SYSTEM_QUEUE: logSystemQueue
       LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
+      telegram.bot.username: "coupler_feedback_dev_bot"
+      telegram.bot.token: "966060711:AAExu0BrqYpybx1ERtUNzTSeo5S0_GKb7LM"
 
   proxy:
     image: gls-proxy:0.1.4
