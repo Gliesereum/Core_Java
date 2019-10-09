@@ -14,6 +14,7 @@ import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
 import com.gliesereum.karma.service.tag.BusinessTagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
+import com.gliesereum.share.common.model.dto.base.geo.GeoPosition;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
@@ -156,6 +157,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             addQueryByCorporationId(boolQueryBuilder, businessSearch.getCorporationIds());
             addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
+            addGeoPolygonQuery(boolQueryBuilder, businessSearch.getPolygonPoints());
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
             addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.getBusinessVerify());
             addQueryByTags(boolQueryBuilder, businessSearch.getTags());
@@ -409,6 +411,19 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                     .point(geoDistance.getLatitude(), geoDistance.getLongitude())
                     .distance(geoDistance.getDistanceMeters(), DistanceUnit.METERS);
             boolQueryBuilder.filter(geoDistanceQueryBuilder);
+        }
+    }
+    
+    private void addGeoPolygonQuery(BoolQueryBuilder boolQueryBuilder, List<GeoPosition> geoPositions) {
+        if (CollectionUtils.isNotEmpty(geoPositions)) {
+            List<org.elasticsearch.common.geo.GeoPoint> geoPoints = geoPositions.stream()
+                    .filter(Objects::nonNull)
+                    .filter(i -> ObjectUtils.allNotNull(i.getLatitude(), i.getLongitude()))
+                    .map(i -> new org.elasticsearch.common.geo.GeoPoint(i.getLatitude(), i.getLongitude()))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(geoPositions)) {
+                boolQueryBuilder.filter(new GeoPolygonQueryBuilder(FIELD_GEO_POINT, geoPoints));
+            }
         }
     }
 
