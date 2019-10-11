@@ -11,7 +11,7 @@ import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.preference.ClientPreferenceService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
-import com.gliesereum.karma.service.tag.BusinessTagService;
+import com.gliesereum.karma.service.tag.ObjectTagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
 import com.gliesereum.share.common.model.dto.base.geo.GeoPosition;
@@ -110,11 +110,11 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private CommentService commentService;
 
     @Autowired
-    private BusinessTagService businessTagService;
+    private ObjectTagService objectTagService;
     
     @Autowired
     private ElasticsearchOperations elasticsearchOperations;
-    
+
     @Autowired
     private PackageService packageService;
 
@@ -247,8 +247,8 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             List<UUID> businessIds = businessList.stream().map(BaseBusinessDto::getId).collect(Collectors.toList());
             Map<UUID, RatingDto> ratingMap = commentService.getRatings(businessIds);
             Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessIds);
-            Map<UUID, List<TagDto>> tagMap = businessTagService.getMapByBusinessIds(businessIds);
             Map<UUID, List<LitePackageDto>> packageMap = packageService.getLiteMapByBusinessIds(businessIds);
+            Map<UUID, List<TagDto>> tagMap = objectTagService.getMapByObjectIds(businessIds);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
                 if (document != null) {
@@ -303,7 +303,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         }
         return target;
     }
-    
+
     private BusinessDocument insertPackageNames(BusinessDocument target, List<LitePackageDto> packages) {
         if ((target != null) && CollectionUtils.isNotEmpty(packages)) {
             List<String> packageNames = packages.stream().map(LitePackageDto::getName).collect(Collectors.toList());
@@ -413,7 +413,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             boolQueryBuilder.filter(geoDistanceQueryBuilder);
         }
     }
-    
+
     private void addGeoPolygonQuery(BoolQueryBuilder boolQueryBuilder, List<GeoPosition> geoPositions) {
         if (CollectionUtils.isNotEmpty(geoPositions)) {
             List<org.elasticsearch.common.geo.GeoPoint> geoPoints = geoPositions.stream()

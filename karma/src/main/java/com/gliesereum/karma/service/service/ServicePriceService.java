@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.service;
 import com.gliesereum.karma.model.entity.service.ServicePriceEntity;
 import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -38,4 +39,12 @@ public interface ServicePriceService extends DefaultService<ServicePriceDto, Ser
     Map<UUID, LiteServicePriceDto> getMapByIds(List<UUID> servicePriceIds);
     
     List<LiteServicePriceDto> getLiteByIds(List<UUID> ids);
+
+    List<TagDto> addTag(UUID tagId, UUID idPrice);
+
+    List<TagDto> getTags(UUID idPrice);
+
+    List<TagDto> saveTags(List<UUID> tagId, UUID idPrice);
+
+    List<TagDto> removeTag(UUID tagId, UUID idPrice);
 }

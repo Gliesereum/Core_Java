@@ -23,10 +23,7 @@ import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.account.user.UserDto;
-import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkTimeDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkerDto;
-import com.gliesereum.share.common.model.dto.karma.business.WorkingSpaceDto;
+import com.gliesereum.share.common.model.dto.karma.business.*;
 import com.gliesereum.share.common.model.dto.karma.client.ClientDto;
 import com.gliesereum.share.common.model.dto.karma.enumerated.*;
 import com.gliesereum.share.common.model.dto.karma.record.*;
@@ -38,6 +35,7 @@ import com.gliesereum.share.common.model.dto.karma.service.LiteServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,6 +56,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.KarmaExceptionMessage.*;
+import static com.gliesereum.share.common.exception.messages.PhoneExceptionMessage.NOT_PHONE_BY_REGEX;
 import static com.gliesereum.share.common.exception.messages.UserExceptionMessage.USER_NOT_AUTHENTICATION;
 
 /**
@@ -105,7 +104,7 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
 
     @Autowired
     private ClientFacade clientFacade;
-    
+
     @Autowired
     private ClientSearchFacade clientSearchFacade;
 
@@ -317,6 +316,34 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
     @Override
     public long countBusyWorker(LocalDateTime time, StatusRecord status) {
         return baseRecordRepository.countBusyWorker(time, status);
+    }
+
+    @Override
+    @RecordCreate
+    public BaseRecordDto createLite(RequestLiteRecordDto dto) {
+        if (!RegexUtil.phoneIsValid(dto.getPhone())) {
+            throw new ClientException(NOT_PHONE_BY_REGEX);
+        }
+       LiteBusinessDto business = baseBusinessService.getLiteById(dto.getBusinessId());
+        if(business == null){
+            throw  new ClientException(BUSINESS_NOT_FOUND);
+        }
+        BaseRecordDto result = null;
+        PublicUserDto user = new PublicUserDto();
+        user.setPhone(dto.getPhone());
+        PublicUserDto existUser = exchangeService.createOrGetPublicUser(user);
+        if (existUser != null) {
+            BaseRecordDto record = new BaseRecordDto();
+            record.setBusinessId(dto.getBusinessId());
+            record.setClientId(existUser.getId());
+            record.setDescription(dto.getComment());
+            result = super.create(record);
+            if (result != null) {
+                ClientDto client = clientFacade.addNewClientAddGet(existUser, dto.getBusinessId());
+                result.setClient(client);
+            }
+        }
+        return result;
     }
 
     @Override

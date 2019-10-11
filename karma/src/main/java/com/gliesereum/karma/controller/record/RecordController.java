@@ -6,6 +6,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusProcess;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
 import com.gliesereum.share.common.model.dto.karma.record.RecordPaymentInfoDto;
+import com.gliesereum.share.common.model.dto.karma.record.RequestLiteRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
@@ -57,6 +58,12 @@ public class RecordController {
     public BaseRecordDto createForBusiness(@Valid @RequestBody BaseRecordDto dto,
                                            @RequestParam(value = "isCustom", required = false, defaultValue = "false") Boolean isCustom) {
         return service.createForBusiness(dto, isCustom);
+    }
+
+    @PostMapping("/create-lite")
+    public MapResponse createLite(@Valid @RequestBody RequestLiteRecordDto dto) {
+        service.createLite(dto);
+        return new MapResponse("true");
     }
 
     @PutMapping("/canceled-record")

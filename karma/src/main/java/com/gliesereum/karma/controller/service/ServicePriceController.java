@@ -4,6 +4,7 @@ import com.gliesereum.karma.service.service.ServiceClassPriceService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceClassPriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -96,13 +97,36 @@ public class ServicePriceController {
 
     @PostMapping("/filter-attributes/{idPrice}")
     public ServicePriceDto addFilterAttributes(@PathVariable("idPrice") UUID idPrice, @RequestBody(required = false) List<UUID> idAttributes) {
-      return  servicePriceService.addFilterAttributes(idPrice, idAttributes);
+        return servicePriceService.addFilterAttributes(idPrice, idAttributes);
     }
 
     @DeleteMapping("/remove/filter-attribute/{idPrice}/{idAttribute}")
     public MapResponse removeFilterAttribute(@PathVariable("idPrice") UUID idPrice, @PathVariable("idAttribute") UUID idAttribute) {
         servicePriceService.removeFilterAttribute(idPrice, idAttribute);
         return new MapResponse("true");
+    }
+
+    @PostMapping("/tag/add")
+    public List<TagDto> addTag(@RequestParam(value = "tagId") UUID tagId,
+                               @RequestParam(value = "idPrice") UUID idPrice) {
+        return servicePriceService.addTag(tagId, idPrice);
+    }
+
+    @GetMapping("/{id}/tags")
+    public List<TagDto> getTags(@PathVariable("id") UUID idPrice) {
+        return servicePriceService.getTags(idPrice);
+    }
+
+    @PostMapping("/tag/save")
+    public List<TagDto> saveTag(@RequestParam(value = "tagId") List<UUID> tagId,
+                                @RequestParam(value = "idPrice") UUID idPrice) {
+        return servicePriceService.saveTags(tagId, idPrice);
+    }
+
+    @PostMapping("/tag/remove")
+    public List<TagDto> removeTag(@RequestParam(value = "tagId") UUID tagId,
+                                  @RequestParam(value = "idPrice") UUID idPrice) {
+        return servicePriceService.removeTag(tagId, idPrice);
     }
 
 }

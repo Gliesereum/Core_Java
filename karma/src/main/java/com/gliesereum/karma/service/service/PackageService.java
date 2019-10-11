@@ -3,6 +3,7 @@ package com.gliesereum.karma.service.service;
 import com.gliesereum.karma.model.entity.service.PackageEntity;
 import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.service.DefaultService;
 
 import java.util.List;
@@ -30,4 +31,12 @@ public interface PackageService extends DefaultService<PackageDto, PackageEntity
     LitePackageDto getLiteById(UUID id);
     
     List<LitePackageDto> getLiteByIds(List<UUID> ids);
+
+    List<TagDto> addTag(UUID tagId, UUID idPackage);
+
+    List<TagDto> getTags(UUID idPackage);
+
+    List<TagDto> saveTags(List<UUID> tagId, UUID idPackage);
+
+    List<TagDto> removeTag(UUID tagId, UUID idPackage);
 }

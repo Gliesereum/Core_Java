@@ -7,6 +7,7 @@ import com.gliesereum.share.common.model.dto.karma.enumerated.StatusRecord;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordFreeTime;
 import com.gliesereum.share.common.model.dto.karma.record.RecordPaymentInfoDto;
+import com.gliesereum.share.common.model.dto.karma.record.RequestLiteRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.ClientRecordSearchDto;
@@ -75,4 +76,6 @@ public interface BaseRecordService extends DefaultService<BaseRecordDto, BaseRec
     long countByStatusRecord(StatusRecord statusRecord);
 
     long countBusyWorker(LocalDateTime time, StatusRecord status);
+
+    BaseRecordDto createLite(RequestLiteRecordDto dto);
 }

@@ -2,6 +2,7 @@ package com.gliesereum.karma.controller.service;
 
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.response.MapResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -51,4 +52,28 @@ public class PackageController {
         service.delete(id);
         return new MapResponse("true");
     }
+
+    @PostMapping("/tag/add")
+    public List<TagDto> addTag(@RequestParam(value = "tagId") UUID tagId,
+                               @RequestParam(value = "idPackage") UUID idPackage) {
+        return service.addTag(tagId, idPackage);
+    }
+
+    @GetMapping("/{id}/tags")
+    public List<TagDto> getTags(@PathVariable("id") UUID idPackage) {
+        return service.getTags(idPackage);
+    }
+
+    @PostMapping("/tag/save")
+    public List<TagDto> saveTag(@RequestParam(value = "tagId") List<UUID> tagId,
+                                @RequestParam(value = "idPackage") UUID idPackage) {
+        return service.saveTags(tagId, idPackage);
+    }
+
+    @PostMapping("/tag/remove")
+    public List<TagDto> removeTag(@RequestParam(value = "tagId") UUID tagId,
+                                  @RequestParam(value = "idPackage") UUID idPackage) {
+        return service.removeTag(tagId, idPackage);
+    }
+
 }
