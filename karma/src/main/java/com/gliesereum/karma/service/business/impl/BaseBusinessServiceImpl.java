@@ -379,8 +379,8 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         businessPermissionFacade.checkPermissionByBusiness(id, BusinessPermission.BUSINESS_ADMINISTRATION);
         BaseBusinessDto dto = getById(id);
         super.delete(dto);
-        businessEsService.indexAsync(dto.getId());
         businessTagService.deleteByBusinessId(id);
+        businessEsService.indexAsync(dto.getId());
     }
 
     @Override

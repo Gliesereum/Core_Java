@@ -5,6 +5,7 @@ import com.gliesereum.karma.model.common.BusinessPermission;
 import com.gliesereum.karma.model.entity.service.PackageEntity;
 import com.gliesereum.karma.model.repository.jpa.service.PackageRepository;
 import com.gliesereum.karma.service.business.BaseBusinessService;
+import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.PackageServiceService;
 import com.gliesereum.karma.service.service.ServicePriceService;
@@ -59,6 +60,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
+    
+    @Autowired
+    private BusinessEsService businessEsService;
 
     @Autowired
     public PackageServiceImpl(PackageRepository packageRepository, DefaultConverter defaultConverter) {
@@ -79,6 +83,18 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
             List<PackageEntity> entities = packageRepository.findAllByBusinessIdIn(businessIds);
             if (CollectionUtils.isNotEmpty(entities)) {
                 result = entities.stream().map(i -> converter.convert(i, dtoClass)).collect(Collectors.groupingBy(PackageDto::getBusinessId));
+            }
+        }
+        return result;
+    }
+    
+    @Override
+    public Map<UUID, List<LitePackageDto>> getLiteMapByBusinessIds(List<UUID> businessIds) {
+        Map<UUID, List<LitePackageDto>> result = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(businessIds)) {
+            List<PackageEntity> entities = packageRepository.findAllByBusinessIdIn(businessIds);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                result = entities.stream().map(i -> converter.convert(i, LitePackageDto.class)).collect(Collectors.groupingBy(LitePackageDto::getBusinessId));
             }
         }
         return result;
@@ -160,6 +176,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         setServices(dto, result);
         List<PackageDescriptionDto> descriptions = packageDescriptionService.create(dto.getDescriptions(), result.getId());
         result.setDescriptions(descriptions);
+        businessEsService.indexAsync(result.getBusinessId());
         return result;
 
     }
@@ -179,6 +196,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         setServices(dto, result);
         List<PackageDescriptionDto> descriptions = packageDescriptionService.update(dto.getDescriptions(), result.getId());
         result.setDescriptions(descriptions);
+        businessEsService.indexAsync(result.getBusinessId());
         return result;
     }
 
@@ -193,6 +211,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
             throw new ClientException(SERVICE_NOT_FOUND);
         }
         dto.setObjectState(ObjectState.DELETED);
+        businessEsService.indexAsync(dto.getBusinessId());
         super.update(dto);
     }
 

@@ -9,16 +9,19 @@ import com.gliesereum.karma.service.car.CarService;
 import com.gliesereum.karma.service.comment.CommentService;
 import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.preference.ClientPreferenceService;
+import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
 import com.gliesereum.karma.service.tag.BusinessTagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
+import com.gliesereum.share.common.model.dto.base.geo.GeoPosition;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
 import com.gliesereum.share.common.model.dto.karma.comment.RatingDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.preference.ClientPreferenceDto;
+import com.gliesereum.share.common.model.dto.karma.service.LitePackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
@@ -47,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -73,6 +77,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private static final String FIELD_DESCRIPTION = "description";
     private static final String FIELD_ADDRESS = "address";
     private static final String FIELD_SERVICE_NAMES = "serviceNames";
+    private static final String FIELD_PACKAGE_NAMES = "packageNames";
     private static final String FIELD_BUSINESS_VERIFY = "businessVerify";
     private static final String FIELD_TAG = "tags";
     private static final String FIELD_WORK_TIMES = "workTimes";
@@ -109,6 +114,9 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     
     @Autowired
     private ElasticsearchOperations elasticsearchOperations;
+    
+    @Autowired
+    private PackageService packageService;
 
     @Override
     public List<BaseBusinessDto> search(BusinessSearchDto businessSearch) {
@@ -149,6 +157,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             addQueryByCorporationId(boolQueryBuilder, businessSearch.getCorporationIds());
             addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
+            addGeoPolygonQuery(boolQueryBuilder, businessSearch.getPolygonPoints());
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
             addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.getBusinessVerify());
             addQueryByTags(boolQueryBuilder, businessSearch.getTags());
@@ -162,7 +171,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         }
         addObjectStateQuery(boolQueryBuilder, ObjectState.ACTIVE);
     
-        FetchSourceFilter fetchSourceFilter = new FetchSourceFilter(null, new String[]{FIELD_SERVICE_NAMES, FIELD_SERVICES, FIELD_WORK_TIMES});
+        FetchSourceFilter fetchSourceFilter = new FetchSourceFilter(null, new String[]{FIELD_SERVICE_NAMES, FIELD_SERVICES, FIELD_WORK_TIMES, FIELD_PACKAGE_NAMES});
         NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder().withQuery(boolQueryBuilder).withSourceFilter(fetchSourceFilter).withIndices(BUSINESS_INDEX_NAME).withTypes(BUSINESS_TYPE_NAME);
         setPageable(nativeSearchQueryBuilder, businessSearch);
         return nativeSearchQueryBuilder;
@@ -172,6 +181,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAllAsync() {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         indexAll();
     }
 
@@ -179,6 +194,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAsync(UUID businessId) {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         log.info("Get data for index Business to ElasticSearch");
         BaseBusinessDto business = baseBusinessService.getByIdIgnoreState(businessId);
         List<BusinessDocument> businessDocuments = collectData(Arrays.asList(business));
@@ -190,6 +211,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAsync(List<UUID> businessIds) {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         log.info("Get data for index Business to ElasticSearch");
         List<BaseBusinessDto> business = baseBusinessService.getByIds(businessIds);
         List<BusinessDocument> businessDocuments = collectData(business);
@@ -221,12 +248,14 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             Map<UUID, RatingDto> ratingMap = commentService.getRatings(businessIds);
             Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessIds);
             Map<UUID, List<TagDto>> tagMap = businessTagService.getMapByBusinessIds(businessIds);
+            Map<UUID, List<LitePackageDto>> packageMap = packageService.getLiteMapByBusinessIds(businessIds);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
                 if (document != null) {
                     insertGeoPoint(document, business);
                     insertServices(document, serviceMap.get(business.getId()));
                     insertRating(document, ratingMap.get(business.getId()));
+                    insertPackageNames(document, packageMap.get(business.getId()));
                     insertTags(document, tagMap.get(business.getId()));
                     if (CollectionUtils.isNotEmpty(business.getSpaces())) {
                         document.setCountBox(business.getSpaces().size());
@@ -271,6 +300,14 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                     }).collect(Collectors.toList());
             target.setServices(services);
             target.setServiceNames(new ArrayList<>(serviceNames));
+        }
+        return target;
+    }
+    
+    private BusinessDocument insertPackageNames(BusinessDocument target, List<LitePackageDto> packages) {
+        if ((target != null) && CollectionUtils.isNotEmpty(packages)) {
+            List<String> packageNames = packages.stream().map(LitePackageDto::getName).collect(Collectors.toList());
+            target.setPackageNames(packageNames);
         }
         return target;
     }
@@ -376,6 +413,19 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             boolQueryBuilder.filter(geoDistanceQueryBuilder);
         }
     }
+    
+    private void addGeoPolygonQuery(BoolQueryBuilder boolQueryBuilder, List<GeoPosition> geoPositions) {
+        if (CollectionUtils.isNotEmpty(geoPositions)) {
+            List<org.elasticsearch.common.geo.GeoPoint> geoPoints = geoPositions.stream()
+                    .filter(Objects::nonNull)
+                    .filter(i -> ObjectUtils.allNotNull(i.getLatitude(), i.getLongitude()))
+                    .map(i -> new org.elasticsearch.common.geo.GeoPoint(i.getLatitude(), i.getLongitude()))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(geoPositions)) {
+                boolQueryBuilder.filter(new GeoPolygonQueryBuilder(FIELD_GEO_POINT, geoPoints));
+            }
+        }
+    }
 
     private void addFullTextQuery(BoolQueryBuilder boolQueryBuilder, String fullTextQuery) {
         if (StringUtils.isNoneBlank(fullTextQuery) && fullTextQuery.length() > 2) {
@@ -384,6 +434,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                     FIELD_NAME, 2.0F,
                     FIELD_DESCRIPTION, 2.0F,
                     FIELD_ADDRESS, 2.0F,
+                    FIELD_PACKAGE_NAMES, 2.0F,
                     FIELD_SERVICE_NAMES, 2.0F);
             boolQueryBuilder.must(QueryBuilders.queryStringQuery(fullTextQuery).fields(fields).type(MultiMatchQueryBuilder.Type.PHRASE_PREFIX));
         }
@@ -432,13 +483,16 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     
     private void setPageable(NativeSearchQueryBuilder nativeSearchQueryBuilder, BusinessSearchDto businessSearchDto) {
         int page = 0;
-        if ((businessSearchDto != null) && (businessSearchDto.getPage() != null) && (businessSearchDto.getPage() >= 0)) {
+        if ((businessSearchDto != null) && (businessSearchDto.getPage() != null) && (businessSearchDto.getPage() > 0)) {
             page = businessSearchDto.getPage();
         }
         if ((businessSearchDto != null) && (businessSearchDto.getSize() != null) && (businessSearchDto.getSize() > 0)) {
             nativeSearchQueryBuilder.withPageable(PageRequest.of(page, businessSearchDto.getSize()));
         } else {
             long count = elasticsearchOperations.count(nativeSearchQueryBuilder.build(), carWashEsRepository.getEntityClass());
+            if (count < 1) {
+                count = 1;
+            }
             nativeSearchQueryBuilder.withPageable(PageRequest.of(page, (int)count));
         }
     }
