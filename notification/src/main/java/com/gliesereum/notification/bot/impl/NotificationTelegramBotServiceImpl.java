@@ -264,7 +264,7 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 	
 	private void processStart(Message originalMessage) {
 		SendMessage sendMessage = new SendMessage();
-		sendMessage.setText("Добро пожаловать. \nДля начала работы добавте номер телефона сотрудника с помошью команды 'Добавить сотрудника'");
+		sendMessage.setText("Добро пожаловать. \nДля начала работы добавте номер телефона сотрудника с помошью команды 'Указать номер телефона'");
 		addMainMenu(sendMessage);
 		
 		send(sendMessage, originalMessage, originalMessage.getChatId(), false);
