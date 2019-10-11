@@ -4,6 +4,7 @@ import com.gliesereum.karma.facade.notification.RecordNotificationFacade;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.share.common.model.dto.karma.record.AbstractRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.RecordNotificationDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.gliesereum.share.common.model.dto.notification.notification.NotificationDto;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,6 +25,9 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
 
     @Value("${notification.record.queueName}")
     private String notificationRecordQueue;
+    
+    @Value("${notification.create-record.queueName}")
+    private String notificationCreateRecordQueue;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -42,7 +46,19 @@ public class RecordNotificationFacadeImpl implements RecordNotificationFacade {
             rabbitTemplate.convertAndSend(notificationRecordQueue, notification);
         }
     }
-
+    
+    @Override
+    @Async
+    public void recordCreateBusinessNotification(RecordNotificationDto recordNotificationDto) {
+        if (recordNotificationDto != null) {
+            NotificationDto<RecordNotificationDto> notification = new NotificationDto<>();
+            notification.setData(recordNotificationDto);
+            notification.setSubscribeDestination(SubscribeDestination.KARMA_BUSINESS_RECORD);
+            notification.setObjectId(recordNotificationDto.getRecord().getBusinessId());
+            rabbitTemplate.convertAndSend(notificationCreateRecordQueue, notification);
+        }
+    }
+    
     @Override
     @Async
     public void recordClientNotification(BaseRecordDto record) {

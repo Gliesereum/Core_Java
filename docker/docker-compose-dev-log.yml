@@ -327,6 +327,8 @@ services:
       LOG_SYSTEM_QUEUE: logSystemQueue
       LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "true"
+      telegram.bot.notification.token: "962353680:AAEeLbmbr6V_ibcovqaY6n0KOc_vkK0PQUg"
+      telegram.bot.notification.user-name: "coupler_worker_dev_bot"
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
 

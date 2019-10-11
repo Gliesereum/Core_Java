@@ -117,7 +117,19 @@ public class BusinessAdministratorServiceImpl extends DefaultServiceImpl<Busines
         }
         return result;
     }
-
+    
+    @Override
+    public List<UUID> getUserIdsByBusinessId(UUID businessId) {
+        List<UUID> result = null;
+        if (businessId != null) {
+            List<BusinessAdministratorEntity> entities = businessAdministratorRepository.findAllByBusinessId(businessId);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                result = entities.stream().map(BusinessAdministratorEntity::getUserId).collect(Collectors.toList());
+            }
+        }
+        return result;
+    }
+    
     @Override
     public List<DetailedBusinessAdministratorDto> getByBusinessId(UUID businessId) {
         List<DetailedBusinessAdministratorDto> result = null;

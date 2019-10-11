@@ -162,7 +162,7 @@ services:
       LOG_SYSTEM_QUEUE: logSystemQueue
       LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "false"
-      auth.sms.prefix: "Coupler SMS authorization. #CPS your CODE:"
+      auth.sms.prefix: "Coupler CPS:"
       telegram.bot.username: "feedBack_bot"
       telegram.bot.token: "914987096:AAFJWyVEq7Qu9DQru0dhve8N64GpIcHUtkM"
   proxy:
@@ -284,6 +284,8 @@ services:
       LOG_SYSTEM_QUEUE: logSystemQueue
       LOG_REQUEST_QUEUE: logRequestQueue
       swagger.enable: "false"
+      telegram.bot.notification.token: "831595784:AAF0qpFXzS4QvpIMk89YFgMpsLcOR5jEh-o"
+      telegram.bot.notification.user-name: "coupler_worker_bot"
     volumes:
       - /usr/config/google-services.json:/config/google-services.json
   language:

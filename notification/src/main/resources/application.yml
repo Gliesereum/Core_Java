@@ -48,6 +48,8 @@ exchange:
     account:
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
+      sendCode: http://account-service/phone/code
+      userAuth: http://account-service/auth/signin
     karma:
       businessForCurrentUser: http://karma-service/business/by-current-user/like-worker
       existChatSupport: http://karma-service/chat-support/exist-chat-support
@@ -60,7 +62,14 @@ firebase:
 notification:
   record:
     queueName: notification-record
+  create-record:
+    queueName: notification-create-record
   business:
     queueName: notification-business
   chat-message:
     queueName: notification-chat-message
+    
+telegram:
+  bot:
+    token: ${telegram.bot.notification.token:962353680:AAEeLbmbr6V_ibcovqaY6n0KOc_vkK0PQUg}
+    user-name: ${telegram.bot.notification.username:coupler_worker_dev_bot}

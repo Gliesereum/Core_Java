@@ -10,6 +10,7 @@ buildscript {
 		lombokVersion = '1.18.2'
 		swaggerVersion = '2.9.2'
 		firebaseAdminVersion = '6.8.0'
+		telegramBotVersion = '4.4.0.1'
 	}
 	repositories {
 		mavenCentral()
@@ -50,6 +51,8 @@ dependencies {
 	implementation "commons-io:commons-io:${commonsIOVersion}"
 	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
 	implementation "com.google.firebase:firebase-admin:${firebaseAdminVersion}"
+
+	implementation "org.telegram:telegrambots-spring-boot-starter:${telegramBotVersion}"
 	
 	runtimeOnly('org.postgresql:postgresql')
 	

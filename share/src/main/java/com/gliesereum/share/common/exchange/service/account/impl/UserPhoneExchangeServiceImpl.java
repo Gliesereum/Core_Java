@@ -3,7 +3,9 @@ package com.gliesereum.share.common.exchange.service.account.impl;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
 import com.gliesereum.share.common.exchange.service.account.UserPhoneExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.UserPhoneDto;
+import com.gliesereum.share.common.model.response.MapResponse;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -55,6 +58,21 @@ public class UserPhoneExchangeServiceImpl implements UserPhoneExchangeService {
         }
         return result;
     }
-
-
+    
+    @Override
+    public void sendCode(String phone) {
+        if(StringUtils.isNotBlank(phone)) {
+            String uri = UriComponentsBuilder
+                    .fromUriString(exchangeProperties.getAccount().getSendCode())
+                    .queryParam("phone", phone)
+                    .build()
+                    .toString();
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<Map>() {});
+        }
+       
+    }
 }

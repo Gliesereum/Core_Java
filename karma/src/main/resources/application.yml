@@ -63,6 +63,8 @@ exchange:
 notification:
   record:
     queueName: notification-record
+  create-record:
+    queueName: notification-create-record
   business:
     queueName: notification-business
   chat-message:
