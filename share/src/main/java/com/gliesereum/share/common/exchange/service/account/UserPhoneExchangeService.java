@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface UserPhoneExchangeService {
 
     List<UserPhoneDto> findUserPhoneByUserIds(Collection<UUID> ids);
+    
+    void sendCode(String phone);
 }

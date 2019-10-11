@@ -3,8 +3,12 @@ package com.gliesereum.notification.config;
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizationInterceptor;
 import com.gliesereum.share.common.exchange.properties.ExchangeProperties;
+import com.gliesereum.share.common.exchange.service.account.UserAuthExchangeService;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.exchange.service.account.UserPhoneExchangeService;
+import com.gliesereum.share.common.exchange.service.account.impl.UserAuthExchangeServiceImpl;
 import com.gliesereum.share.common.exchange.service.account.impl.UserExchangeServiceImpl;
+import com.gliesereum.share.common.exchange.service.account.impl.UserPhoneExchangeServiceImpl;
 import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
 import com.gliesereum.share.common.exchange.service.karma.impl.KarmaExchangeServiceImpl;
 import com.gliesereum.share.common.security.properties.JwtSecurityProperties;
@@ -57,6 +61,18 @@ public class ExchangeConfiguration {
 	public UserExchangeService userExchangeService(RestTemplate restTemplate,
 			ExchangeProperties exchangeProperties) {
 		return new UserExchangeServiceImpl(restTemplate, exchangeProperties);
+	}
+	
+	@Bean
+	public UserPhoneExchangeService userPhoneExchangeService(RestTemplate restTemplate,
+	                                                         ExchangeProperties exchangeProperties) {
+		return new UserPhoneExchangeServiceImpl(restTemplate, exchangeProperties);
+	}
+	
+	@Bean
+	public UserAuthExchangeService userAuthExchangeService(RestTemplate restTemplate, 
+	                                                       ExchangeProperties exchangeProperties) {
+		return new UserAuthExchangeServiceImpl(restTemplate, exchangeProperties);
 	}
 
 	@Bean

@@ -38,6 +38,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     }
 
     @Override
+    @Transactional
     public D create(D dto) {
         if (dto != null) {
             dto.setId(null);
@@ -50,6 +51,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     }
 
     @Override
+    @Transactional
     public List<D> create(List<D> dtos) {
         if (CollectionUtils.isNotEmpty(dtos)) {
             List<E> entities = converter.convert(dtos, entityClass);
@@ -62,6 +64,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     }
 
     @Override
+    @Transactional
     public D update(D dto) {
         if (dto != null) {
             if (dto.getId() == null) {
@@ -76,6 +79,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     }
 
     @Override
+    @Transactional
     public List<D> update(List<D> dtos) {
         if (CollectionUtils.isNotEmpty(dtos)) {
             if (dtos.stream().anyMatch(i -> i.getId() == null)) {
@@ -91,6 +95,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     }
 
     @Override
+    @Transactional
     public D getById(UUID id) {
         D result = null;
         if (id != null) {
@@ -103,6 +108,7 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     }
 
     @Override
+    @Transactional
     public List<D> getByIds(Iterable<UUID> ids) {
         List<D> result = null;
         if (ids != null) {
@@ -113,12 +119,14 @@ public abstract class DefaultServiceImpl<D extends DefaultDto, E extends Default
     }
 
     @Override
+    @Transactional
     public List<D> getAll() {
         List<E> entities = repository.findAll();
         return converter.convert(entities, dtoClass);
     }
 
     @Override
+    @Transactional
     public Page<D> getAll(Pageable pageable) {
         Page<E> entities = repository.findAll(pageable);
         return converter.convert(entities, dtoClass);

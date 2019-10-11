@@ -1,9 +1,11 @@
 package com.gliesereum.notification.mq;
 
+import com.gliesereum.notification.bot.NotificationTelegramBotService;
 import com.gliesereum.notification.service.notification.NotificationService;
 import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.chat.ChatMessageDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
+import com.gliesereum.share.common.model.dto.karma.record.RecordNotificationDto;
 import com.gliesereum.share.common.model.dto.notification.notification.NotificationDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -22,6 +24,9 @@ public class NotificationMqListener {
 
     @Autowired
     private NotificationService notificationService;
+    
+    @Autowired
+    private NotificationTelegramBotService notificationTelegramBotService;
 
     @RabbitListener(queuesToDeclare = @Queue(name = "${notification.record.queueName}", ignoreDeclarationExceptions = "true"))
     public void receiveRecordNotification(NotificationDto<BaseRecordDto> recordNotification) {
@@ -29,6 +34,25 @@ public class NotificationMqListener {
             notificationService.processRecordNotification(recordNotification);
         } catch (Exception e) {
             log.warn("Error while receive record notification", e);
+        }
+    }
+    
+    @RabbitListener(queuesToDeclare = @Queue(name = "${notification.create-record.queueName}", ignoreDeclarationExceptions = "true"))
+    public void receiveCreateRecordNotification(NotificationDto<RecordNotificationDto> recordNotification) {
+        try {
+            NotificationDto<BaseRecordDto> notification = new NotificationDto<>();
+            notification.setObjectId(recordNotification.getObjectId());
+            notification.setData(recordNotification.getData().getRecord());
+            notification.setSubscribeDestination(recordNotification.getSubscribeDestination());
+            notificationService.processRecordNotification(notification);
+            
+        } catch (Exception e) {
+            log.warn("Error while receive record notification", e);
+        }
+        try {
+            notificationTelegramBotService.recordCreateNotification(recordNotification.getData());
+        } catch (Exception e) {
+            log.warn("Error while send notification via telegram", e);
         }
     }
 

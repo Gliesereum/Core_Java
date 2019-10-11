@@ -29,4 +29,8 @@ public class AccountProperty {
     private String createOrGetPublicUser;
 
     private String publicStatistic;
+    
+    private String sendCode;
+    
+    private String userAuth;
 }
