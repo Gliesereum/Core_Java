@@ -10,6 +10,7 @@ import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.PackageServiceService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.descriptions.PackageDescriptionService;
+import com.gliesereum.karma.service.tag.ObjectTagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
@@ -18,6 +19,7 @@ import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.PackageServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.descriptions.PackageDescriptionDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -60,9 +62,12 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
 
     @Autowired
     private BusinessPermissionFacade businessPermissionFacade;
-    
+
     @Autowired
     private BusinessEsService businessEsService;
+
+    @Autowired
+    private ObjectTagService objectTagService;
 
     @Autowired
     public PackageServiceImpl(PackageRepository packageRepository, DefaultConverter defaultConverter) {
@@ -72,8 +77,11 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
 
     @Override
     public List<PackageDto> getByBusinessId(UUID id) {
+        List<PackageDto> result = null;
         List<PackageEntity> entities = packageRepository.getByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
-        return converter.convert(entities, dtoClass);
+        result = converter.convert(entities, dtoClass);
+        setTags(result);
+        return result;
     }
 
     @Override
@@ -87,7 +95,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         }
         return result;
     }
-    
+
     @Override
     public Map<UUID, List<LitePackageDto>> getLiteMapByBusinessIds(List<UUID> businessIds) {
         Map<UUID, List<LitePackageDto>> result = new HashMap<>();
@@ -99,7 +107,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         }
         return result;
     }
-    
+
     @Override
     public Map<UUID, LitePackageDto> getMapByIds(List<UUID> packageIds) {
         Map<UUID, LitePackageDto> result = new HashMap<>();
@@ -119,7 +127,30 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         }
         return result;
     }
-    
+
+    @Override
+    public List<TagDto> addTag(UUID tagId, UUID idPackage) {
+        checkPackageExist(idPackage);
+        return objectTagService.addTag(tagId, idPackage);
+    }
+
+    @Override
+    public List<TagDto> getTags(UUID idPackage) {
+        return objectTagService.getByObjectId(idPackage);
+    }
+
+    @Override
+    public List<TagDto> saveTags(List<UUID> tagId, UUID idPackage) {
+        checkPackageExist(idPackage);
+        return objectTagService.saveTags(tagId, idPackage);
+    }
+
+    @Override
+    public List<TagDto> removeTag(UUID tagId, UUID idPackage) {
+        checkPackageExist(idPackage);
+        return objectTagService.removeTag(tagId, idPackage);
+    }
+
     @Override
     public PackageDto getByIdIgnoreState(UUID id) {
         PackageDto result = null;
@@ -129,6 +160,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
                 result = converter.convert(entity.get(), dtoClass);
             }
         }
+        setTags(Arrays.asList(result));
         return result;
     }
 
@@ -140,14 +172,20 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
 
     @Override
     public List<PackageDto> getAll() {
+        List<PackageDto> result = null;
         List<PackageEntity> entities = packageRepository.getAllByObjectState(ObjectState.ACTIVE);
-        return converter.convert(entities, dtoClass);
+        result = converter.convert(entities, dtoClass);
+        setTags(result);
+        return result;
     }
 
     @Override
     public PackageDto getById(UUID id) {
+        PackageDto result = null;
         PackageEntity entity = packageRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
-        return converter.convert(entity, dtoClass);
+        result = converter.convert(entity, dtoClass);
+        setTags(Arrays.asList(result));
+        return result;
     }
 
     @Override
@@ -163,6 +201,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
             List<PackageEntity> entities = packageRepository.getAllByIdInAndObjectState(ids, ObjectState.ACTIVE);
             result = converter.convert(entities, dtoClass);
         }
+        setTags(result);
         return result;
     }
 
@@ -196,6 +235,7 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         setServices(dto, result);
         List<PackageDescriptionDto> descriptions = packageDescriptionService.update(dto.getDescriptions(), result.getId());
         result.setDescriptions(descriptions);
+        setTags(Arrays.asList(result));
         businessEsService.indexAsync(result.getBusinessId());
         return result;
     }
@@ -264,5 +304,23 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
         businessPermissionFacade.checkPermissionByBusiness(dto.getBusinessId(), BusinessPermission.BUSINESS_ADMINISTRATION);
+    }
+
+    private void checkPackageExist(UUID idPackage) {
+        if (!isExist(idPackage)) {
+            throw new ClientException(PACKAGE_NOT_FOUND);
+        }
+    }
+
+    private void setTags(List<PackageDto> packages) {
+        if (CollectionUtils.isNotEmpty(packages)) {
+            Set<UUID> ids = packages.stream().map(PackageDto::getId).collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(ids)) {
+                Map<UUID, List<TagDto>> map = objectTagService.getMapByObjectIds(new ArrayList<>(ids));
+                packages.forEach(price -> {
+                    price.setTags(map.get(price.getId()));
+                });
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.gliesereum.share.common.model.dto.base.geo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -10,11 +11,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class GeoDistanceDto {
-
-    private Double longitude;
-
-    private Double latitude;
-
+@EqualsAndHashCode(callSuper = true)
+public class GeoDistanceDto extends GeoPosition {
+    
     private Integer distanceMeters;
 }

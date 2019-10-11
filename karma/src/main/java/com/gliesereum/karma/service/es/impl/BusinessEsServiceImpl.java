@@ -11,9 +11,10 @@ import com.gliesereum.karma.service.es.BusinessEsService;
 import com.gliesereum.karma.service.preference.ClientPreferenceService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.impl.ServicePriceServiceImpl;
-import com.gliesereum.karma.service.tag.BusinessTagService;
+import com.gliesereum.karma.service.tag.ObjectTagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.model.dto.base.geo.GeoDistanceDto;
+import com.gliesereum.share.common.model.dto.base.geo.GeoPosition;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.business.BusinessSearchDto;
 import com.gliesereum.share.common.model.dto.karma.car.CarInfoDto;
@@ -49,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -108,11 +110,11 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     private CommentService commentService;
 
     @Autowired
-    private BusinessTagService businessTagService;
+    private ObjectTagService objectTagService;
     
     @Autowired
     private ElasticsearchOperations elasticsearchOperations;
-    
+
     @Autowired
     private PackageService packageService;
 
@@ -155,6 +157,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             addQueryByCorporationId(boolQueryBuilder, businessSearch.getCorporationIds());
             addQueryByBusinessCategoryId(boolQueryBuilder, businessSearch.getBusinessCategoryIds());
             addGeoDistanceQuery(boolQueryBuilder, businessSearch.getGeoDistance());
+            addGeoPolygonQuery(boolQueryBuilder, businessSearch.getPolygonPoints());
             addFullTextQuery(boolQueryBuilder, businessSearch.getFullTextQuery());
             addBusinessVerifyStateQuery(boolQueryBuilder, businessSearch.getBusinessVerify());
             addQueryByTags(boolQueryBuilder, businessSearch.getTags());
@@ -178,6 +181,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAllAsync() {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         indexAll();
     }
 
@@ -185,6 +194,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAsync(UUID businessId) {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         log.info("Get data for index Business to ElasticSearch");
         BaseBusinessDto business = baseBusinessService.getByIdIgnoreState(businessId);
         List<BusinessDocument> businessDocuments = collectData(Arrays.asList(business));
@@ -196,6 +211,12 @@ public class BusinessEsServiceImpl implements BusinessEsService {
     @Transactional
     @Async
     public void indexAsync(List<UUID> businessIds) {
+        //TODO: WHILE Parent transaction not finished es service get old data, think how fix this
+        try {
+            TimeUnit.MILLISECONDS.sleep(10L);
+        } catch (InterruptedException e) {
+            log.error("Error while sleep");
+        }
         log.info("Get data for index Business to ElasticSearch");
         List<BaseBusinessDto> business = baseBusinessService.getByIds(businessIds);
         List<BusinessDocument> businessDocuments = collectData(business);
@@ -226,8 +247,8 @@ public class BusinessEsServiceImpl implements BusinessEsService {
             List<UUID> businessIds = businessList.stream().map(BaseBusinessDto::getId).collect(Collectors.toList());
             Map<UUID, RatingDto> ratingMap = commentService.getRatings(businessIds);
             Map<UUID, List<ServicePriceDto>> serviceMap = getServiceMap(businessIds);
-            Map<UUID, List<TagDto>> tagMap = businessTagService.getMapByBusinessIds(businessIds);
             Map<UUID, List<LitePackageDto>> packageMap = packageService.getLiteMapByBusinessIds(businessIds);
+            Map<UUID, List<TagDto>> tagMap = objectTagService.getMapByObjectIds(businessIds);
             for (BaseBusinessDto business : businessList) {
                 BusinessDocument document = defaultConverter.convert(business, BusinessDocument.class);
                 if (document != null) {
@@ -282,7 +303,7 @@ public class BusinessEsServiceImpl implements BusinessEsService {
         }
         return target;
     }
-    
+
     private BusinessDocument insertPackageNames(BusinessDocument target, List<LitePackageDto> packages) {
         if ((target != null) && CollectionUtils.isNotEmpty(packages)) {
             List<String> packageNames = packages.stream().map(LitePackageDto::getName).collect(Collectors.toList());
@@ -390,6 +411,19 @@ public class BusinessEsServiceImpl implements BusinessEsService {
                     .point(geoDistance.getLatitude(), geoDistance.getLongitude())
                     .distance(geoDistance.getDistanceMeters(), DistanceUnit.METERS);
             boolQueryBuilder.filter(geoDistanceQueryBuilder);
+        }
+    }
+
+    private void addGeoPolygonQuery(BoolQueryBuilder boolQueryBuilder, List<GeoPosition> geoPositions) {
+        if (CollectionUtils.isNotEmpty(geoPositions)) {
+            List<org.elasticsearch.common.geo.GeoPoint> geoPoints = geoPositions.stream()
+                    .filter(Objects::nonNull)
+                    .filter(i -> ObjectUtils.allNotNull(i.getLatitude(), i.getLongitude()))
+                    .map(i -> new org.elasticsearch.common.geo.GeoPoint(i.getLatitude(), i.getLongitude()))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(geoPositions)) {
+                boolQueryBuilder.filter(new GeoPolygonQueryBuilder(FIELD_GEO_POINT, geoPoints));
+            }
         }
     }
 

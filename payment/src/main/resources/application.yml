@@ -61,8 +61,7 @@ way-for-pay:
       exchange-name: business-update-type-payment
 
 liq-pay:
-  crypto:
-    password: eD6fB08A179e
-    salt: f57P7bCf25dc2e
+  checkout:
+    callback-server-url: https://32bff33b.ngrok.io/liq-pay/call-back
   public-key: sandbox_i68717225710
   private-key: sandbox_MbnwJt32pvmXEFielzRaM2gYB4tauUmpYM4a3qFs

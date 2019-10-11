@@ -15,11 +15,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "business_tag")
-public class BusinessTagEntity extends DefaultEntity {
+@Table(name = "object_tag")
+public class ObjectTagEntity extends DefaultEntity {
 
-    @Column(name = "business_id")
-    private UUID businessId;
+    @Column(name = "object_id")
+    private UUID objectId;
 
     @Column(name = "tag_id")
     private UUID tagId;

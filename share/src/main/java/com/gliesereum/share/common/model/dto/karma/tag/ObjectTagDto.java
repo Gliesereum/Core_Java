@@ -11,14 +11,14 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BusinessTagDto extends DefaultDto {
+public class ObjectTagDto extends DefaultDto {
 
-    private UUID businessId;
+    private UUID objectId;
 
     private UUID tagId;
 
-    public BusinessTagDto(UUID businessId, UUID tagId) {
-        this.businessId = businessId;
+    public ObjectTagDto(UUID objectId, UUID tagId) {
+        this.objectId = objectId;
         this.tagId = tagId;
     }
 }

@@ -12,6 +12,7 @@ import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
 import com.gliesereum.karma.service.service.ServiceService;
 import com.gliesereum.karma.service.service.descriptions.ServicePriceDescriptionService;
+import com.gliesereum.karma.service.tag.ObjectTagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
@@ -22,6 +23,7 @@ import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServiceDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServicePriceDescriptionDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -74,16 +76,19 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
     @Autowired
     private ServicePriceDescriptionService servicePriceDescriptionService;
 
+    @Autowired
+    private ObjectTagService objectTagService;
+
     public ServicePriceServiceImpl(ServicePriceRepository servicePriceRepository, DefaultConverter defaultConverter) {
         super(servicePriceRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.servicePriceRepository = servicePriceRepository;
     }
-    
+
     @Override
     public Map<UUID, LiteServicePriceDto> getMapByIds(List<UUID> servicePriceIds) {
         Map<UUID, LiteServicePriceDto> result = new HashMap<>();
         if (CollectionUtils.isNotEmpty(servicePriceIds)) {
-            
+
             List<LiteServicePriceDto> services = this.getLiteByIds(servicePriceIds);
             if (CollectionUtils.isNotEmpty(services)) {
                 result = services.stream().collect(Collectors.toMap(LiteServicePriceDto::getId, i -> i));
@@ -91,7 +96,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         }
         return result;
     }
-    
+
     @Override
     public List<LiteServicePriceDto> getLiteByIds(List<UUID> ids) {
         List<LiteServicePriceDto> result = null;
@@ -101,7 +106,30 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         }
         return result;
     }
-    
+
+    @Override
+    public List<TagDto> addTag(UUID tagId, UUID idPrice) {
+        checkPriceExist(idPrice);
+        return objectTagService.addTag(tagId, idPrice);
+    }
+
+    @Override
+    public List<TagDto> getTags(UUID idPrice) {
+        return objectTagService.getByObjectId(idPrice);
+    }
+
+    @Override
+    public List<TagDto> saveTags(List<UUID> tagId, UUID idPrice) {
+        checkPriceExist(idPrice);
+        return objectTagService.saveTags(tagId, idPrice);
+    }
+
+    @Override
+    public List<TagDto> removeTag(UUID tagId, UUID idPrice) {
+        checkPriceExist(idPrice);
+        return objectTagService.removeTag(tagId, idPrice);
+    }
+
     @Override
     public ServicePriceDto create(ServicePriceDto dto) {
         ServicePriceDto result = null;
@@ -131,6 +159,7 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             List<ServicePriceDescriptionDto> descriptions = servicePriceDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
             businessEsService.indexAsync(result.getBusinessId());
+            setTags(Arrays.asList(result));
         }
         return result;
     }
@@ -149,23 +178,32 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
 
     @Override
     public List<ServicePriceDto> getAll() {
+        List<ServicePriceDto> result = null;
         List<ServicePriceEntity> entities = servicePriceRepository.getAllByObjectState(ObjectState.ACTIVE);
-        return converter.convert(entities, dtoClass);
+        result = converter.convert(entities, dtoClass);
+        setTags(result);
+        return result;
     }
 
     @Override
     public ServicePriceDto getById(UUID id) {
+        ServicePriceDto result = null;
         ServicePriceEntity entity = servicePriceRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
-        return converter.convert(entity, dtoClass);
+        result = converter.convert(entity, dtoClass);
+        setTags(Arrays.asList(result));
+        return result;
     }
 
     @Override
     public ServicePriceDto getByIdAndRefresh(UUID id) {
+        ServicePriceDto result = null;
         ServicePriceEntity entity = servicePriceRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         if (entity != null) {
             servicePriceRepository.refresh(entity);
         }
-        return converter.convert(entity, dtoClass);
+        result = converter.convert(entity, dtoClass);
+        setTags(Arrays.asList(result));
+        return result;
     }
 
     @Override
@@ -196,19 +234,26 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         if (packageDto != null && CollectionUtils.isNotEmpty(packageDto.getServices())) {
             result = packageDto.getServices().stream().filter(f -> f.getObjectState().equals(ObjectState.ACTIVE)).collect(Collectors.toList());
         }
+        setTags(result);
         return result;
     }
 
     @Override
     public List<ServicePriceDto> getByBusinessId(UUID id) {
+        List<ServicePriceDto> result = null;
         List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessIdAndObjectState(id, ObjectState.ACTIVE);
-        return converter.convert(entities, dtoClass);
+        result = converter.convert(entities, dtoClass);
+        setTags(result);
+        return result;
     }
 
     @Override
     public List<ServicePriceDto> getByBusinessIds(List<UUID> ids) {
+        List<ServicePriceDto> result = null;
         List<ServicePriceEntity> entities = servicePriceRepository.findAllByBusinessIdInAndObjectState(ids, ObjectState.ACTIVE);
-        return converter.convert(entities, dtoClass);
+        result = converter.convert(entities, dtoClass);
+        setTags(result);
+        return result;
     }
 
     @Override
@@ -322,5 +367,23 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             dto.setName(service.getName());
         }
         return dto;
+    }
+
+    private void checkPriceExist(UUID idPrice) {
+        if (!isExist(idPrice)) {
+            throw new ClientException(SERVICE_PRICE_NOT_FOUND);
+        }
+    }
+
+    private void setTags(List<ServicePriceDto> prices) {
+        if (CollectionUtils.isNotEmpty(prices)) {
+            Set<UUID> ids = prices.stream().map(ServicePriceDto::getId).collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(ids)) {
+                Map<UUID, List<TagDto>> map = objectTagService.getMapByObjectIds(new ArrayList<>(ids));
+                prices.forEach(price -> {
+                    price.setTags(map.get(price.getId()));
+                });
+            }
+        }
     }
 }

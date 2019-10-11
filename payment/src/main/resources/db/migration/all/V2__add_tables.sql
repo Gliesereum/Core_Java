@@ -71,3 +71,26 @@ CREATE TABLE IF NOT EXISTS payment.wfp_response_code
     reason      character varying,
     CONSTRAINT wfp_response_code_pk PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS payment.liq_pay_transaction
+(
+    id                  uuid NOT NULL DEFAULT uuid_generate_v4(),
+    order_id            uuid,
+    agent_commission    float8,
+    amount              float8,
+    receiver_commission float8,
+    action              character varying,
+    card_token          character varying,
+    completion_date     character varying,
+    create_date         character varying,
+    currency            character varying,
+    end_date            character varying,
+    liqpay_order_id     character varying,
+    payment_id          character varying,
+    paytype             character varying,
+    status              character varying,
+    err_code            character varying,
+    err_description     character varying,
+
+    CONSTRAINT liq_pay_transaction_pk PRIMARY KEY (id)
+);

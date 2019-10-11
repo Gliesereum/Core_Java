@@ -16,7 +16,7 @@ import com.gliesereum.karma.service.popular.BusinessPopularService;
 import com.gliesereum.karma.service.record.BaseRecordService;
 import com.gliesereum.karma.service.service.PackageService;
 import com.gliesereum.karma.service.service.ServicePriceService;
-import com.gliesereum.karma.service.tag.BusinessTagService;
+import com.gliesereum.karma.service.tag.ObjectTagService;
 import com.gliesereum.karma.service.tag.TagService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
@@ -32,7 +32,6 @@ import com.gliesereum.share.common.model.dto.karma.service.PackageDto;
 import com.gliesereum.share.common.model.dto.karma.service.ServicePriceDto;
 import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
-import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.service.auditable.impl.AuditableServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -113,8 +112,8 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
     private TagService tagService;
 
     @Autowired
-    private BusinessTagService businessTagService;
-    
+    private ObjectTagService objectTagService;
+
     @Autowired
     private BusinessPopularService businessPopularService;
 
@@ -350,8 +349,8 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         Map<UUID, List<PackageDto>> packages = packageService.getMapByBusinessIds(ids);
         Map<UUID, List<MediaDto>> medias = mediaService.getMapByObjectIds(ids);
         Map<UUID, List<CommentFullDto>> comments = commentService.getMapFullByObjectIds(ids);
-        Map<UUID, List<TagDto>> tags = businessTagService.getMapByBusinessIds(ids);
-        
+        Map<UUID, List<TagDto>> tags = objectTagService.getMapByObjectIds(ids);
+
         businessPopularService.updateBusinessCountAsync(ids);
 
         return entities.stream()
@@ -379,7 +378,7 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         businessPermissionFacade.checkPermissionByBusiness(id, BusinessPermission.BUSINESS_ADMINISTRATION);
         BaseBusinessDto dto = getById(id);
         super.delete(dto);
-        businessTagService.deleteByBusinessId(id);
+        objectTagService.deleteByObjectId(id);
         businessEsService.indexAsync(dto.getId());
     }
 
@@ -475,30 +474,33 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
 
     @Override
     public List<TagDto> addTag(UUID tagId, UUID businessId) {
-        List<TagDto> result =  businessTagService.addTag(tagId,businessId);
+        checkBusinessExist(businessId);
+        List<TagDto> result = objectTagService.addTag(tagId, businessId);
         businessEsService.indexAsync(businessId);
         return result;
     }
-    
+
     @Override
     public List<TagDto> saveTags(List<UUID> tagId, UUID businessId) {
-        List<TagDto> result =  businessTagService.saveTags(tagId, businessId);
+        checkBusinessExist(businessId);
+        List<TagDto> result = objectTagService.saveTags(tagId, businessId);
         businessEsService.indexAsync(businessId);
         return result;
     }
-    
+
     @Override
     public List<TagDto> removeTag(UUID tagId, UUID businessId) {
-        List<TagDto> result =  businessTagService.removeTag(tagId,businessId);
+        checkBusinessExist(businessId);
+        List<TagDto> result = objectTagService.removeTag(tagId, businessId);
         businessEsService.indexAsync(businessId);
         return result;
     }
-    
+
     @Override
     public List<TagDto> getTags(UUID businessId) {
-        return businessTagService.getByBusinessId(businessId);
+        return objectTagService.getByObjectId(businessId);
     }
-    
+
     private void checkCorporationId(BaseBusinessDto business) {
         UUID corporationId = business.getCorporationId();
         if (corporationId == null) {
@@ -526,11 +528,9 @@ public class BaseBusinessServiceImpl extends AuditableServiceImpl<BaseBusinessDt
         }
     }
 
-    private List<TagDto> getByBusinessId(UUID businessId){
+    private void checkBusinessExist(UUID businessId) {
         if (!isExist(businessId)) {
             throw new ClientException(BUSINESS_NOT_FOUND);
         }
-        List<UUID> tagIds = businessTagService.getTagIdsByBusinessId(businessId);
-        return tagService.getByIds(tagIds);
     }
 }

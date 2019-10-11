@@ -7,6 +7,7 @@ import com.gliesereum.share.common.databind.json.description.DescriptionJsonSeri
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.filter.FilterAttributeDto;
 import com.gliesereum.share.common.model.dto.karma.service.descriptions.ServicePriceDescriptionDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -56,4 +57,6 @@ public class ServicePriceDto extends DefaultDto {
     private List<ServiceClassDto> serviceClass = new ArrayList<>();
 
     private List<FilterAttributeDto> attributes = new ArrayList<>();
+
+    private List<TagDto> tags = new ArrayList<>();
 }

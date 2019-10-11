@@ -6,6 +6,7 @@ import com.gliesereum.share.common.databind.json.description.DescriptionJsonDese
 import com.gliesereum.share.common.databind.json.description.DescriptionJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.service.descriptions.PackageDescriptionDto;
+import com.gliesereum.share.common.model.dto.karma.tag.TagDto;
 import com.gliesereum.share.common.model.enumerated.ObjectState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -50,5 +51,7 @@ public class PackageDto extends DefaultDto {
     @JsonDeserialize(using = DescriptionJsonDeserializer.class)
     @JsonSerialize(using = DescriptionJsonSerializer.class)
     private List<PackageDescriptionDto> descriptions = new ArrayList<>();
+
+    private List<TagDto> tags = new ArrayList<>();
 
 }

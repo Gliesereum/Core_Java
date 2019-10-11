@@ -60,6 +60,8 @@ dependencies {
 	runtimeOnly('org.postgresql:postgresql')
 
 	compile 'com.liqpay:liqpay-sdk:0.7-SNAPSHOT'
+	compile group: 'net.glxn', name: 'qrgen', version: '1.4'
+
 
 	implementation (project(':share')) {
 		transitive = false

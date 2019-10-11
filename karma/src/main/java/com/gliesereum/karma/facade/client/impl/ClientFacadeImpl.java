@@ -63,6 +63,13 @@ public class ClientFacadeImpl implements ClientFacade {
     }
     
     @Override
+    public ClientDto addNewClientAddGet(PublicUserDto user, UUID businessId) {
+        ClientDto clientDto = clientService.addNewClient(user, businessId);
+        clientEsService.index(clientDto);
+        return clientDto;
+    }
+    
+    @Override
     @Async
     public void updateClientInfo(UserDto user) {
         ClientDto clientDto = clientService.updateClientInfo(user);
