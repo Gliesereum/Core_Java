@@ -313,14 +313,14 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
     }
 
     private void setTags(List<PackageDto> packages) {
-        if (CollectionUtils.isNotEmpty(packages)) {
-            Set<UUID> ids = packages.stream().map(PackageDto::getId).collect(Collectors.toSet());
-            if (CollectionUtils.isNotEmpty(ids)) {
-                Map<UUID, List<TagDto>> map = objectTagService.getMapByObjectIds(new ArrayList<>(ids));
-                packages.forEach(price -> {
-                    price.setTags(map.get(price.getId()));
-                });
-            }
-        }
+//        if (CollectionUtils.isNotEmpty(packages)) {
+//            Set<UUID> ids = packages.stream().map(PackageDto::getId).collect(Collectors.toSet());
+//            if (CollectionUtils.isNotEmpty(ids)) {
+//                Map<UUID, List<TagDto>> map = objectTagService.getMapByObjectIds(new ArrayList<>(ids));
+//                packages.forEach(price -> {
+//                    price.setTags(map.get(price.getId()));
+//                });
+//            }
+//        }
     }
 }
