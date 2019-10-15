@@ -159,7 +159,9 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             List<ServicePriceDescriptionDto> descriptions = servicePriceDescriptionService.update(dto.getDescriptions(), result.getId());
             result.setDescriptions(descriptions);
             businessEsService.indexAsync(result.getBusinessId());
-            setTags(Arrays.asList(result));
+            if(result != null){
+                setTags(Arrays.asList(result));
+            }
         }
         return result;
     }
@@ -190,7 +192,9 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
         ServicePriceDto result = null;
         ServicePriceEntity entity = servicePriceRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         result = converter.convert(entity, dtoClass);
-        setTags(Arrays.asList(result));
+        if(result != null){
+            setTags(Arrays.asList(result));
+        }
         return result;
     }
 
@@ -202,7 +206,9 @@ public class ServicePriceServiceImpl extends DefaultServiceImpl<ServicePriceDto,
             servicePriceRepository.refresh(entity);
         }
         result = converter.convert(entity, dtoClass);
-        setTags(Arrays.asList(result));
+        if(result != null){
+            setTags(Arrays.asList(result));
+        }
         return result;
     }
 
