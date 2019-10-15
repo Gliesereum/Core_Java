@@ -121,4 +121,8 @@ public class KarmaExceptionMessage {
     public static final ExceptionMessage TAG_NOT_FOUND = new ExceptionMessage(1498, 404, "Tag not found");
     
     public static final ExceptionMessage TAG_WITH_THIS_NAME_EXIST = new ExceptionMessage(1499, 400, "Tag with this name exist");
+
+    public static final ExceptionMessage COUNTRY_NOT_FOUND = new ExceptionMessage(1500, 400, "Country not found");
+    public static final ExceptionMessage CITY_NOT_FOUND = new ExceptionMessage(1501, 400, "City not found");
+    public static final ExceptionMessage DISTRICT_NOT_FOUND = new ExceptionMessage(1502, 400, "District not found");
 }
