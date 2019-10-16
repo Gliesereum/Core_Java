@@ -10,33 +10,24 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.UUID;
 
-/**
- * @author vitalij
- * @version 1.0
- */
+
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class InvestorOfferDto extends DefaultDto {
+public class OfferCommentDto extends DefaultDto {
 
-    private Integer sumInvestment;
+    private String comment;
 
-    private Integer stockCount;
+    private UUID offerId;
 
-    private UUID customerId;
-
-    private UUID artBondId;
-
-    private OfferStateType stateType;
+    private UUID createById;
 
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime create;
 
-    private List<OfferCommentDto> comments = new ArrayList<>();
+    private OfferStateType stateType;
 }

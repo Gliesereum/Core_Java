@@ -2,9 +2,11 @@ package com.gliesereum.lendinggallery.service.offer.impl;
 
 import com.gliesereum.lendinggallery.model.entity.offer.InvestorOfferEntity;
 import com.gliesereum.lendinggallery.model.repository.jpa.offer.InvestorOfferRepository;
+import com.gliesereum.lendinggallery.service.advisor.AdvisorService;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
 import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
+import com.gliesereum.lendinggallery.service.offer.OfferCommentService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
@@ -15,13 +17,12 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStat
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
-import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferFullModelDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.*;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,12 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Autowired
     private UserExchangeService userExchangeService;
 
+    @Autowired
+    private AdvisorService advisorService;
+
+    @Autowired
+    private OfferCommentService commentService;
+
     public InvestorOfferServiceImpl(InvestorOfferRepository investorOfferRepository, DefaultConverter defaultConverter) {
         super(investorOfferRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.investorOfferRepository = investorOfferRepository;
@@ -72,7 +79,8 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Override
     @Transactional
-    public InvestorOfferDto updateState(OfferStateType state, UUID id) {
+    public InvestorOfferDto updateState(OfferStateType state, UUID id, String comment) {
+        advisorService.checkCurrentUserIsAdvisor(id);
         if (state == null) {
             throw new ClientException(OFFER_STATE_IS_EMPTY);
         }
@@ -91,6 +99,14 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                             LocalDateTime.now(),
                             OperationType.PURCHASE));
 
+        }
+        if (result != null && StringUtils.isNotEmpty(comment)) {
+            OfferCommentDto offerComment = new OfferCommentDto();
+            offerComment.setComment(comment);
+            offerComment.setCreate(LocalDateTime.now());
+            offerComment.setOfferId(result.getId());
+            offerComment.setStateType(result.getStateType());
+            offerComment.setCreateById(SecurityUtil.getUserId());
         }
         return result;
     }
@@ -190,18 +206,31 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Override
     public List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state) {
         List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateType(state);
-        List<InvestorOfferFullModelDto> result = converter.convert(entities, InvestorOfferFullModelDto.class);
-        if (CollectionUtils.isNotEmpty(result)) {
-            result.forEach(i -> {
-                UUID artBondId = i.getArtBondId();
-                if (artBondId != null) {
-                    i.setArtBond(artBondService.getById(artBondId));
-                    i.getArtBond().setAmountCollected(artBondService.getAmountCollected(artBondId));
-                }
-            });
+        return setFullModelByEntities(entities);
+    }
 
-            customerService.setCustomerAndUser(result, InvestorOfferFullModelDto::getCustomerId,
-                    InvestorOfferFullModelDto::setCustomer, InvestorOfferFullModelDto::setUser);
+    @Override
+    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search) {
+        advisorService.checkCurrentUserIsAdvisor(search.getArtBondId());
+        List<InvestorOfferEntity> entities = investorOfferRepository.searchInvestorOffersByParams(search);
+        return setFullModelByEntities(entities);
+    }
+
+    private List<InvestorOfferFullModelDto> setFullModelByEntities(List<InvestorOfferEntity> entities) {
+        List<InvestorOfferFullModelDto> result = null;
+        if (CollectionUtils.isNotEmpty(entities)) {
+            result = converter.convert(entities, InvestorOfferFullModelDto.class);
+            if (CollectionUtils.isNotEmpty(result)) {
+                result.forEach(i -> {
+                    UUID artBondId = i.getArtBondId();
+                    if (artBondId != null) {
+                        i.setArtBond(artBondService.getById(artBondId));
+                        i.getArtBond().setAmountCollected(artBondService.getAmountCollected(artBondId));
+                    }
+                });
+                customerService.setCustomerAndUser(result, InvestorOfferFullModelDto::getCustomerId,
+                        InvestorOfferFullModelDto::setCustomer, InvestorOfferFullModelDto::setUser);
+            }
         }
         return result;
     }

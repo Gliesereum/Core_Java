@@ -175,15 +175,17 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public List<ArtBondDto> getAllByCurrentAdvisor() {
         List<ArtBondDto> result = null;
-        if (SecurityUtil.isAnonymous()) {
-            throw new ClientException(USER_IS_ANONYMOUS);
-        }
+        SecurityUtil.checkUserByBanStatus();
         List<AdvisorDto> advisors = advisorService.findByUserId(SecurityUtil.getUserId());
-        if(CollectionUtils.isNotEmpty(advisors)){
+
+        if (CollectionUtils.isNotEmpty(advisors)) {
             Set<UUID> artBondIds = advisors.stream().map(AdvisorDto::getArtBondId).collect(Collectors.toSet());
-            if(CollectionUtils.isNotEmpty(artBondIds)){
+            if (CollectionUtils.isNotEmpty(artBondIds)) {
                 result = getByIds(artBondIds);
             }
+        }
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(this::setAdditionalField);
         }
         return result;
     }

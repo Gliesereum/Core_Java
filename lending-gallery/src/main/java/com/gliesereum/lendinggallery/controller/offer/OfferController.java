@@ -7,6 +7,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStat
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.BorrowerOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferFullModelDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.OfferSearchDto;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,11 @@ public class OfferController {
         return investorOfferService.getAllFullModelByState(state);
     }
 
+    @GetMapping("/investor/full-model/by-current-adviser")
+    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(@RequestBody OfferSearchDto search) {
+        return investorOfferService.searchInvestorOffersFullModelByCurrentAdviser(search);
+    }
+
     @GetMapping("/investor/user")
     public List<InvestorOfferDto> getAllInvestorOffersByUser() {
         return investorOfferService.getAllByUser();
@@ -73,8 +79,9 @@ public class OfferController {
 
     @PutMapping("/investor/state")
     public InvestorOfferDto updateInvestorOfferState(@RequestParam("state") OfferStateType state,
-                                                     @RequestParam("id") UUID id) {
-        return investorOfferService.updateState(state, id);
+                                                     @RequestParam("id") UUID id,
+                                                     @RequestParam(name = "comment", required = false) String comment) {
+        return investorOfferService.updateState(state, id, comment);
     }
 
     @GetMapping("/borrower")
