@@ -90,6 +90,12 @@ public class ArtBondDto extends DefaultDto {
 
     private Double latitude;
 
+    private String coverUrl;
+
+    private String videoUrl;
+
+    private String logoUrl;
+
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime paymentStartDate;

@@ -114,4 +114,13 @@ public class ArtBondEntity extends DefaultEntity {
     @Column(name = "latitude")
     private Double latitude;
 
+    @Column(name = "logo_url")
+    private String logoUrl;
+
+    @Column(name = "cover_url")
+    private String coverUrl;
+
+    @Column(name = "video_url")
+    private String videoUrl;
+
 }

@@ -52,7 +52,7 @@ public class OfferController {
         return investorOfferService.getAllFullModelByState(state);
     }
 
-    @GetMapping("/investor/full-model/by-current-adviser")
+    @PostMapping("/investor/full-model/by-current-adviser")
     public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(@RequestBody OfferSearchDto search) {
         return investorOfferService.searchInvestorOffersFullModelByCurrentAdviser(search);
     }
@@ -84,7 +84,7 @@ public class OfferController {
         return investorOfferService.updateState(state, id, comment);
     }
 
-    @PostMapping("/offer/comment")
+    @PostMapping("/add-comment")
     public InvestorOfferDto setComment(@RequestParam("id") UUID id, @RequestParam("comment") String comment) {
         return investorOfferService.setComment(id, comment);
     }
