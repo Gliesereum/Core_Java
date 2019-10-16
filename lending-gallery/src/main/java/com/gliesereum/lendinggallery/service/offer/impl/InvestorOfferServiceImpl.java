@@ -219,7 +219,6 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     public InvestorOfferDto setComment(UUID id, String comment) {
         InvestorOfferDto result = findById(id);
         addComment(result, comment);
-
         return result;
     }
 
