@@ -52,6 +52,11 @@ public class OfferController {
         return investorOfferService.getAllFullModelByState(state);
     }
 
+    @GetMapping("/investor/full-model/by-states")
+    public List<InvestorOfferFullModelDto> getAllInvestorOffersFullModelByStates(@RequestParam("states") List<OfferStateType> states) {
+        return investorOfferService.getAllFullModelByState(states);
+    }
+
     @PostMapping("/investor/full-model/by-current-adviser")
     public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(@RequestBody OfferSearchDto search) {
         return investorOfferService.searchInvestorOffersFullModelByCurrentAdviser(search);

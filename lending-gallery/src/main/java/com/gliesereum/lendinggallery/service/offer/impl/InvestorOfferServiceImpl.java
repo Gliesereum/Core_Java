@@ -85,9 +85,9 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             throw new ClientException(OFFER_STATE_IS_EMPTY);
         }
         InvestorOfferDto result = findById(id);
-        if (result != null) {
+        /*if (result != null) {
             advisorService.checkCurrentUserIsAdvisor(result.getArtBondId());
-        }
+        }*/ //todo check is adviser
         checkUpdateState(result, state);
         result.setStateType(state);
         result = super.update(result);
@@ -206,12 +206,21 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     }
 
     @Override
+    public List<InvestorOfferFullModelDto> getAllFullModelByState(List<OfferStateType> states) {
+        List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateTypeIn(states);
+        return setFullModelByEntities(entities);
+    }
+
+    @Override
     public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search) {
         List<InvestorOfferFullModelDto> result = null;
         advisorService.checkCurrentUserIsAdvisor(search.getArtBondId());
         List<InvestorOfferEntity> entities = investorOfferRepository.searchInvestorOffersByParams(search);
         result = setFullModelByEntities(entities);
         setUsersToCommentInOffers(result);
+        if(CollectionUtils.isNotEmpty(result)){
+            result.sort(Comparator.comparing(InvestorOfferFullModelDto::getCreate));
+        }
         return result;
     }
 
@@ -224,7 +233,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     private void addComment(InvestorOfferDto offer, String comment) {
         if (offer != null && StringUtils.isNotEmpty(comment)) {
-            advisorService.checkCurrentUserIsAdvisor(offer.getArtBondId());
+            //advisorService.checkCurrentUserIsAdvisor(offer.getArtBondId()); //todo check adviser
             OfferCommentDto offerComment = new OfferCommentDto();
             offerComment.setComment(comment);
             offerComment.setCreate(LocalDateTime.now());
