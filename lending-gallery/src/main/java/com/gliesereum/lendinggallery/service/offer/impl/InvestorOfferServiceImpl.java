@@ -219,7 +219,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         result = setFullModelByEntities(entities);
         setUsersToCommentInOffers(result);
         if(CollectionUtils.isNotEmpty(result)){
-            result.sort(Comparator.comparing(InvestorOfferFullModelDto::getCreate));
+            result.sort(Comparator.comparing(InvestorOfferFullModelDto::getCreate).reversed());
         }
         return result;
     }
@@ -242,7 +242,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             offerComment.setCreateById(SecurityUtil.getUserId());
             OfferCommentDto createComment = commentService.create(offerComment);
             offer.getComments().add(createComment);
-            offer.getComments().sort(Comparator.comparing(OfferCommentDto::getCreate));
+            offer.getComments().sort(Comparator.comparing(OfferCommentDto::getCreate).reversed());
             setUsersToComment(offer.getComments());
         }
     }
