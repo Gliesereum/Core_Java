@@ -86,6 +86,10 @@ public class ArtBondDto extends DefaultDto {
 
     private Long paymentDuration;
 
+    private Double longitude;
+
+    private Double latitude;
+
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime paymentStartDate;

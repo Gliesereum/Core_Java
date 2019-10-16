@@ -23,5 +23,6 @@ public class LandingGalleryExceptionMessage {
     public static final ExceptionMessage CUSTOMER_ALREADY_EXIST = new ExceptionMessage(1612, 400, "Customer already exist");
     public static final ExceptionMessage USER_ALREADY_EXIST_LIKE_ADVISOR_IN_ART_BOND = new ExceptionMessage(1613, 400, "User already exist like advisor in this artBond");
     public static final ExceptionMessage USER_DOES_NOT_ADVISOR_FOR_ART_BOND = new ExceptionMessage(1614, 400, "User does not advisor for art bond");
-    
+    public static final ExceptionMessage ADVISOR_NOT_FOUND = new ExceptionMessage(1615, 400, "Advisor not found");
+
 }
