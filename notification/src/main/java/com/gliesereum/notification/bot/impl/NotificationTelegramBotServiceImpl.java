@@ -27,8 +27,10 @@ import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.format.DateTimeFormatter;
@@ -247,15 +249,22 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 			send(sendMessage, originalMessage, originalMessage.getChatId(), isButton);
 		} else {
 			SendMessage sendMessage = new SendMessage();
-			sendMessage.setText("Введите номер телефона:");
-			KeyboardButton keyboardButton = new KeyboardButton();
-			keyboardButton.setRequestContact(true);
-			keyboardButton.setText("Отправить мой номер");
-//		KeyboardRow row = new KeyboardRow();
-//		row.add(keyboardButton);
-//		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-//		replyKeyboardMarkup.setKeyboard(List.of(row));
-//		sendMessage.setReplyMarkup(replyKeyboardMarkup);
+			String text = "";
+			text = text + "Введите номер телефона";
+			if (originalMessage.getChat().isUserChat()) {
+				text = text + " или отправте свой текущий номер"
+				KeyboardButton keyboardButton = new KeyboardButton();
+				keyboardButton.setRequestContact(true);
+				keyboardButton.setText("Отправить мой номер");
+				KeyboardRow row = new KeyboardRow();
+				row.add(keyboardButton);
+				ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+				replyKeyboardMarkup.setKeyboard(List.of(row));
+				replyKeyboardMarkup.setOneTimeKeyboard(true);
+				replyKeyboardMarkup.setResizeKeyboard(true);
+				sendMessage.setReplyMarkup(replyKeyboardMarkup);
+			}
+			sendMessage.setText(text);
 			telegramChatActionService.create(originalMessage.getChatId(), TelegramAction.ADD_PHONE);
 			send(sendMessage, originalMessage, originalMessage.getChatId(), isButton);
 		}
