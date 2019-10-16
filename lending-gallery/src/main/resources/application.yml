@@ -47,6 +47,9 @@ exchange:
       endpointUpdatePack: http://permission-service/endpoint/pack
       getGroupUserByGroupPurpose: http://permission-service/group-user/by-group-purpose
     account:
+      getByPhone: http://account-service/user/by-phone
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
       findDetailedByIds: http://account-service/user/detailed/by-ids
+      findPublicUserByUserIds: http://account-service/user/public/by-ids
+      createOrGetPublicUser: http://account-service/user/public/create-or-get

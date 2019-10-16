@@ -2,6 +2,7 @@ package com.gliesereum.lendinggallery.service.artbond.impl;
 
 import com.gliesereum.lendinggallery.model.entity.artbond.ArtBondEntity;
 import com.gliesereum.lendinggallery.model.repository.jpa.artbond.ArtBondRepository;
+import com.gliesereum.lendinggallery.service.advisor.AdvisorService;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.artbond.InterestedArtBondService;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
@@ -10,6 +11,7 @@ import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.lendinggallery.advisor.AdvisorDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.DetailedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
@@ -42,8 +44,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
-import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.ART_BOND_NOT_FOUND_BY_ID;
-import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.ID_IS_EMPTY;
+import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -73,6 +74,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private AdvisorService advisorService;
 
 
     public ArtBondServiceImpl(ArtBondRepository artBondRepository, DefaultConverter defaultConverter) {
@@ -166,6 +170,28 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public List<InterestedArtBondDto> getInterested(UUID id) {
         return interestedArtBondService.getByArtBondId(id);
+    }
+
+    @Override
+    public List<ArtBondDto> getAllByCurrentAdvisor() {
+        List<ArtBondDto> result = null;
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        List<AdvisorDto> advisors = advisorService.findByUserId(SecurityUtil.getUserId());
+        if(CollectionUtils.isNotEmpty(advisors)){
+            Set<UUID> artBondIds = advisors.stream().map(AdvisorDto::getArtBondId).collect(Collectors.toSet());
+            if(CollectionUtils.isNotEmpty(artBondIds)){
+                result = getByIds(artBondIds);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<ArtBondDto> getAllByAdvisor(UUID id) {
+        List<ArtBondDto> result = null;
+        return result;
     }
 
     @Override

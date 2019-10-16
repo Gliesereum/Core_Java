@@ -108,4 +108,10 @@ public class ArtBondEntity extends DefaultEntity {
     @Column(name = "release_date")
     private LocalDateTime releaseDate;
 
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
 }
