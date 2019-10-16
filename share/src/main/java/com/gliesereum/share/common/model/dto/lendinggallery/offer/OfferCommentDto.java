@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
 import com.gliesereum.share.common.model.dto.DefaultDto;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,4 +31,6 @@ public class OfferCommentDto extends DefaultDto {
     private LocalDateTime create;
 
     private OfferStateType stateType;
+
+    private PublicUserDto createBy;
 }

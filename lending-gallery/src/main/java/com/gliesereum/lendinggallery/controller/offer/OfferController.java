@@ -84,6 +84,11 @@ public class OfferController {
         return investorOfferService.updateState(state, id, comment);
     }
 
+    @PostMapping("/offer/comment")
+    public InvestorOfferDto setComment(@RequestParam("id") UUID id, @RequestParam("comment") String comment) {
+        return investorOfferService.setComment(id, comment);
+    }
+
     @GetMapping("/borrower")
     public List<BorrowerOfferDto> getAllBorrowerOffers() {
         return borrowerOfferService.getAll();

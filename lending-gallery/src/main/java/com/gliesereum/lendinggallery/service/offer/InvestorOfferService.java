@@ -31,4 +31,6 @@ public interface InvestorOfferService extends DefaultService<InvestorOfferDto, I
     List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state);
 
     List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search);
+
+    InvestorOfferDto setComment(UUID id, String comment);
 }

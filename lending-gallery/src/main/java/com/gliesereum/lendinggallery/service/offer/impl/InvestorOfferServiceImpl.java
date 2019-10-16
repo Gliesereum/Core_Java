@@ -11,6 +11,7 @@ import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
@@ -22,15 +23,15 @@ import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
@@ -80,11 +81,13 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Override
     @Transactional
     public InvestorOfferDto updateState(OfferStateType state, UUID id, String comment) {
-        advisorService.checkCurrentUserIsAdvisor(id);
         if (state == null) {
             throw new ClientException(OFFER_STATE_IS_EMPTY);
         }
         InvestorOfferDto result = findById(id);
+        if (result != null) {
+            advisorService.checkCurrentUserIsAdvisor(result.getArtBondId());
+        }
         checkUpdateState(result, state);
         result.setStateType(state);
         result = super.update(result);
@@ -100,14 +103,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                             OperationType.PURCHASE));
 
         }
-        if (result != null && StringUtils.isNotEmpty(comment)) {
-            OfferCommentDto offerComment = new OfferCommentDto();
-            offerComment.setComment(comment);
-            offerComment.setCreate(LocalDateTime.now());
-            offerComment.setOfferId(result.getId());
-            offerComment.setStateType(result.getStateType());
-            offerComment.setCreateById(SecurityUtil.getUserId());
-        }
+        addComment(result, comment);
         return result;
     }
 
@@ -211,9 +207,36 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Override
     public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search) {
+        List<InvestorOfferFullModelDto> result = null;
         advisorService.checkCurrentUserIsAdvisor(search.getArtBondId());
         List<InvestorOfferEntity> entities = investorOfferRepository.searchInvestorOffersByParams(search);
-        return setFullModelByEntities(entities);
+        result = setFullModelByEntities(entities);
+        setUsersToCommentInOffers(result);
+        return result;
+    }
+
+    @Override
+    public InvestorOfferDto setComment(UUID id, String comment) {
+        InvestorOfferDto result = findById(id);
+        addComment(result, comment);
+
+        return result;
+    }
+
+    private void addComment(InvestorOfferDto offer, String comment) {
+        if (offer != null && StringUtils.isNotEmpty(comment)) {
+            advisorService.checkCurrentUserIsAdvisor(offer.getArtBondId());
+            OfferCommentDto offerComment = new OfferCommentDto();
+            offerComment.setComment(comment);
+            offerComment.setCreate(LocalDateTime.now());
+            offerComment.setOfferId(offer.getId());
+            offerComment.setStateType(offer.getStateType());
+            offerComment.setCreateById(SecurityUtil.getUserId());
+            OfferCommentDto createComment = commentService.create(offerComment);
+            offer.getComments().add(createComment);
+            offer.getComments().sort(Comparator.comparing(OfferCommentDto::getCreate));
+            setUsersToComment(offer.getComments());
+        }
     }
 
     private List<InvestorOfferFullModelDto> setFullModelByEntities(List<InvestorOfferEntity> entities) {
@@ -282,5 +305,44 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         return customerService.findByUserId(SecurityUtil.getUserId());
+    }
+
+    private void setUsersToComment(List<OfferCommentDto> comments) {
+        if (CollectionUtils.isNotEmpty(comments)) {
+            Set<UUID> usersIds = comments.stream().map(OfferCommentDto::getCreateById).collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(usersIds)) {
+                Map<UUID, PublicUserDto> users = userExchangeService.findPublicUserMapByIds(usersIds);
+                if (MapUtils.isNotEmpty(users)) {
+                    comments.forEach(f -> {
+                        f.setCreateBy(users.get(f.getCreateById()));
+                    });
+                }
+            }
+        }
+    }
+
+    private void setUsersToCommentInOffers(List<InvestorOfferFullModelDto> offers) {
+        if (CollectionUtils.isNotEmpty(offers)) {
+            Set<UUID> userIds = new HashSet<>();
+            offers.forEach(offer -> {
+                if (CollectionUtils.isNotEmpty(offer.getComments())) {
+                    offer.getComments().forEach(f -> {
+                        userIds.add(f.getCreateById());
+                    });
+                }
+            });
+            if (CollectionUtils.isNotEmpty(userIds)) {
+                Map<UUID, PublicUserDto> users = userExchangeService.findPublicUserMapByIds(userIds);
+                if (MapUtils.isNotEmpty(users)) {
+                    offers.forEach(offer -> {
+                        if (CollectionUtils.isNotEmpty(offer.getComments())) {
+                            offer.getComments().forEach(f -> {
+                                f.setCreateBy(users.get(f.getCreateById()));
+                            });
+                        }
+                    });
+                }
+            }
+        }
     }
 }
