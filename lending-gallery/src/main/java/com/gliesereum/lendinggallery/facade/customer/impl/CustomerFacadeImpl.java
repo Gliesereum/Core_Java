@@ -1,6 +1,7 @@
 package com.gliesereum.lendinggallery.facade.customer.impl;
 
 import com.gliesereum.lendinggallery.facade.customer.CustomerFacade;
+import com.gliesereum.lendinggallery.service.advisor.AdvisorService;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
@@ -12,10 +13,12 @@ import com.gliesereum.share.common.model.dto.lendinggallery.customer.DetailedCus
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.CustomerType;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
+import com.gliesereum.share.common.util.SecurityUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,10 +47,17 @@ public class CustomerFacadeImpl implements CustomerFacade {
     @Autowired
     private GroupUserExchangeService groupUserExchangeService;
 
+    @Autowired
+    private AdvisorService advisorService;
+
     @Override
     public List<DetailedCustomerDto> getDetailedInvestor(UUID artBondId) {
         List<DetailedCustomerDto> result = null;
-        List<CustomerDto> customers = getInvestors(artBondId);
+        List<UUID> artBondIds = null;
+        if (artBondId != null) {
+            artBondIds = Arrays.asList(artBondId);
+        }
+        List<CustomerDto> customers = getInvestors(artBondIds);
         if (CollectionUtils.isNotEmpty(customers)) {
             Map<UUID, CustomerDto> userCustomer = customers.stream().collect(Collectors.toMap(CustomerDto::getUserId, i -> i));
             List<DetailedUserDto> detailedUser = userExchangeService.findDetailedByIds(userCustomer.keySet());
@@ -110,16 +120,43 @@ public class CustomerFacadeImpl implements CustomerFacade {
         return result;
     }
 
+    @Override
+    public List<DetailedCustomerDto> getDetailedInvestorByCurrentAdviser() {
+        List<DetailedCustomerDto> result = null;
+        SecurityUtil.checkUserByBanStatus();
+        List<UUID> artBondIds = advisorService.getArtBondIdsByUserId(SecurityUtil.getUserId());
+        List<CustomerDto> customers = null;
+        if(CollectionUtils.isNotEmpty(artBondIds)){
+            customers = getInvestors(artBondIds);
+        }
+        if (CollectionUtils.isNotEmpty(customers)) {
+            Map<UUID, CustomerDto> userCustomer = customers.stream().collect(Collectors.toMap(CustomerDto::getUserId, i -> i));
+            List<DetailedUserDto> detailedUser = userExchangeService.findDetailedByIds(userCustomer.keySet());
+            if (CollectionUtils.isNotEmpty(detailedUser)) {
+                result = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
+                result = result.stream()
+                        .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
+                        .peek(i -> {
+                            i.setCustomer(userCustomer.get(i.getId()));
+                            i.setPaymentInfo(customerService.getPaymentInfoCommon(i.getId()));
+                        })
+                        .collect(Collectors.toList());
+                insertOperationsStory(result);
+            }
+        }
+        return result;
+    }
+
     private void insertOperationsStory(List<DetailedCustomerDto> result) {
         List<UUID> resultCustomerIds = result.stream().map(i -> i.getCustomer().getId()).collect(Collectors.toList());
         Map<UUID, List<OperationsStoryDto>> operationStory = operationsStoryService.getAllByCustomerIds(resultCustomerIds);
         result.forEach(i -> i.setOperationsStories(operationStory.get(i.getCustomer().getId())));
     }
 
-    private List<CustomerDto> getInvestors(UUID artBondId) {
+    private List<CustomerDto> getInvestors(List<UUID> artBondIds) {
         List<CustomerDto> result;
-        if (artBondId != null) {
-            List<UUID> customerIds = operationsStoryService.getCustomerByArtBondId(artBondId);
+        if (CollectionUtils.isNotEmpty(artBondIds)) {
+            List<UUID> customerIds = operationsStoryService.getCustomerByArtBondId(artBondIds);
             result = customerService.getByCustomerTypeAndIdIn(CustomerType.INVESTOR, customerIds);
         } else {
             result = customerService.getByCustomerType(CustomerType.INVESTOR);

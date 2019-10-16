@@ -16,4 +16,6 @@ public interface CustomerFacade {
     List<DetailedCustomerDto> getDetailedBorrower();
 
     List<DetailedCustomerDto> getDetailedAdmin();
+
+    List<DetailedCustomerDto> getDetailedInvestorByCurrentAdviser();
 }

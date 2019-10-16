@@ -95,6 +95,11 @@ public class CustomerController {
         return customerFacade.getDetailedInvestor(artBondId);
     }
 
+    @GetMapping("/detailed/investor-by-current-adviser")
+    public List<DetailedCustomerDto> getDetailedInvestorByCurrentAdviser() {
+        return customerFacade.getDetailedInvestorByCurrentAdviser();
+    }
+
     @GetMapping("/detailed/borrower")
     public List<DetailedCustomerDto> getDetailedBorrower() {
         return customerFacade.getDetailedBorrower();

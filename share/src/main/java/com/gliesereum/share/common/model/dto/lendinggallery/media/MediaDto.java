@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.UUID;
 
@@ -20,17 +21,19 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class MediaDto extends DefaultDto {
 
+    @NotNull
     private UUID objectId;
 
-    @NotEmpty
-    @Size(min = 2)
     private String title;
 
     private String description;
 
     private UUID fileId;
 
+    @NotEmpty
+    @Size(min = 8)
     private String url;
 
+    @NotNull
     private BlockMediaType blockMediaType;
 }
