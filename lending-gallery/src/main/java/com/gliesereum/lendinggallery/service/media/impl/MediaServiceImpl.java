@@ -80,6 +80,7 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
              }
              f.setObjectId(id);
          });
+         deleteAllByObjectId(id);
          create(files); //todo check
         }
         return result;
