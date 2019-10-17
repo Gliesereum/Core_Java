@@ -169,20 +169,25 @@ public class AdvisorServiceImpl extends AuditableServiceImpl<AdvisorDto, Advisor
         return result;
     }
 
-    @Override
-    public List<UUID> getArtBondIdsByUserId(UUID userId) {
-        return advisorRepository.getArtBondIdsByUserIdAndObjectState(userId, ObjectState.ACTIVE);
-    }
-
-    private void checkAdvisor(AdvisorDto dto) {
-        if (dto.getUserId() == null) {
-            throw new ClientException(USER_ID_IS_EMPTY);
-        }
-        if (dto.getId() == null && existByUserIdAndArtBondId(dto.getUserId(), dto.getArtBondId())) {
-            throw new ClientException(USER_ALREADY_EXIST_LIKE_ADVISOR_IN_ART_BOND);
-        }
-        if (!userExchangeService.userIsExist(dto.getUserId())) {
-            throw new ClientException(USER_NOT_FOUND);
-        }
-    }
+	@Override
+	public List<UUID> getArtBondIdsByUserId(UUID userId) {
+		return advisorRepository.getArtBondIdsByUserIdAndObjectState(userId, ObjectState.ACTIVE);
+	}
+	
+	@Override
+	public List<UUID> getUserIdsByArtBondId(UUID artBondId) {
+		return  advisorRepository.getUserIdsByArtBondIdAndObjectState(artBondId, ObjectState.ACTIVE);
+	}
+	
+	private void checkAdvisor(AdvisorDto dto) {
+		if (dto.getUserId() == null) {
+			throw new ClientException(USER_ID_IS_EMPTY);
+		}
+		if (dto.getId() == null && existByUserIdAndArtBondId(dto.getUserId(), dto.getArtBondId())) {
+			throw new ClientException(USER_ALREADY_EXIST_LIKE_ADVISOR_IN_ART_BOND);
+		}
+		if (!userExchangeService.userIsExist(dto.getUserId())) {
+			throw new ClientException(USER_NOT_FOUND);
+		}
+	}
 }

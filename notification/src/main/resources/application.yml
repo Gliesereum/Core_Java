@@ -68,6 +68,9 @@ notification:
     queueName: notification-business
   chat-message:
     queueName: notification-chat-message
+  lg:
+    create-offer:
+      queueName: notification-lg-create-offer
     
 telegram:
   bot:

@@ -27,4 +27,6 @@ public interface AdvisorService extends AuditableService<AdvisorDto, AdvisorEnti
 	Boolean checkAdvisorExistByPhone(String phone);
 
 	List<UUID> getArtBondIdsByUserId(UUID userId);
+	
+	List<UUID> getUserIdsByArtBondId(UUID artBondId);
 }

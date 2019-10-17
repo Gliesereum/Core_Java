@@ -112,24 +112,28 @@ public class GroupUserServiceImpl extends DefaultServiceImpl<GroupUserDto, Group
     @Override
     public List<GroupDto> getGroupByUser(UserDto user, UUID applicationId) {
         List<GroupDto> result;
-        UUID userId = user.getId();
-        if (userId == null) {
-            throw new ClientException(ID_NOT_SPECIFIED);
-        }
-        if (!userExchangeService.userIsExist(userId)) {
-            throw new ClientException(USER_NOT_FOUND);
-        }
-        result = groupService.getDefaultGroup(user, applicationId);
-        result = (result == null) ? new ArrayList<>() : result;
-
-        List<GroupUserEntity> groupUser = groupUserRepository.findByUserId(userId);
-        if (CollectionUtils.isNotEmpty(groupUser)) {
-            List<GroupDto> byIds = groupService.getByIds(groupUser.stream().map(GroupUserEntity::getGroupId).collect(Collectors.toList()));
-            if (CollectionUtils.isNotEmpty(byIds)) {
-                result.addAll(byIds);
+        if ((user != null) && (user.getId() != null)) {
+            UUID userId = user.getId();
+            if (userId == null) {
+                throw new ClientException(ID_NOT_SPECIFIED);
             }
+            if (!userExchangeService.userIsExist(userId)) {
+                throw new ClientException(USER_NOT_FOUND);
+            }
+            result = groupService.getDefaultGroup(user, applicationId);
+            result = (result == null) ? new ArrayList<>() : result;
+    
+            List<GroupUserEntity> groupUser = groupUserRepository.findByUserId(userId);
+            if (CollectionUtils.isNotEmpty(groupUser)) {
+                List<GroupDto> byIds = groupService.getByIds(groupUser.stream().map(GroupUserEntity::getGroupId).collect(Collectors.toList()));
+                if (CollectionUtils.isNotEmpty(byIds)) {
+                    result.addAll(byIds);
+                }
+            }
+            result = result.stream().distinct().collect(Collectors.toList());
+        } else {
+            result = groupService.getForAnonymous(applicationId);
         }
-        result = result.stream().distinct().collect(Collectors.toList());
         return result;
     }
 
@@ -146,7 +150,18 @@ public class GroupUserServiceImpl extends DefaultServiceImpl<GroupUserDto, Group
         }
         return result;
     }
-
+    
+    @Override
+    public List<GroupDto> getByPhone(String phone, UUID applicationId) {
+        List<GroupDto> result;
+        UserDto user = null;
+        if (phone != null) {
+            user = userExchangeService.getByPhone(phone);
+        }
+        result = getGroupByUser(user, applicationId);
+        return result;
+    }
+    
     @Override
     public boolean groupExistInUser(GroupPurpose groupPurpose) {
         boolean result = false;

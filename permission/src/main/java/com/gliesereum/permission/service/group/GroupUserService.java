@@ -25,6 +25,8 @@ public interface GroupUserService extends DefaultService<GroupUserDto, GroupUser
     List<GroupDto> getGroupByUser(UserDto user, UUID applicationId);
 
     List<GroupUserDto> getByGroupPurpose(GroupPurpose groupPurpose);
+    
+    List<GroupDto> getByPhone(String phone, UUID applicationId);
 
     boolean groupExistInUser(GroupPurpose groupPurpose);
 }
