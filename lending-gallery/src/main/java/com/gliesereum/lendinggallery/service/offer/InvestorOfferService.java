@@ -6,6 +6,8 @@ import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferD
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferFullModelDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OfferSearchDto;
 import com.gliesereum.share.common.service.DefaultService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +33,8 @@ public interface InvestorOfferService extends DefaultService<InvestorOfferDto, I
     List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state);
 
     List<InvestorOfferFullModelDto> getAllFullModelByState(List<OfferStateType> states);
+    
+    Page<InvestorOfferFullModelDto> getFullModelByCustomerId(UUID customerId, Pageable pageable);
 
     List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search);
 

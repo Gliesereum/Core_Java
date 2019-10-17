@@ -10,6 +10,10 @@ import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferF
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OfferSearchDto;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -60,6 +64,12 @@ public class OfferController {
     @GetMapping("/investor/full-model/by-states")
     public List<InvestorOfferFullModelDto> getAllInvestorOffersFullModelByStates(@RequestParam("states") List<OfferStateType> states) {
         return investorOfferService.getAllFullModelByState(states);
+    }
+    
+    @GetMapping("/investor/full-model/by-customer")
+    public Page<InvestorOfferFullModelDto> getAllInvestorOffersFullModelByCustomerId(@RequestParam("customerId") UUID customerId, 
+                                                                                     @PageableDefault(page = 0, size = 20, sort = "create", direction = Sort.Direction.DESC) Pageable pageable) {
+        return investorOfferService.getFullModelByCustomerId(customerId, pageable);
     }
 
     @PostMapping("/investor/full-model/by-current-adviser")

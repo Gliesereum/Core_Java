@@ -1,7 +1,7 @@
 package com.gliesereum.notification.mq;
 
 import com.gliesereum.notification.bot.NotificationTelegramBotService;
-import com.gliesereum.notification.service.notification.NotificationService;
+import com.gliesereum.notification.service.notification.KarmaNotificationService;
 import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.chat.ChatMessageDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
@@ -20,10 +20,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class NotificationMqListener {
+public class KarmaNotificationMqListener {
 
     @Autowired
-    private NotificationService notificationService;
+    private KarmaNotificationService karmaNotificationService;
     
     @Autowired
     private NotificationTelegramBotService notificationTelegramBotService;
@@ -31,7 +31,7 @@ public class NotificationMqListener {
     @RabbitListener(queuesToDeclare = @Queue(name = "${notification.record.queueName}", ignoreDeclarationExceptions = "true"))
     public void receiveRecordNotification(NotificationDto<BaseRecordDto> recordNotification) {
         try {
-            notificationService.processRecordNotification(recordNotification);
+            karmaNotificationService.processRecordNotification(recordNotification);
         } catch (Exception e) {
             log.warn("Error while receive record notification", e);
         }
@@ -44,7 +44,7 @@ public class NotificationMqListener {
             notification.setObjectId(recordNotification.getObjectId());
             notification.setData(recordNotification.getData().getRecord());
             notification.setSubscribeDestination(recordNotification.getSubscribeDestination());
-            notificationService.processRecordNotification(notification);
+            karmaNotificationService.processRecordNotification(notification);
             
         } catch (Exception e) {
             log.warn("Error while receive record notification", e);
@@ -59,7 +59,7 @@ public class NotificationMqListener {
     @RabbitListener(queuesToDeclare = @Queue(name = "${notification.business.queueName}", ignoreDeclarationExceptions = "true"))
     public void receiveBusinessNotification(NotificationDto<AbstractBusinessDto> businessNotification) {
         try {
-            notificationService.processBusinessNotification(businessNotification);
+            karmaNotificationService.processBusinessNotification(businessNotification);
         } catch (Exception e) {
             log.warn("Error while receive business notification", e);
         }
@@ -68,7 +68,7 @@ public class NotificationMqListener {
     @RabbitListener(queuesToDeclare = @Queue(name = "${notification.chat-message.queueName}", ignoreDeclarationExceptions = "true"))
     public void receiveChatMessageNotification(NotificationDto<ChatMessageDto> chatMessageNotification) {
         try {
-            notificationService.processChatMessageNotification(chatMessageNotification);
+            karmaNotificationService.processChatMessageNotification(chatMessageNotification);
         } catch (Exception e) {
             log.warn("Error while receive chat message notification", e);
         }

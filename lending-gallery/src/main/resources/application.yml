@@ -53,3 +53,8 @@ exchange:
       findDetailedByIds: http://account-service/user/detailed/by-ids
       findPublicUserByUserIds: http://account-service/user/public/by-ids
       createOrGetPublicUser: http://account-service/user/public/create-or-get
+
+notification:
+  lg:
+    create-offer:
+      queueName: notification-lg-create-offer
