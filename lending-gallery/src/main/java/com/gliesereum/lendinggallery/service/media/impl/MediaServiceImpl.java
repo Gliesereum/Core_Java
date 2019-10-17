@@ -65,6 +65,7 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
     }
 
     @Override
+    @Transactional
     public ArtBondDto createList(List<MediaDto> files, UUID id) {
         ArtBondDto result = artBondService.getById(id);
         if(result == null){
