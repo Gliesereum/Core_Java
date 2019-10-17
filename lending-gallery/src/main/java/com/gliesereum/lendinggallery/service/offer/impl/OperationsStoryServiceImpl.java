@@ -125,6 +125,18 @@ public class OperationsStoryServiceImpl extends DefaultServiceImpl<OperationsSto
     }
 
     @Override
+    public List<UUID> getCustomerByArtBondId(List<UUID> artBondIds) {
+        List<UUID> result = null;
+        if (CollectionUtils.isNotEmpty(artBondIds)) {
+            List<OperationsStoryEntity> operationsStories = operationsStoryRepository.findAllByArtBondIdIn(artBondIds);
+            if (CollectionUtils.isNotEmpty(operationsStories)) {
+                result = operationsStories.stream().map(OperationsStoryEntity::getCustomerId).distinct().collect(Collectors.toList());
+            }
+        }
+        return result;
+    }
+
+    @Override
     public List<OperationsStoryDto> filterByUserId(OperationsStoryQuery operationsStoryQuery, UUID userId) {
         List<OperationsStoryDto> result = null;
         CustomerDto customer = getCustomer(userId);

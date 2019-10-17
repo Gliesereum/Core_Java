@@ -4,6 +4,7 @@ import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDe
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,4 +21,6 @@ public class NotificationDto<T> {
     private UUID objectId;
 
     private T data;
+    
+    private List<UUID> userIds;
 }

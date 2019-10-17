@@ -160,7 +160,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
                 result = converter.convert(entity.get(), dtoClass);
             }
         }
-        setTags(Arrays.asList(result));
+        if(result != null){
+            setTags(Arrays.asList(result));
+        }
         return result;
     }
 
@@ -184,7 +186,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         PackageDto result = null;
         PackageEntity entity = packageRepository.findByIdAndObjectState(id, ObjectState.ACTIVE);
         result = converter.convert(entity, dtoClass);
-        setTags(Arrays.asList(result));
+        if(result != null){
+            setTags(Arrays.asList(result));
+        }
         return result;
     }
 
@@ -235,7 +239,9 @@ public class PackageServiceImpl extends DefaultServiceImpl<PackageDto, PackageEn
         setServices(dto, result);
         List<PackageDescriptionDto> descriptions = packageDescriptionService.update(dto.getDescriptions(), result.getId());
         result.setDescriptions(descriptions);
-        setTags(Arrays.asList(result));
+        if(result != null){
+            setTags(Arrays.asList(result));
+        }
         businessEsService.indexAsync(result.getBusinessId());
         return result;
     }

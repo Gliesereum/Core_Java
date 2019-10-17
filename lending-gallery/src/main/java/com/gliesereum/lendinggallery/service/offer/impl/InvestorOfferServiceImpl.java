@@ -2,34 +2,37 @@ package com.gliesereum.lendinggallery.service.offer.impl;
 
 import com.gliesereum.lendinggallery.model.entity.offer.InvestorOfferEntity;
 import com.gliesereum.lendinggallery.model.repository.jpa.offer.InvestorOfferRepository;
+import com.gliesereum.lendinggallery.service.advisor.AdvisorService;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
+import com.gliesereum.lendinggallery.service.media.MediaService;
 import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
+import com.gliesereum.lendinggallery.service.offer.OfferCommentService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
-import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferFullModelDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.*;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
@@ -59,6 +62,15 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Autowired
     private UserExchangeService userExchangeService;
 
+    @Autowired
+    private AdvisorService advisorService;
+
+    @Autowired
+    private OfferCommentService commentService;
+
+    @Autowired
+    private MediaService mediaService;
+
     public InvestorOfferServiceImpl(InvestorOfferRepository investorOfferRepository, DefaultConverter defaultConverter) {
         super(investorOfferRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
         this.investorOfferRepository = investorOfferRepository;
@@ -72,11 +84,14 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Override
     @Transactional
-    public InvestorOfferDto updateState(OfferStateType state, UUID id) {
+    public InvestorOfferDto updateState(OfferStateType state, UUID id, String comment) {
         if (state == null) {
             throw new ClientException(OFFER_STATE_IS_EMPTY);
         }
         InvestorOfferDto result = findById(id);
+        /*if (result != null) {
+            advisorService.checkCurrentUserIsAdvisor(result.getArtBondId());
+        }*/ //todo check is adviser
         checkUpdateState(result, state);
         result.setStateType(state);
         result = super.update(result);
@@ -92,6 +107,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                             OperationType.PURCHASE));
 
         }
+        addComment(result, comment);
         return result;
     }
 
@@ -190,18 +206,95 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Override
     public List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state) {
         List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateType(state);
-        List<InvestorOfferFullModelDto> result = converter.convert(entities, InvestorOfferFullModelDto.class);
-        if (CollectionUtils.isNotEmpty(result)) {
-            result.forEach(i -> {
-                UUID artBondId = i.getArtBondId();
-                if (artBondId != null) {
-                    i.setArtBond(artBondService.getById(artBondId));
-                    i.getArtBond().setAmountCollected(artBondService.getAmountCollected(artBondId));
-                }
-            });
+        return setFullModelByEntities(entities);
+    }
 
-            customerService.setCustomerAndUser(result, InvestorOfferFullModelDto::getCustomerId,
-                    InvestorOfferFullModelDto::setCustomer, InvestorOfferFullModelDto::setUser);
+    @Override
+    public List<InvestorOfferFullModelDto> getAllFullModelByState(List<OfferStateType> states) {
+        List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateTypeIn(states);
+        return setFullModelByEntities(entities);
+    }
+    
+    @Override
+    public Page<InvestorOfferFullModelDto> getFullModelByCustomerId(UUID customerId, Pageable pageable) {
+        Page<InvestorOfferFullModelDto> result = null;
+        Page<InvestorOfferEntity> page = investorOfferRepository.findAllByCustomerIdOrderByCreate(customerId, pageable);
+        if (page != null) {
+            List<InvestorOfferFullModelDto> list = setFullModelByEntities(page.getContent());
+            if (CollectionUtils.isNotEmpty(list)) {
+                result = new PageImpl<>(list, page.getPageable(), page.getTotalElements());
+            }
+        }
+        return result;
+    }
+    
+    @Override
+    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search) {
+        List<InvestorOfferFullModelDto> result = null;
+        //advisorService.checkCurrentUserIsAdvisor(search.getArtBondId()); //todo check adviser
+        List<InvestorOfferEntity> entities = investorOfferRepository.searchInvestorOffersByParams(search);
+        result = setFullModelByEntities(entities);
+        setUsersToCommentInOffers(result);
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.sort(Comparator.comparing(InvestorOfferFullModelDto::getCreate).reversed());
+        }
+        return result;
+    }
+
+    @Override
+    public InvestorOfferDto setComment(UUID id, String comment) {
+        InvestorOfferDto result = findById(id);
+        addComment(result, comment);
+        return result;
+    }
+
+    @Override
+    public InvestorOfferFullModelDto getInvestorOfferFullModelById(UUID id) {
+        InvestorOfferFullModelDto result = null;
+        InvestorOfferEntity entity = investorOfferRepository.getOne(id);
+        if(entity != null){
+            List<InvestorOfferFullModelDto> fullModelList = setFullModelByEntities(Arrays.asList(entity));
+            if(CollectionUtils.isNotEmpty(fullModelList)){
+                result = fullModelList.get(0);
+            }
+        }
+        return result;
+    }
+
+    private void addComment(InvestorOfferDto offer, String comment) {
+        if (offer != null && StringUtils.isNotEmpty(comment)) {
+            //advisorService.checkCurrentUserIsAdvisor(offer.getArtBondId()); //todo check adviser
+            OfferCommentDto offerComment = new OfferCommentDto();
+            offerComment.setComment(comment);
+            offerComment.setCreate(LocalDateTime.now());
+            offerComment.setOfferId(offer.getId());
+            offerComment.setStateType(offer.getStateType());
+            offerComment.setCreateById(SecurityUtil.getUserId());
+            OfferCommentDto createComment = commentService.create(offerComment);
+            offer.getComments().add(createComment);
+            offer.getComments().sort(Comparator.comparing(OfferCommentDto::getCreate).reversed());
+            setUsersToComment(offer.getComments());
+        }
+    }
+
+    private List<InvestorOfferFullModelDto> setFullModelByEntities(List<InvestorOfferEntity> entities) {
+        List<InvestorOfferFullModelDto> result = null;
+        if (CollectionUtils.isNotEmpty(entities)) {
+            result = converter.convert(entities, InvestorOfferFullModelDto.class);
+            if (CollectionUtils.isNotEmpty(result)) {
+                result.forEach(i -> {
+                    UUID artBondId = i.getArtBondId();
+                    if (artBondId != null) {
+                        i.setArtBond(artBondService.getById(artBondId));
+                        i.getArtBond().setAmountCollected(artBondService.getAmountCollected(artBondId));
+                    }
+                });
+                customerService.setCustomerAndUser(result, InvestorOfferFullModelDto::getCustomerId,
+                        InvestorOfferFullModelDto::setCustomer, InvestorOfferFullModelDto::setUser);
+            }
+        }
+        if(CollectionUtils.isNotEmpty(result)){
+            setMedia(result);
         }
         return result;
     }
@@ -253,5 +346,62 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             throw new ClientException(USER_IS_ANONYMOUS);
         }
         return customerService.findByUserId(SecurityUtil.getUserId());
+    }
+
+    private void setUsersToComment(List<OfferCommentDto> comments) {
+        if (CollectionUtils.isNotEmpty(comments)) {
+            Set<UUID> usersIds = comments.stream().map(OfferCommentDto::getCreateById).collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(usersIds)) {
+                Map<UUID, PublicUserDto> users = userExchangeService.findPublicUserMapByIds(usersIds);
+                if (MapUtils.isNotEmpty(users)) {
+                    comments.forEach(f -> {
+                        f.setCreateBy(users.get(f.getCreateById()));
+                    });
+                }
+            }
+        }
+    }
+
+    private void setUsersToCommentInOffers(List<InvestorOfferFullModelDto> offers) {
+        if (CollectionUtils.isNotEmpty(offers)) {
+            Set<UUID> userIds = new HashSet<>();
+            offers.forEach(offer -> {
+                if (CollectionUtils.isNotEmpty(offer.getComments())) {
+                    offer.getComments().forEach(f -> {
+                        userIds.add(f.getCreateById());
+                    });
+                }
+            });
+            if (CollectionUtils.isNotEmpty(userIds)) {
+                Map<UUID, PublicUserDto> users = userExchangeService.findPublicUserMapByIds(userIds);
+                if (MapUtils.isNotEmpty(users)) {
+                    offers.forEach(offer -> {
+                        if (CollectionUtils.isNotEmpty(offer.getComments())) {
+                            offer.getComments().forEach(f -> {
+                                f.setCreateBy(users.get(f.getCreateById()));
+                            });
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    private void setMedia(List<InvestorOfferFullModelDto> offers) {
+        if (CollectionUtils.isNotEmpty(offers)) {
+            Set<ArtBondDto> setArtBond = offers.stream().map(InvestorOfferFullModelDto::getArtBond).collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(setArtBond)) {
+                Map<UUID, ArtBondDto> map = new HashMap<>();
+                setArtBond.forEach(artBondDto -> {
+                    artBondDto.setImages(mediaService.getByObjectIdAndType(artBondDto.getId(), BlockMediaType.IMAGES));
+                    map.put(artBondDto.getId(), artBondDto);
+                });
+                if (MapUtils.isNotEmpty(map)) {
+                    offers.forEach(offer -> {
+                        offer.setArtBond(map.get(offer.getArtBondId()));
+                    });
+                }
+            }
+        }
     }
 }

@@ -29,6 +29,8 @@ public interface OperationsStoryService extends DefaultService<OperationsStoryDt
 
     List<UUID> getCustomerByArtBondId(UUID artBondId);
 
+    List<UUID> getCustomerByArtBondId(List<UUID> artBondIds);
+
     List<OperationsStoryDto> filterByUserId(OperationsStoryQuery operationsStoryQuery, UUID userId);
 
     List<OperationsStoryDto> getAllForUserByArtBondId(UUID artBondId);

@@ -7,8 +7,13 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStat
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.BorrowerOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferFullModelDto;
+import com.gliesereum.share.common.model.dto.lendinggallery.offer.OfferSearchDto;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -46,9 +51,30 @@ public class OfferController {
         return investorOfferService.getAllByState(state);
     }
 
+    @GetMapping("/investor/full-model/by-id")
+    public InvestorOfferFullModelDto getInvestorOfferFullModelById(@RequestParam("id") UUID id) {
+        return investorOfferService.getInvestorOfferFullModelById(id);
+    }
+
     @GetMapping("/investor/full-model/by-state")
     public List<InvestorOfferFullModelDto> getAllInvestorOffersFullModelByState(@RequestParam("state") OfferStateType state) {
         return investorOfferService.getAllFullModelByState(state);
+    }
+
+    @GetMapping("/investor/full-model/by-states")
+    public List<InvestorOfferFullModelDto> getAllInvestorOffersFullModelByStates(@RequestParam("states") List<OfferStateType> states) {
+        return investorOfferService.getAllFullModelByState(states);
+    }
+    
+    @GetMapping("/investor/full-model/by-customer")
+    public Page<InvestorOfferFullModelDto> getAllInvestorOffersFullModelByCustomerId(@RequestParam("customerId") UUID customerId, 
+                                                                                     @PageableDefault(page = 0, size = 20, sort = "create", direction = Sort.Direction.DESC) Pageable pageable) {
+        return investorOfferService.getFullModelByCustomerId(customerId, pageable);
+    }
+
+    @PostMapping("/investor/full-model/by-current-adviser")
+    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(@RequestBody OfferSearchDto search) {
+        return investorOfferService.searchInvestorOffersFullModelByCurrentAdviser(search);
     }
 
     @GetMapping("/investor/user")
@@ -73,8 +99,14 @@ public class OfferController {
 
     @PutMapping("/investor/state")
     public InvestorOfferDto updateInvestorOfferState(@RequestParam("state") OfferStateType state,
-                                                     @RequestParam("id") UUID id) {
-        return investorOfferService.updateState(state, id);
+                                                     @RequestParam("id") UUID id,
+                                                     @RequestParam(name = "comment", required = false) String comment) {
+        return investorOfferService.updateState(state, id, comment);
+    }
+
+    @PostMapping("/add-comment")
+    public InvestorOfferDto setComment(@RequestParam("id") UUID id, @RequestParam("comment") String comment) {
+        return investorOfferService.setComment(id, comment);
     }
 
     @GetMapping("/borrower")

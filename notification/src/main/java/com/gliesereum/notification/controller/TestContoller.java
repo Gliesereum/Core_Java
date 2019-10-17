@@ -1,6 +1,6 @@
 package com.gliesereum.notification.controller;
 
-import com.gliesereum.notification.service.notification.NotificationService;
+import com.gliesereum.notification.service.notification.KarmaNotificationService;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.notification.enumerated.SubscribeDestination;
 import com.gliesereum.share.common.model.dto.notification.notification.NotificationDto;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class TestContoller {
 
     @Autowired
-    private NotificationService notificationService;
+    private KarmaNotificationService karmaNotificationService;
 
     @GetMapping("/test-record")
     public void testRecord(@RequestParam("id") UUID id) {
@@ -32,7 +32,7 @@ public class TestContoller {
         notificationDto.setData(baseRecordDto);
         notificationDto.setSubscribeDestination(SubscribeDestination.KARMA_USER_RECORD);
         notificationDto.setObjectId(id);
-        notificationService.processRecordNotification(notificationDto);
+        karmaNotificationService.processRecordNotification(notificationDto);
     }
 
     @GetMapping("/test-remind")
@@ -44,11 +44,11 @@ public class TestContoller {
         notificationDto.setData(baseRecordDto);
         notificationDto.setSubscribeDestination(SubscribeDestination.KARMA_USER_REMIND_RECORD);
         notificationDto.setObjectId(id);
-        notificationService.processRecordNotification(notificationDto);
+        karmaNotificationService.processRecordNotification(notificationDto);
     }
 
     @GetMapping("/test-user")
     public void testUser(@RequestParam("id") UUID id, @RequestParam("title") String title, @RequestParam("body") String body) {
-        notificationService.sendNotificationToUser(id, title, body);
+        karmaNotificationService.sendNotificationToUser(id, title, body);
     }
 }

@@ -177,4 +177,14 @@ public class ArtBondController {
     public List<InterestedArtBondDto> getInterested(@PathVariable("id") UUID id) {
         return service.getInterested(id);
     }
+
+    @GetMapping("/by-current-advisor")
+    public List<ArtBondDto> getAllByAdvisorCurrent() {
+        return service.getAllByCurrentAdvisor();
+    }
+
+    @GetMapping("/by-advisor-id")
+    public List<ArtBondDto> getAllByAdvisorId(@RequestParam("id") UUID id) {
+        return service.getAllByAdvisor(id);
+    }
 }

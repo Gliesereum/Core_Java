@@ -14,6 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -44,4 +46,6 @@ public class InvestorOfferFullModelDto extends DefaultDto {
     private UserDto user;
 
     private ArtBondDto artBond;
+
+    private List<OfferCommentDto> comments = new ArrayList<>();
 }

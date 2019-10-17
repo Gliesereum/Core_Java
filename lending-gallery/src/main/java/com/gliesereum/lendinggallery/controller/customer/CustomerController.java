@@ -10,6 +10,10 @@ import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalen
 import com.gliesereum.share.common.model.response.MapResponse;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,9 +36,14 @@ public class CustomerController {
     @Autowired
     private CustomerFacade customerFacade;
 
-    @GetMapping
+   /* @GetMapping
     public List<CustomerDto> getAll() {
         return customerService.getAll();
+    }*/
+
+    @GetMapping
+    public Page<CustomerDto> getAll(@PageableDefault(page = 0, size = 100) Pageable pageable) {
+        return customerService.getAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -90,14 +99,20 @@ public class CustomerController {
         return customerService.getPaymentInfoCommon(SecurityUtil.getUserId());
     }
 
+    @GetMapping("/detailed/investor-by-current-adviser")
+    public List<DetailedCustomerDto> getDetailedInvestorByCurrentAdviser() {
+        return customerFacade.getDetailedInvestorByCurrentAdviser();
+    }
+
     @GetMapping("/detailed/investor")
-    public List<DetailedCustomerDto> getDetailedInvestor(@RequestParam(value = "artBondId", required = false) UUID artBondId) {
-        return customerFacade.getDetailedInvestor(artBondId);
+    public Page<DetailedCustomerDto> getDetailedInvestor(@PageableDefault(page = 0, size = 100) Pageable pageable,
+                                                         @RequestParam(value = "artBondId", required = false) UUID artBondId) {
+        return customerFacade.getDetailedInvestor(artBondId, pageable);
     }
 
     @GetMapping("/detailed/borrower")
-    public List<DetailedCustomerDto> getDetailedBorrower() {
-        return customerFacade.getDetailedBorrower();
+    public Page<DetailedCustomerDto> getDetailedBorrower(@PageableDefault(page = 0, size = 100) Pageable pageable) {
+        return customerFacade.getDetailedBorrower(pageable);
     }
 
     @GetMapping("/detailed/admin")

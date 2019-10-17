@@ -2,6 +2,7 @@ package com.gliesereum.lendinggallery.service.artbond.impl;
 
 import com.gliesereum.lendinggallery.model.entity.artbond.ArtBondEntity;
 import com.gliesereum.lendinggallery.model.repository.jpa.artbond.ArtBondRepository;
+import com.gliesereum.lendinggallery.service.advisor.AdvisorService;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.artbond.InterestedArtBondService;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
@@ -10,6 +11,7 @@ import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
 import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
+import com.gliesereum.share.common.model.dto.lendinggallery.advisor.AdvisorDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.DetailedArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.InterestedArtBondDto;
@@ -27,7 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yahoofinance.YahooFinance;
@@ -42,8 +46,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
-import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.ART_BOND_NOT_FOUND_BY_ID;
-import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.ID_IS_EMPTY;
+import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
 
 /**
  * @author vitalij
@@ -59,6 +62,12 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     private final ArtBondRepository artBondRepository;
 
+    @Value("${image-url.art-bond.logo}")
+    private String defaultLogo;
+
+    @Value("${image-url.art-bond.cover}")
+    private String defaultCover;
+
     @Autowired
     private MediaService mediaService;
 
@@ -73,6 +82,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private AdvisorService advisorService;
 
 
     public ArtBondServiceImpl(ArtBondRepository artBondRepository, DefaultConverter defaultConverter) {
@@ -111,6 +123,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public ArtBondDto create(ArtBondDto dto) {
         dto.setStatusType(StatusType.WAITING_COLLECTION);
         dto.setSpecialStatusType(SpecialStatusType.ACTIVE);
+        setLogoIfNull(dto);
         ArtBondDto result = super.create(dto);
         if (result != null) {
             createMedia(dto, result);
@@ -124,6 +137,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setStockCount(artBond.getStockCount());
         dto.setStatusType(artBond.getStatusType());
         dto.setSpecialStatusType(artBond.getSpecialStatusType());
+        setLogoIfNull(dto);
         ArtBondDto result = super.update(dto);
         if (result != null) {
             mediaService.deleteAllByObjectId(result.getId());
@@ -166,6 +180,30 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public List<InterestedArtBondDto> getInterested(UUID id) {
         return interestedArtBondService.getByArtBondId(id);
+    }
+
+    @Override
+    public List<ArtBondDto> getAllByCurrentAdvisor() {
+        List<ArtBondDto> result = null;
+        SecurityUtil.checkUserByBanStatus();
+        List<AdvisorDto> advisors = advisorService.findByUserId(SecurityUtil.getUserId());
+
+        if (CollectionUtils.isNotEmpty(advisors)) {
+            Set<UUID> artBondIds = advisors.stream().map(AdvisorDto::getArtBondId).collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(artBondIds)) {
+                result = getByIds(artBondIds);
+            }
+        }
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(this::setAdditionalField);
+        }
+        return result;
+    }
+
+    @Override
+    public List<ArtBondDto> getAllByAdvisor(UUID id) {
+        List<ArtBondDto> result = null;
+        return result;
     }
 
     @Override
@@ -513,6 +551,17 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             long between = ChronoUnit.MONTHS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
             artBond.setPaymentDuration(between);
 
+        }
+    }
+
+    private void setLogoIfNull(ArtBondDto artBond) {
+        if (artBond != null) {
+            if (StringUtils.isBlank(artBond.getLogoUrl())) {
+                artBond.setLogoUrl(defaultLogo);
+            }
+            if (StringUtils.isBlank(artBond.getCoverUrl())) {
+                artBond.setCoverUrl(defaultCover);
+            }
         }
     }
 }

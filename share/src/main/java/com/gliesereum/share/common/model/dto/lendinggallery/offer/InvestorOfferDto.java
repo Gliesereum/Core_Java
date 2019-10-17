@@ -10,8 +10,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author vitalij
@@ -35,4 +37,6 @@ public class InvestorOfferDto extends DefaultDto {
     @JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime create;
+
+    private List<OfferCommentDto> comments = new ArrayList<>();
 }

@@ -8,6 +8,8 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.CustomerT
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.CustomerPaymentInfo;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import com.gliesereum.share.common.service.DefaultService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,10 @@ public interface CustomerService extends DefaultService<CustomerDto, CustomerEnt
     List<CustomerDto> getByCustomerType(CustomerType customerType);
 
     List<CustomerDto> getByCustomerTypeAndIdIn(CustomerType customerType, List<UUID> ids);
+
+    Page<CustomerDto> getByCustomerType(CustomerType customerType, Pageable pageable);
+
+    Page<CustomerDto> getByCustomerTypeAndIdIn(CustomerType customerType, List<UUID> ids, Pageable pageable);
 
     List<CustomerDto> getByUserIds(List<UUID> userIds);
 

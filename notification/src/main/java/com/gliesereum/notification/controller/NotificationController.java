@@ -1,6 +1,6 @@
 package com.gliesereum.notification.controller;
 
-import com.gliesereum.notification.service.notification.NotificationService;
+import com.gliesereum.notification.service.notification.KarmaNotificationService;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.model.dto.notification.notification.SendNotificationDto;
 import com.gliesereum.share.common.model.response.MapResponse;
@@ -25,14 +25,14 @@ import static com.gliesereum.share.common.exception.messages.CommonExceptionMess
 public class NotificationController {
 
     @Autowired
-    private NotificationService notificationService;
+    private KarmaNotificationService karmaNotificationService;
 
     @PostMapping("/send")
     public MapResponse sendNotification(@Valid @RequestBody SendNotificationDto sendNotification) {
         if (SecurityUtil.isAnonymous()) {
             throw new ClientException(USER_IS_ANONYMOUS);
         }
-        notificationService.sendBusinessNotification(sendNotification);
+        karmaNotificationService.sendBusinessNotification(sendNotification);
         return new MapResponse("true");
     }
 }

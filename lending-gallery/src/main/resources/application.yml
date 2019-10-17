@@ -47,6 +47,20 @@ exchange:
       endpointUpdatePack: http://permission-service/endpoint/pack
       getGroupUserByGroupPurpose: http://permission-service/group-user/by-group-purpose
     account:
+      getByPhone: http://account-service/user/by-phone
       userIsExist: http://account-service/user/exist
       findByIds: http://account-service/user/by-ids
       findDetailedByIds: http://account-service/user/detailed/by-ids
+      findPublicUserByUserIds: http://account-service/user/public/by-ids
+      createOrGetPublicUser: http://account-service/user/public/create-or-get
+
+notification:
+  lg:
+    create-offer:
+      queueName: notification-lg-create-offer
+
+
+image-url:
+  art-bond:
+    logo: https://glcdn.sgp1.digitaloceanspaces.com/lg/ava_v3.png
+    cover: https://glcdn.sgp1.digitaloceanspaces.com/lg/lg_noimage_cover_bg_16x9.png

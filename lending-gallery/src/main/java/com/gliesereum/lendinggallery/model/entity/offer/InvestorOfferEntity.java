@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -39,5 +41,9 @@ public class InvestorOfferEntity extends DefaultEntity {
     @Column(name = "state_type")
     @Enumerated(EnumType.STRING)
     private OfferStateType stateType;
+
+    @OneToMany
+    @JoinColumn(name = "offer_id", insertable = false, updatable = false)
+    private Set<OfferCommentEntity> comments = new HashSet<>();
 
 }
