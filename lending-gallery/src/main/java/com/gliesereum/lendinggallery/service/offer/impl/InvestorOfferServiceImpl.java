@@ -24,6 +24,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -211,7 +214,20 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateTypeIn(states);
         return setFullModelByEntities(entities);
     }
-
+    
+    @Override
+    public Page<InvestorOfferFullModelDto> getFullModelByCustomerId(UUID customerId, Pageable pageable) {
+        Page<InvestorOfferFullModelDto> result = null;
+        Page<InvestorOfferEntity> page = investorOfferRepository.findAllByCustomerIdOrderByCreate(customerId, pageable);
+        if (page != null) {
+            List<InvestorOfferFullModelDto> list = setFullModelByEntities(page.getContent());
+            if (CollectionUtils.isNotEmpty(list)) {
+                result = new PageImpl<>(list, page.getPageable(), page.getTotalElements());
+            }
+        }
+        return result;
+    }
+    
     @Override
     public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search) {
         List<InvestorOfferFullModelDto> result = null;
