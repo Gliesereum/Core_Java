@@ -214,7 +214,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Override
     public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search) {
         List<InvestorOfferFullModelDto> result = null;
-        advisorService.checkCurrentUserIsAdvisor(search.getArtBondId());
+        //advisorService.checkCurrentUserIsAdvisor(search.getArtBondId()); //todo check adviser
         List<InvestorOfferEntity> entities = investorOfferRepository.searchInvestorOffersByParams(search);
         result = setFullModelByEntities(entities);
         setUsersToCommentInOffers(result);

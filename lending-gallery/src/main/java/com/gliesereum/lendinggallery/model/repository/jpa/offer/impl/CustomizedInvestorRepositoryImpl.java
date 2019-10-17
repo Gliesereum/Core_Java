@@ -31,7 +31,7 @@ public class CustomizedInvestorRepositoryImpl implements CustomizedInvestorRepos
         List<Predicate> predicates = new ArrayList<>();
 
         SqlUtil.createEqIfNotNull(builder, predicates, root.get("artBondId"), search.getArtBondId());
-        SqlUtil.createEqIfNotNull(builder, predicates, root.get("stateType"), search.getState());
+        SqlUtil.createInIfNotEmpty(predicates, root.get("stateType"), search.getStates());
         SqlUtil.createBetweenDate(builder, predicates, root.get("create"), search.getFrom(), search.getTo());
 
         if (CollectionUtils.isNotEmpty(predicates)) {

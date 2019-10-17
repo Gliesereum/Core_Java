@@ -27,10 +27,8 @@ public class OfferSearchDto {
     @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
     private LocalDateTime to;
 
-    @NotNull
+   // @NotNull
     private UUID artBondId;
 
-    private OfferStateType state;
-
-
+   private List<OfferStateType> states;
 }
