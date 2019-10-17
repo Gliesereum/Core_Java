@@ -4,6 +4,7 @@ import com.gliesereum.lendinggallery.model.entity.media.MediaEntity;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.BlockMediaType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,4 +19,6 @@ public interface MediaRepository extends JpaRepository<MediaEntity, UUID> {
     MediaEntity findByIdAndObjectId(UUID id, UUID objectId);
 
     void deleteAllByObjectId(UUID objectId);
+    
+    void deleteAllByObjectIdAndBlockMediaTypeIn(UUID objectId, Collection<BlockMediaType> blockMediaTypes);
 }

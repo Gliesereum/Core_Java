@@ -5,8 +5,10 @@ import com.gliesereum.notification.service.telegram.TelegramChatActionService;
 import com.gliesereum.notification.service.telegram.TelegramChatService;
 import com.gliesereum.share.common.exception.rest.RestRequestException;
 import com.gliesereum.share.common.exchange.service.account.UserAuthExchangeService;
+import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.exchange.service.account.UserPhoneExchangeService;
 import com.gliesereum.share.common.model.dto.account.auth.AuthDto;
+import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.karma.business.BaseBusinessDto;
 import com.gliesereum.share.common.model.dto.karma.record.BaseRecordDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordNotificationDto;
@@ -27,8 +29,10 @@ import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.format.DateTimeFormatter;
@@ -55,6 +59,9 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 	
 	@Autowired
 	private UserAuthExchangeService userAuthExchangeService;
+	
+	@Autowired
+	private UserExchangeService userExchangeService;
 	
 	@Override
 	public void recordCreateNotification(RecordNotificationDto data) {
@@ -97,35 +104,33 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 			switch (callbackQuery.getData()) {
 				case "setphone": {
 					processSetPhone(message, true);
-					break;
+					return;
 				}
 				case "cancelaction": {
 					cancelAction(message, true);
-					break;
+					return;
 				}
 			}
 			
 		} else {
 			Message message = update.getMessage();
-			if (message != null) {
+			if ((message != null) && (message.getText() != null)) {
 				switch (message.getText()) {
 					case "/start": {
 						processStart(message);
-						break;
+						return;
 					}
 					case "/menu": {
 						processMenu(message);
-						break;
-					}
-					default: {
-						TelegramChatActionDto action = telegramChatActionService.getByChatId(message.getChatId());
-						if (action != null) {
-							processAction(action, message);
-						}
-						break;
+						return;
 					}
 				}
 			}
+		}
+		Message message = update.getMessage();
+		TelegramChatActionDto action = telegramChatActionService.getByChatId(message.getChatId());
+		if (action != null) {
+			processAction(action, message);
 		}
 	}
 	
@@ -199,6 +204,18 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 			phone = message.getText();
 		} else {
 			phone = contact.getPhoneNumber();
+			if (message.getFrom().getId().equals(contact.getUserID())) {
+				PublicUserDto publicUserDto = new PublicUserDto();
+				publicUserDto.setPhone(phone);
+				publicUserDto = userExchangeService.createOrGetPublicUser(publicUserDto);
+				TelegramChatDto telegramChatDto = telegramChatService.create(message.getChatId(), publicUserDto.getId());
+				
+				SendMessage sendMessage = new SendMessage();
+				sendMessage.setText("Номер телефона успешно добавлен: " + phone);
+				send(sendMessage, message, message.getChatId(), false);
+				telegramChatActionService.deleteByChatId(message.getChatId());
+				return;
+			} 
 		}
 		if (!RegexUtil.phoneIsValid(phone)) {
 			SendMessage sendMessage = new SendMessage();
@@ -247,15 +264,22 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 			send(sendMessage, originalMessage, originalMessage.getChatId(), isButton);
 		} else {
 			SendMessage sendMessage = new SendMessage();
-			sendMessage.setText("Введите номер телефона:");
-			KeyboardButton keyboardButton = new KeyboardButton();
-			keyboardButton.setRequestContact(true);
-			keyboardButton.setText("Отправить мой номер");
-//		KeyboardRow row = new KeyboardRow();
-//		row.add(keyboardButton);
-//		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-//		replyKeyboardMarkup.setKeyboard(List.of(row));
-//		sendMessage.setReplyMarkup(replyKeyboardMarkup);
+			String text = "";
+			text = text + "Введите номер телефона";
+			if (originalMessage.getChat().isUserChat()) {
+				text = text + " или отправте свой текущий номер";
+				KeyboardButton keyboardButton = new KeyboardButton();
+				keyboardButton.setRequestContact(true);
+				keyboardButton.setText("Отправить мой номер");
+				KeyboardRow row = new KeyboardRow();
+				row.add(keyboardButton);
+				ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+				replyKeyboardMarkup.setKeyboard(List.of(row));
+				replyKeyboardMarkup.setOneTimeKeyboard(true);
+				replyKeyboardMarkup.setResizeKeyboard(true);
+				sendMessage.setReplyMarkup(replyKeyboardMarkup);
+			}
+			sendMessage.setText(text);
 			telegramChatActionService.create(originalMessage.getChatId(), TelegramAction.ADD_PHONE);
 			send(sendMessage, originalMessage, originalMessage.getChatId(), isButton);
 		}
