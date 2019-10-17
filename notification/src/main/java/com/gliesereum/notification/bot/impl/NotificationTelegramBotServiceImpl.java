@@ -252,7 +252,7 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 			String text = "";
 			text = text + "Введите номер телефона";
 			if (originalMessage.getChat().isUserChat()) {
-				text = text + " или отправте свой текущий номер"
+				text = text + " или отправте свой текущий номер";
 				KeyboardButton keyboardButton = new KeyboardButton();
 				keyboardButton.setRequestContact(true);
 				keyboardButton.setText("Отправить мой номер");
