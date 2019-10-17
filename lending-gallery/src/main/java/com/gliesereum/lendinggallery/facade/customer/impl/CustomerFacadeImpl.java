@@ -70,7 +70,7 @@ public class CustomerFacadeImpl implements CustomerFacade {
                 if (CollectionUtils.isNotEmpty(detailedUser)) {
                     listDetailed = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
                     listDetailed = listDetailed.stream()
-                            .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
+                            //.filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))TODO; kyc request disable check
                             .peek(i -> {
                                 i.setCustomer(userCustomer.get(i.getId()));
                                 if (artBondId == null) {
@@ -103,7 +103,7 @@ public class CustomerFacadeImpl implements CustomerFacade {
                 if (CollectionUtils.isNotEmpty(detailedUser)) {
                     listDetailed = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
                     listDetailed = listDetailed.stream()
-                            .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
+                            //.filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))TODO; kyc request disable check
                             .peek(i -> i.setCustomer(userCustomer.get(i.getId())))
                             .collect(Collectors.toList());
                     insertOperationsStory(listDetailed);
