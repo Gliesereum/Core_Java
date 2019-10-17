@@ -5,6 +5,7 @@ import com.gliesereum.lendinggallery.model.repository.jpa.offer.InvestorOfferRep
 import com.gliesereum.lendinggallery.service.advisor.AdvisorService;
 import com.gliesereum.lendinggallery.service.artbond.ArtBondService;
 import com.gliesereum.lendinggallery.service.customer.CustomerService;
+import com.gliesereum.lendinggallery.service.media.MediaService;
 import com.gliesereum.lendinggallery.service.offer.InvestorOfferService;
 import com.gliesereum.lendinggallery.service.offer.OfferCommentService;
 import com.gliesereum.lendinggallery.service.offer.OperationsStoryService;
@@ -14,10 +15,7 @@ import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OfferStateType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
-import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
+import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.*;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -66,6 +64,9 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
 
     @Autowired
     private OfferCommentService commentService;
+
+    @Autowired
+    private MediaService mediaService;
 
     public InvestorOfferServiceImpl(InvestorOfferRepository investorOfferRepository, DefaultConverter defaultConverter) {
         super(investorOfferRepository, defaultConverter, DTO_CLASS, ENTITY_CLASS);
@@ -218,7 +219,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         List<InvestorOfferEntity> entities = investorOfferRepository.searchInvestorOffersByParams(search);
         result = setFullModelByEntities(entities);
         setUsersToCommentInOffers(result);
-        if(CollectionUtils.isNotEmpty(result)){
+        if (CollectionUtils.isNotEmpty(result)) {
             result.sort(Comparator.comparing(InvestorOfferFullModelDto::getCreate).reversed());
         }
         return result;
@@ -228,6 +229,19 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     public InvestorOfferDto setComment(UUID id, String comment) {
         InvestorOfferDto result = findById(id);
         addComment(result, comment);
+        return result;
+    }
+
+    @Override
+    public InvestorOfferFullModelDto getInvestorOfferFullModelById(UUID id) {
+        InvestorOfferFullModelDto result = null;
+        InvestorOfferEntity entity = investorOfferRepository.getOne(id);
+        if(entity != null){
+            List<InvestorOfferFullModelDto> fullModelList = setFullModelByEntities(Arrays.asList(entity));
+            if(CollectionUtils.isNotEmpty(fullModelList)){
+                result = fullModelList.get(0);
+            }
+        }
         return result;
     }
 
@@ -262,6 +276,9 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                 customerService.setCustomerAndUser(result, InvestorOfferFullModelDto::getCustomerId,
                         InvestorOfferFullModelDto::setCustomer, InvestorOfferFullModelDto::setUser);
             }
+        }
+        if(CollectionUtils.isNotEmpty(result)){
+            setMedia(result);
         }
         return result;
     }
@@ -348,6 +365,24 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                                 f.setCreateBy(users.get(f.getCreateById()));
                             });
                         }
+                    });
+                }
+            }
+        }
+    }
+
+    private void setMedia(List<InvestorOfferFullModelDto> offers) {
+        if (CollectionUtils.isNotEmpty(offers)) {
+            Set<ArtBondDto> setArtBond = offers.stream().map(InvestorOfferFullModelDto::getArtBond).collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(setArtBond)) {
+                Map<UUID, ArtBondDto> map = new HashMap<>();
+                setArtBond.forEach(artBondDto -> {
+                    artBondDto.setImages(mediaService.getByObjectIdAndType(artBondDto.getId(), BlockMediaType.IMAGES));
+                    map.put(artBondDto.getId(), artBondDto);
+                });
+                if (MapUtils.isNotEmpty(map)) {
+                    offers.forEach(offer -> {
+                        offer.setArtBond(map.get(offer.getArtBondId()));
                     });
                 }
             }

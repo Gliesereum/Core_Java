@@ -47,6 +47,11 @@ public class OfferController {
         return investorOfferService.getAllByState(state);
     }
 
+    @GetMapping("/investor/full-model/by-id")
+    public InvestorOfferFullModelDto getInvestorOfferFullModelById(@RequestParam("id") UUID id) {
+        return investorOfferService.getInvestorOfferFullModelById(id);
+    }
+
     @GetMapping("/investor/full-model/by-state")
     public List<InvestorOfferFullModelDto> getAllInvestorOffersFullModelByState(@RequestParam("state") OfferStateType state) {
         return investorOfferService.getAllFullModelByState(state);
