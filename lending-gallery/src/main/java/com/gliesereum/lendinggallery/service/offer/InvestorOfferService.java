@@ -35,4 +35,6 @@ public interface InvestorOfferService extends DefaultService<InvestorOfferDto, I
     List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search);
 
     InvestorOfferDto setComment(UUID id, String comment);
+
+    InvestorOfferFullModelDto getInvestorOfferFullModelById(UUID id);
 }
