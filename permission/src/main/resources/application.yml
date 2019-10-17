@@ -42,4 +42,5 @@ exchange:
   endpoint:
     account:
       userIsExist: http://account-service/user/exist
+      getByPhone: http://account-service/user/by-phone
 #      userKYCPassed: http://account-service/user/kyc-passed
