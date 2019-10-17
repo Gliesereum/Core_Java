@@ -58,3 +58,9 @@ notification:
   lg:
     create-offer:
       queueName: notification-lg-create-offer
+
+
+image-url:
+  art-bond:
+    logo: https://glcdn.sgp1.digitaloceanspaces.com/lg/ava_v3.png
+    cover: https://glcdn.sgp1.digitaloceanspaces.com/lg/lg_noimage_cover_bg_16x9.png

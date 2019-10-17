@@ -29,7 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yahoofinance.YahooFinance;
@@ -59,6 +61,12 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     private static final Integer PAYMENT_PERIOD_DAYS = 30;
 
     private final ArtBondRepository artBondRepository;
+
+    @Value("${image-url.art-bond.logo}")
+    private String defaultLogo;
+
+    @Value("${image-url.art-bond.cover}")
+    private String defaultCover;
 
     @Autowired
     private MediaService mediaService;
@@ -115,6 +123,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     public ArtBondDto create(ArtBondDto dto) {
         dto.setStatusType(StatusType.WAITING_COLLECTION);
         dto.setSpecialStatusType(SpecialStatusType.ACTIVE);
+        setLogoIfNull(dto);
         ArtBondDto result = super.create(dto);
         if (result != null) {
             createMedia(dto, result);
@@ -128,6 +137,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         dto.setStockCount(artBond.getStockCount());
         dto.setStatusType(artBond.getStatusType());
         dto.setSpecialStatusType(artBond.getSpecialStatusType());
+        setLogoIfNull(dto);
         ArtBondDto result = super.update(dto);
         if (result != null) {
             mediaService.deleteAllByObjectId(result.getId());
@@ -541,6 +551,17 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             long between = ChronoUnit.MONTHS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
             artBond.setPaymentDuration(between);
 
+        }
+    }
+
+    private void setLogoIfNull(ArtBondDto artBond) {
+        if (artBond != null) {
+            if (StringUtils.isBlank(artBond.getLogoUrl())) {
+                artBond.setLogoUrl(defaultLogo);
+            }
+            if (StringUtils.isBlank(artBond.getCoverUrl())) {
+                artBond.setCoverUrl(defaultCover);
+            }
         }
     }
 }
