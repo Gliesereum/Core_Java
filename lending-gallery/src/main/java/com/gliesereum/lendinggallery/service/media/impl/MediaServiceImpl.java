@@ -15,9 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
@@ -81,10 +80,13 @@ public class MediaServiceImpl extends DefaultServiceImpl<MediaDto, MediaEntity> 
              }
              f.setObjectId(id);
          });
-            List<MediaDto> toUpdate = files.stream().filter(i -> i.getId() != null).collect(Collectors.toList());
-            List<MediaDto> toCreate = files.stream().filter(i -> i.getId() == null).collect(Collectors.toList());
-            update(toUpdate);
-            create(toCreate); //todo check
+            Set<BlockMediaType> mediaTypes = files.stream()
+                    .filter(i -> i.getBlockMediaType() != null).map(MediaDto::getBlockMediaType)
+                    .collect(Collectors.toSet());
+            if (CollectionUtils.isNotEmpty(mediaTypes)) {
+                mediaRepository.deleteAllByObjectIdAndBlockMediaTypeIn(id, mediaTypes);
+            }
+         create(files); //todo check
         }
         return result;
     }
