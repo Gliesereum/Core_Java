@@ -24,6 +24,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,6 +84,26 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
         List<CustomerDto> result = null;
         if ((customerType != null) && CollectionUtils.isNotEmpty(ids)) {
             List<CustomerEntity> entities = customerRepository.findAllByCustomerTypeAndIdIn(customerType, ids);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public Page<CustomerDto> getByCustomerType(CustomerType customerType, Pageable pageable) {
+        Page<CustomerDto> result = null;
+        if (customerType != null) {
+            Page<CustomerEntity> entities = customerRepository.findAllByCustomerType(customerType, pageable);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+
+    @Override
+    public Page<CustomerDto> getByCustomerTypeAndIdIn(CustomerType customerType, List<UUID> ids, Pageable pageable) {
+        Page<CustomerDto> result = null;
+        if ((customerType != null) && CollectionUtils.isNotEmpty(ids)) {
+            Page<CustomerEntity> entities = customerRepository.findAllByCustomerTypeAndIdIn(customerType, ids, pageable);
             result = converter.convert(entities, dtoClass);
         }
         return result;

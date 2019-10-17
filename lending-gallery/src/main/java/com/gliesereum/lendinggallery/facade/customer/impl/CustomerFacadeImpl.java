@@ -16,6 +16,9 @@ import com.gliesereum.share.common.model.dto.permission.enumerated.GroupPurpose;
 import com.gliesereum.share.common.util.SecurityUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -51,49 +54,63 @@ public class CustomerFacadeImpl implements CustomerFacade {
     private AdvisorService advisorService;
 
     @Override
-    public List<DetailedCustomerDto> getDetailedInvestor(UUID artBondId) {
-        List<DetailedCustomerDto> result = null;
+    public Page<DetailedCustomerDto> getDetailedInvestor(UUID artBondId, Pageable pageable) {
+        Page<DetailedCustomerDto> result = Page.empty(pageable);
+        List<DetailedCustomerDto> listDetailed = null;
         List<UUID> artBondIds = null;
         if (artBondId != null) {
             artBondIds = Arrays.asList(artBondId);
         }
-        List<CustomerDto> customers = getInvestors(artBondIds);
-        if (CollectionUtils.isNotEmpty(customers)) {
-            Map<UUID, CustomerDto> userCustomer = customers.stream().collect(Collectors.toMap(CustomerDto::getUserId, i -> i));
-            List<DetailedUserDto> detailedUser = userExchangeService.findDetailedByIds(userCustomer.keySet());
-            if (CollectionUtils.isNotEmpty(detailedUser)) {
-                result = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
-                result = result.stream()
-                        .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
-                        .peek(i -> {
-                            i.setCustomer(userCustomer.get(i.getId()));
-                            if (artBondId == null) {
-                                i.setPaymentInfo(customerService.getPaymentInfoCommon(i.getId()));
-                            } else {
-                                i.setPaymentInfo(customerService.getPaymentInfoByArtBond(artBondId, i.getId()));
-                            }
-                        })
-                        .collect(Collectors.toList());
-                insertOperationsStory(result);
+        Page<CustomerDto> pageCustomers = getInvestors(artBondIds, pageable);
+        if (pageCustomers != null && pageCustomers.hasContent()) {
+            List<CustomerDto> customers = pageCustomers.getContent();
+            if (CollectionUtils.isNotEmpty(customers)) {
+                Map<UUID, CustomerDto> userCustomer = customers.stream().collect(Collectors.toMap(CustomerDto::getUserId, i -> i));
+                List<DetailedUserDto> detailedUser = userExchangeService.findDetailedByIds(userCustomer.keySet());
+                if (CollectionUtils.isNotEmpty(detailedUser)) {
+                    listDetailed = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
+                    listDetailed = listDetailed.stream()
+                            .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
+                            .peek(i -> {
+                                i.setCustomer(userCustomer.get(i.getId()));
+                                if (artBondId == null) {
+                                    i.setPaymentInfo(customerService.getPaymentInfoCommon(i.getId()));
+                                } else {
+                                    i.setPaymentInfo(customerService.getPaymentInfoByArtBond(artBondId, i.getId()));
+                                }
+                            })
+                            .collect(Collectors.toList());
+                    insertOperationsStory(listDetailed);
+                }
+                if (CollectionUtils.isNotEmpty(listDetailed)) {
+                    result = new PageImpl<>(listDetailed, pageCustomers.getPageable(), pageCustomers.getTotalElements());
+                }
             }
         }
         return result;
     }
 
     @Override
-    public List<DetailedCustomerDto> getDetailedBorrower() {
-        List<DetailedCustomerDto> result = null;
-        List<CustomerDto> customers = customerService.getByCustomerType(CustomerType.BORROWER);
-        if (CollectionUtils.isNotEmpty(customers)) {
-            Map<UUID, CustomerDto> userCustomer = customers.stream().collect(Collectors.toMap(CustomerDto::getUserId, i -> i));
-            List<DetailedUserDto> detailedUser = userExchangeService.findDetailedByIds(userCustomer.keySet());
-            if (CollectionUtils.isNotEmpty(detailedUser)) {
-                result = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
-                result = result.stream()
-                        .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
-                        .peek(i -> i.setCustomer(userCustomer.get(i.getId())))
-                        .collect(Collectors.toList());
-                insertOperationsStory(result);
+    public Page<DetailedCustomerDto> getDetailedBorrower(Pageable pageable) {
+        Page<DetailedCustomerDto> result = Page.empty(pageable);
+        List<DetailedCustomerDto> listDetailed = null;
+        Page<CustomerDto> pageCustomers = customerService.getByCustomerType(CustomerType.BORROWER, pageable);
+        if (pageCustomers != null && pageCustomers.hasContent()) {
+            List<CustomerDto> customers = pageCustomers.getContent();
+            if (CollectionUtils.isNotEmpty(customers)) {
+                Map<UUID, CustomerDto> userCustomer = customers.stream().collect(Collectors.toMap(CustomerDto::getUserId, i -> i));
+                List<DetailedUserDto> detailedUser = userExchangeService.findDetailedByIds(userCustomer.keySet());
+                if (CollectionUtils.isNotEmpty(detailedUser)) {
+                    listDetailed = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
+                    listDetailed = listDetailed.stream()
+                            .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
+                            .peek(i -> i.setCustomer(userCustomer.get(i.getId())))
+                            .collect(Collectors.toList());
+                    insertOperationsStory(listDetailed);
+                }
+                if (CollectionUtils.isNotEmpty(listDetailed)) {
+                    result = new PageImpl<>(listDetailed, pageCustomers.getPageable(), pageCustomers.getTotalElements());
+                }
             }
         }
         return result;
@@ -126,7 +143,7 @@ public class CustomerFacadeImpl implements CustomerFacade {
         SecurityUtil.checkUserByBanStatus();
         List<UUID> artBondIds = advisorService.getArtBondIdsByUserId(SecurityUtil.getUserId());
         List<CustomerDto> customers = null;
-        if(CollectionUtils.isNotEmpty(artBondIds)){
+        if (CollectionUtils.isNotEmpty(artBondIds)) {
             customers = getInvestors(artBondIds);
         }
         if (CollectionUtils.isNotEmpty(customers)) {
@@ -160,6 +177,17 @@ public class CustomerFacadeImpl implements CustomerFacade {
             result = customerService.getByCustomerTypeAndIdIn(CustomerType.INVESTOR, customerIds);
         } else {
             result = customerService.getByCustomerType(CustomerType.INVESTOR);
+        }
+        return result;
+    }
+
+    private Page<CustomerDto> getInvestors(List<UUID> artBondIds, Pageable pageable) {
+        Page<CustomerDto> result;
+        if (CollectionUtils.isNotEmpty(artBondIds)) {
+            List<UUID> customerIds = operationsStoryService.getCustomerByArtBondId(artBondIds);
+            result = customerService.getByCustomerTypeAndIdIn(CustomerType.INVESTOR, customerIds, pageable);
+        } else {
+            result = customerService.getByCustomerType(CustomerType.INVESTOR, pageable);
         }
         return result;
     }
