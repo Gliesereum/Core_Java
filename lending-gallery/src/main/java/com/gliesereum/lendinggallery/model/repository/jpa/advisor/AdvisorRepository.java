@@ -21,4 +21,7 @@ public interface AdvisorRepository extends AuditableRepository<AdvisorEntity> {
 
 	@Query("SELECT a.artBondId FROM AdvisorEntity a WHERE a.userId = :userId AND a.objectState = :objectState")
 	List<UUID> getArtBondIdsByUserIdAndObjectState(@Param("userId") UUID userId, @Param("objectState") ObjectState objectState);
+	
+	@Query("SELECT a.userId FROM AdvisorEntity a WHERE a.artBondId = :artBondId AND a.objectState = :objectState")
+	List<UUID> getUserIdsByArtBondIdAndObjectState(@Param("artBondId") UUID artBondId, @Param("objectState") ObjectState objectState);
 }

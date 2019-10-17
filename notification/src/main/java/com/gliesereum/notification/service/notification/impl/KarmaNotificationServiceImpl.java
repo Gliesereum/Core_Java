@@ -2,7 +2,7 @@ package com.gliesereum.notification.service.notification.impl;
 
 import com.gliesereum.notification.service.device.UserDeviceService;
 import com.gliesereum.notification.service.firebase.FirebaseService;
-import com.gliesereum.notification.service.notification.NotificationService;
+import com.gliesereum.notification.service.notification.KarmaNotificationService;
 import com.gliesereum.share.common.exchange.service.karma.KarmaExchangeService;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.karma.business.AbstractBusinessDto;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class NotificationServiceImpl implements NotificationService {
+public class KarmaNotificationServiceImpl implements KarmaNotificationService {
 
     @Autowired
     private FirebaseService firebaseService;

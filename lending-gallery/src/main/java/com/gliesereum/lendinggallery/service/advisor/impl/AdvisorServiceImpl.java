@@ -163,7 +163,12 @@ public class AdvisorServiceImpl extends AuditableServiceImpl<AdvisorDto, Advisor
 	public List<UUID> getArtBondIdsByUserId(UUID userId) {
 		return advisorRepository.getArtBondIdsByUserIdAndObjectState(userId, ObjectState.ACTIVE);
 	}
-
+	
+	@Override
+	public List<UUID> getUserIdsByArtBondId(UUID artBondId) {
+		return  advisorRepository.getUserIdsByArtBondIdAndObjectState(artBondId, ObjectState.ACTIVE);
+	}
+	
 	private void checkAdvisor(AdvisorDto dto) {
 		if (dto.getUserId() == null) {
 			throw new ClientException(USER_ID_IS_EMPTY);

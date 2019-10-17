@@ -13,7 +13,7 @@ import java.util.UUID;
  * @author yvlasiuk
  * @version 1.0
  */
-public interface NotificationService {
+public interface KarmaNotificationService {
 
     void processRecordNotification(NotificationDto<BaseRecordDto> recordNotification);
 

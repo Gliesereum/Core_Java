@@ -203,6 +203,7 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                         }
                         break;
                     }
+                    case LG_CREATE_OFFER:
                     case KARMA_BUSINESS_NOTIFICATION:
                     case KARMA_USER_NEW_BUSINESS: {
                         subscribe.setObjectId(null);
