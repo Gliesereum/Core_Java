@@ -43,6 +43,7 @@ public class InvestorOfferEntity extends DefaultEntity {
     private OfferStateType stateType;
 
     @OneToMany
+    @OrderBy("create DESC")
     @JoinColumn(name = "offer_id", insertable = false, updatable = false)
     private Set<OfferCommentEntity> comments = new HashSet<>();
 

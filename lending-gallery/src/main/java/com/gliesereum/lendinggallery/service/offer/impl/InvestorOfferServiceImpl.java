@@ -275,7 +275,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
             offerComment.setCreateById(SecurityUtil.getUserId());
             OfferCommentDto createComment = commentService.create(offerComment);
             offer.getComments().add(createComment);
-            offer.getComments().sort(Comparator.comparing(OfferCommentDto::getCreate).reversed());
+            //offer.getComments().sort(Comparator.comparing(OfferCommentDto::getCreate).reversed()); todo set order by in entity
             setUsersToComment(offer.getComments());
         }
     }
