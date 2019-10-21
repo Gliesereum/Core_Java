@@ -6,8 +6,18 @@ package com.gliesereum.share.common.model.dto.lendinggallery.enumerated;
  */
 public enum OfferStateType {
 
-    REQUEST,
-    REFUSED,
-    IN_PROCESS,
-    COMPLETED;
+    REQUEST(1),
+    IN_PROCESS(2),
+    COMPLETED(3),
+    REFUSED(4);
+
+    private final int index;
+
+    OfferStateType(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
 }
