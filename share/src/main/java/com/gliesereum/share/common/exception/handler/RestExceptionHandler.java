@@ -89,7 +89,9 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
-        return buildResponse(new ErrorResponse(BODY_INVALID), ex);
+        ErrorResponse errorResponse = new ErrorResponse(BODY_INVALID);
+        errorResponse.setAdditional(ex.getMessage().replaceFirst("`.*`", ""));
+        return buildResponse(errorResponse, ex);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)

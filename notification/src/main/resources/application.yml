@@ -50,6 +50,7 @@ exchange:
       findByIds: http://account-service/user/by-ids
       sendCode: http://account-service/phone/code
       userAuth: http://account-service/auth/signin
+      createOrGetPublicUser: http://account-service/user/public/create-or-get
     karma:
       businessForCurrentUser: http://karma-service/business/by-current-user/like-worker
       existChatSupport: http://karma-service/chat-support/exist-chat-support
