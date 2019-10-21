@@ -152,7 +152,7 @@ public class CustomerFacadeImpl implements CustomerFacade {
             if (CollectionUtils.isNotEmpty(detailedUser)) {
                 result = defaultConverter.convert(detailedUser, DetailedCustomerDto.class);
                 result = result.stream()
-                        .filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))
+                        //.filter(i -> CollectionUtils.isNotEmpty(i.getPassedKycRequests()))TODO; kyc request disable check
                         .peek(i -> {
                             i.setCustomer(userCustomer.get(i.getId()));
                             i.setPaymentInfo(customerService.getPaymentInfoCommon(i.getId()));
