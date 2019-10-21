@@ -115,6 +115,9 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         if (offer == null) {
             throw new ClientException(OFFER_NOT_FOUND_BY_ID);
         }
+        if (offer.getStateType().getIndex() > state.getIndex()) {
+            throw new ClientException(CAN_NOT_OFFER_STATE_BACK);
+        }
         ArtBondDto artBond = artBondService.getById(offer.getArtBondId());
         Integer commonSum = 0;
 
