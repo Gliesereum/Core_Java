@@ -262,7 +262,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     }
 
     private void addComment(InvestorOfferDto offer, String comment) {
-        if (offer != null && StringUtils.isNotEmpty(comment)) {
+        if (offer != null && StringUtils.isNotBlank(comment)) {
             //advisorService.checkCurrentUserIsAdvisor(offer.getArtBondId()); //todo check adviser
             OfferCommentDto offerComment = new OfferCommentDto();
             offerComment.setComment(comment);
