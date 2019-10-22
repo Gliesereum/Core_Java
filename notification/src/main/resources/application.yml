@@ -77,3 +77,5 @@ telegram:
   bot:
     token: ${telegram.bot.notification.token:962353680:AAEeLbmbr6V_ibcovqaY6n0KOc_vkK0PQUg}
     user-name: ${telegram.bot.notification.username:coupler_worker_dev_bot}
+#    token: ${telegram.bot.notification.token:831595784:AAF0qpFXzS4QvpIMk89YFgMpsLcOR5jEh-o}
+#    user-name: ${telegram.bot.notification.username:coupler_worker_bot}
