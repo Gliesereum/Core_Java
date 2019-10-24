@@ -18,6 +18,7 @@ import com.gliesereum.share.common.model.dto.notification.telegram.TelegramChatD
 import com.gliesereum.share.common.util.RegexUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -192,6 +194,8 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 			inlineKeyboardMarkup.setKeyboard(List.of(List.of(addWorkerButton, cancelButton)));
 			
 			sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+			
+			emptyKeyboardMarkup(sendMessage);
 			send(sendMessage, message, message.getChatId(), false);
 		}
 		
@@ -212,6 +216,7 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 				
 				SendMessage sendMessage = new SendMessage();
 				sendMessage.setText("Номер телефона успешно добавлен: " + phone);
+				emptyKeyboardMarkup(sendMessage);
 				send(sendMessage, message, message.getChatId(), false);
 				telegramChatActionService.deleteByChatId(message.getChatId());
 				return;
@@ -240,7 +245,6 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 			sendMessage.setText("На номер: " + phone + " отправленна смс с кодом, введите ее");
 			addCancelMenu(sendMessage);
 			
-			
 			send(sendMessage, message, message.getChatId(), false);
 		}
 	}
@@ -251,6 +255,7 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 		SendMessage sendMessage = new SendMessage();
 		sendMessage.setText("Действие отменено");
 		addMainMenu(sendMessage);
+		emptyKeyboardMarkup(sendMessage);
 		
 		send(sendMessage, message, message.getChatId(), isButton);
 	}
@@ -336,5 +341,13 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 		inlineKeyboardMarkup.setKeyboard(List.of(List.of(cancelButton)));
 		
 		message.setReplyMarkup(inlineKeyboardMarkup);
+	}
+	
+	private void emptyKeyboardMarkup(SendMessage message) {
+		ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+		replyKeyboardMarkup.setKeyboard(new ArrayList<>());
+		replyKeyboardMarkup.setOneTimeKeyboard(true);
+		replyKeyboardMarkup.setResizeKeyboard(true);
+		message.setReplyMarkup(replyKeyboardMarkup);
 	}
 }

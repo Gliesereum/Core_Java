@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.repository.jpa.record.impl;
 
+import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import com.gliesereum.karma.model.entity.record.BaseRecordEntity;
 import com.gliesereum.karma.model.entity.record.RecordServiceEntity;
 import com.gliesereum.karma.model.repository.jpa.record.BaseRecordSearchRepository;
@@ -9,6 +10,7 @@ import com.gliesereum.share.common.model.dto.karma.record.RecordPaymentInfoDto;
 import com.gliesereum.share.common.model.dto.karma.record.RecordUsageCountDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchDto;
 import com.gliesereum.share.common.model.dto.karma.record.search.BusinessRecordSearchPageableDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.util.SqlUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -232,10 +234,13 @@ public class BaseRecordSearchRepositoryImpl implements BaseRecordSearchRepositor
         CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
         Root<BaseRecordEntity> root = query.from(BaseRecordEntity.class);
     
+        Join<BaseRecordEntity, WorkerEntity> workerJoin = root.join("worker", JoinType.LEFT);
+    
         List<Predicate> predicates = new ArrayList<>();
     
         predicates.add(builder.isNotNull(root.get("workerId")));
         predicates.add(builder.greaterThan(root.get("begin"), beginFrom));
+        predicates.add(builder.equal(workerJoin.get("objectState"), ObjectState.ACTIVE));
         SqlUtil.createInIfNotEmpty(predicates, root.get("businessId"), businessIds);
     
         query.where(predicates.toArray(new Predicate[predicates.size()]));

@@ -15,4 +15,6 @@ public interface BusinessPopularService extends DefaultService<BusinessPopularDt
     void updateBusinessCountAsync(List<UUID> businessIds);
     
     List<BusinessPopularDto> getByBusinessIds(Iterable<UUID> businessIds);
+    
+    List<BusinessPopularDto> getByBusinessIds(Iterable<UUID> businessIds, int size);
 }

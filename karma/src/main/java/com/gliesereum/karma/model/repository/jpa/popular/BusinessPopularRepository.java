@@ -1,6 +1,7 @@
 package com.gliesereum.karma.model.repository.jpa.popular;
 
 import com.gliesereum.karma.model.entity.popular.BusinessPopularEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface BusinessPopularRepository extends JpaRepository<BusinessPopular
     BusinessPopularEntity findByBusinessId(UUID businessId);
     
     List<BusinessPopularEntity> findByBusinessIdInOrderByCountDesc(Iterable<UUID> businessIds);
+    
+    List<BusinessPopularEntity> findByBusinessIdIn(Iterable<UUID> businessIds, Pageable pageable);
 }
