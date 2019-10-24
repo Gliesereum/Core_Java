@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +62,17 @@ public class BusinessPopularServiceImpl extends DefaultServiceImpl<BusinessPopul
         List<BusinessPopularDto> result = null;
         if (!IterableUtils.isEmpty(businessIds)) {
             List<BusinessPopularEntity> entities = businessPopularRepository.findByBusinessIdInOrderByCountDesc(businessIds);
+            result = converter.convert(entities, dtoClass);
+        }
+        return result;
+    }
+    
+    @Override
+    public List<BusinessPopularDto> getByBusinessIds(Iterable<UUID> businessIds, int size) {
+        List<BusinessPopularDto> result = null;
+        if (!IterableUtils.isEmpty(businessIds)) {
+            PageRequest pageRequest = PageRequest.of(0, size, Sort.Direction.DESC, "count");
+            List<BusinessPopularEntity> entities = businessPopularRepository.findByBusinessIdIn(businessIds, pageRequest);
             result = converter.convert(entities, dtoClass);
         }
         return result;

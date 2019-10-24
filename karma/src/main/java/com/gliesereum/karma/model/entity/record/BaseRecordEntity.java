@@ -1,5 +1,6 @@
 package com.gliesereum.karma.model.entity.record;
 
+import com.gliesereum.karma.model.entity.business.WorkerEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,10 @@ public class BaseRecordEntity extends AbstractRecordEntity {
     
     @Column(name = "worker_id")
     private UUID workerId;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "worker_id", insertable = false, updatable = false)
+    private WorkerEntity worker;
     
     @OneToMany
     @JoinColumn(name = "record_id", insertable = false, updatable = false)

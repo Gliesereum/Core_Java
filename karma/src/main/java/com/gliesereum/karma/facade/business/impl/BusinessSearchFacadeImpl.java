@@ -95,6 +95,10 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
     
     private void addGroup(BusinessGroupSearchDto groupSearch, Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, long limit) {
         List<BusinessGroupBy> groups = groupSearch.getGroups();
+        LocalDateTime dateFromSearch = LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1);
+        if (groupSearch.getDateFromRecordSearch() != null) {
+            dateFromSearch = groupSearch.getDateFromRecordSearch();
+        }
         if (CollectionUtils.isNotEmpty(groups)) {
             for (BusinessGroupBy group : groups) {
                 switch (group) {
@@ -105,16 +109,16 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
                         addGroupOrderByPopular(businessMap, target, group, limit);
                         break;
                     case orderByPopularPackage:
-                        addGroupOrderByPopularPackage(businessMap, target, group, limit);
+                        addGroupOrderByPopularPackage(businessMap, target, group, limit, dateFromSearch);
                         break;
                     case orderByPopularService:
-                        addGroupOrderByPopularService(businessMap, target, group, limit);
+                        addGroupOrderByPopularService(businessMap, target, group, limit, dateFromSearch);
                         break;
                     case orderByRecordCount:
-                        addGroupOrderByRecordCount(businessMap, target, group, limit);
+                        addGroupOrderByRecordCount(businessMap, target, group, limit, dateFromSearch);
                         break;
                     case orderByPopularWorker:
-                        addGroupOrderByPopularWorker(businessMap, target, group, limit);
+                        addGroupOrderByPopularWorker(businessMap, target, group, limit, dateFromSearch);
                         break;
                 }
             }
@@ -122,9 +126,9 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
         }
     }
     
-    private void addGroupOrderByPopularPackage(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
+    private void addGroupOrderByPopularPackage(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit, LocalDateTime dateFromSearch) {
         Set<UUID> businessIds = businessMap.keySet();
-        List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountPackageUsage(LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1), businessIds, limit);
+        List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountPackageUsage(dateFromSearch, businessIds, limit);
         List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(usageCount)) {
             List<UUID> packageIds = usageCount.stream().map(RecordUsageCountDto::getObjectId).collect(Collectors.toList());
@@ -142,7 +146,7 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
     
     private void addGroupOrderByPopular(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
         Set<UUID> businessIds = businessMap.keySet();
-        List<BusinessPopularDto> businessPopular = businessPopularService.getByBusinessIds(businessIds);
+        List<BusinessPopularDto> businessPopular = businessPopularService.getByBusinessIds(businessIds, (int) limit);
         List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(businessPopular)) {
             list = businessPopular.stream().map(i -> {
@@ -155,9 +159,9 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
         target.getGroups().put(businessGroup, list);
     }
     
-    private void addGroupOrderByPopularService(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
+    private void addGroupOrderByPopularService(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit, LocalDateTime dateFromSearch) {
         Set<UUID> businessIds = businessMap.keySet();
-        List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountServiceUsage(LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1), businessIds, limit);
+        List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountServiceUsage(dateFromSearch, businessIds, limit);
         List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(usageCount)) {
             List<UUID> serviceIds = usageCount.stream().map(RecordUsageCountDto::getObjectId).collect(Collectors.toList());
@@ -173,9 +177,9 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
         target.getGroups().put(businessGroup, list);
     }
     
-    private void addGroupOrderByPopularWorker(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
+    private void addGroupOrderByPopularWorker(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit, LocalDateTime dateFromSearch) {
         Set<UUID> businessIds = businessMap.keySet();
-        List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountWorkerUsage(LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1), businessIds, limit);
+        List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountWorkerUsage(dateFromSearch, businessIds, limit);
         List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(usageCount)) {
             List<UUID> workerIds = usageCount.stream().map(RecordUsageCountDto::getObjectId).collect(Collectors.toList());
@@ -192,9 +196,9 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
         target.getGroups().put(businessGroup, list);
     }
     
-    private void addGroupOrderByRecordCount(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
+    private void addGroupOrderByRecordCount(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit, LocalDateTime dateFromSearch) {
         Set<UUID> businessIds = businessMap.keySet();
-        List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountRecordInBusiness(LocalDateTime.now(ZoneId.of("UTC")).minusMonths(1), businessIds, limit);
+        List<RecordUsageCountDto> usageCount = baseRecordRepository.getCountRecordInBusiness(dateFromSearch, businessIds, limit);
         List<BusinessGroupListItemDto> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(usageCount)) {
             list = usageCount.stream().map(i -> {
