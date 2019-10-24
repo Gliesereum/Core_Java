@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
@@ -103,7 +104,7 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
             for (BusinessGroupBy group : groups) {
                 switch (group) {
                     case orderByRating:
-                        addGroupOrderByRating(businessMap, target, group, limit);
+                        addGroupOrderByRating(businessMap, target, group, limit, groupSearch.getMinimumRatingCount());
                         break;
                     case orderByPopular:
                         addGroupOrderByPopular(businessMap, target, group, limit);
@@ -211,17 +212,21 @@ public class BusinessSearchFacadeImpl implements BusinessSearchFacade {
         target.getGroups().put(businessGroup, list);
     }
     
-    private void addGroupOrderByRating(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit) {
-        List<BusinessGroupListItemDto> list = businessMap.values().stream()
-                .sorted((b1, b2) -> Double.compare(b2.getRating() * b2.getRatingCount(), b1.getRating() * b1.getRatingCount()))
-                .limit(limit)
-                .map(i -> {
-                    BusinessGroupListItemDto item = new BusinessGroupListItemDto();
-                    item.setBusiness(i);
-                    return item;
-                })
-                .collect(Collectors.toList());
-        target.getGroups().put(businessGroup, list);
+    private void addGroupOrderByRating(Map<UUID, BusinessDocumentDto> businessMap, BusinessGroupDto target, BusinessGroupBy businessGroup, long limit, Integer minimumRatingCount) {
+	    List<BusinessGroupListItemDto> list;
+	    Stream<BusinessDocumentDto> stream = businessMap.values().stream();
+	    if (minimumRatingCount != null) {
+	    	stream = stream.filter(i -> (i.getRatingCount() != null) &&  (i.getRatingCount() >= minimumRatingCount));
+	    }
+	    list = stream.sorted(Comparator.comparingDouble(BusinessDocumentDto::getRating).reversed())
+			    .limit(limit)
+			    .map(i -> {
+				    BusinessGroupListItemDto item = new BusinessGroupListItemDto();
+				    item.setBusiness(i);
+				    return item;
+			    })
+			    .collect(Collectors.toList());
+	    target.getGroups().put(businessGroup, list);
     }
     
     private void addTagGroups(BusinessGroupSearchDto groupSearch, List<BusinessDocumentDto> businesses, BusinessGroupDto target) {

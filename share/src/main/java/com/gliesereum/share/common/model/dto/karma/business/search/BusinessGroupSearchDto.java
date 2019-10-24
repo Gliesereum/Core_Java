@@ -27,4 +27,6 @@ public class BusinessGroupSearchDto extends BusinessSearchDto {
 	@JsonDeserialize(using = LocalDateTimeJsonDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeJsonSerializer.class)
 	private LocalDateTime dateFromRecordSearch;
+	
+	private Integer minimumRatingCount;
 }
