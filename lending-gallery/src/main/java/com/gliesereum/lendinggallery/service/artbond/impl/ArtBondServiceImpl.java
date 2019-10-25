@@ -343,7 +343,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
                 paymentCalendar.setDividendPercent(artBond.getDividendPercent());
                 paymentCalendar.setDate(paymentDate);
                 double purchaseValue = stockCount * artBond.getStockPrice();
-                paymentCalendar.setDividendValue(purchaseValue / 100 * artBond.getDividendPercent());
+                double dividendValuePerYear = purchaseValue / 100 * artBond.getDividendPercent();
+                double dividendValue = dividendValuePerYear / (12.0 / artBond.getPaymentPeriod());
+                paymentCalendar.setDividendValue(dividendValue);
                 result.add(paymentCalendar);
                 paymentDate = paymentDate.plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS);
             }
