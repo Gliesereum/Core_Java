@@ -21,6 +21,8 @@ public class RequestLiteRecordDto{
 
     private String comment;
 
+    private UUID servicePriceId;
+
     @NotNull
     private UUID businessId;
 

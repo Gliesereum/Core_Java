@@ -19,6 +19,7 @@ public class KycExceptionMessage {
     public static final ExceptionMessage KYC_REQUEST_PASSED_CANNOT_UPDATE = new ExceptionMessage(1087, 400, "KYC request with status passed cannot be updated");
     public static final ExceptionMessage KYC_REQUEST_REJECTED_CANNOT_UPDATE = new ExceptionMessage(1088, 400, "KYC request with status rejected cannot be updated");
     public static final ExceptionMessage KYC_REQUEST_ONLY_SENT_TO_REWORK_CAN_UPDATE = new ExceptionMessage(1089, 400, "Only KYC request with status sent to rework can be updated");
+    public static final ExceptionMessage KYC_NOT_PASSED = new ExceptionMessage(1090, 400, "KYC not passed");
 
 
 }
