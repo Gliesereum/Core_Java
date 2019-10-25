@@ -38,6 +38,8 @@ import yahoofinance.YahooFinance;
 import yahoofinance.quotes.fx.FxQuote;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -401,7 +403,8 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public double calculateNkd(double dividendValuePerYear, long daysPerPaymentYear, long daysAfterLastPayment, double rewardValue, long daysPayment, long daysAfterPaymentStart) {
-        return (dividendValuePerYear / daysPerPaymentYear) * daysAfterLastPayment + (rewardValue / MathUtil.getOneIfZero(daysPayment)) * daysAfterPaymentStart;
+        //return (dividendValuePerYear / daysPerPaymentYear) * daysAfterLastPayment + (rewardValue / MathUtil.getOneIfZero(daysPayment)) * daysAfterPaymentStart;
+        return new BigDecimal((dividendValuePerYear / daysPerPaymentYear) * daysAfterLastPayment + (rewardValue / MathUtil.getOneIfZero(daysPayment)) * daysAfterPaymentStart).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     @Override
