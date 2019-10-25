@@ -40,6 +40,7 @@ import yahoofinance.quotes.fx.FxQuote;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -389,7 +390,9 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
             long daysAfterPaymentStart = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), currentDate.toLocalDate()));
             long daysPayment = MathUtil.getOneIfZero(ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentFinishDate().toLocalDate()));
 
-            long daysPerPaymentYear = ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentStartDate().plus(1, ChronoUnit.YEARS).toLocalDate());
+           // long daysPerPaymentYear = ChronoUnit.DAYS.between(artBond.getPaymentStartDate().toLocalDate(), artBond.getPaymentStartDate().plus(1, ChronoUnit.YEARS).toLocalDate());
+    
+            long daysPerPaymentYear = Year.of(artBond.getPaymentStartDate().toLocalDate().plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS).getYear()).length();
 
             result = calculateNkd(dividendValuePerYear, daysPerPaymentYear, daysAfterPaymentStart, rewardValue, daysPayment, daysAfterPaymentStart);
         }
