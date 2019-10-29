@@ -75,9 +75,12 @@ public class NotificationTelegramBotServiceImpl extends TelegramLongPollingBot i
 					+ "*Дата:* " + record.getBegin().toLocalDate().toString() + "\n"
 					+ "*Время:* " + record.getBegin().toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n"
 					+ "*Номер телефона:* " + record.getClient().getPhone() + "\n";
-					
+			
+			if (CollectionUtils.isNotEmpty(record.getServices()) && record.getServices().get(0) != null) {
+				text = text + "*Услуга:*" + record.getServices().get(0).getName() + "\n";
+			}
 			if (StringUtils.isNotBlank(data.getRecord().getDescription())) {
-				text = text + "*Комментарий:*" + record.getDescription();
+				text = text + "*Комментарий:*" + record.getDescription() + "\n";
 			}
 			
 			List<TelegramChatDto> users = telegramChatService.getByUserIds(data.getUserIds());
