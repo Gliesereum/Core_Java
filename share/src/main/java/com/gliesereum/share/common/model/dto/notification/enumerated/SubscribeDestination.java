@@ -12,6 +12,7 @@ public enum SubscribeDestination {
     KARMA_BUSINESS_NOTIFICATION,
     KARMA_CHAT_USER,
     KARMA_CHAT_BUSINESS,
+    KARMA_PROMO,
     
     LG_CREATE_OFFER;
 }

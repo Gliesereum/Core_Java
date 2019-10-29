@@ -35,4 +35,10 @@ public class NotificationController {
         karmaNotificationService.sendBusinessNotification(sendNotification);
         return new MapResponse("true");
     }
+    
+    @PostMapping("/system/topic")
+    public MapResponse sendSystemNotification(@Valid @RequestBody SendNotificationDto sendNotification) {
+        karmaNotificationService.sendSystemNotification(sendNotification);
+        return new MapResponse("true");
+    }
 }
