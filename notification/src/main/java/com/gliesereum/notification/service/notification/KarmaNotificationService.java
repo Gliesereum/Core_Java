@@ -26,4 +26,6 @@ public interface KarmaNotificationService {
     void sendNotificationToUser(UUID userId, String title, String body);
 
     void sendBusinessNotification(SendNotificationDto sendNotification);
+    
+    void sendSystemNotification(SendNotificationDto sendNotification);
 }

@@ -26,50 +26,55 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class FirebaseServiceImpl implements FirebaseService {
-
-    @Autowired
-    private FirebaseMessaging firebaseMessagingKarma;
-
-    @Autowired
-    private UserDeviceService userDeviceService;
-
+	
+	@Autowired
+	private FirebaseMessaging firebaseMessagingKarma;
+	
+	@Autowired
+	private UserDeviceService userDeviceService;
+	
+	@Override
+	public TopicManagementResponse subscribeToTopic(String registrationToken, String topicDestination) {
+		TopicManagementResponse response = null;
+		try {
+			response = firebaseMessagingKarma.subscribeToTopic(Arrays.asList(registrationToken), topicDestination);
+		} catch (FirebaseMessagingException e) {
+			log.warn("Error while subscribe", e);
+		}
+		return response;
+	}
+	
+	@Override
+	public TopicManagementResponse subscribeToTopic(String registrationToken, String subscribeDestination, UUID subscribeId) {
+		TopicManagementResponse response = null;
+		if (StringUtils.isNotBlank(registrationToken) && StringUtils.isNotBlank(subscribeDestination)) {
+			String topicDestination = NotificationUtil.routingKey(subscribeDestination, subscribeId);
+			response = subscribeToTopic(registrationToken, topicDestination);
+		}
+		return response;
+	}
+	
+	@Override
+	public TopicManagementResponse unsubscribeFromTopic(String registrationToken, String subscribeDestination, UUID subscribeId) {
+		TopicManagementResponse response = null;
+		try {
+			response = firebaseMessagingKarma.unsubscribeFromTopic(Arrays.asList(registrationToken), NotificationUtil.routingKey(subscribeDestination, subscribeId));
+		} catch (FirebaseMessagingException e) {
+			log.warn("Error while unsubscribe", e);
+		}
+		return response;
+	}
+    
     @Override
-    public TopicManagementResponse subscribeToTopic(String registrationToken, String topicDestination) {
-        TopicManagementResponse response = null;
-        try {
-            response = firebaseMessagingKarma.subscribeToTopic(Arrays.asList(registrationToken), topicDestination);
-        } catch (FirebaseMessagingException e) {
-            log.warn("Error while subscribe", e);
+    public void sendNotificationToTopic(String topic, String title, String body, UUID objectId, SubscribeDestination subscribeDestination, Map<String, String> data) {
+        Message.Builder builder = Message.builder();
+        if (objectId != null) {
+            builder = builder.putData("objectId", objectId.toString());
         }
-        return response;
-    }
-
-    @Override
-    public TopicManagementResponse subscribeToTopic(String registrationToken, String subscribeDestination, UUID subscribeId) {
-        TopicManagementResponse response = null;
-        if (StringUtils.isNotBlank(registrationToken) && StringUtils.isNotBlank(subscribeDestination)) {
-            String topicDestination = NotificationUtil.routingKey(subscribeDestination, subscribeId);
-            response = subscribeToTopic(registrationToken, topicDestination);
+        if (MapUtils.isNotEmpty(data)) {
+            builder.putAllData(data);
         }
-        return response;
-    }
-
-    @Override
-    public TopicManagementResponse unsubscribeFromTopic(String registrationToken, String subscribeDestination, UUID subscribeId) {
-        TopicManagementResponse response = null;
-        try {
-            response = firebaseMessagingKarma.unsubscribeFromTopic(Arrays.asList(registrationToken), NotificationUtil.routingKey(subscribeDestination, subscribeId));
-        } catch (FirebaseMessagingException e) {
-            log.warn("Error while unsubscribe", e);
-        }
-        return response;
-    }
-
-    @Override
-    public void sendNotificationToTopic(String topic, String title, String body, UUID objectId, SubscribeDestination subscribeDestination) {
-        Message message = Message.builder()
-                .putData("objectId", objectId.toString())
-                .putData("title", title)
+        builder = builder.putData("title", title)
                 .putData("body", body)
                 .putData("event", subscribeDestination.toString())
                 .setApnsConfig(ApnsConfig.builder()
@@ -81,59 +86,65 @@ public class FirebaseServiceImpl implements FirebaseService {
                                 .setBadge(1)
                                 .build())
                         .build())
-                .setTopic(topic)
-                .build();
+                .setTopic(topic);
+        Message message = builder.build();
+    
         try {
             firebaseMessagingKarma.send(message);
         } catch (FirebaseMessagingException e) {
             log.warn("Error while send message", e);
         }
     }
-
+    
     @Override
-    public void sendNotificationToDevice(String registrationToken, String title, String body, Map<String, String> data) {
-        Message message = buildMessage(registrationToken, title, body, data);
-        try {
-            firebaseMessagingKarma.send(message);
-        } catch (FirebaseMessagingException e) {
-            log.warn("Error while send message for device", e);
-            if (e.getErrorCode().equals(FirebaseMessageCode.REGISTRATION_TOKEN_NOT_FOUND)) {
-                log.warn("Try remove device by registration token");
-                userDeviceService.removeDevice(registrationToken);
-            }
-        }
-    }
-
-    @Override
-    public void sendNotificationToDevices(List<String> registrationTokens, String title, String body, Map<String, String> data) {
-        List<Message> messages = registrationTokens.stream()
-                .map(registrationToken -> buildMessage(registrationToken, title, body, data))
-                .collect(Collectors.toList());
-        try {
-            firebaseMessagingKarma.sendAll(messages);
-        } catch (FirebaseMessagingException e) {
-            log.warn("Error while send batch messages for ", e);
-
-        }
-    }
-
-    private Message buildMessage(String registrationToken, String title, String body, Map<String, String> data) {
-        data = MapUtils.emptyIfNull(data);
-        return Message.builder()
-                .putData("title", title)
-                .putData("body", body)
-                .putAllData(data)
-                .setNotification(new Notification(title, body))
-                .setApnsConfig(ApnsConfig.builder()
-                        .setAps(Aps.builder()
-                                .setAlert(ApsAlert.builder()
-                                        .setTitle(title)
-                                        .setBody(body)
-                                        .build())
-                                .setBadge(1)
-                                .build())
-                        .build())
-                .setToken(registrationToken)
-                .build();
-    }
+	public void sendNotificationToTopic(String topic, String title, String body, UUID objectId, SubscribeDestination subscribeDestination) {
+		sendNotificationToTopic(topic, title, body, objectId, subscribeDestination, null);
+	}
+	
+	@Override
+	public void sendNotificationToDevice(String registrationToken, String title, String body, Map<String, String> data) {
+		Message message = buildMessage(registrationToken, title, body, data);
+		try {
+			firebaseMessagingKarma.send(message);
+		} catch (FirebaseMessagingException e) {
+			log.warn("Error while send message for device", e);
+			if (e.getErrorCode().equals(FirebaseMessageCode.REGISTRATION_TOKEN_NOT_FOUND)) {
+				log.warn("Try remove device by registration token");
+				userDeviceService.removeDevice(registrationToken);
+			}
+		}
+	}
+	
+	@Override
+	public void sendNotificationToDevices(List<String> registrationTokens, String title, String body, Map<String, String> data) {
+		List<Message> messages = registrationTokens.stream()
+				.map(registrationToken -> buildMessage(registrationToken, title, body, data))
+				.collect(Collectors.toList());
+		try {
+			firebaseMessagingKarma.sendAll(messages);
+		} catch (FirebaseMessagingException e) {
+			log.warn("Error while send batch messages for ", e);
+			
+		}
+	}
+	
+	private Message buildMessage(String registrationToken, String title, String body, Map<String, String> data) {
+		data = MapUtils.emptyIfNull(data);
+		return Message.builder()
+				.putData("title", title)
+				.putData("body", body)
+				.putAllData(data)
+				.setNotification(new Notification(title, body))
+				.setApnsConfig(ApnsConfig.builder()
+						.setAps(Aps.builder()
+								.setAlert(ApsAlert.builder()
+										.setTitle(title)
+										.setBody(body)
+										.build())
+								.setBadge(1)
+								.build())
+						.build())
+				.setToken(registrationToken)
+				.build();
+	}
 }
