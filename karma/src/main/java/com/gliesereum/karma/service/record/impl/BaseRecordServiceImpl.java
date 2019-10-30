@@ -343,7 +343,11 @@ public class BaseRecordServiceImpl extends DefaultServiceImpl<BaseRecordDto, Bas
                 ClientDto client = clientFacade.addNewClientAddGet(existUser, dto.getBusinessId());
                 result.setClient(client);
                 if (dto.getServicePriceId() != null) {
-                    recordServiceService.create(new RecordServiceDto(result.getId(), dto.getServicePriceId()));
+                    ServicePriceDto servicePrice = servicePriceService.getById(dto.getServicePriceId());
+                    if (servicePrice != null) {
+                        recordServiceService.create(new RecordServiceDto(result.getId(), dto.getServicePriceId()));
+                        result.setServices(Arrays.asList(servicePrice));
+                    }
                 }
             }
         }

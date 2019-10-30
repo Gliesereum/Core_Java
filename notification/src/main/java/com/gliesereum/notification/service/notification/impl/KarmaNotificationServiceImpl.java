@@ -119,7 +119,13 @@ public class KarmaNotificationServiceImpl implements KarmaNotificationService {
             }
         }
     }
-
+    
+    @Override
+    public void sendSystemNotification(SendNotificationDto sendNotification) {
+        String routingKey = NotificationUtil.routingKey(sendNotification.getDestination().toString(), sendNotification.getObjectId());
+        firebaseService.sendNotificationToTopic(routingKey, sendNotification.getTitle(), sendNotification.getBody(), sendNotification.getObjectId(), sendNotification.getDestination(), sendNotification.getData());
+    }
+    
     private String getTitle(SubscribeDestination subscribeDestination, StatusRecord statusRecord, StatusProcess statusProcess) {
         String title;
         if (subscribeDestination.equals(SubscribeDestination.KARMA_USER_RECORD) && statusRecord.equals(StatusRecord.CREATED) && statusProcess.equals(StatusProcess.WAITING)) {

@@ -205,6 +205,7 @@ public class UserSubscribeServiceImpl extends DefaultServiceImpl<UserSubscribeDt
                     }
                     case LG_CREATE_OFFER:
                     case KARMA_BUSINESS_NOTIFICATION:
+                    case KARMA_PROMO:
                     case KARMA_USER_NEW_BUSINESS: {
                         subscribe.setObjectId(null);
                         validSubscribes.add(subscribe);

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -226,7 +227,9 @@ public class CustomerServiceImpl extends DefaultServiceImpl<CustomerDto, Custome
                         long daysAfterLastPayment = ChronoUnit.DAYS.between(lastPaymentDate.toLocalDate(), currentDate.toLocalDate());
                         long daysPayment = ChronoUnit.DAYS.between(paymentStartDate.toLocalDate(), artBond.getPaymentFinishDate().toLocalDate());
 
-                        long daysPerPaymentYear = ChronoUnit.DAYS.between(lastPaymentDate.toLocalDate(), lastPaymentDate.toLocalDate().plus(1, ChronoUnit.YEARS));
+                        //long daysPerPaymentYear = ChronoUnit.DAYS.between(lastPaymentDate.toLocalDate(), lastPaymentDate.toLocalDate().plus(1, ChronoUnit.YEARS));
+    
+                        long daysPerPaymentYear = Year.of(lastPaymentDate.toLocalDate().plus(artBond.getPaymentPeriod(), ChronoUnit.MONTHS).getYear()).length();
 
                         double nkd = artBondService.calculateNkd(dividendValuePerYear, daysPerPaymentYear, daysAfterLastPayment, rewardValue, daysPayment, daysAfterPaymentStart);
                         result.setNkd(nkd);

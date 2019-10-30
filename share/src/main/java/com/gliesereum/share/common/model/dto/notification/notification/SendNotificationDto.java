@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -20,6 +21,8 @@ public class SendNotificationDto {
 
     @NotNull
     private SubscribeDestination destination;
+    
+    private UUID objectId;
 
     @NotEmpty
     private String title;
@@ -27,8 +30,9 @@ public class SendNotificationDto {
     @NotEmpty
     private String body;
 
-    @NotNull
     private List<UUID> userIds;
+    
+    private Map<String, String> data;
 
     @NotNull
     private UUID businessId;
