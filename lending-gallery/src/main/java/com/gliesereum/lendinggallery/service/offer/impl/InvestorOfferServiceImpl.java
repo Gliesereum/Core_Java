@@ -13,6 +13,7 @@ import com.gliesereum.share.common.converter.DefaultConverter;
 import com.gliesereum.share.common.exception.client.ClientException;
 import com.gliesereum.share.common.exchange.service.account.UserExchangeService;
 import com.gliesereum.share.common.model.dto.account.user.PublicUserDto;
+import com.gliesereum.share.common.model.dto.account.user.UserDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.artbond.ArtBondDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.customer.CustomerDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.*;
@@ -35,6 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gliesereum.share.common.exception.messages.CommonExceptionMessage.USER_IS_ANONYMOUS;
+import static com.gliesereum.share.common.exception.messages.KycExceptionMessage.KYC_NOT_PASSED;
 import static com.gliesereum.share.common.exception.messages.LandingGalleryExceptionMessage.*;
 
 /**
@@ -85,13 +87,19 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     @Override
     @Transactional
     public InvestorOfferDto updateState(OfferStateType state, UUID id, String comment) {
-        if (state == null) {
-            throw new ClientException(OFFER_STATE_IS_EMPTY);
-        }
-        InvestorOfferDto result = findById(id);
-        /*if (result != null) {
-            advisorService.checkCurrentUserIsAdvisor(result.getArtBondId());
-        }*/ //todo check is adviser
+        InvestorOfferDto offer = findById(id);
+        return updateState(state, offer, comment);
+    }
+
+    @Override
+    @Transactional
+    public InvestorOfferDto updateStateLikeAdviser(OfferStateType state, UUID id, String comment) {
+        InvestorOfferDto offer = findById(id);
+        advisorService.checkCurrentUserIsAdvisor(offer.getArtBondId());
+        return updateState(state, offer, comment);
+    }
+
+    private InvestorOfferDto updateState(OfferStateType state, InvestorOfferDto result, String comment) {
         checkUpdateState(result, state);
         result.setStateType(state);
         result = super.update(result);
@@ -112,9 +120,6 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     }
 
     private void checkUpdateState(InvestorOfferDto offer, OfferStateType state) {
-        if (offer == null) {
-            throw new ClientException(OFFER_NOT_FOUND_BY_ID);
-        }
         if (offer.getStateType().getIndex() > state.getIndex()) {
             throw new ClientException(CAN_NOT_OFFER_STATE_BACK);
         }
@@ -191,6 +196,10 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         if (customer == null) {
             throw new ClientException(CUSTOMER_NOT_FOUND_BY_USER_ID);
         }
+        UserDto user = SecurityUtil.getUserModel();
+        if(user.getKycApproved() == null || !user.getKycApproved()){
+            throw new ClientException(KYC_NOT_PASSED);
+        }
         dto.setCustomerId(customer.getId());
         dto.setCreate(LocalDateTime.now());
         dto.setStateType(OfferStateType.REQUEST);
@@ -217,7 +226,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         List<InvestorOfferEntity> entities = investorOfferRepository.findAllByStateTypeIn(states);
         return setFullModelByEntities(entities);
     }
-    
+
     @Override
     public Page<InvestorOfferFullModelDto> getFullModelByCustomerId(UUID customerId, Pageable pageable) {
         Page<InvestorOfferFullModelDto> result = null;
@@ -230,19 +239,6 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
         }
         return result;
     }
-    
-    @Override
-    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search) {
-        List<InvestorOfferFullModelDto> result = null;
-        //advisorService.checkCurrentUserIsAdvisor(search.getArtBondId()); //todo check adviser
-        List<InvestorOfferEntity> entities = investorOfferRepository.searchInvestorOffersByParams(search);
-        result = setFullModelByEntities(entities);
-        setUsersToCommentInOffers(result);
-        if (CollectionUtils.isNotEmpty(result)) {
-            result.sort(Comparator.comparing(InvestorOfferFullModelDto::getCreate).reversed());
-        }
-        return result;
-    }
 
     @Override
     public InvestorOfferDto setComment(UUID id, String comment) {
@@ -252,21 +248,55 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     }
 
     @Override
+    public InvestorOfferDto setCommentLikeAdviser(UUID id, String comment) {
+        InvestorOfferDto result = findById(id);
+        if (result.getArtBondId() != null) {
+            advisorService.checkCurrentUserIsAdvisor(result.getArtBondId());
+            addComment(result, comment);
+        }
+        return result;
+    }
+
+    @Override
     public InvestorOfferFullModelDto getInvestorOfferFullModelById(UUID id) {
         InvestorOfferFullModelDto result = null;
         InvestorOfferEntity entity = investorOfferRepository.getOne(id);
-        if(entity != null){
+        if (entity != null) {
             List<InvestorOfferFullModelDto> fullModelList = setFullModelByEntities(Arrays.asList(entity));
-            if(CollectionUtils.isNotEmpty(fullModelList)){
+            if (CollectionUtils.isNotEmpty(fullModelList)) {
                 result = fullModelList.get(0);
             }
         }
         return result;
     }
 
+    @Override
+    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search) {
+        if (search == null || search.getArtBondId() == null) {
+            throw new ClientException(ART_BOND_ID_IS_EMPTY);
+        }
+        advisorService.checkCurrentUserIsAdvisor(search.getArtBondId());
+        return getInvestorOffersFullModel(search);
+    }
+
+    @Override
+    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModel(OfferSearchDto search) {
+        return getInvestorOffersFullModel(search);
+    }
+
+    private List<InvestorOfferFullModelDto> getInvestorOffersFullModel(OfferSearchDto search) {
+        List<InvestorOfferFullModelDto> result = null;
+        List<InvestorOfferEntity> entities = investorOfferRepository.searchInvestorOffersByParams(search);
+        result = setFullModelByEntities(entities);
+        setUsersToCommentInOffers(result);
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.sort(Comparator.comparing(InvestorOfferFullModelDto::getCreate).reversed());
+        }
+        return result;
+    }
+
     private void addComment(InvestorOfferDto offer, String comment) {
         if (offer != null && StringUtils.isNotBlank(comment)) {
-            //advisorService.checkCurrentUserIsAdvisor(offer.getArtBondId()); //todo check adviser
             OfferCommentDto offerComment = new OfferCommentDto();
             offerComment.setComment(comment);
             offerComment.setCreate(LocalDateTime.now());
@@ -296,7 +326,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
                         InvestorOfferFullModelDto::setCustomer, InvestorOfferFullModelDto::setUser);
             }
         }
-        if(CollectionUtils.isNotEmpty(result)){
+        if (CollectionUtils.isNotEmpty(result)) {
             setMedia(result);
         }
         return result;
@@ -345,9 +375,7 @@ public class InvestorOfferServiceImpl extends DefaultServiceImpl<InvestorOfferDt
     }
 
     private CustomerDto getCustomer() {
-        if (SecurityUtil.isAnonymous()) {
-            throw new ClientException(USER_IS_ANONYMOUS);
-        }
+        SecurityUtil.checkUserByBanStatus();
         return customerService.findByUserId(SecurityUtil.getUserId());
     }
 
