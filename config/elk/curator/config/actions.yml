@@ -1,5 +1,5 @@
 actions:
-  delete_indices_logstash:
+  delete_indices_system_logstash:
     action: delete_indices
     description: >-
       Delete system indices older than 3 days (ignore_empty_list).
@@ -15,5 +15,24 @@ actions:
       direction: older
       timestring: '%Y.%m.%d'
       unit: days
-      unit_count: ${UNIT_COUNT}
+      unit_count: ${UNIT_SYSTEM_COUNT}
       exclude:
+        
+  delete_indices_request_logstash:
+    action: delete_indices
+    description: >-
+      Delete system indices older than 3 days (ignore_empty_list).
+    options:
+      ignore_empty_list: True
+      disable_action: False
+    filters:
+      - filtertype: pattern
+        kind: prefix
+        value: logstash-request
+      - filtertype: age
+        source: name
+        direction: older
+        timestring: '%Y.%m.%d'
+        unit: days
+        unit_count: ${UNIT_REQUEST_COUNT}
+        exclude:

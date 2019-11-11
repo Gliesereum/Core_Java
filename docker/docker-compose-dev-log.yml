@@ -86,7 +86,8 @@ services:
       CONFIG_FILE: /curator/config/curator.yml
       COMMAND: /curator/config/actions.yml
       #delete indeces older 10 days
-      UNIT_COUNT: 10
+      UNIT_SYSTEM_COUNT: 3
+      UNIT_REQUEST_CUNT: 7
     deploy:
       restart_policy:
         condition: on-failure
