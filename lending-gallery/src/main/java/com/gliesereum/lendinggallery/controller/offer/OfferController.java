@@ -73,8 +73,13 @@ public class OfferController {
     }
 
     @PostMapping("/investor/full-model/by-current-adviser")
-    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(@RequestBody OfferSearchDto search) {
+    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(@Valid @RequestBody OfferSearchDto search) {
         return investorOfferService.searchInvestorOffersFullModelByCurrentAdviser(search);
+    }
+
+    @PostMapping("/investor/full-model/by-search")
+    public List<InvestorOfferFullModelDto> searchInvestorOffersFullModel(@Valid @RequestBody OfferSearchDto search) {
+        return investorOfferService.searchInvestorOffersFullModel(search);
     }
 
     @GetMapping("/investor/user")
@@ -104,9 +109,21 @@ public class OfferController {
         return investorOfferService.updateState(state, id, comment);
     }
 
+    @PutMapping("/investor/state/like-current-adviser")
+    public InvestorOfferDto updateStateLikeAdviser(@RequestParam("state") OfferStateType state,
+                                                     @RequestParam("id") UUID id,
+                                                     @RequestParam(name = "comment", required = false) String comment) {
+        return investorOfferService.updateStateLikeAdviser(state, id, comment);
+    }
+
     @PostMapping("/add-comment")
     public InvestorOfferDto setComment(@RequestParam("id") UUID id, @RequestParam("comment") String comment) {
         return investorOfferService.setComment(id, comment);
+    }
+
+    @PostMapping("/add-comment/like-current-adviser")
+    public InvestorOfferDto setCommentLikeAdviser(@RequestParam("id") UUID id, @RequestParam("comment") String comment) {
+        return investorOfferService.setCommentLikeAdviser(id, comment);
     }
 
     @GetMapping("/borrower")

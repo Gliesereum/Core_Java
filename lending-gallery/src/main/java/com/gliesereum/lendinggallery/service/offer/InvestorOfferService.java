@@ -33,12 +33,18 @@ public interface InvestorOfferService extends DefaultService<InvestorOfferDto, I
     List<InvestorOfferFullModelDto> getAllFullModelByState(OfferStateType state);
 
     List<InvestorOfferFullModelDto> getAllFullModelByState(List<OfferStateType> states);
-    
+
     Page<InvestorOfferFullModelDto> getFullModelByCustomerId(UUID customerId, Pageable pageable);
 
     List<InvestorOfferFullModelDto> searchInvestorOffersFullModelByCurrentAdviser(OfferSearchDto search);
 
     InvestorOfferDto setComment(UUID id, String comment);
 
+    InvestorOfferDto setCommentLikeAdviser(UUID id, String comment);
+
     InvestorOfferFullModelDto getInvestorOfferFullModelById(UUID id);
+
+    List<InvestorOfferFullModelDto> searchInvestorOffersFullModel(OfferSearchDto search);
+
+    InvestorOfferDto updateStateLikeAdviser(OfferStateType state, UUID id, String comment);
 }
