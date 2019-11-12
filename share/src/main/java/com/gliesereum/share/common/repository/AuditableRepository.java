@@ -26,6 +26,8 @@ public interface AuditableRepository<T extends AuditableDefaultEntity> extends J
     List<T> findByObjectState(ObjectState objectState);
 
     Page<T> findAllByObjectState(ObjectState objectState, Pageable pageable);
+    
+    List<T> findAllByObjectState(ObjectState objectState);
 
     boolean existsByIdAndObjectState(UUID id, ObjectState objectState);
 

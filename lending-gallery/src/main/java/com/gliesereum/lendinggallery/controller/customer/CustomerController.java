@@ -82,6 +82,14 @@ public class CustomerController {
         }
         return customerService.getPaymentCalendar(SecurityUtil.getUserId());
     }
+    
+    @GetMapping("/payment-calendar/by-user")
+    public List<PaymentCalendarDto> paymentCalendarByCustomer(@RequestParam("userId") UUID userId) {
+        if (SecurityUtil.isAnonymous()) {
+            throw new ClientException(USER_IS_ANONYMOUS);
+        }
+        return customerService.getPaymentCalendar(userId);
+    }
 
     @GetMapping("/payment-info/by-art-bond")
     public CustomerPaymentInfo getPaymentInfoByArtBond(@RequestParam("artBondId") UUID artBondId) {

@@ -21,8 +21,10 @@ import com.gliesereum.share.common.model.dto.lendinggallery.media.MediaDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.InvestorOfferDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.offer.OperationsStoryDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
 import com.gliesereum.share.common.service.DefaultServiceImpl;
+import com.gliesereum.share.common.service.auditable.impl.AuditableServiceImpl;
 import com.gliesereum.share.common.util.MathUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +59,7 @@ import static com.gliesereum.share.common.exception.messages.LandingGalleryExcep
  */
 @Slf4j
 @Service
-public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEntity> implements ArtBondService {
+public class ArtBondServiceImpl extends AuditableServiceImpl<ArtBondDto, ArtBondEntity> implements ArtBondService {
 
     private static final Class<ArtBondDto> DTO_CLASS = ArtBondDto.class;
     private static final Class<ArtBondEntity> ENTITY_CLASS = ArtBondEntity.class;
@@ -107,7 +109,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public List<ArtBondDto> getAllByStatus(StatusType status) {
-        List<ArtBondEntity> entities = artBondRepository.findAllByStatusTypeAndSpecialStatusType(status, SpecialStatusType.ACTIVE);
+        List<ArtBondEntity> entities = artBondRepository.findAllByStatusTypeAndSpecialStatusTypeAndObjectState(status, SpecialStatusType.ACTIVE, ObjectState.ACTIVE);
         List<ArtBondDto> result = converter.convert(entities, dtoClass);
         result.forEach(this::setAdditionalField);
         return result;
@@ -115,7 +117,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
 
     @Override
     public List<ArtBondDto> getAll() {
-        List<ArtBondDto> result = super.getAll();
+        List<ArtBondDto> result = super.getAll(ObjectState.ACTIVE);
         if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(this::setAdditionalField);
         }
@@ -264,7 +266,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
         if (CollectionUtils.isEmpty(tags)) {
             return new ArrayList<>();
         }
-        List<ArtBondEntity> entities = artBondRepository.findAllByTagsContains(tags);
+        List<ArtBondEntity> entities = artBondRepository.findAllByTagsContainsAndObjectState(tags, ObjectState.ACTIVE);
         List<ArtBondDto> result = converter.convert(entities, dtoClass);
         if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(this::setAdditionalField);
@@ -292,7 +294,7 @@ public class ArtBondServiceImpl extends DefaultServiceImpl<ArtBondDto, ArtBondEn
     @Override
     public List<DetailedArtBondDto> getDetailedAll() {
         List<DetailedArtBondDto> result = null;
-        List<ArtBondEntity> entities = artBondRepository.findAll();
+        List<ArtBondEntity> entities = artBondRepository.findAllByObjectState(ObjectState.ACTIVE);
         result = converter.convert(entities, DetailedArtBondDto.class);
         if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(this::setAdditionalField);

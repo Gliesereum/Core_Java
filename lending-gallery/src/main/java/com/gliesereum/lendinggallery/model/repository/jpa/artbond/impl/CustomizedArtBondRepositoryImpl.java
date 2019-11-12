@@ -4,6 +4,7 @@ import com.gliesereum.lendinggallery.model.entity.artbond.ArtBondEntity;
 import com.gliesereum.lendinggallery.model.entity.offer.OperationsStoryEntity;
 import com.gliesereum.lendinggallery.model.repository.jpa.artbond.CustomizedArtBondRepository;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.OperationType;
+import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.model.query.base.OrderType;
 import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
 import com.gliesereum.share.common.util.SqlUtil;
@@ -57,6 +58,7 @@ public class CustomizedArtBondRepositoryImpl implements CustomizedArtBondReposit
             SqlUtil.createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("dividendPercent"), queryRequest.getDividendPercentGreaterThan(), queryRequest.getDividendPercentLessThan());
             SqlUtil.createBetweenOrGreaterOrLess(criteriaBuilder, predicates, root.get("rewardPercent"), queryRequest.getRewardPercentGreaterThan(), queryRequest.getRewardPercentLessThan());
             SqlUtil.createBetweenOrGreaterOrLess(criteriaBuilder, predicates, subQuery, queryRequest.getAmountCollectedGreaterThan(), queryRequest.getAmountCollectedLessThan());
+            SqlUtil.createEqIfNotNull(criteriaBuilder, predicates, root.get("objectState"), ObjectState.ACTIVE);
 
             if (CollectionUtils.isNotEmpty(predicates)) {
                 criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));

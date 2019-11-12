@@ -8,6 +8,7 @@ import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusTyp
 import com.gliesereum.share.common.model.dto.lendinggallery.payment.PaymentCalendarDto;
 import com.gliesereum.share.common.model.query.lendinggallery.artbond.ArtBondQuery;
 import com.gliesereum.share.common.service.DefaultService;
+import com.gliesereum.share.common.service.auditable.AuditableService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.UUID;
  * @author vitalij
  * @version 1.0
  */
-public interface ArtBondService extends DefaultService<ArtBondDto, ArtBondEntity> {
+public interface ArtBondService extends AuditableService<ArtBondDto, ArtBondEntity> {
 
     List<ArtBondDto> getAllByStatus(StatusType status);
 
