@@ -1,6 +1,6 @@
 #!/bin/sh
 
-curator --config ${CONFIG_FILE} ${COMMAND}
+sleep 4m && curator --config ${CONFIG_FILE} ${COMMAND}
 
 echo "$CRON curator --config ${CONFIG_FILE} ${COMMAND}" >>/etc/crontabs/root
 
