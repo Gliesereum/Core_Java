@@ -2,6 +2,7 @@ package com.gliesereum.lendinggallery.model.entity.artbond;
 
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
+import com.gliesereum.share.common.model.entity.AuditableDefaultEntity;
 import com.gliesereum.share.common.model.entity.DefaultEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "art_bond")
-public class ArtBondEntity extends DefaultEntity {
+public class ArtBondEntity extends AuditableDefaultEntity {
 
     @Column(name = "price")
     private Integer price;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonDeserializer;
 import com.gliesereum.share.common.databind.json.LocalDateTimeJsonSerializer;
+import com.gliesereum.share.common.model.dto.AuditableDefaultDto;
 import com.gliesereum.share.common.model.dto.DefaultDto;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.SpecialStatusType;
 import com.gliesereum.share.common.model.dto.lendinggallery.enumerated.StatusType;
@@ -26,7 +27,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ArtBondDto extends DefaultDto {
+public class ArtBondDto extends AuditableDefaultDto {
 
     private Integer price;
 
