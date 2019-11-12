@@ -35,4 +35,3 @@ actions:
         timestring: '%Y.%m.%d'
         unit: days
         unit_count: ${UNIT_REQUEST_COUNT}
-        exclude:
