@@ -57,6 +57,7 @@ dependencies {
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 	runtimeOnly('org.postgresql:postgresql')
 
 	compile 'com.liqpay:liqpay-sdk:0.7-SNAPSHOT'

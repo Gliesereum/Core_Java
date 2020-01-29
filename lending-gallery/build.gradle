@@ -53,6 +53,7 @@ dependencies {
 	
 	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 	compile group: 'com.yahoofinance-api', name: 'YahooFinanceAPI', version: '3.14.0'
 	
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
