@@ -9,17 +9,15 @@ spring:
     listener:
       simple:
         auto-startup: false
-
-zuul:
-  routes:
-    stub-service:
-      path: /stub/v1/**
-      url: ${downstream.url}
-  ignored-services: '*'
-
-ribbon:
-  eureka:
-    enabled: false
+  cloud:
+    gateway:
+      routes:
+        - id: stub-service
+          uri: ${downstream.url}
+          predicates:
+            - Path=/api/stub/v1/**
+          filters:
+            - StripPrefix=3
 
 eureka:
   client:

@@ -2,68 +2,92 @@
 spring:
   application:
     name: proxy-service
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-logging.level.org.springframework.cloud.netflix.zuul.filters.post.SendErrorFilter: ERROR
+  codec:
+    # Replaces the servlet multipart limits; on WebFlux this caps the in-memory
+    # buffer for a request body.
+    max-in-memory-size: 10MB
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 30000
+        response-timeout: 30s
+      routes:
+        # Every route strips three segments — /api, the module and the version —
+        # because the downstream controllers are mapped at the bare path
+        # (/user, /record, ...). That is what Zuul's stripPrefix did, with /api
+        # having come from server.servlet.context-path.
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/api/account/v1/**
+          filters:
+            - StripPrefix=3
+        - id: permission-service
+          uri: lb://permission-service
+          predicates:
+            - Path=/api/permission/v1/**
+          filters:
+            - StripPrefix=3
+        - id: mail-service
+          uri: lb://mail-service
+          predicates:
+            - Path=/api/mail/v1/**
+          filters:
+            - StripPrefix=3
+        - id: karma-service
+          uri: lb://karma-service
+          predicates:
+            - Path=/api/karma/v1/**
+          filters:
+            - StripPrefix=3
+        - id: file-service
+          uri: lb://file-service
+          predicates:
+            - Path=/api/file/v1/**
+          filters:
+            - StripPrefix=3
+        - id: lending-gallery-service
+          uri: lb://lending-gallery-service
+          predicates:
+            - Path=/api/lending-gallery/v1/**
+          filters:
+            - StripPrefix=3
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notification/v1/**
+          filters:
+            - StripPrefix=3
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payment/v1/**
+          filters:
+            - StripPrefix=3
+        - id: license-service
+          uri: lb://license-service
+          predicates:
+            - Path=/api/license/v1/**
+          filters:
+            - StripPrefix=3
+        - id: language-service
+          uri: lb://language-service
+          predicates:
+            - Path=/api/language/v1/**
+          filters:
+            - StripPrefix=3
 
 server:
   port: 8200
-  servlet:
-    context-path: /api
 
-zuul:
-  routes:
-    account-service:
-      path: /account/v1/**
-      service-id: account-service
-    permission-service:
-      path: /permission/v1/**
-      service-id: permission-service
-    mail-service:
-      path: /mail/v1/**
-      service-id: mail-service
-    karma-service:
-      path: /karma/v1/**
-      service-id: karma-service
-    file-service:
-      path: /file/v1/**
-      service-id: file-service
-    lending-gallery-service:
-      path: /lending-gallery/v1/**
-      service-id: lending-gallery-service
-    notification-service:
-      path: /notification/v1/**
-      service-id: notification-service
-    payment-service:
-      path: /payment/v1/**
-      service-id: payment-service
-    license-service:
-      path: /license/v1/**
-      service-id: license-service
-    language-service:
-      path: /language/v1/**
-      service-id: language-service
-  ignored-services: '*'
-  host:
-    connectTimeoutMillis: 30000
-    socket-timeout-millis: 30000
-  add-host-header: true
-  sensitive-headers:
+# Prefix stripped before a path is read as module + endpoint by the endpoint
+# keeper. Used to be read from the never-configured zuul.prefix.
+gateway:
+  prefix: /api
 
 ribbon:
   ConnectTimeout: 60000
   ReadTimeout: 80000
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 280000
 
 # eureka server url
 eureka:

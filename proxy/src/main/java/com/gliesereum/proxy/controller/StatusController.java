@@ -23,7 +23,9 @@ public class StatusController {
     @Autowired
     private DiscoveryClient discoveryClient;
 
-    @GetMapping("/status")
+    // WebFlux has no server.servlet.context-path, and spring.webflux.base-path
+    // only arrives in Boot 2.4, so the /api prefix is part of the mapping.
+    @GetMapping("/api/status")
     public Map<String, Object> status() {
         Map<String, Object> result = new HashMap<>();
         List<String> services = discoveryClient.getServices();

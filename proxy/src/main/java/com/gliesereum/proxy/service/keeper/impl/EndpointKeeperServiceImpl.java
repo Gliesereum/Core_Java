@@ -8,6 +8,7 @@ import com.gliesereum.share.common.model.dto.permission.endpoint.EndpointDto;
 import com.gliesereum.share.common.model.dto.permission.group.GroupDto;
 import com.gliesereum.share.common.model.dto.permission.permission.PermissionMapValue;
 import com.gliesereum.share.common.model.dto.permission.uri.RequestUriDto;
+import com.gliesereum.share.common.security.model.UserAuthentication;
 import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.share.common.util.RegexUtil;
 import com.gliesereum.share.common.util.SecurityUtil;
@@ -15,7 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,18 +41,30 @@ public class EndpointKeeperServiceImpl implements EndpointKeeperService {
     private SecurityProperties securityProperties;
 
     @Autowired
-    private ZuulProperties zuulProperties;
-
-    @Autowired
     private GroupUserService groupUserService;
 
     @Autowired
     private GroupService groupService;
 
+    /**
+     * Everything the gateway serves is published under this prefix, and it has
+     * to come off before the rest of the path can be read as module + endpoint.
+     *
+     * Under Zuul this read `zuul.prefix`, which was never configured, so it was
+     * always the empty string while the prefix actually came from
+     * `server.servlet.context-path: /api`. Nothing noticed because
+     * endpointKeeperEnable is false; had it been switched on, every path would
+     * have been split one segment early and rejected.
+     */
+    @Value("${gateway.prefix:/api}")
+    private String gatewayPrefix;
+
     @Override
-    public void checkAccess(String currentJwt, String uri, String method) {
-        if (securityProperties.getEndpointKeeperEnable() && StringUtils.isNotEmpty(currentJwt) && StringUtils.isNotEmpty(uri)) {
-            Map<String, PermissionMapValue> permissionMap = getPermissionMap(currentJwt);
+    public void checkAccess(UserAuthentication authentication, String currentJwt, String uri, String method) {
+        if (Boolean.TRUE.equals(securityProperties.getEndpointKeeperEnable())
+                && StringUtils.isNotEmpty(currentJwt)
+                && StringUtils.isNotEmpty(uri)) {
+            Map<String, PermissionMapValue> permissionMap = getPermissionMap(authentication, currentJwt);
             RequestUriDto parsedUri = parse(uri);
             PermissionMapValue module = permissionMap.get(parsedUri.getModulePath());
             if (module == null) {
@@ -77,13 +90,11 @@ public class EndpointKeeperServiceImpl implements EndpointKeeperService {
                 throw new ClientException(ENDPOINT_NOT_ACTIVE);
             }
         }
-
     }
 
     private RequestUriDto parse(String uri) {
-        String apiPrefix = zuulProperties.getPrefix();
-        if (uri.startsWith(apiPrefix)) {
-            uri = uri.replaceFirst(apiPrefix, "");
+        if (StringUtils.isNotEmpty(gatewayPrefix) && uri.startsWith(gatewayPrefix)) {
+            uri = uri.substring(gatewayPrefix.length());
         }
         if (!uri.matches(RegexUtil.REQUEST_URI_REGEX)) {
             throw new ClientException(NOT_VALID_URI);
@@ -94,10 +105,10 @@ public class EndpointKeeperServiceImpl implements EndpointKeeperService {
         return new RequestUriDto(modulePath, RegexUtil.removeUUIDToStar(endpointPath));
     }
 
-
-    private Map<String, PermissionMapValue> getPermissionMap(String currentJwt) {
-        UUID userIdToCache = SecurityUtil.getUserId() != null ? SecurityUtil.getUserId() : SecurityUtil.getAnonymousId();
-        List<GroupDto> userGroup = groupUserService.getUserGroups(userIdToCache, SecurityUtil.getApplicationId(), currentJwt);
+    private Map<String, PermissionMapValue> getPermissionMap(UserAuthentication authentication, String currentJwt) {
+        UUID userId = userIdOf(authentication);
+        UUID userIdToCache = userId != null ? userId : SecurityUtil.getAnonymousId();
+        List<GroupDto> userGroup = groupUserService.getUserGroups(userIdToCache, applicationIdOf(authentication), currentJwt);
         if (CollectionUtils.isEmpty(userGroup)) {
             throw new ClientException(GROUP_NOT_FOUND);
         }
@@ -111,5 +122,19 @@ public class EndpointKeeperServiceImpl implements EndpointKeeperService {
             throw new ClientException(DONT_HAVE_ANY_PERMISSION);
         }
         return permissionMap;
+    }
+
+    private UUID userIdOf(UserAuthentication authentication) {
+        if (authentication == null || authentication.isAnonymous() || authentication.getUser() == null) {
+            return null;
+        }
+        return authentication.getUser().getId();
+    }
+
+    private UUID applicationIdOf(UserAuthentication authentication) {
+        if (authentication == null || authentication.getApplication() == null) {
+            return null;
+        }
+        return authentication.getApplication().getId();
     }
 }

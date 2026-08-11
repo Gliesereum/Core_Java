@@ -1,17 +1,19 @@
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-amqp'
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
+    // Spring Cloud Gateway is reactive; spring-boot-starter-web must stay out of
+    // this module or the gateway refuses to start.
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
     implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
     implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
-    implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
-    implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+    // share's UserAuthentication extends UsernamePasswordAuthenticationToken.
+    // Only the core types are needed: pulling spring-boot-starter-security would
+    // put spring-security-config on the classpath and auto-configure a reactive
+    // filter chain the gateway does not want.
+    implementation 'org.springframework.security:spring-security-core'
 
     // JDK 11 removed java.xml.bind, which the Eureka client's XML codecs need.
     implementation "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
@@ -27,6 +29,5 @@ dependencies {
         transitive = false
     }
 
-    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'com.squareup.okhttp3:mockwebserver'
 }

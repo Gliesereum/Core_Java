@@ -1,5 +1,8 @@
 package com.gliesereum.proxy.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gliesereum.share.common.security.jwt.factory.JwtTokenFactory;
+import com.gliesereum.share.common.security.jwt.factory.impl.JwtTokenFactoryImpl;
 import com.gliesereum.share.common.security.properties.SecurityProperties;
 import com.gliesereum.share.common.exception.handler.RestTemplateErrorHandler;
 import com.gliesereum.share.common.exchange.interceptor.RestTemplateAuthorizationInterceptor;
@@ -20,6 +23,13 @@ import java.util.List;
  */
 @Configuration
 public class BeanConfiguration {
+
+    // Was declared on the servlet SecurityConfiguration, which the reactive
+    // gateway no longer has.
+    @Bean
+    public JwtTokenFactory jwtTokenFactory(SecurityProperties securityProperties, ObjectMapper objectMapper) {
+        return new JwtTokenFactoryImpl(securityProperties, objectMapper);
+    }
 
     @Bean
     @LoadBalanced
