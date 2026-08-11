@@ -7,6 +7,14 @@ buildscript {
     }
 }
 
+// Services that own a schema and a set of Flyway migrations. Each gets a
+// context test that boots against a throwaway Postgres, so `ddl-auto: validate`
+// checks the JPA mappings against the schema the migrations actually produce.
+def databaseBackedModules = [
+        'account', 'file', 'karma', 'language', 'lending-gallery',
+        'license', 'mail', 'notification', 'payment', 'permission',
+]
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'
@@ -32,5 +40,22 @@ subprojects {
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
         compileOnly "org.springframework.boot:spring-boot-configuration-processor"
         testImplementation "org.springframework.boot:spring-boot-starter-test"
+    }
+
+    if (name in databaseBackedModules) {
+        dependencies {
+            testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
+            testRuntimeOnly 'org.postgresql:postgresql'
+        }
+    }
+
+    test {
+        // Resolved inside each application-test.yml's Testcontainers JDBC URL,
+        // so the image tag stays pinned in one place.
+        systemProperty 'postgres.test.tag', postgresTestTag
+        testLogging {
+            exceptionFormat = 'full'
+            events 'failed'
+        }
     }
 }
