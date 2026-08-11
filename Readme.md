@@ -2,20 +2,23 @@
 
 ### Build jar's
 
-##### gradle
+This is a single Gradle multi-project build, driven through the wrapper — no
+system Gradle needed, and the Gradle version is pinned by the repo.
+
 ```
-sudo gradle clean build -b=account/build.gradle --no-daemon
-sudo gradle clean build -b=discovery/build.gradle --no-daemon
-sudo gradle clean build -b=proxy/build.gradle --no-daemon
-sudo gradle clean build -b=mail/build.gradle --no-daemon
-sudo gradle clean build -b=permission/build.gradle --no-daemon
-sudo gradle clean build -b=karma/build.gradle --no-daemon
-sudo gradle clean build -b=file/build.gradle --no-daemon
-sudo gradle clean build -b=lending-gallery/build.gradle --no-daemon
-#sudo gradle clean build -b=socket/build.gradle --no-daemon
-sudo gradle clean build -b=notification/build.gradle --no-daemon
-#sudo gradle clean build -b=payment/build.gradle --no-daemon
+./gradlew clean build
 ```
+
+Jars land in `<module>/build/libs/`, which is what the Dockerfiles read.
+To build one service and what it depends on:
+
+```
+./gradlew :karma:build
+```
+
+All third-party versions live in `gradle.properties`; the plugins, the Spring
+Cloud BOM and the lombok wiring live in the root `build.gradle`. Modules
+declare only their own dependencies.
 
 ### Build images
 

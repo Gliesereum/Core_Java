@@ -7,17 +7,8 @@ whoami
 echo 'Git pull' 
 sudo git pull
 
-echo 'Gradle build'                               
-sudo gradle clean build -b=account/build.gradle --no-daemon
-sudo gradle clean build -b=discovery/build.gradle --no-daemon
-sudo gradle clean build -b=proxy/build.gradle --no-daemon
-sudo gradle clean build -b=mail/build.gradle --no-daemon
-sudo gradle clean build -b=permission/build.gradle --no-daemon
-sudo gradle clean build -b=karma/build.gradle --no-daemon
-sudo gradle clean build -b=file/build.gradle --no-daemon
-sudo gradle clean build -b=lending-gallery/build.gradle --no-daemon
-sudo gradle clean build -b=notification/build.gradle --no-daemon
-sudo gradle clean build -b=language/build.gradle --no-daemon
+echo 'Gradle build'
+sudo ./gradlew clean build --no-daemon                               
 
 echo 'Docker stop containers'       
 docker stack rm couplerServices
