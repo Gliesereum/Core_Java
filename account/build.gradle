@@ -1,76 +1,24 @@
-buildscript {
-	ext {
-		springBootVersion = '2.1.5.RELEASE'
-		springCloudVersion = 'Greenwich.SR1'
-		commonsCollectionsVersion = '4.2'
-		commonsLangVersion = '3.8.1'
-		commonsIOVersion = '2.6'
-		lettuceVersion = '5.1.0.RELEASE'
-		modelMapperVersion = '2.3.0'
-		jjwtVersion = '0.9.1'
-		lombokVersion = '1.18.2'
-		logbackVersion = '1.2.3'
-		swaggerVersion = '2.9.2'
-	}
-	repositories {
-		mavenCentral()
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
-}
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-
-group = 'com.gliesereum'
-version = '0.1.4'
-sourceCompatibility = 11
-
-repositories {
-	mavenCentral()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
-}
-
 dependencies {
-	implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-	implementation('org.springframework.boot:spring-boot-starter-data-redis')
-	implementation('org.springframework.boot:spring-boot-starter-security')
-	implementation('org.springframework.boot:spring-boot-starter-web')
-	implementation('org.springframework.boot:spring-boot-starter-amqp')
-	implementation('org.springframework.boot:spring-boot-starter-mail')
-	implementation('org.flywaydb:flyway-core')
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'io.lettuce:lettuce-core'
     implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
-	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
-	implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
-	implementation "io.lettuce:lettuce-core:${lettuceVersion}"
+    implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
     implementation "commons-io:commons-io:${commonsIOVersion}"
-	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
-	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
+    implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
 
-	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    implementation(project(':share')) {
+        transitive = false
+    }
 
-	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-
-	testImplementation "ch.qos.logback:logback-classic:${logbackVersion}"
-
-	runtimeOnly('org.postgresql:postgresql')
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-
-	implementation (project(':share')) {
-		transitive = false
-	}
-}
-
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation "ch.qos.logback:logback-classic:${logbackVersion}"
 }

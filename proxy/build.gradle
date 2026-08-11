@@ -1,85 +1,31 @@
-buildscript {
-	ext {
-		springBootVersion = '2.1.5.RELEASE'
-		springCloudVersion = 'Greenwich.SR1'
-		cache2kVersion = '1.2.0.Final'
-		commonsCollectionsVersion = '4.2'
-		commonsLangVersion = '3.8.1'
-		modelMapperVersion = '2.3.0'
-		jjwtVersion = '0.9.1'
-		lombokVersion = '1.18.2'
-		swaggerVersion = '2.9.2'
-
-		jaxbApiVersion = '2.3.1'
-		jaxbCoreVersion = '2.3.0.1'
-		jaxbImplVersion = '2.3.2'
-		javaxActivationVersion = '1.1.1'
-	}
-	repositories {
-		mavenCentral()
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
-}
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-
-group = 'com.gliesereum'
-version = '0.1.4'
-sourceCompatibility = 11
-
-repositories {
-	mavenCentral()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
-}
-
 dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-web')
-	implementation('org.springframework.boot:spring-boot-starter-security')
-	implementation('org.springframework.boot:spring-boot-starter-amqp')
-	implementation('org.springframework.cloud:spring-cloud-starter-netflix-zuul')
-	implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	implementation('org.springframework.boot:spring-boot-starter-mail')
-	implementation('org.springframework.boot:spring-boot-starter-cache')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation "org.apache.commons:commons-collections4:${commonsCollectionsVersion}"
-	implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
-	implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
-	implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
-	implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
-	implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+    implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
+    implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
+    implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
 
-	implementation "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
-	implementation "com.sun.xml.bind:jaxb-core:${jaxbCoreVersion}"
-	implementation "com.sun.xml.bind:jaxb-impl:${jaxbImplVersion}"
-	implementation "javax.activation:activation:${javaxActivationVersion}"
+    // JDK 11 removed java.xml.bind, which the Eureka client's XML codecs need.
+    implementation "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
+    implementation "com.sun.xml.bind:jaxb-core:${jaxbCoreVersion}"
+    implementation "com.sun.xml.bind:jaxb-impl:${jaxbImplVersion}"
+    implementation "javax.activation:activation:${javaxActivationVersion}"
 
-	implementation "org.cache2k:cache2k-api:${cache2kVersion}"
-	implementation "org.cache2k:cache2k-jcache:${cache2kVersion}"
-	runtimeOnly "org.cache2k:cache2k-core:${cache2kVersion}"
+    implementation "org.cache2k:cache2k-api:${cache2kVersion}"
+    implementation "org.cache2k:cache2k-jcache:${cache2kVersion}"
+    runtimeOnly "org.cache2k:cache2k-core:${cache2kVersion}"
 
-	implementation (project(':share')) {
-		transitive = false
-	}
+    implementation(project(':share')) {
+        transitive = false
+    }
 
-	compileOnly "org.projectlombok:lombok:${lombokVersion}"
-	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-	
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testImplementation('org.springframework.security:spring-security-test')
-
-
-}
-
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+    testImplementation 'org.springframework.security:spring-security-test'
 }

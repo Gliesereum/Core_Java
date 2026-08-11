@@ -1,53 +1,10 @@
-buildscript {
-	ext {
-		springBootVersion = '2.1.5.RELEASE'
-		springCloudVersion = 'Greenwich.SR1'
-		
-		jaxbApiVersion = '2.3.1'
-		jaxbCoreVersion = '2.3.0.1'
-		jaxbImplVersion = '2.3.2'
-		javaxActivationVersion = '1.1.1'
-	}
-	repositories {
-		mavenCentral()
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
-}
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-
-group = 'com.gliesereum'
-version = '0.1.4'
-sourceCompatibility = 11
-
-repositories {
-	mavenCentral()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
-}
-
-
 dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-web')
-	implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
 
-	implementation "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
-	implementation "com.sun.xml.bind:jaxb-core:${jaxbCoreVersion}"
-	implementation "com.sun.xml.bind:jaxb-impl:${jaxbImplVersion}"
-	implementation "javax.activation:activation:${javaxActivationVersion}"
-
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-}
-
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+    // JDK 11 removed java.xml.bind, which Eureka's XML codecs need.
+    implementation "javax.xml.bind:jaxb-api:${jaxbApiVersion}"
+    implementation "com.sun.xml.bind:jaxb-core:${jaxbCoreVersion}"
+    implementation "com.sun.xml.bind:jaxb-impl:${jaxbImplVersion}"
+    implementation "javax.activation:activation:${javaxActivationVersion}"
 }
