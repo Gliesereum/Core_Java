@@ -1,9 +1,5 @@
 ### Gradle ###
 .gradle/
-gradle/
-gradlew
-gradlew.bat
-!gradle/wrapper/gradle-wrapper.jar
 buid/
 */build/
 /build/
@@ -26,6 +22,7 @@ logs/
 
 
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 
 .DS_Store
 /.DS_Store

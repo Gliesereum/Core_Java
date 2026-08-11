@@ -1,4 +1,0 @@
-rootProject.name = 'lendinggallery'
-
-include 'share'
-project(':share').projectDir = new File(settingsDir,  '../share')

@@ -1,4 +1,0 @@
-rootProject.name = 'language'
-
-include 'share'
-project(':share').projectDir = new File(settingsDir,  '../share')
