@@ -46,7 +46,7 @@ public class ContentServiceImpl extends DefaultServiceImpl<ContentDto, ContentEn
         if (CollectionUtils.isEmpty(tags)) {
             return new ArrayList<>();
         }
-        List<ContentEntity> entities = contentRepository.findAllByTagsContainsOrderByCreate(tags, PageRequest.of(page, size));
+        List<ContentEntity> entities = contentRepository.findDistinctByTagsInOrderByCreate(tags, PageRequest.of(page, size));
         return converter.convert(entities, dtoClass);
     }
 }

@@ -7,6 +7,7 @@ import com.gliesereum.share.common.model.enumerated.ObjectState;
 import com.gliesereum.share.common.repository.AuditableRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,5 +19,10 @@ public interface ArtBondRepository extends AuditableRepository<ArtBondEntity>, C
 
     List<ArtBondEntity> findAllByStatusTypeAndSpecialStatusTypeAndObjectState(StatusType statusType, SpecialStatusType specialStatusType, ObjectState objectState);
 
-    List<ArtBondEntity> findAllByTagsContainsAndObjectState(List<String> tags, ObjectState objectState);
+    /**
+     * Art bonds carrying any of the given tags. `tags` is an @ElementCollection,
+     * so this joins the art_bond_tag table; Distinct keeps a bond from being
+     * returned once per matching tag.
+     */
+    List<ArtBondEntity> findDistinctByTagsInAndObjectState(Collection<String> tags, ObjectState objectState);
 }

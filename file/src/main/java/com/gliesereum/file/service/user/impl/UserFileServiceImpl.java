@@ -12,7 +12,6 @@ import com.gliesereum.share.common.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,7 +56,7 @@ public class UserFileServiceImpl extends DefaultServiceImpl<UserFileDto, UserFil
     public List<UserFileDto> getAllCanRead(UUID userId) {
         List<UserFileDto> result = null;
         if (userId != null) {
-            List<UserFileEntity> entities = userFileRepository.findAllByUserIdOrReaderIdsContains(userId, Arrays.asList(userId));
+            List<UserFileEntity> entities = userFileRepository.findAllByUserIdOrReaderIdsContains(userId, userId);
             result = converter.convert(entities, dtoClass);
         }
         return result;

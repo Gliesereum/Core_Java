@@ -266,7 +266,7 @@ public class ArtBondServiceImpl extends AuditableServiceImpl<ArtBondDto, ArtBond
         if (CollectionUtils.isEmpty(tags)) {
             return new ArrayList<>();
         }
-        List<ArtBondEntity> entities = artBondRepository.findAllByTagsContainsAndObjectState(tags, ObjectState.ACTIVE);
+        List<ArtBondEntity> entities = artBondRepository.findDistinctByTagsInAndObjectState(tags, ObjectState.ACTIVE);
         List<ArtBondDto> result = converter.convert(entities, dtoClass);
         if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(this::setAdditionalField);

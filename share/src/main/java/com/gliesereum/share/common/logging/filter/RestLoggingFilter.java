@@ -90,7 +90,11 @@ public class RestLoggingFilter extends OncePerRequestFilter {
         String body = null;
         try {
             body = IOUtils.toString(contentAsByte, characterEncoding);
-        } catch (IOException e) {
+        } catch (IllegalArgumentException e) {
+            // commons-io 2.7 dropped `throws IOException` from this overload; an
+            // unusable request charset now arrives as UnsupportedCharsetException,
+            // which is an IllegalArgumentException. Logging a bad body must not
+            // take the request down, same as before.
             log.warn("Error while read body", e);
         }
         return body;

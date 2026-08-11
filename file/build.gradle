@@ -20,5 +20,4 @@ dependencies {
     }
 
     runtimeOnly 'org.postgresql:postgresql'
-    testImplementation "ch.qos.logback:logback-classic:${logbackVersion}"
 }
