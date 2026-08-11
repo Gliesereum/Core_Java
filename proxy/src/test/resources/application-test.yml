@@ -1,0 +1,28 @@
+# Routes one stub path at a MockWebServer the test starts, so the gateway's
+# own behaviour (application check, bearer handling, header propagation,
+# prefix stripping) can be asserted without Eureka or any real service.
+spring:
+  rabbitmq:
+    queue-logstash: logstash
+    queue-logstash-system: logstash-system
+    queue-logstash-request: logstash-request
+    listener:
+      simple:
+        auto-startup: false
+
+zuul:
+  routes:
+    stub-service:
+      path: /stub/v1/**
+      url: ${downstream.url}
+  ignored-services: '*'
+
+ribbon:
+  eureka:
+    enabled: false
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
